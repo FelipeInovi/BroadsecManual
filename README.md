@@ -39,6 +39,10 @@ pnpm type-check
 pnpm test
 ```
 
+Skills live in `skills/` and are agent-agnostic. To let your coding agent
+discover them, link that folder into its skills directory — see
+`skills/AGENTS.md`. The link is local and gitignored.
+
 ## Status
 
 Scaffolded. The block catalog and the PDF render engine are intentionally

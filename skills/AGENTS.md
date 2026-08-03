@@ -6,6 +6,26 @@ specification: https://agentskills.io/specification
 These are **portable and vendor-neutral**. A skill is a folder; copy it to any
 skills-compatible agent and it works. Nothing in a skill may assume Claude Code.
 
+## Local setup — link this folder for your agent to discover it
+
+`skills/` is the canonical, committed location. Agents that look for skills in a
+tool-specific directory need a link to it. The link is local and gitignored;
+**never commit a copy of these folders anywhere else** — two copies drift, and
+then nobody knows which one an agent actually loaded.
+
+For Claude Code, from the repository root:
+
+```bash
+# Windows (Git Bash) — directory junction, no admin rights needed
+mkdir -p .claude && cmd //c "mklink /J .claude\skills skills"
+
+# macOS / Linux
+mkdir -p .claude && ln -s ../skills .claude/skills
+```
+
+Verify: the skills appear in the agent's available-skills list. If they do not,
+the link is missing or points at the wrong path.
+
 ## Format — enforced, not suggested
 
 ```
