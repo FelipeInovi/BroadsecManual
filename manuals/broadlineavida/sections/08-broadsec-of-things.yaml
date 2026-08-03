@@ -1,13 +1,22 @@
 # Broadsec of Things (BoT) — a module that does NOT exist in Manual_Broadsec_v5.
 #
-# Written from source, not from the legacy manual. Every claim traces to a file
-# and line recorded beside it. Screenshots do not exist yet, so field-list items
-# carry no `image` and render a stated placeholder.
+# Written against skills/module-completeness/SKILL.md: every submodule the
+# product offers is covered, each with what it does, how to reach it, its main
+# functions and its procedures.
+#
+# Sources, all read rather than assumed:
+#   AppRoutes.tsx:202-214            route and gating
+#   pages/PMV/PMVPage.tsx            tab shell and polling
+#   pages/BroadsecOfThings/*.tsx     sidebar and header
+#   locales/translations/es.json     every UI label quoted below
 #
 # Whole-module gating: AppRoutes.tsx:207 — allowedProjects={["DEMO", "MV"]}.
-# There is also a ROLE gate (AppRoutes.tsx:205-206, allowedRoles={["admin"]},
-# deniedRoles={["manager","agent"]}) which the manual cannot express as a build
-# axis today — only `tenant` is declared. It is stated in prose instead.
+# Role gating (AppRoutes.tsx:205-206, allowedRoles ["admin"], denied to manager
+# and agent) cannot be a build axis today — only `tenant` is declared — so it is
+# stated in prose. First real case for a second axis.
+#
+# No image exists for this module. Per the image rule, every slot shows its
+# reference instead of a blank gap.
 
 id: broadsec-of-things
 title: Broadsec of Things
@@ -22,9 +31,9 @@ children:
       text: >-
         **Broadsec of Things (BoT)** reúne en una sola pantalla la operación de
         los dispositivos desplegados en campo: paneles de mensajería variable,
-        cámaras, recursos y alarmas. Está organizado como un panel lateral de
-        navegación y un área de trabajo que cambia según la sección
-        seleccionada.
+        cámaras, recursos, alarmas y personal en vía. Se organiza como un panel
+        lateral de navegación a la izquierda y un área de trabajo que cambia
+        según la sección seleccionada.
 
   - id: bot.acceso
     type: callout
@@ -34,57 +43,52 @@ children:
         El acceso a este módulo está restringido a los perfiles de
         administrador. Los perfiles de supervisor y de agente no lo visualizan.
 
-  # ------------------------------------------------ Panel lateral ---
+  # ============================================================ Navegación ===
   - id: bot.navegacion
     title: Panel lateral de navegación
     children:
-      - id: bot.navegacion.intro
+      - id: bot.navegacion.que-hace
         type: prose
         props:
           text: >-
             El panel lateral concentra el acceso a todas las secciones del
-            módulo. Puede contraerse para ampliar el área de trabajo. Las
-            secciones **CCTV** y **PMV** agrupan subsecciones que se despliegan
-            al seleccionarlas.
+            módulo y permanece visible en todo momento. Puede contraerse para
+            ampliar el área de trabajo. Las secciones **CCTV** y **PMV** agrupan
+            subsecciones que se despliegan al seleccionarlas.
+
+      - id: bot.navegacion.cabecera
+        type: prose
+        props:
+          text: >-
+            Sobre el área de trabajo, la barra superior indica en todo momento
+            la sección activa e incluye el botón de inicio, que devuelve al
+            operador a la pantalla principal de la plataforma.
 
       - id: bot.secciones
-        type: field-list
+        type: icon-table
         props:
-          items:
-            # BOTSidebar.tsx getNavItems — labels from
-            # locales/translations/es.json → botSidebar.navItems
+          labelHeader: Sección
+          descriptionHeader: Descripción
+          rows:
+            # BOTSidebar.tsx getNavItems — labels from botSidebar.navItems
             - id: bot.seccion.mapa
               label: Mapa
-              text: >-
-                Vista geográfica de la operación. Muestra la ubicación de los
-                paneles, los vehículos con seguimiento, los semáforos y las
-                cámaras disponibles, con los mismos controles de capas del mapa
-                principal.
+              description: Vista geográfica de la operación.
             - id: bot.seccion.prt
               label: PRT
-              text: >-
-                Sección de gestión del sistema PRT.
+              description: Personal y vehículos desplegados en vía.
             - id: bot.seccion.recursos
               label: Recursos
-              text: >-
-                Administración de los recursos disponibles para la operación.
+              description: Monitoreo y despacho operativo en tiempo real.
             - id: bot.seccion.cctv
               label: CCTV
-              text: >-
-                Agrupa el acceso al video de las cámaras. Su subsección
-                **Mosaico** permite visualizar varias cámaras de forma
-                simultánea en una grilla configurable. Al seleccionar una cámara
-                desde el mapa, el módulo abre el mosaico en vista individual con
-                esa cámara ya cargada.
+              description: Video de las cámaras del sistema.
             - id: bot.seccion.pmv
               label: PMV
-              text: >-
-                Agrupa la operación de los paneles de mensajería variable. Se
-                detalla más adelante.
+              description: Paneles de mensajería variable.
             - id: bot.seccion.alarmas
               label: Alarmas
-              text: >-
-                Gestión de las alarmas del sistema.
+              description: Supervisión y reconocimiento de alarmas.
 
       - id: bot.integraciones.header
         type: detail-header
@@ -96,8 +100,8 @@ children:
         props:
           text: >-
             En la parte inferior del panel lateral se listan las integraciones
-            del sistema. Estos elementos no son secciones navegables: cada uno
-            muestra únicamente si la integración se encuentra activa.
+            del sistema. Estos elementos **no son secciones navegables**: cada
+            uno indica únicamente si la integración se encuentra activa.
 
       - id: bot.integraciones
         type: data-table
@@ -127,48 +131,329 @@ children:
             El estado de las integraciones se actualiza automáticamente cada 30
             segundos. No es necesario recargar la pantalla.
 
-  # ------------------------------------------------------------ PMV ---
-  - id: bot.pmv
-    title: PMV — Paneles de Mensajería Variable
+  # ================================================================== Mapa ===
+  - id: bot.mapa
+    title: Mapa
     children:
-      - id: bot.pmv.intro
+      - id: bot.mapa.que-hace
         type: prose
         props:
           text: >-
-            La sección **PMV** permite programar, administrar y supervisar los
-            mensajes que se muestran en los paneles de mensajería variable
-            desplegados en la vía.
+            Presenta la operación sobre el mapa: la ubicación de los paneles de
+            mensajería variable, los vehículos con seguimiento automático, los
+            puntos semaforizados y las cámaras disponibles. Es la vista inicial
+            del módulo.
 
-      - id: bot.pmv.subsecciones
+      - id: bot.mapa.como-llegar
+        type: prose
+        props:
+          text: >-
+            Diríjase a **Mapa** en el panel lateral. Es la sección que se
+            muestra al ingresar al módulo.
+
+      - id: bot.mapa.funciones
         type: term-list
         props:
           entries:
-            - id: bot.pmv.sub.programacion
-              term: Programación
-              definition: Creación y edición de un mensaje y su vigencia.
-            - id: bot.pmv.sub.gestion
-              term: Gestión
-              definition: Listado de los mensajes existentes y su estado.
-            - id: bot.pmv.sub.variables
-              term: Variables
+            - id: bot.mapa.fn.capas
+              term: Control de capas
               definition: >-
-                Administración de familias, grupos de paneles y mensajes
-                predefinidos.
+                Activa y desactiva de forma independiente cada tipo de elemento
+                sobre el mapa.
+            - id: bot.mapa.fn.tipo
+              term: Tipo de mapa
+              definition: Alterna entre las vistas estándar, satelital y de tráfico.
+            - id: bot.mapa.fn.camara
+              term: Acceso directo a una cámara
+              definition: >-
+                Al seleccionar una cámara sobre el mapa, el módulo abre el
+                mosaico de CCTV en vista individual con esa cámara ya cargada.
+
+  # =================================================================== PRT ===
+  - id: bot.prt
+    title: PRT
+    children:
+      - id: bot.prt.que-hace
+        type: prose
+        props:
+          text: >-
+            Consolida el personal y los vehículos desplegados en vía, con su
+            asignación de zona, horario y punto de control. Permite verificar de
+            un vistazo quién está en servicio y dónde.
+
+      - id: bot.prt.como-llegar
+        type: prose
+        props:
+          text: Diríjase a **PRT** en el panel lateral.
+
+      - id: bot.prt.columnas
+        type: data-table
+        props:
+          labelHeader: Columna
+          descriptionHeader: Descripción
+          rows:
+            # locales → prtPage.tableHeaders
+            - id: bot.prt.col.cedula
+              label: Cédula
+              description: Documento de identidad del agente.
+            - id: bot.prt.col.nombre
+              label: Nombres y Apellidos
+              description: Nombre completo del agente.
+            - id: bot.prt.col.seccion
+              label: Sección
+              description: Sección a la que pertenece.
+            - id: bot.prt.col.horario
+              label: Horario
+              description: Franja horaria de su turno.
+            - id: bot.prt.col.vehiculo
+              label: Vehículo
+              description: Tipo de vehículo asignado.
+            - id: bot.prt.col.placa
+              label: Placa
+              description: Placa del vehículo.
+            - id: bot.prt.col.zona
+              label: Zona / SubZona
+              description: Área geográfica de responsabilidad.
+            - id: bot.prt.col.punto
+              label: Punto de Control
+              description: Ubicación puntual asignada dentro de la zona.
+            - id: bot.prt.col.observaciones
+              label: Observaciones
+              description: Anotaciones registradas sobre el agente o su turno.
+
+      - id: bot.prt.buscar
+        type: procedure
+        props:
+          lead: Para localizar a un agente o a un vehículo, siga estos pasos.
+          steps:
+            - id: bot.prt.paso.buscar
+              title: Escriba el criterio de búsqueda
+              text: >-
+                Use el campo de búsqueda. Admite nombre, cédula, placa o
+                vehículo, de forma indistinta.
+            - id: bot.prt.paso.filtrar
+              title: Acote por tipo de vehículo
+              text: >-
+                El selector de vehículo permite restringir el listado a un tipo
+                en particular. La opción **Todos los vehículos** lo restablece.
+            - id: bot.prt.paso.limpiar
+              title: Restablezca el listado
+              text: >-
+                El botón **Limpiar** descarta todos los filtros aplicados. Si
+                ninguna fila coincide, la plataforma indica que no hay
+                resultados para los filtros aplicados.
+
+  # ============================================================== Recursos ===
+  - id: bot.recursos
+    title: Recursos
+    children:
+      - id: bot.recursos.que-hace
+        type: prose
+        props:
+          text: >-
+            Permite el monitoreo y el despacho operativo en tiempo real. Desde
+            aquí se asigna un recurso a un incidente, se registra su llegada al
+            sitio, se cierra su atención y se dejan observaciones.
+
+      - id: bot.recursos.como-llegar
+        type: prose
+        props:
+          text: Diríjase a **Recursos** en el panel lateral.
+
+      - id: bot.recursos.columnas
+        type: data-table
+        props:
+          labelHeader: Columna
+          descriptionHeader: Descripción
+          rows:
+            # locales → resourcesManagmentPage.columns
+            - id: bot.recursos.col.recurso
+              label: Recurso
+              description: Identificación del recurso.
+            - id: bot.recursos.col.agente
+              label: Agente
+              description: Agente a cargo.
+            - id: bot.recursos.col.placa
+              label: Placa
+              description: Placa del vehículo asociado.
+            - id: bot.recursos.col.seccion
+              label: Sección
+              description: Sección a la que pertenece.
+            - id: bot.recursos.col.punto
+              label: Pto. Ctrl
+              description: Punto de control asignado.
+            - id: bot.recursos.col.turno
+              label: Turno
+              description: Turno en curso.
+            - id: bot.recursos.col.zona
+              label: Zona
+              description: Área geográfica de responsabilidad.
+            - id: bot.recursos.col.pj
+              label: PJ
+              description: Indica si el recurso está marcado como Policía Judicial.
+            - id: bot.recursos.col.despacho
+              label: Despacho
+              description: >-
+                Muestra **ASIGNAR** cuando el recurso está libre y **ASIGNADO**
+                cuando ya atiende un incidente.
+
+      - id: bot.recursos.asignar
+        type: procedure
+        props:
+          lead: Para asignar un recurso a un incidente, siga estos pasos.
+          steps:
+            - id: bot.recursos.paso.ubicar
+              title: Ubique el recurso
+              text: >-
+                Use el campo de búsqueda o el filtro por columna hasta encontrar
+                el recurso disponible.
+            - id: bot.recursos.paso.asignar
+              title: Abra la asignación
+              text: >-
+                En la columna **Despacho**, accione **ASIGNAR**. La plataforma
+                abre la ventana *Asignar recurso a un incidente*, con el recurso
+                y su placa a la vista.
+            - id: bot.recursos.paso.caso
+              title: Elija el incidente
+              text: >-
+                Seleccione el caso de la lista y confirme con **Confirmar
+                asignación**. Si no hay casos disponibles, la plataforma lo
+                indica y permite volver a la lista.
+            - id: bot.recursos.paso.resultado
+              title: Verifique el resultado
+              text: >-
+                La columna **Despacho** pasa a mostrar **ASIGNADO**. Al
+                accionarla nuevamente se abre el detalle del incidente, desde
+                donde puede registrar **Recurso en sitio**, **Finalizar
+                atención** o **Desasignar**.
+
+      - id: bot.recursos.pj
+        type: procedure
+        props:
+          lead: Para marcar un recurso como Policía Judicial, siga estos pasos.
+          steps:
+            - id: bot.recursos.paso.pj-accionar
+              title: Accione la marca en la columna PJ
+              text: >-
+                La plataforma solicita confirmación antes de aplicar el cambio,
+                indicando el recurso y la acción a realizar.
+            - id: bot.recursos.paso.pj-confirmar
+              title: Confirme
+              text: >-
+                Al confirmar, la plataforma informa que el recurso quedó marcado
+                como Policía Judicial. La misma acción, sobre un recurso ya
+                marcado, lo desmarca.
+
+      - id: bot.recursos.observacion.header
+        type: detail-header
+        props:
+          text: Observaciones sobre un recurso
+
+      - id: bot.recursos.observacion.texto
+        type: prose
+        props:
+          text: >-
+            La columna **Observ.** permite agregar, editar y eliminar
+            anotaciones sobre el recurso. La plataforma no guarda una
+            observación vacía ni una sin cambios, y solicita confirmación antes
+            de eliminar.
+
+  # ================================================================== CCTV ===
+  - id: bot.cctv
+    title: CCTV
+    children:
+      - id: bot.cctv.que-hace
+        type: prose
+        props:
+          text: >-
+            Da acceso al video de las cámaras del sistema, en vivo, con control
+            de movimiento sobre las cámaras que lo admiten.
+
+      - id: bot.cctv.como-llegar
+        type: prose
+        props:
+          text: >-
+            Despliegue **CCTV** en el panel lateral y seleccione **Mosaico**.
+            También se llega seleccionando una cámara directamente sobre el
+            mapa, lo que abre el mosaico en vista individual con esa cámara ya
+            cargada.
+
+      - id: bot.cctv.funciones
+        type: field-list
+        props:
+          items:
+            - id: bot.cctv.fn.lista
+              label: Lista de cámaras
+              text: >-
+                Permite buscar por alias, identificador o nombre. Indica cuántas
+                cámaras coinciden y advierte cuando no se encuentra ninguna.
+            - id: bot.cctv.fn.grilla
+              label: Grilla del mosaico
+              text: >-
+                Define cuántas cámaras se visualizan de forma simultánea. La
+                vista individual corresponde a una sola cámara en pantalla.
+            - id: bot.cctv.fn.estado
+              label: Estado de la transmisión
+              text: >-
+                Una cámara sin video muestra **SIN SEÑAL**, y una que perdió
+                conexión muestra **FUERA DE COMUNICACIONES**. La opción de
+                reintentar conexión vuelve a solicitar la transmisión.
+            - id: bot.cctv.fn.ptz
+              label: Control PTZ
+              text: >-
+                Sobre las cámaras que lo admiten, permite desplazar la vista en
+                ocho direcciones y acercar o alejar la imagen.
+
+      - id: bot.cctv.preset
+        type: procedure
+        props:
+          lead: Para guardar y reutilizar una posición de cámara, siga estos pasos.
+          steps:
+            - id: bot.cctv.paso.encuadrar
+              title: Encuadre la vista
+              text: >-
+                Con el control PTZ, desplace la cámara y ajuste el zoom hasta
+                obtener el encuadre deseado.
+            - id: bot.cctv.paso.nombrar
+              title: Nombre la posición
+              text: >-
+                En **Presets de posición**, escriba un nombre y accione
+                **Guardar posición actual**.
+            - id: bot.cctv.paso.reutilizar
+              title: Reutilice la posición
+              text: >-
+                El preset queda listado y puede invocarse en cualquier momento
+                para devolver la cámara a ese encuadre. También puede
+                eliminarse. Si no hay ninguno guardado, la plataforma lo indica.
+
+  # ======================================================= PMV Programación ===
+  - id: bot.pmv-programacion
+    title: PMV — Programación
+    children:
+      - id: bot.pmv.que-hace
+        type: prose
+        props:
+          text: >-
+            Permite crear y editar el mensaje que se mostrará en uno o varios
+            paneles de mensajería variable, junto con su vigencia.
+
+      - id: bot.pmv.como-llegar
+        type: prose
+        props:
+          text: Despliegue **PMV** en el panel lateral y seleccione **Programación**.
 
       - id: bot.pmv.programar
         type: procedure
         props:
-          lead: >-
-            Para programar un mensaje en uno o varios paneles, siga estos pasos:
+          lead: Para programar un mensaje, siga estos pasos.
           steps:
-            # Field labels from locales/translations/es.json → pmv.programming
+            # Field labels from locales → pmv.programming
             - id: bot.pmv.paso.identificar
               title: Identifique el mensaje
               text: >-
-                Diríjase a **PMV › Programación** e indique el **Título
-                Interno**. Este título identifica el mensaje dentro de la
-                plataforma y no se muestra en el panel. Seleccione a
-                continuación el **Tipo** de mensaje.
+                Indique el **Título Interno**. Este título identifica el mensaje
+                dentro de la plataforma y no se muestra en el panel. Seleccione
+                a continuación el **Tipo** de mensaje.
             - id: bot.pmv.paso.clasificar
               title: Clasifique el mensaje
               text: >-
@@ -201,8 +486,7 @@ children:
               title: Guarde el mensaje
               text: >-
                 Al guardar, la plataforma lo redirige a **PMV › Gestión**, donde
-                el mensaje queda listado. Desde allí puede editarlo, lo que
-                reabre el formulario de programación con los datos cargados.
+                el mensaje queda listado.
 
       - id: bot.pmv.prioritario
         type: callout
@@ -213,25 +497,175 @@ children:
             programación existente del panel. Verifique la vigencia antes de
             guardarlo.
 
-  # ------------------------------------------------------ Monitoreo ---
-  - id: bot.monitoreo
-    title: Monitoreo de Paneles
+  # ============================================================ PMV Gestión ===
+  - id: bot.pmv-gestion
+    title: PMV — Gestión
     children:
-      - id: bot.monitoreo.intro
+      - id: bot.pmv-gestion.que-hace
         type: prose
         props:
           text: >-
-            La vista de monitoreo muestra el estado de comunicación de cada
-            panel. Puede filtrarse por **Todos**, **Comunica** o **No
-            comunica**.
+            Lista los mensajes existentes con su estado y su vigencia, y permite
+            editarlos, activarlos o desactivarlos.
 
-      - id: bot.monitoreo.columnas
+      - id: bot.pmv-gestion.como-llegar
+        type: prose
+        props:
+          text: >-
+            Despliegue **PMV** en el panel lateral y seleccione **Gestión**. La
+            plataforma también lo trae aquí al guardar un mensaje nuevo.
+
+      - id: bot.pmv-gestion.filtros
+        type: term-list
+        props:
+          entries:
+            # locales → pmv.calendar
+            - id: bot.pmv-gestion.f.busqueda
+              term: Búsqueda
+              definition: Localiza un mensaje por su título o por su texto.
+            - id: bot.pmv-gestion.f.paneles
+              term: Todos Los Paneles
+              definition: Restringe el listado a los mensajes de un panel.
+            - id: bot.pmv-gestion.f.familias
+              term: Todas las familias
+              definition: Restringe por familia o subfamilia de mensajes.
+            - id: bot.pmv-gestion.f.tipos
+              term: Todos los tipos
+              definition: Restringe por tipo de mensaje.
+            - id: bot.pmv-gestion.f.estados
+              term: Todos los estados
+              definition: Restringe por estado de ejecución.
+
+      - id: bot.pmv-gestion.estados
+        type: data-table
+        props:
+          labelHeader: Estado
+          descriptionHeader: Significado
+          rows:
+            - id: bot.pmv-gestion.e.corriendo
+              label: Corriendo
+              description: El mensaje se está mostrando en el panel en este momento.
+            - id: bot.pmv-gestion.e.pendiente
+              label: Pendiente
+              description: Programado, aún no alcanzó su ventana de vigencia.
+            - id: bot.pmv-gestion.e.desactivado
+              label: Desactivado
+              description: Retirado de la programación.
+
+      - id: bot.pmv-gestion.detalle
+        type: prose
+        props:
+          text: >-
+            El detalle de cada mensaje indica su **Horario**, su **Vigencia**,
+            su **Familia**, su **Grupo** y los **Paneles** afectados. Los
+            mensajes prioritarios se distinguen con una marca.
+
+      - id: bot.pmv-gestion.desactivar
+        type: procedure
+        props:
+          lead: Para desactivar un mensaje, siga estos pasos.
+          steps:
+            - id: bot.pmv-gestion.paso.desactivar
+              title: Accione Desactivar sobre el mensaje
+              text: >-
+                Si el mensaje no se está ejecutando, se desactiva de inmediato.
+            - id: bot.pmv-gestion.paso.elegir
+              title: Elija cómo retirarlo si está corriendo
+              text: >-
+                Cuando el mensaje se está ejecutando, la plataforma pregunta
+                cómo desea desactivarlo y ofrece **Esperar a que termine** o
+                **Quitar ya**.
+            - id: bot.pmv-gestion.paso.reactivar
+              title: Reactive si corresponde
+              text: >-
+                Un mensaje desactivado puede volver a ponerse en circulación con
+                **Activar**, siempre que su vigencia siga siendo válida.
+
+  # ========================================================== PMV Variables ===
+  - id: bot.pmv-variables
+    title: PMV — Variables
+    children:
+      - id: bot.pmv-variables.que-hace
+        type: prose
+        props:
+          text: >-
+            Administra los elementos reutilizables de la programación: la
+            clasificación de los mensajes, las agrupaciones de paneles y los
+            textos predefinidos.
+
+      - id: bot.pmv-variables.como-llegar
+        type: prose
+        props:
+          text: Despliegue **PMV** en el panel lateral y seleccione **Variables**.
+
+      - id: bot.pmv-variables.secciones
+        type: field-list
+        props:
+          items:
+            # locales → pmv.variables
+            - id: bot.pmv-variables.s.familias
+              label: Familias
+              text: >-
+                Clasificación de los mensajes en familias y subfamilias. Cada
+                familia indica cuántos elementos contiene, y puede editarse o
+                eliminarse. Una subfamilia sin mensajes se señala como tal.
+            - id: bot.pmv-variables.s.grupos
+              label: Grupos
+              text: >-
+                Agrupaciones de paneles que se aplican de una sola vez al
+                programar. Cada grupo indica cuántos paneles reúne, y puede
+                editarse o eliminarse.
+            - id: bot.pmv-variables.s.predefinidos
+              label: Mensajes Predefinidos
+              text: >-
+                Textos guardados para reutilizar al componer una página, sin
+                volver a escribirlos.
+
+      - id: bot.pmv-variables.grupo
+        type: procedure
+        props:
+          lead: Para crear un grupo de paneles, siga estos pasos.
+          steps:
+            - id: bot.pmv-variables.paso.anadir
+              title: Inicie la creación
+              text: Accione **Añadir Grupo** en la sección de grupos.
+            - id: bot.pmv-variables.paso.nombrar
+              title: Nombre el grupo
+              text: >-
+                Indique el nombre con el que aparecerá al programar un mensaje.
+            - id: bot.pmv-variables.paso.seleccionar
+              title: Seleccione los paneles
+              text: >-
+                Elija los paneles que formarán parte del grupo y guarde. La
+                plataforma confirma la creación y el grupo queda disponible en
+                **Programación**.
+
+  # ========================================================== PMV Monitoreo ===
+  - id: bot.pmv-monitoreo
+    title: PMV — Monitoreo de Paneles
+    children:
+      - id: bot.pmv-monitoreo.que-hace
+        type: prose
+        props:
+          text: >-
+            Muestra el estado de comunicación de cada panel y el mensaje que
+            tiene activo, para verificar que la programación se esté aplicando
+            en vía.
+
+      - id: bot.pmv-monitoreo.filtros
+        type: prose
+        props:
+          text: >-
+            El listado puede filtrarse por **Todos**, **Comunica** o **No
+            comunica**. Si ningún panel coincide, la plataforma lo indica.
+
+      - id: bot.pmv-monitoreo.columnas
         type: data-table
         props:
           labelHeader: Columna
           descriptionHeader: Descripción
           rows:
-            # locales/translations/es.json → pmv.monitoring
+            # locales → pmv.monitoring
             - id: bot.monitoreo.col.id
               label: ID Panel
               description: Identificador del panel en la plataforma.
@@ -248,26 +682,33 @@ children:
               label: Estado
               description: Indica si el panel se encuentra comunicando.
 
-  # ------------------------------------------------------ Auditoría ---
-  - id: bot.auditoria
-    title: Registro de Auditoría
+  # ========================================================== PMV Auditoría ===
+  - id: bot.pmv-auditoria
+    title: PMV — Registro de Auditoría
     children:
-      - id: bot.auditoria.intro
+      - id: bot.pmv-auditoria.que-hace
         type: prose
         props:
           text: >-
-            El registro de auditoría deja trazabilidad de cada acción realizada
-            sobre los paneles. Puede filtrarse por **Usuario**, **Panel** y
-            **Fecha**, y cada asiento indica el usuario, su rol, la acción, el
-            panel afectado, el detalle y la fecha y hora.
+            Deja trazabilidad de cada acción realizada sobre los paneles. Cada
+            asiento indica el usuario, su rol, la acción, el panel afectado, el
+            detalle y la fecha y hora.
 
-      - id: bot.auditoria.acciones
+      - id: bot.pmv-auditoria.filtros
+        type: prose
+        props:
+          text: >-
+            El registro puede filtrarse por **Usuario**, **Panel** y **Fecha**.
+            La plataforma informa cuántos registros coinciden, y avisa cuando no
+            se encuentra ninguno con los filtros aplicados.
+
+      - id: bot.pmv-auditoria.acciones
         type: data-table
         props:
           labelHeader: Acción
           descriptionHeader: Cuándo se registra
           rows:
-            # locales/translations/es.json → pmv.audit.action
+            # locales → pmv.audit.action
             - id: bot.auditoria.accion.creado
               label: Mensaje creado
               description: Se programó un mensaje nuevo.
@@ -289,3 +730,91 @@ children:
             - id: bot.auditoria.accion.sesion-cierre
               label: Sesión cerrada
               description: Un usuario finalizó su sesión.
+
+  # ============================================================== Alarmas ===
+  - id: bot.alarmas
+    title: Alarmas
+    children:
+      - id: bot.alarmas.que-hace
+        type: prose
+        props:
+          text: >-
+            Permite supervisar, filtrar y reconocer las alarmas del sistema. El
+            reconocimiento deja constancia de que un operador se hizo cargo de
+            la alarma.
+
+      - id: bot.alarmas.como-llegar
+        type: prose
+        props:
+          text: Diríjase a **Alarmas** en el panel lateral.
+
+      - id: bot.alarmas.columnas
+        type: data-table
+        props:
+          labelHeader: Columna
+          descriptionHeader: Descripción
+          rows:
+            # locales → alarmsPage.columns
+            - id: bot.alarmas.col.fecha
+              label: Fecha
+              description: Momento en que se generó la alarma.
+            - id: bot.alarmas.col.estado
+              label: Estado
+              description: Indica si la alarma está activa o inactiva.
+            - id: bot.alarmas.col.alarma
+              label: Alarma
+              description: Descripción de la condición detectada.
+            - id: bot.alarmas.col.nivel
+              label: Nivel
+              description: Criticidad de la alarma.
+            - id: bot.alarmas.col.origen
+              label: Origen
+              description: Sistema o dispositivo que la reportó.
+            - id: bot.alarmas.col.recurso
+              label: Recurso
+              description: Recurso afectado.
+            - id: bot.alarmas.col.gestion
+              label: Gestión
+              description: Estado de atención de la alarma.
+
+      - id: bot.alarmas.reconocer
+        type: procedure
+        props:
+          lead: Para reconocer una o varias alarmas, siga estos pasos.
+          steps:
+            - id: bot.alarmas.paso.filtrar
+              title: Acote el listado
+              text: >-
+                Filtre por columna o use la búsqueda para ubicar las alarmas que
+                va a atender. **Limpiar** descarta los filtros aplicados.
+            - id: bot.alarmas.paso.seleccionar
+              title: Seleccione las alarmas
+              text: >-
+                Marque una o varias. La plataforma indica cuántas quedaron
+                seleccionadas.
+            - id: bot.alarmas.paso.reconocer
+              title: Accione Reconocer
+              text: >-
+                La plataforma abre una ventana de confirmación, que indica si se
+                reconoce una alarma o varias, y permite escribir un comentario.
+            - id: bot.alarmas.paso.resultado
+              title: Verifique el resultado
+              text: >-
+                Al confirmar, la columna **Gestión** refleja el reconocimiento.
+                Si no hay alarmas en el rango consultado, la plataforma lo
+                indica.
+
+  # =========================================================== Pendientes ===
+  - id: bot.pendientes
+    title: Aspectos pendientes de confirmación
+    children:
+      - id: bot.pendientes.texto
+        type: callout
+        props:
+          variant: info
+          text: >-
+            Dos puntos de este módulo están pendientes de confirmación con el
+            equipo de producto: la ruta exacta desde la interfaz principal para
+            ingresar a Broadsec of Things, y la forma de acceder a las vistas de
+            **Monitoreo** y **Auditoría**, que existen en la plataforma pero no
+            figuran en el panel lateral de navegación.

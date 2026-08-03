@@ -91,12 +91,12 @@ describe("formatCliError", () => {
 });
 
 describe("run", () => {
-  it("turns a bad --tenant invocation (a plain CLI typo) into a formatted error, not an uncaught stack trace", () => {
+  it("turns a bad --tenant invocation (a plain CLI typo) into a formatted error, not an uncaught stack trace", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
       // `parseAxisFilters` throws a plain `Error` here — it must be caught
       // by `run()`'s guarded region, not escape as a raw stack trace.
-      const exitCode = run(["build", "some-manual", "--tenant"]);
+      const exitCode = await run(["build", "some-manual", "--tenant"]);
       expect(exitCode).toBe(1);
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining("error: --tenant requires a value"),

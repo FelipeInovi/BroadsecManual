@@ -7,7 +7,7 @@ import { z } from "zod";
 import { catalog } from "@broadsec-manual/blocks";
 import type { BuildTarget, ManualDocument, ManualNode } from "@broadsec-manual/blocks";
 import { assemble, loadSection, ContentError, type ContentWarning } from "@broadsec-manual/core";
-import { renderHtml, pagedPolyfill } from "@broadsec-manual/render-web";
+import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import { printToPdf } from "./chrome.ts";
 
 const axisValueSchema = z
@@ -178,7 +178,7 @@ export function parseAxisFilters(args: readonly string[]): Map<string, string> {
   return filters;
 }
 
-function build(manualDir: string, filters: ReadonlyMap<string, string>): void {
+async function build(manualDir: string, filters: ReadonlyMap<string, string>): Promise<void> {
   const configFile = join(manualDir, "manual.config.yaml");
   const parsed = manualConfigSchema.safeParse(parseYaml(readFileSync(configFile, "utf8")));
   if (!parsed.success) {
@@ -193,7 +193,7 @@ function build(manualDir: string, filters: ReadonlyMap<string, string>): void {
   const outDir = join(manualDir, config.output.dir);
   mkdirSync(outDir, { recursive: true });
 
-  const polyfill = pagedPolyfill();
+  const polyfill = pagedRuntime();
   const assetBase = pathToFileURL(join(manualDir, "assets", "figures")).href;
 
   const targets = config.targets.filter((t) =>
@@ -226,13 +226,13 @@ function build(manualDir: string, filters: ReadonlyMap<string, string>): void {
     const htmlPath = join(outDir, name.replace(/\.pdf$/, ".html"));
     const pdfPath = join(outDir, name);
     writeFileSync(htmlPath, html, "utf8");
-    printToPdf(htmlPath, pdfPath);
+    const { pages } = await printToPdf(htmlPath, pdfPath);
 
     const sections = manual.children.length;
     const label = Object.entries(target)
       .map(([axis, value]) => `${axis}=${value}`)
       .join(" ");
-    console.log(`  ${label.padEnd(16)} ${sections} section(s), ${manual.numbers.size} numbered node(s) -> ${name}`);
+    console.log(`  ${label.padEnd(16)} ${sections} section(s), ${manual.numbers.size} numbered node(s), ${pages} page(s) -> ${name}`);
   }
 
   printWarnings(warnings);
@@ -258,7 +258,7 @@ export function formatCliError(error: unknown): string {
  * code, without ever letting an uncaught error escape as a raw stack trace.
  * Kept separate from `main()` so it is testable without exiting the process.
  */
-export function run(argv: readonly string[]): number {
+export async function run(argv: readonly string[]): Promise<number> {
   const [command, manualId, ...rest] = argv;
   if (command !== "build" || !manualId) {
     console.error(
@@ -277,7 +277,7 @@ export function run(argv: readonly string[]): number {
     const label = [...filters.entries()].map(([axis, value]) => `${axis}=${value}`).join(" ");
     console.log(`building ${manualId}${label ? ` (${label})` : ""}`);
 
-    build(manualDir, filters);
+    await build(manualDir, filters);
     return 0;
   } catch (error) {
     console.error(`\n${formatCliError(error)}`);
@@ -288,8 +288,8 @@ export function run(argv: readonly string[]): number {
   }
 }
 
-function main(): void {
-  process.exit(run(process.argv.slice(2)));
+async function main(): Promise<void> {
+  process.exit(await run(process.argv.slice(2)));
 }
 
 // Run only when this module is the process entry point — importing it (e.g.
