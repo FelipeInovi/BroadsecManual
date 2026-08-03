@@ -1,0 +1,291 @@
+# Broadsec of Things (BoT) — a module that does NOT exist in Manual_Broadsec_v5.
+#
+# Written from source, not from the legacy manual. Every claim traces to a file
+# and line recorded beside it. Screenshots do not exist yet, so field-list items
+# carry no `image` and render a stated placeholder.
+#
+# Whole-module gating: AppRoutes.tsx:207 — allowedProjects={["DEMO", "MV"]}.
+# There is also a ROLE gate (AppRoutes.tsx:205-206, allowedRoles={["admin"]},
+# deniedRoles={["manager","agent"]}) which the manual cannot express as a build
+# axis today — only `tenant` is declared. It is stated in prose instead.
+
+id: broadsec-of-things
+title: Broadsec of Things
+subtitle: Gestión de dispositivos en campo
+when:
+  tenant: [mv, demo]
+
+children:
+  - id: bot.intro
+    type: prose
+    props:
+      text: >-
+        **Broadsec of Things (BoT)** reúne en una sola pantalla la operación de
+        los dispositivos desplegados en campo: paneles de mensajería variable,
+        cámaras, recursos y alarmas. Está organizado como un panel lateral de
+        navegación y un área de trabajo que cambia según la sección
+        seleccionada.
+
+  - id: bot.acceso
+    type: callout
+    props:
+      variant: important
+      text: >-
+        El acceso a este módulo está restringido a los perfiles de
+        administrador. Los perfiles de supervisor y de agente no lo visualizan.
+
+  # ------------------------------------------------ Panel lateral ---
+  - id: bot.navegacion
+    title: Panel lateral de navegación
+    children:
+      - id: bot.navegacion.intro
+        type: prose
+        props:
+          text: >-
+            El panel lateral concentra el acceso a todas las secciones del
+            módulo. Puede contraerse para ampliar el área de trabajo. Las
+            secciones **CCTV** y **PMV** agrupan subsecciones que se despliegan
+            al seleccionarlas.
+
+      - id: bot.secciones
+        type: field-list
+        props:
+          items:
+            # BOTSidebar.tsx getNavItems — labels from
+            # locales/translations/es.json → botSidebar.navItems
+            - id: bot.seccion.mapa
+              label: Mapa
+              text: >-
+                Vista geográfica de la operación. Muestra la ubicación de los
+                paneles, los vehículos con seguimiento, los semáforos y las
+                cámaras disponibles, con los mismos controles de capas del mapa
+                principal.
+            - id: bot.seccion.prt
+              label: PRT
+              text: >-
+                Sección de gestión del sistema PRT.
+            - id: bot.seccion.recursos
+              label: Recursos
+              text: >-
+                Administración de los recursos disponibles para la operación.
+            - id: bot.seccion.cctv
+              label: CCTV
+              text: >-
+                Agrupa el acceso al video de las cámaras. Su subsección
+                **Mosaico** permite visualizar varias cámaras de forma
+                simultánea en una grilla configurable. Al seleccionar una cámara
+                desde el mapa, el módulo abre el mosaico en vista individual con
+                esa cámara ya cargada.
+            - id: bot.seccion.pmv
+              label: PMV
+              text: >-
+                Agrupa la operación de los paneles de mensajería variable. Se
+                detalla más adelante.
+            - id: bot.seccion.alarmas
+              label: Alarmas
+              text: >-
+                Gestión de las alarmas del sistema.
+
+      - id: bot.integraciones.header
+        type: detail-header
+        props:
+          text: Estado de las integraciones
+
+      - id: bot.integraciones.intro
+        type: prose
+        props:
+          text: >-
+            En la parte inferior del panel lateral se listan las integraciones
+            del sistema. Estos elementos no son secciones navegables: cada uno
+            muestra únicamente si la integración se encuentra activa.
+
+      - id: bot.integraciones
+        type: data-table
+        props:
+          labelHeader: Integración
+          descriptionHeader: Descripción
+          rows:
+            # BOTSidebar.tsx — items marked `statusOnly: true`.
+            - id: bot.integracion.ars
+              label: ARS
+              description: Sistema de semaforización.
+            - id: bot.integracion.citra
+              label: CITRA
+              description: Integración con la plataforma CITRA.
+            - id: bot.integracion.icad
+              label: ICAD
+              description: Integración con la plataforma ICAD.
+            - id: bot.integracion.avl
+              label: AVL
+              description: Seguimiento automático de vehículos.
+
+      - id: bot.integraciones.refresco
+        type: callout
+        props:
+          variant: info
+          text: >-
+            El estado de las integraciones se actualiza automáticamente cada 30
+            segundos. No es necesario recargar la pantalla.
+
+  # ------------------------------------------------------------ PMV ---
+  - id: bot.pmv
+    title: PMV — Paneles de Mensajería Variable
+    children:
+      - id: bot.pmv.intro
+        type: prose
+        props:
+          text: >-
+            La sección **PMV** permite programar, administrar y supervisar los
+            mensajes que se muestran en los paneles de mensajería variable
+            desplegados en la vía.
+
+      - id: bot.pmv.subsecciones
+        type: term-list
+        props:
+          entries:
+            - id: bot.pmv.sub.programacion
+              term: Programación
+              definition: Creación y edición de un mensaje y su vigencia.
+            - id: bot.pmv.sub.gestion
+              term: Gestión
+              definition: Listado de los mensajes existentes y su estado.
+            - id: bot.pmv.sub.variables
+              term: Variables
+              definition: >-
+                Administración de familias, grupos de paneles y mensajes
+                predefinidos.
+
+      - id: bot.pmv.programar
+        type: procedure
+        props:
+          lead: >-
+            Para programar un mensaje en uno o varios paneles, siga estos pasos:
+          steps:
+            # Field labels from locales/translations/es.json → pmv.programming
+            - id: bot.pmv.paso.identificar
+              title: Identifique el mensaje
+              text: >-
+                Diríjase a **PMV › Programación** e indique el **Título
+                Interno**. Este título identifica el mensaje dentro de la
+                plataforma y no se muestra en el panel. Seleccione a
+                continuación el **Tipo** de mensaje.
+            - id: bot.pmv.paso.clasificar
+              title: Clasifique el mensaje
+              text: >-
+                De forma opcional, asocie el mensaje a una **Familia de
+                Mensajes** y a una **Subfamilia**. La clasificación permite
+                reutilizar mensajes predefinidos y ordenar el catálogo.
+            - id: bot.pmv.paso.destino
+              title: Seleccione los paneles de destino
+              text: >-
+                Elija un **Grupo de Paneles** o seleccione los paneles de forma
+                individual. No es posible combinar ambas formas: si ya
+                seleccionó paneles sueltos, la plataforma advierte antes de
+                aplicar un grupo, y a la inversa.
+            - id: bot.pmv.paso.contenido
+              title: Componga el contenido
+              text: >-
+                Defina las **Páginas del Panel** y el **Texto a Mostrar** de
+                cada una. Cada página tiene su propia duración en segundos, y
+                pueden agregarse o eliminarse páginas según sea necesario. El
+                texto de una página no puede quedar vacío. Si corresponde,
+                seleccione un **Pictograma**.
+            - id: bot.pmv.paso.vigencia
+              title: Defina la vigencia
+              text: >-
+                Establezca el rango de fechas durante el cual el mensaje estará
+                activo. La plataforma no permite guardar con un rango inválido o
+                vencido, y advierte cuando el mensaje entra en conflicto de
+                programación con otro ya existente sobre el mismo panel.
+            - id: bot.pmv.paso.guardar
+              title: Guarde el mensaje
+              text: >-
+                Al guardar, la plataforma lo redirige a **PMV › Gestión**, donde
+                el mensaje queda listado. Desde allí puede editarlo, lo que
+                reabre el formulario de programación con los datos cargados.
+
+      - id: bot.pmv.prioritario
+        type: callout
+        props:
+          variant: important
+          text: >-
+            Un mensaje marcado como **Mensaje Prioritario** se impone sobre la
+            programación existente del panel. Verifique la vigencia antes de
+            guardarlo.
+
+  # ------------------------------------------------------ Monitoreo ---
+  - id: bot.monitoreo
+    title: Monitoreo de Paneles
+    children:
+      - id: bot.monitoreo.intro
+        type: prose
+        props:
+          text: >-
+            La vista de monitoreo muestra el estado de comunicación de cada
+            panel. Puede filtrarse por **Todos**, **Comunica** o **No
+            comunica**.
+
+      - id: bot.monitoreo.columnas
+        type: data-table
+        props:
+          labelHeader: Columna
+          descriptionHeader: Descripción
+          rows:
+            # locales/translations/es.json → pmv.monitoring
+            - id: bot.monitoreo.col.id
+              label: ID Panel
+              description: Identificador del panel en la plataforma.
+            - id: bot.monitoreo.col.ubicacion
+              label: Ubicación
+              description: Punto de la vía donde está instalado.
+            - id: bot.monitoreo.col.mensaje
+              label: Mensaje Activo
+              description: Contenido que el panel está mostrando en ese momento.
+            - id: bot.monitoreo.col.senal
+              label: Última señal
+              description: Momento del último reporte recibido desde el panel.
+            - id: bot.monitoreo.col.estado
+              label: Estado
+              description: Indica si el panel se encuentra comunicando.
+
+  # ------------------------------------------------------ Auditoría ---
+  - id: bot.auditoria
+    title: Registro de Auditoría
+    children:
+      - id: bot.auditoria.intro
+        type: prose
+        props:
+          text: >-
+            El registro de auditoría deja trazabilidad de cada acción realizada
+            sobre los paneles. Puede filtrarse por **Usuario**, **Panel** y
+            **Fecha**, y cada asiento indica el usuario, su rol, la acción, el
+            panel afectado, el detalle y la fecha y hora.
+
+      - id: bot.auditoria.acciones
+        type: data-table
+        props:
+          labelHeader: Acción
+          descriptionHeader: Cuándo se registra
+          rows:
+            # locales/translations/es.json → pmv.audit.action
+            - id: bot.auditoria.accion.creado
+              label: Mensaje creado
+              description: Se programó un mensaje nuevo.
+            - id: bot.auditoria.accion.editado
+              label: Mensaje editado
+              description: Se modificó un mensaje existente.
+            - id: bot.auditoria.accion.eliminado
+              label: Mensaje eliminado
+              description: Se retiró un mensaje de la programación.
+            - id: bot.auditoria.accion.reinicio
+              label: Panel reiniciado
+              description: Se ordenó el reinicio de un panel.
+            - id: bot.auditoria.accion.config
+              label: Config. actualizada
+              description: Se modificó la configuración de un panel.
+            - id: bot.auditoria.accion.sesion-inicio
+              label: Sesión iniciada
+              description: Un usuario ingresó al módulo.
+            - id: bot.auditoria.accion.sesion-cierre
+              label: Sesión cerrada
+              description: Un usuario finalizó su sesión.
