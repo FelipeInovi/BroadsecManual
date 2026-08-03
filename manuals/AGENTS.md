@@ -21,6 +21,19 @@ en…"). No regionalisms, no voseo, no second-person familiar.
 Everything else — ids, filenames, config keys, comments, commit messages — is
 English. An id is a symbol, not prose.
 
+## Skills that govern work here
+
+Read these before writing content. They own their rules; this file does not
+restate them, because a rule stated twice is a rule that drifts.
+
+| Skill | Owns |
+|---|---|
+| `module-completeness` | When a module is finished, and the image rule |
+| `block-authoring` | Choosing and filling a block type |
+| `tenant-conditioning` | Tagging content per deployment |
+| `source-extraction` | Getting facts out of the product |
+| `manual-import` | Migrating the legacy document |
+
 ## Authoring rules
 
 These follow directly from the architecture. Breaking one does not produce a
