@@ -1,0 +1,109 @@
+---
+name: tenant-conditioning
+description: Rules for tagging manual content so each tenant's PDF contains only what that tenant sees. Covers choosing the right granularity, tagging table rows and individual steps, avoiding cross-tenant references, and why numbering and anchors must never be written by hand. Use when authoring or editing manual content, tagging fragments for a deployment, reviewing tenant coverage, or fixing a manual that shows the wrong content for a tenant.
+license: Proprietary — internal Broadsec / Inovisec use only.
+metadata:
+  author: Inovisec AG
+  version: "1.0"
+---
+
+# Conditioning manual content
+
+Each tenant gets its own PDF containing only its own content. No badges, no
+"not available in your deployment", no trace that other deployments exist. The
+reader must not be able to tell.
+
+Everything below follows from that.
+
+## Rule 1 — tag at the smallest unit that varies
+
+This is the rule that matters most, and the one most often broken.
+
+Tenant divergence in Broadsec products is mostly **element-level inside shared
+screens**: a map layer only MV sees, a filter only MED has, a report column
+specific to AMVA. Every tenant opens the same screen.
+
+So:
+
+- ❌ Tagging a whole section because one table row differs
+- ✅ Tagging that row
+
+Over-tagging is how a manual ends up either hiding content from tenants who need
+it, or — the usual outcome — being written once with everything packed together
+because separating it got too hard. That packed document is exactly what this
+system replaces.
+
+**Every unit can be tagged**: a section, a fragment, a step in a procedure, a
+row in a data table, a single figure.
+
+## Rule 2 — never write a number, an anchor or a slug
+
+If a tenant does not see module 6, its module 7 becomes 6.
+
+Therefore any of these, written by hand, is broken for someone:
+
+- ❌ `5.2`, `Figura 7.1.3`, "consulte la sección 4"
+- ❌ `#52-semforos-y-ars` or any slug
+- ✅ reference by stable id — the build resolves it to that tenant's number
+
+There is no exception. Not "just this once", not in a caption, not in a
+sentence. A number typed into content is a number that is wrong for at least one
+tenant.
+
+## Rule 3 — never reference across a boundary
+
+A reference from content one tenant sees to content it does not is a dangling
+link in that tenant's PDF.
+
+Before referencing another node, ask: **is that node visible to every tenant
+that can see this one?** If not, either widen the target's tenants or restate
+the information locally.
+
+Validation catches this. Do not rely on it to think for you.
+
+## Rule 4 — default to "all", narrow deliberately
+
+Untagged content applies everywhere. That is the right default: most content is
+shared.
+
+Narrow only with evidence from the module map. **Never narrow because it "feels
+tenant-specific"** — that guess is how content silently disappears from a
+client's manual, and nobody notices until the client does.
+
+## Rule 5 — the module map decides, not the legacy manual
+
+Tenant metadata in the legacy `manual-usuario.md` is mostly `_(por definir)_` or
+`Todos`. It is not evidence. Rebuild tagging from `knowledge/module-map.json`.
+
+## Data tables
+
+A table whose rows vary by tenant is **data**, not prose. Each row carries its
+own tenants and the table renumbers itself after filtering:
+
+```yaml
+- id: mapa.capas.semaforos
+  label: { i18nKey: map.layers.traffic_lights }
+  tenants: [mv]
+  description: Muestra el estado de cada intersección semaforizada.
+- id: mapa.capas.camaras
+  label: { i18nKey: map.layers.cameras }
+  tenants: [all]
+  description: Muestra la ubicación de las cámaras disponibles.
+```
+
+Hand-written Markdown tables with tenant-varying rows are not maintainable.
+Do not create them.
+
+## Before you finish
+
+Run `broadsec-manual coverage <manual>` and check:
+
+- **Dead content** — tagged so narrowly no tenant sees it. Either the tag is
+  wrong or the content should go.
+- **Thin tenants** — a tenant with far less content than its peers. Usually
+  over-tagging, not a genuinely smaller product.
+- **Cross-target references** — must be zero.
+
+Then read one tenant's build end to end. Numbering gaps, dangling references and
+paragraphs that assume missing context are obvious in the output and invisible
+in the source.

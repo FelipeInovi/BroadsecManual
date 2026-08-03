@@ -1,0 +1,25 @@
+node_modules/
+dist/
+build/
+out/
+.turbo/
+coverage/
+
+# Build output — manuals are generated, never committed
+manuals/**/output/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+*.log
+
+# Agent tooling state — auto-generated, contains machine-local absolute paths
+.atl/
+
+# Claude Code local state
+.claude/settings.local.json
+
+# Local junction/symlink to skills/ for Claude Code discovery.
+# The canonical skills live in skills/ — never commit the link.
+.claude/skills

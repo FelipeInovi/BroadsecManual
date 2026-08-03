@@ -1,0 +1,84 @@
+---
+name: block-authoring
+description: How to write Broadsec manual content as typed blocks from the block catalogue — choosing the right block type, filling its props, referencing UI labels and other nodes, and requesting a new block type instead of improvising a layout. Use when writing or editing manual sections, converting prose into structured content, deciding which block fits a piece of content, or adding a block type to the catalogue.
+license: Proprietary — internal Broadsec / Inovisec use only.
+metadata:
+  author: Inovisec AG
+  version: "1.0"
+---
+
+# Authoring content as blocks
+
+Manual content is a tree of **typed block instances**, not prose with formatting.
+The catalogue of block types is fixed and defined by the design team. Your job
+is to pick the right one and fill it correctly.
+
+## The rule that keeps this maintainable
+
+**If the content does not fit a block in the catalogue, request a new block
+type. Do not improvise a layout.**
+
+The first hand-rolled table, the first ad-hoc bold-line-then-indent pattern —
+that is the moment the system stops scaling. One improvised structure cannot be
+restyled, cannot be conditioned reliably, and cannot be validated. Then there
+are twenty.
+
+Requesting a block is cheap. Migrating improvised content is not.
+
+## Choosing a block
+
+1. Read the block's `description`. It says what the block is for **and when to
+   use it instead of a similar one**. That sentence exists precisely for this
+   decision.
+2. Browse the catalogue gallery (`broadsec-manual catalog`) — seeing the
+   structures beats reading their schemas.
+3. Still unsure between two? Pick the more specific one. A specific block
+   carries meaning a generic one loses, and meaning is what survives a restyle.
+
+## Filling a block
+
+- **Every node gets a stable `id`**: lowercase, dot-separated, meaningful —
+  `mapa.capas.semaforos`. Never derived from a number, never renamed casually
+  (references point at it).
+- **Props follow the schema exactly.** Validation will reject the rest; do not
+  fight it.
+- **UI labels come from i18n**, referenced by key, never retyped. The manual
+  must say what the screen says, including after the screen's wording changes.
+- **Cross-references point at ids.** Never write a section number or a
+  screen name in place of a reference.
+- **Conditioning goes on the smallest unit that varies.** See the
+  `tenant-conditioning` skill.
+
+## Never in content
+
+- A number, an anchor, or a slug — the build assigns those per tenant
+- A colour, a size, a font, a spacing value — that is the design system
+- A tenant badge — output is client-facing
+- A hand-built table where the block catalogue has a data-table block
+
+## Requesting a new block type
+
+Do not add one yourself unless you own the catalogue. Raise it with:
+
+1. **The content that does not fit**, verbatim — a real example, not a
+   description of one.
+2. **Why existing blocks fail it.** Name the closest one and what it loses.
+3. **How often it recurs.** A structure appearing once is usually a sign the
+   content should be reshaped, not that a block is missing.
+4. **How it should condition.** Which parts can vary by tenant.
+
+## Adding a block type to the catalogue
+
+Only when the design team has delivered the structure.
+
+1. One file per type in `packages/blocks/src/catalog/`.
+2. Fully specified Zod schema. No `z.any()`.
+3. A `description` written for whoever must choose between block types.
+4. Declare `numbering` if instances are numbered. Never bake a number into
+   props.
+5. Implement it in **every** renderer. A block one target cannot render is not
+   done.
+6. Add minimal, maximal and edge-case fixtures — long labels, empty optional
+   slots, a table filtered down to one row.
+7. SemVer the catalogue: new optional prop is minor; removing or renaming one is
+   major and needs a content migration.

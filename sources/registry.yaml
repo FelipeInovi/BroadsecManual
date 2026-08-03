@@ -1,0 +1,35 @@
+# Source product repositories. Read-only inputs — never written to.
+#
+# `extract` tells the extractor where the facts live. Paths are relative to the
+# source repo root. Adjust per product; nothing here is assumed to generalise.
+
+version: 1
+
+sources:
+  broadlineavida:
+    name: Broadsec SIMM
+    vendor: Inovisec AG
+    # Relative to this repository's root.
+    path: ../broadlineavida
+    framework: react-vite-ts
+
+    extract:
+      # One config file per tenant — the authoritative tenant registry.
+      tenantConfigs: src/render/config/*.config.ts
+      # Route declarations and route-level gating (`allowedProjects`).
+      routes: src/render/routes/AppRoutes.tsx
+      routeAccess: src/render/routes/RouteAccess.tsx
+      # UI strings. The manual quotes these; it never retypes them.
+      i18n: src/render/locales/translations/es.json
+      # Screens, for figure capture and module mapping.
+      pages: src/render/pages
+      components: src/render/components
+
+    notes: |
+      Tenant divergence in this product is mostly ELEMENT-level inside shared
+      screens, not module-level. Route gating via `allowedProjects` covers only
+      a small part of it; most differences are inline comparisons against the
+      active tenant config scattered through components.
+
+      Extraction must therefore collect inline tenant references, not just
+      route gating, or the module map will claim every tenant sees everything.

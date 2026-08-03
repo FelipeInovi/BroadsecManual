@@ -1,0 +1,60 @@
+# Broadsec SIMM — operator manual.
+#
+# `tenant` values mirror the ids used by the product itself
+# (`src/render/config/<id>.config.ts`). They are re-derived by `extract`;
+# if this list and the extraction disagree, the extraction is right.
+
+version: 1
+
+manual:
+  id: broadlineavida
+  source: broadlineavida
+  title: Manual de operador
+  product: Broadsec SIMM
+  # SemVer of the manual content. Bumped on every content change.
+  contentVersion: 0.1.0
+  language: es
+  register: neutral-formal
+
+# Block catalogue version this manual's content is written against.
+# Opens once the design team delivers the fixed visual structures.
+catalog:
+  version: null
+
+# Conditioning axes. Today only `tenant`; the engine supports more.
+axes:
+  tenant:
+    label: Deployment
+    values:
+      - id: lv
+        code: LV
+        name: Línea Vida
+      - id: amva
+        code: AMVA
+        name: Área Metropolitana Valle de Aburrá
+      - id: ant
+        code: ANT
+        name: Antioquia
+      - id: mv
+        code: MV
+        name: Movilidad Medellín
+      - id: med
+        code: MED
+        name: Medellín
+      - id: demo
+        # The product's internal id is DEMO; the manual calls it Demostración.
+        code: DEMO
+        name: Demostración
+
+# One PDF per target. Client-facing: only that tenant's content, no badges.
+targets:
+  - { tenant: lv }
+  - { tenant: amva }
+  - { tenant: ant }
+  - { tenant: mv }
+  - { tenant: med }
+  - { tenant: demo }
+
+output:
+  dir: output
+  filename: "manual-operador-{tenant}-v{contentVersion}.pdf"

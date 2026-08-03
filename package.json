@@ -1,0 +1,22 @@
+{
+  "name": "broadsec-manual",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Assembles Broadsec operator manuals into styled, client-facing PDFs — one per tenant",
+  "author": "Inovisec AG",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "type-check": "pnpm -r type-check",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
