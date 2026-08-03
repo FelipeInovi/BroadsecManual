@@ -7,8 +7,15 @@ import type { BlockCatalog, ManualNode, NodeId } from "@broadsec-manual/blocks";
  * which cannot see a section has its following sections shift up.
  *
  * - Sections take their position in the tree: `1`, `1.2`, `1.2.3`.
- * - A numbered block counts within its nearest enclosing section, per the
- *   block type's `numbering.scope`.
+ * - A numbered block counts against a counter chosen by the block type's
+ *   `numbering.scope`:
+ *     - `document` — one counter for the whole manual, never reset. Ordinal
+ *       is the bare counter (`1`, `2`, `3`).
+ *     - `section` — resets at each TOP-LEVEL section and keeps counting
+ *       through every subsection nested under it, however deep. Ordinal is
+ *       `<top-level section number>.<n>`.
+ *     - `subsection` — resets at EVERY section, at any depth. Ordinal is
+ *       `<full section path>.<n>`.
  * - Rows inside a numbered block continue that block's scope counter, so a
  *   filtered table renumbers from one.
  */
@@ -18,45 +25,70 @@ export function assignNumbers(
 ): Map<NodeId, string> {
   const numbers = new Map<NodeId, string>();
 
-  const walk = (children: readonly ManualNode[], prefix: readonly number[]): void => {
+  // `document`-scoped counters span the whole manual and are never reset,
+  // regardless of how many sections or recursion frames the walk crosses.
+  const documentCounters = new Map<string, number>();
+
+  const walk = (
+    children: readonly ManualNode[],
+    prefix: readonly number[],
+    /** Ordinal prefix of the enclosing TOP-LEVEL section, for `section` scope. */
+    topLevelPrefix: readonly number[],
+    /** `section`-scoped counters for the current top-level section — shared
+     * by every subsection nested under it, no matter the depth. */
+    sectionCounters: Map<string, number>,
+  ): void => {
     let sectionIndex = 0;
-    // Per-scope counters, reset for every section — that is what makes
-    // numbering local and therefore stable under conditioning.
-    const blockCounters = new Map<string, number>();
+    // `subsection`-scoped counters, reset for every section frame.
+    const subsectionCounters = new Map<string, number>();
 
     for (const node of children) {
       if (node.kind === "section") {
         sectionIndex += 1;
         const path = [...prefix, sectionIndex];
         numbers.set(node.id, path.join("."));
-        walk(node.children, path);
+        const isTopLevel = prefix.length === 0;
+        walk(
+          node.children,
+          path,
+          isTopLevel ? path : topLevelPrefix,
+          isTopLevel ? new Map() : sectionCounters,
+        );
         continue;
       }
 
       const def = catalog.get(node.type);
       if (!def?.numbering) continue;
 
-      const scope = def.numbering.labelKey;
+      const { scope, labelKey } = def.numbering;
+      const counters =
+        scope === "document"
+          ? documentCounters
+          : scope === "section"
+            ? sectionCounters
+            : subsectionCounters;
+      const ordinalPrefix = scope === "document" ? [] : scope === "section" ? topLevelPrefix : prefix;
+
       const rows = node.props["rows"];
 
       if (Array.isArray(rows)) {
         // The block itself is a container of numbered items.
-        let n = blockCounters.get(scope) ?? 0;
+        let n = counters.get(labelKey) ?? 0;
         for (const row of rows) {
           if (typeof row !== "object" || row === null || !("id" in row)) continue;
           n += 1;
-          numbers.set(String((row as { id: unknown }).id), [...prefix, n].join("."));
+          numbers.set(String((row as { id: unknown }).id), [...ordinalPrefix, n].join("."));
         }
-        blockCounters.set(scope, n);
+        counters.set(labelKey, n);
         continue;
       }
 
-      const n = (blockCounters.get(scope) ?? 0) + 1;
-      blockCounters.set(scope, n);
-      numbers.set(node.id, [...prefix, n].join("."));
+      const n = (counters.get(labelKey) ?? 0) + 1;
+      counters.set(labelKey, n);
+      numbers.set(node.id, [...ordinalPrefix, n].join("."));
     }
   };
 
-  walk(nodes, []);
+  walk(nodes, [], [], new Map());
   return numbers;
 }

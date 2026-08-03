@@ -1,6 +1,24 @@
 import type { Tokens } from "@broadsec-manual/tokens";
 
 /**
+ * Escape a value for use inside a CSS string literal (e.g. a `content`
+ * value), and neutralise a literal `</style>` sequence.
+ *
+ * This stylesheet is embedded verbatim inside a literal `<style>` element in
+ * `html.ts`. `<style>` is a "raw text" element: the HTML parser closes it at
+ * the first `</style` sequence it sees, character-for-character, regardless
+ * of CSS quoting. A backslash between `<` and `/` breaks that sequence
+ * without changing what a CSS parser renders — `\/` inside a CSS string is
+ * an escaped `/`.
+ */
+function escapeCssString(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/<\/(style)/gi, "<\\/$1");
+}
+
+/**
  * Stylesheet for the paginated target.
  *
  * Every value comes from `tokens`. A literal colour or size in here is a bug —
@@ -8,6 +26,7 @@ import type { Tokens } from "@broadsec-manual/tokens";
  */
 export function stylesheet(t: Tokens, header: string): string {
   const gutter = `calc(${t.page.marginX} - 12pt)`;
+  const safeHeader = escapeCssString(header);
   return `
 @page {
   size: ${t.page.size};
@@ -15,7 +34,7 @@ export function stylesheet(t: Tokens, header: string): string {
 
   @top-left-corner { content: ""; background: ${t.runningHeader.accent}; }
   @top-left {
-    content: "${header}";
+    content: "${safeHeader}";
     color: ${t.runningHeader.textColor};
     font: ${t.runningHeader.textSize} ${t.font.sans};
     vertical-align: middle;

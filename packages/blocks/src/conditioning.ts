@@ -10,6 +10,8 @@
  * repository, never hardcoded here.
  */
 
+import { z } from "zod";
+
 /** Identifier of a conditioning axis, e.g. `"tenant"`. */
 export type AxisId = string;
 
@@ -29,6 +31,23 @@ export const ALL = "all" as const;
  * `tenant` selector applies to every role.
  */
 export type Selector = Readonly<Record<AxisId, readonly AxisValue[]>>;
+
+/**
+ * Runtime validation for `Selector`, shared by every place a `when` is
+ * parsed — section/block conditioning (`core/load.ts`) and row-level
+ * conditioning inside a block's own props (e.g. `icon-table`'s rows).
+ *
+ * A selector is a record of axis id -> a non-empty array of non-empty axis
+ * values. The scalar shorthand some authors reach for by mistake — e.g.
+ * `when: { tenant: mv }` instead of `when: { tenant: [mv] }` — must be
+ * rejected here: left unvalidated, it silently turns `Array#includes` into
+ * `String#includes`, which does substring matching instead of exact
+ * matching and leaks content across tenants.
+ */
+export const selectorSchema = z.record(
+  z.string().min(1),
+  z.array(z.string().min(1)).min(1),
+);
 
 /** The axis values a single build targets, e.g. `{ tenant: "mv" }`. */
 export type BuildTarget = Readonly<Record<AxisId, AxisValue>>;

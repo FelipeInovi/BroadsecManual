@@ -1,7 +1,6 @@
 import { z } from "zod";
 import type { BlockDefinition } from "../definition.js";
-
-const selector = z.record(z.string(), z.array(z.string()).min(1));
+import { selectorSchema } from "../conditioning.ts";
 
 export const iconTableRow = z.object({
   /** Stable id. Referenceable, and the anchor for the row's icon asset. */
@@ -11,7 +10,7 @@ export const iconTableRow = z.object({
   label: z.string().min(1),
   description: z.string().min(1),
   /** Conditioning for this ROW. Omitted means every target sees it. */
-  when: selector.optional(),
+  when: selectorSchema.optional(),
 });
 
 export const iconTableProps = z.object({

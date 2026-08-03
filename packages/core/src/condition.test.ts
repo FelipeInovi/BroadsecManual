@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { BlockNode, ManualNode, SectionNode } from "@broadsec-manual/blocks";
+import type { BlockNode, ManualNode, SectionNode, Selector } from "@broadsec-manual/blocks";
 import { conditionNodes, matches } from "./condition.ts";
 
 const block = (id: string, when?: BlockNode["when"], props: object = {}): BlockNode => ({
@@ -102,5 +102,29 @@ describe("conditionNodes", () => {
     const b = block("b", undefined, { tags: ["x", "y"], count: 2 });
     const [out] = conditionNodes([b], target) as BlockNode[];
     expect(out?.props).toEqual({ tags: ["x", "y"], count: 2 });
+  });
+
+  it("drops a standalone nested object conditioned by `when` that the target cannot see", () => {
+    const b = block("b", undefined, {
+      detail: { when: { tenant: ["mv"] }, text: "mv only" },
+      other: "kept",
+    });
+    const [out] = conditionNodes([b], target) as BlockNode[];
+    expect(out?.props).toEqual({ other: "kept" });
+  });
+
+  it("keeps a standalone nested object conditioned by `when` that the target can see, stripping the tag", () => {
+    const b = block("b", undefined, {
+      detail: { when: { tenant: ["amva"] }, text: "amva only" },
+    });
+    const [out] = conditionNodes([b], target) as BlockNode[];
+    expect(out?.props).toEqual({ detail: { text: "amva only" } });
+  });
+});
+
+describe("matches — malformed selector guard", () => {
+  it("throws instead of silently degrading when an axis value is not an array", () => {
+    const malformed = { tenant: "mv" } as unknown as Selector;
+    expect(() => matches(malformed, { tenant: "mv" })).toThrow();
   });
 });

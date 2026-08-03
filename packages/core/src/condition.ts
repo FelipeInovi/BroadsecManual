@@ -16,6 +16,18 @@ import {
 export function matches(when: Selector | undefined, target: BuildTarget): boolean {
   if (!when) return true;
   for (const [axis, values] of Object.entries(when)) {
+    // Defense in depth: `load.ts` validates every `when` against
+    // `selectorSchema` before it reaches an AST, so this should never fire in
+    // practice. But if something ever constructs a node without going
+    // through that validation, a scalar here (`{ tenant: "mv" }` instead of
+    // `{ tenant: ["mv"] }`) must fail loudly — silently falling through to
+    // `String#includes` turns exact tenant matching into substring matching
+    // and leaks content across tenants.
+    if (!Array.isArray(values)) {
+      throw new TypeError(
+        `malformed selector: axis "${axis}" must be an array of values, got ${typeof values}`,
+      );
+    }
     const actual = target[axis];
     if (actual === undefined) continue;
     if (!values.includes(ALL) && !values.includes(actual)) return false;
@@ -47,6 +59,12 @@ function conditionProps(value: unknown, target: BuildTarget): unknown {
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(value)) {
       if (k === "when") continue;
+      // A standalone nested object (not an array item) can carry its own
+      // conditioning too. If the target cannot see it, drop the key
+      // entirely — keeping it while merely stripping `when` would silently
+      // serve the content to every target and erase the only evidence that
+      // it was ever conditioned.
+      if (isConditionedRow(v) && !matches(v.when, target)) continue;
       out[k] = conditionProps(v, target);
     }
     return out;
