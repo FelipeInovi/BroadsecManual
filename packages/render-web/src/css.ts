@@ -234,54 +234,127 @@ figcaption {
   font-style: ${t.figure.captionStyle};
 }
 
-table.icon-table {
+/* One table implementation, two variants — see renderTable in html.ts. */
+table.tbl {
   width: 100%;
   border-collapse: collapse;
   margin: ${t.space.md} 0 ${t.space.lg};
   font-size: ${t.table.cellSize};
 }
-table.icon-table thead th {
-  background: ${t.table.headBackground};
-  color: ${t.table.headColor};
+table.tbl thead th {
   font-size: ${t.table.headSize};
   text-align: left;
   padding: 6pt 8pt;
 }
-table.icon-table tbody tr { break-inside: avoid; }
-table.icon-table tbody tr:nth-child(even) { background: ${t.table.rowAltBackground}; }
-table.icon-table td {
+table.tbl--icon-table thead th {
+  background: ${t.table.headBackground};
+  color: ${t.table.headColor};
+}
+table.tbl--data-table thead th {
+  background: ${t.dataTable.headBackground};
+  color: ${t.dataTable.headColor};
+}
+table.tbl tbody tr { break-inside: avoid; }
+table.tbl--icon-table tbody tr:nth-child(even) { background: ${t.table.rowAltBackground}; }
+table.tbl--data-table tbody tr:nth-child(even) { background: ${t.dataTable.rowAltBackground}; }
+table.tbl td {
   padding: 5pt 8pt;
   border-bottom: 0.5pt solid ${t.table.rule};
   color: ${t.table.cellColor};
   vertical-align: middle;
 }
-td.icon-table__icon {
+td.tbl__icon {
   width: 34pt;
   text-align: center;
   background: ${t.sectionHeader.background};
 }
-td.icon-table__icon img { max-width: 20pt; max-height: 20pt; }
-td.icon-table__ref {
+td.tbl__icon img { max-width: 20pt; max-height: 20pt; }
+td.tbl__ref {
   width: 34pt;
   color: ${t.figure.captionColor};
   font-size: ${t.runningFooter.textSize};
   text-align: center;
 }
-td.icon-table__label {
+td.tbl__label {
   width: 130pt;
   color: ${t.table.labelColor};
   font-weight: bold;
 }
+table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
 
-.note {
-  background: ${t.note.background};
-  border-left: 3pt solid ${t.note.accent};
+.callout {
   padding: 8pt 12pt;
   margin: ${t.space.md} 0;
-  font-size: ${t.note.size};
-  color: ${t.note.color};
+  font-size: ${t.callout.size};
+  color: ${t.callout.color};
   break-inside: avoid;
 }
+.callout--info {
+  background: ${t.callout.info.background};
+  border-left: 3pt solid ${t.callout.info.accent};
+}
+.callout--important {
+  background: ${t.callout.important.background};
+  border-left: 3pt solid ${t.callout.important.accent};
+}
+
+/* ---- field-list ------------------------------------------------------ */
+
+.field { break-inside: avoid; margin-bottom: ${t.space.md}; }
+.field__label {
+  color: ${t.fieldList.labelColor};
+  font-size: ${t.fieldList.labelSize};
+  font-weight: bold;
+  margin: ${t.space.md} 0 ${t.space.xs};
+}
+.field__shot { text-align: center; margin: ${t.space.sm} 0 0; }
+.field__shot img { max-width: 62%; border: 0.6pt solid ${t.table.rule}; }
+/* A pending screenshot is stated, never left blank — an empty gap reads as
+   finished content. Counted and reported by the build. */
+.field__pending {
+  text-align: center;
+  margin: ${t.space.sm} 0 0;
+  padding: 14pt;
+  border: 0.8pt dashed ${t.figure.captionColor};
+  color: ${t.figure.captionColor};
+  font-size: ${t.figure.captionSize};
+  font-style: italic;
+}
+
+/* ---- term-list ------------------------------------------------------- */
+
+.term-list { margin: ${t.space.sm} 0 ${t.space.md} ${t.space.md}; }
+.term { break-inside: avoid; margin-bottom: ${t.space.xs}; }
+.term dt {
+  display: inline;
+  font-weight: bold;
+  color: ${t.termList.termColor};
+  font-size: ${t.termList.size};
+}
+.term dd {
+  display: inline;
+  margin: 0 0 0 ${t.space.xs};
+  font-size: ${t.termList.size};
+}
+
+/* ---- procedure ------------------------------------------------------- */
+
+.step { break-inside: avoid; margin-bottom: ${t.space.md}; }
+.step__title {
+  color: ${t.procedure.stepTitleColor};
+  font-size: ${t.procedure.stepTitleSize};
+  font-weight: bold;
+  margin: ${t.space.md} 0 ${t.space.sm};
+}
+.step__marker { color: ${t.procedure.markerColor}; }
+.step__actions {
+  margin: 0 0 ${t.space.sm} ${t.space.lg};
+  font-size: ${t.prose.size};
+  line-height: ${t.prose.lineHeight};
+}
+.step__actions li { margin-bottom: ${t.space.xs}; }
+.step__shot { text-align: center; margin: ${t.space.sm} 0 0; }
+.step__shot img { max-width: 70%; border: 0.6pt solid ${t.table.rule}; }
 
 .content { padding-right: ${gutter}; }
 `;

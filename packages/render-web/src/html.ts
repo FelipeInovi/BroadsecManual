@@ -39,16 +39,132 @@ const plain = (inline: readonly Inline[]): string =>
 const asset = (base: string, src: string): string =>
   `${base.replace(/\/$/, "")}/${src.replace(/^\//, "")}`;
 
+/**
+ * `icon-table` and `data-table` render through one function.
+ *
+ * What actually differs is three switches — an icon column, an item-number
+ * column, and the header colour — so duplicating the markup for a second block
+ * type would be two copies drifting apart over a boolean.
+ */
+function renderTable(
+  node: BlockNode,
+  numbers: ReadonlyMap<NodeId, string>,
+  o: RenderOptions,
+): string {
+  const rows = node.props["rows"] as ReadonlyArray<Record<string, unknown>>;
+  const numbered = node.type === "icon-table";
+  // Conditioning can remove every row that had an icon. Keeping the column
+  // then leaves a strip of empty dark cells, so it is decided per build.
+  const hasIcons = numbered && rows.some((r) => Boolean(r["icon"]));
+  const variant = numbered ? "icon-table" : "data-table";
+
+  const body = rows
+    .map((r) =>
+      [
+        `<tr>`,
+        hasIcons
+          ? `<td class="tbl__icon">${
+              r["icon"] ? `<img src="${esc(asset(o.assetBase, String(r["icon"])))}">` : ""
+            }</td>`
+          : "",
+        numbered ? `<td class="tbl__ref">${esc(numbers.get(String(r["id"])) ?? "")}</td>` : "",
+        `<td class="tbl__label">${esc(String(r["label"]))}</td>`,
+        `<td>${inlineMarkup(String(r["description"]))}</td>`,
+        `</tr>`,
+      ].join(""),
+    )
+    .join("");
+
+  return [
+    `<table class="tbl tbl--${variant}"><thead><tr>`,
+    hasIcons ? `<th></th>` : "",
+    numbered ? `<th>Ítem</th>` : "",
+    `<th>${esc(String(node.props["labelHeader"]))}</th>`,
+    `<th>${esc(String(node.props["descriptionHeader"]))}</th>`,
+    `</tr></thead><tbody>${body}</tbody></table>`,
+  ].join("");
+}
+
 function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: RenderOptions): string {
   switch (node.type) {
     case "prose":
       return `<p class="prose">${inlineMarkup(String(node.props["text"]))}</p>`;
 
-    case "note":
-      return `<div class="note">${inlineMarkup(String(node.props["text"]))}</div>`;
+    case "callout": {
+      const variant = String(node.props["variant"] ?? "info");
+      const label = variant === "important" ? `<strong>IMPORTANTE:</strong> ` : "";
+      return `<div class="callout callout--${esc(variant)}">${label}${inlineMarkup(
+        String(node.props["text"]),
+      )}</div>`;
+    }
 
     case "detail-header":
       return `<h3 class="detail-header">${esc(String(node.props["text"]))}</h3>`;
+
+    case "field-list": {
+      const items = node.props["items"] as ReadonlyArray<Record<string, unknown>>;
+      return `<div class="field-list">${items
+        .map((f) =>
+          [
+            `<div class="field">`,
+            `<p class="field__label">${esc(String(f["label"]))}</p>`,
+            `<p class="prose">${inlineMarkup(String(f["text"]))}</p>`,
+            f["image"]
+              ? `<p class="field__shot"><img src="${esc(
+                  asset(o.assetBase, String(f["image"])),
+                )}"></p>`
+              : `<p class="field__pending">[ ${esc(String(f["label"]))} — imagen pendiente ]</p>`,
+            `</div>`,
+          ].join(""),
+        )
+        .join("")}</div>`;
+    }
+
+    case "term-list": {
+      const entries = node.props["entries"] as ReadonlyArray<Record<string, unknown>>;
+      return `<dl class="term-list">${entries
+        .map(
+          (e) =>
+            `<div class="term"><dt>${esc(String(e["term"]))}:</dt>` +
+            `<dd>${inlineMarkup(String(e["definition"]))}</dd></div>`,
+        )
+        .join("")}</dl>`;
+    }
+
+    case "procedure": {
+      const steps = node.props["steps"] as ReadonlyArray<Record<string, unknown>>;
+      const lead = node.props["lead"]
+        ? `<p class="prose">${inlineMarkup(String(node.props["lead"]))}</p>`
+        : "";
+      const body = steps
+        .map((s) => {
+          // The ordinal comes from the numbers map, assigned after
+          // conditioning — never from the step's position in the source.
+          const n = numbers.get(String(s["id"])) ?? "";
+          const actions = Array.isArray(s["actions"])
+            ? `<ol class="step__actions">${(s["actions"] as string[])
+                .map((a) => `<li>${inlineMarkup(a)}</li>`)
+                .join("")}</ol>`
+            : "";
+          const image = s["image"]
+            ? `<p class="step__shot"><img src="${esc(
+                asset(o.assetBase, String(s["image"])),
+              )}"></p>`
+            : "";
+          return [
+            `<div class="step">`,
+            `<p class="step__title"><span class="step__marker">Paso ${esc(n)}:</span> ${esc(
+              String(s["title"]),
+            )}</p>`,
+            `<p class="prose">${inlineMarkup(String(s["text"]))}</p>`,
+            actions,
+            image,
+            `</div>`,
+          ].join("");
+        })
+        .join("");
+      return `<div class="procedure">${lead}${body}</div>`;
+    }
 
     case "figure": {
       const n = numbers.get(node.id);
@@ -62,38 +178,12 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
       ].join("");
     }
 
-    case "icon-table": {
-      const rows = node.props["rows"] as ReadonlyArray<Record<string, unknown>>;
-      // Conditioning can remove every row that had an icon. Keeping the column
-      // then leaves a strip of empty dark cells, so it is decided per build.
-      const hasIcons = rows.some((r) => Boolean(r["icon"]));
-      const body = rows
-        .map((r) => {
-          const ref = numbers.get(String(r["id"])) ?? "";
-          const icon = hasIcons
-            ? `<td class="icon-table__icon">${
-                r["icon"] ? `<img src="${esc(asset(o.assetBase, String(r["icon"])))}">` : ""
-              }</td>`
-            : "";
-          return [
-            `<tr>`,
-            icon,
-            `<td class="icon-table__ref">${esc(ref)}</td>`,
-            `<td class="icon-table__label">${esc(String(r["label"]))}</td>`,
-            `<td>${inlineMarkup(String(r["description"]))}</td>`,
-            `</tr>`,
-          ].join("");
-        })
-        .join("");
-      return [
-        `<table class="icon-table"><thead><tr>`,
-        hasIcons ? `<th></th>` : "",
-        `<th>Ítem</th>`,
-        `<th>${esc(String(node.props["labelHeader"]))}</th>`,
-        `<th>${esc(String(node.props["descriptionHeader"]))}</th>`,
-        `</tr></thead><tbody>${body}</tbody></table>`,
-      ].join("");
-    }
+    // Both table types share this renderer. They stayed separate block types
+    // because numbering is declared per TYPE, not per instance: icon-table
+    // numbers its rows, data-table does not, and one type cannot do both.
+    case "icon-table":
+    case "data-table":
+      return renderTable(node, numbers, o);
 
     default:
       // A block type with no renderer is a broken block, not a silent skip.

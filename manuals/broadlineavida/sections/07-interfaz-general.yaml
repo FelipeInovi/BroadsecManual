@@ -294,7 +294,7 @@ children:
             directamente desde Broadsec.
 
       - id: incidentes.nota
-        type: note
+        type: callout
         props:
           text: >-
             La lista se actualiza en tiempo real. Un caso recién creado aparece

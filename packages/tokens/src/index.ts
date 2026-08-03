@@ -18,6 +18,8 @@ const base = {
     teal600: "#0D9488",
     slate700: "#2D3748",
     slate400: "#8FA3B8",
+    amber500: "#F59E0B",
+    amberSurface: "#FFF8E8",
     ink: "#000000",
     white: "#FFFFFF",
     headerInk: "#E8EDF2",
@@ -112,11 +114,38 @@ export const tokens = {
     captionSize: base.size.sm,
     captionStyle: "italic",
   },
-  note: {
-    background: base.color.surfaceTeal,
-    accent: base.color.teal600,
-    color: base.color.slate700,
-    size: base.size.md,
+  callout: {
+    info: {
+      background: base.color.surfaceTeal,
+      accent: base.color.teal600,
+    },
+    important: {
+      background: base.color.amberSurface,
+      accent: base.color.amber500,
+    },
+    color: base.color.navy900,
+    size: base.size.base,
+    labelSize: base.size.base,
+  },
+  fieldList: {
+    labelColor: base.color.teal600,
+    labelSize: base.size.lg,
+  },
+  procedure: {
+    stepTitleColor: base.color.navy900,
+    stepTitleSize: base.size.xl,
+    markerColor: base.color.teal600,
+  },
+  termList: {
+    termColor: base.color.slate700,
+    size: base.size.body,
+  },
+  dataTable: {
+    headBackground: base.color.teal600,
+    headColor: base.color.white,
+    labelColor: base.color.teal600,
+    cellColor: base.color.ink,
+    rowAltBackground: base.color.surfaceTeal,
   },
   cover: {
     background: base.color.navy950,

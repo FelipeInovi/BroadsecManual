@@ -16,8 +16,9 @@ import type { BlockCatalog, ManualNode, NodeId } from "@broadsec-manual/blocks";
  *       `<top-level section number>.<n>`.
  *     - `subsection` — resets at EVERY section, at any depth. Ordinal is
  *       `<full section path>.<n>`.
- * - Rows inside a numbered block continue that block's scope counter, so a
- *   filtered table renumbers from one.
+ *     - `block` — resets at every instance. Bare ordinal.
+ * - A block that declares `numbering.itemsProp` numbers the items in that prop
+ *   instead of itself, so a filtered table or procedure renumbers from one.
  */
 export function assignNumbers(
   nodes: readonly ManualNode[],
@@ -60,24 +61,30 @@ export function assignNumbers(
       const def = catalog.get(node.type);
       if (!def?.numbering) continue;
 
-      const { scope, labelKey } = def.numbering;
+      const { scope, labelKey, itemsProp } = def.numbering;
+      // `block` scope gets a throwaway counter map: nothing outside this one
+      // block instance may share or continue its count.
       const counters =
         scope === "document"
           ? documentCounters
           : scope === "section"
             ? sectionCounters
-            : subsectionCounters;
-      const ordinalPrefix = scope === "document" ? [] : scope === "section" ? topLevelPrefix : prefix;
+            : scope === "subsection"
+              ? subsectionCounters
+              : new Map<string, number>();
+      const ordinalPrefix =
+        scope === "section" ? topLevelPrefix : scope === "subsection" ? prefix : [];
 
-      const rows = node.props["rows"];
+      // A container numbers its items; anything else numbers itself. Which one
+      // it is comes from the block's own declaration, never from prop names.
+      const items = itemsProp === undefined ? undefined : node.props[itemsProp];
 
-      if (Array.isArray(rows)) {
-        // The block itself is a container of numbered items.
+      if (Array.isArray(items)) {
         let n = counters.get(labelKey) ?? 0;
-        for (const row of rows) {
-          if (typeof row !== "object" || row === null || !("id" in row)) continue;
+        for (const item of items) {
+          if (typeof item !== "object" || item === null || !("id" in item)) continue;
           n += 1;
-          numbers.set(String((row as { id: unknown }).id), [...ordinalPrefix, n].join("."));
+          numbers.set(String((item as { id: unknown }).id), [...ordinalPrefix, n].join("."));
         }
         counters.set(labelKey, n);
         continue;

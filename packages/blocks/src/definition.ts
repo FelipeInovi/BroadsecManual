@@ -27,13 +27,33 @@ export type ChildPolicy =
   /** Other blocks, restricted to the listed types. */
   | { readonly kind: "blocks"; readonly allowed: readonly BlockType[] };
 
-/** Where a block's counter resets, for block types that are numbered. */
-export type NumberingScope = "document" | "section" | "subsection";
+/**
+ * Where a block's counter resets, for block types that are numbered.
+ *
+ * - `document` — one counter for the whole manual, never reset. Bare ordinal.
+ * - `section` — resets at each top-level section, keeps counting through every
+ *   subsection nested under it. Ordinal is `<top-level number>.<n>`.
+ * - `subsection` — resets at every section, at any depth. Ordinal is
+ *   `<full section path>.<n>`.
+ * - `block` — resets at every instance of the block. Bare ordinal. For items
+ *   that only make sense relative to their own container, such as the steps of
+ *   one procedure.
+ */
+export type NumberingScope = "document" | "section" | "subsection" | "block";
 
 export interface NumberingPolicy {
   readonly scope: NumberingScope;
   /** Caption prefix, e.g. `"Figura"`. Rendered per the manual's language. */
   readonly labelKey: string;
+  /**
+   * Name of the prop holding the items to number, when the block is a
+   * container rather than a single numbered thing.
+   *
+   * Declared, never inferred. Guessing from a prop happening to be called
+   * `rows` silently mis-numbers the first block that owns an unrelated array
+   * by that name.
+   */
+  readonly itemsProp?: string;
 }
 
 export interface BlockDefinition<TProps = unknown> {

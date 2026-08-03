@@ -54,14 +54,43 @@ const subCounterBlock: BlockDefinition<z.infer<typeof testCounterProps>> = {
   numbering: { scope: "subsection", labelKey: "note" },
 };
 
+/** Numbers its own items, held in a prop that is NOT called `rows`. */
+const stepsBlock: BlockDefinition<{ steps: Array<{ id: string }> }> = {
+  type: "test-steps",
+  version: "0.1.0",
+  description: "Test-only container numbered with `block` scope.",
+  schema: z.object({ steps: z.array(z.object({ id: z.string() })) }),
+  children: { kind: "none" },
+  numbering: { scope: "block", labelKey: "step", itemsProp: "steps" },
+};
+
+/** Numbered block that merely happens to own an unrelated `rows` prop. */
+const rowsNamedBlock: BlockDefinition<{ rows: string[] }> = {
+  type: "test-rows-named",
+  version: "0.1.0",
+  description: "Test-only block whose `rows` prop is not a set of numbered items.",
+  schema: z.object({ rows: z.array(z.string()) }),
+  children: { kind: "none" },
+  numbering: { scope: "subsection", labelKey: "widget" },
+};
+
 const catalogWithTestBlocks: BlockCatalog = new Map([
   ...catalog,
   [docCounterBlock.type, docCounterBlock],
   [subCounterBlock.type, subCounterBlock],
+  [stepsBlock.type, stepsBlock as never],
+  [rowsNamedBlock.type, rowsNamedBlock as never],
 ]);
 
 const docItem = (id: string): BlockNode => ({ kind: "block", id, type: docCounterBlock.type, props: {} });
 const subItem = (id: string): BlockNode => ({ kind: "block", id, type: subCounterBlock.type, props: {} });
+
+const steps = (id: string, stepIds: readonly string[]): BlockNode => ({
+  kind: "block",
+  id,
+  type: stepsBlock.type,
+  props: { steps: stepIds.map((s) => ({ id: s })) },
+});
 
 describe("assignNumbers", () => {
   it("numbers top-level sections from one", () => {
@@ -164,5 +193,47 @@ describe("assignNumbers", () => {
     );
     expect(n.get("r1")).toBe("1.1.1");
     expect(n.get("r3")).toBe("1.1.2");
+  });
+
+  it("`block` scope numbers items with a bare ordinal, restarting per instance", () => {
+    const n = assignNumbers(
+      [section("a", [steps("a.p1", ["s1", "s2"]), steps("a.p2", ["s3"])])],
+      catalogWithTestBlocks,
+    );
+    expect(n.get("s1")).toBe("1");
+    expect(n.get("s2")).toBe("2");
+    // A second procedure in the same section restarts — steps are local to
+    // their procedure, unlike table rows which continue across sibling tables.
+    expect(n.get("s3")).toBe("1");
+  });
+
+  it("`block` scope restarts in every section too", () => {
+    const n = assignNumbers(
+      [section("a", [steps("a.p", ["s1", "s2"])]), section("b", [steps("b.p", ["s3"])])],
+      catalogWithTestBlocks,
+    );
+    expect(n.get("s2")).toBe("2");
+    expect(n.get("s3")).toBe("1");
+  });
+
+  it("renumbers items after conditioning removed one", () => {
+    const n = assignNumbers(
+      [section("a", [steps("a.p", ["s1", "s3"])])],
+      catalogWithTestBlocks,
+    );
+    expect(n.get("s1")).toBe("1");
+    expect(n.get("s3")).toBe("2");
+  });
+
+  it("numbers a block itself when it declares no `itemsProp`, even if it owns a `rows` prop", () => {
+    const widget: BlockNode = {
+      kind: "block",
+      id: "a.w",
+      type: rowsNamedBlock.type,
+      props: { rows: ["not", "numbered", "items"] },
+    };
+    const n = assignNumbers([section("a", [widget])], catalogWithTestBlocks);
+    // The block gets the ordinal; the strings inside `rows` get nothing.
+    expect(n.get("a.w")).toBe("1.1");
   });
 });

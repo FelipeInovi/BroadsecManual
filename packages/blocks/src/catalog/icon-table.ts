@@ -32,5 +32,5 @@ export const iconTable: BlockDefinition<IconTableProps> = {
     "this — never a hand-written table — whenever rows can vary by target.",
   schema: iconTableProps,
   children: { kind: "none" },
-  numbering: { scope: "subsection", labelKey: "row" },
+  numbering: { scope: "subsection", labelKey: "row", itemsProp: "rows" },
 };

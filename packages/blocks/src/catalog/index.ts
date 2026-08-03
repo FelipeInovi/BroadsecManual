@@ -1,17 +1,35 @@
-import type { BlockCatalog } from "../definition.js";
+import type { BlockCatalog } from "../definition.ts";
 import { prose } from "./prose.ts";
 import { iconTable } from "./icon-table.ts";
+import { dataTable } from "./data-table.ts";
 import { figure } from "./figure.ts";
-import { note } from "./note.ts";
+import { callout } from "./callout.ts";
 import { detailHeader } from "./detail-header.ts";
+import { fieldList } from "./field-list.ts";
+import { procedure } from "./procedure.ts";
+import { termList } from "./term-list.ts";
 
 export * from "./prose.ts";
 export * from "./icon-table.ts";
+export * from "./data-table.ts";
 export * from "./figure.ts";
-export * from "./note.ts";
+export * from "./callout.ts";
 export * from "./detail-header.ts";
+export * from "./field-list.ts";
+export * from "./procedure.ts";
+export * from "./term-list.ts";
 
 /** PROVISIONAL — see README.md in this folder. */
 export const catalog: BlockCatalog = new Map(
-  [prose, iconTable, figure, note, detailHeader].map((b) => [b.type, b as never]),
+  [
+    prose,
+    detailHeader,
+    callout,
+    figure,
+    fieldList,
+    termList,
+    procedure,
+    iconTable,
+    dataTable,
+  ].map((b) => [b.type, b as never]),
 );
