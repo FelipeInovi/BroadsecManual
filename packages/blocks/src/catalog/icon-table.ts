@@ -26,10 +26,15 @@ export const iconTable: BlockDefinition<IconTableProps> = {
   type: "icon-table",
   version: "0.1.0",
   description:
-    "A table describing icon-based UI controls, one row per control. Rows are " +
-    "DATA and each carries its own conditioning, so a target that lacks a " +
-    "control simply does not get its row and the table renumbers itself. Use " +
-    "this — never a hand-written table — whenever rows can vary by target.",
+    "A table describing icon-based UI controls, one row per control. The first " +
+    "column shows the control's icon; while that image does not exist yet it " +
+    "shows the row's item number instead, which is the reference the image " +
+    "will be delivered under. Icon or reference, never both and never neither. " +
+    "Rows are DATA and each carries its own conditioning, so a target that " +
+    "lacks a control simply does not get its row and the table renumbers " +
+    "itself. Use this — never a hand-written table — whenever rows can vary " +
+    "by target. Use `data-table` when the rows are concepts rather than " +
+    "controls the reader must recognise on screen.",
   schema: iconTableProps,
   children: { kind: "none" },
   numbering: { scope: "subsection", labelKey: "row", itemsProp: "rows" },

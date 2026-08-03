@@ -269,11 +269,12 @@ td.tbl__icon {
   background: ${t.sectionHeader.background};
 }
 td.tbl__icon img { max-width: 20pt; max-height: 20pt; }
-td.tbl__ref {
-  width: 34pt;
-  color: ${t.figure.captionColor};
+/* Same cell, pending state: the item number stands in for the image that has
+   not been delivered yet, and names the reference it will arrive under. */
+td.tbl__icon--pending {
+  color: ${t.runningHeader.accent};
   font-size: ${t.runningFooter.textSize};
-  text-align: center;
+  font-style: italic;
 }
 td.tbl__label {
   width: 130pt;
@@ -307,6 +308,12 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
   font-weight: bold;
   margin: ${t.space.md} 0 ${t.space.xs};
 }
+.prose__shot, .term__shot { text-align: center; margin: 0 0 ${t.space.md}; }
+.prose__shot img, .term__shot img {
+  max-width: 62%;
+  border: 0.6pt solid ${t.table.rule};
+}
+
 .field__shot { text-align: center; margin: ${t.space.sm} 0 0; }
 .field__shot img { max-width: 62%; border: 0.6pt solid ${t.table.rule}; }
 /* A pending screenshot is stated, never left blank — an empty gap reads as

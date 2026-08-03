@@ -52,22 +52,29 @@ function renderTable(
   o: RenderOptions,
 ): string {
   const rows = node.props["rows"] as ReadonlyArray<Record<string, unknown>>;
-  const numbered = node.type === "icon-table";
-  // Conditioning can remove every row that had an icon. Keeping the column
-  // then leaves a strip of empty dark cells, so it is decided per build.
-  const hasIcons = numbered && rows.some((r) => Boolean(r["icon"]));
-  const variant = numbered ? "icon-table" : "data-table";
+  const withIcons = node.type === "icon-table";
+  const variant = withIcons ? "icon-table" : "data-table";
+
+  // One column, two states. The icon if it exists; otherwise the row's item
+  // number, which IS the reference the pending image will be delivered under.
+  // Never both, never neither — an empty cell reads as "no control here".
+  const iconCell = (r: Record<string, unknown>): string => {
+    if (!withIcons) return "";
+    if (r["icon"]) {
+      return `<td class="tbl__icon"><img src="${esc(
+        asset(o.assetBase, String(r["icon"])),
+      )}"></td>`;
+    }
+    return `<td class="tbl__icon tbl__icon--pending">${esc(
+      numbers.get(String(r["id"])) ?? "",
+    )}</td>`;
+  };
 
   const body = rows
     .map((r) =>
       [
         `<tr>`,
-        hasIcons
-          ? `<td class="tbl__icon">${
-              r["icon"] ? `<img src="${esc(asset(o.assetBase, String(r["icon"])))}">` : ""
-            }</td>`
-          : "",
-        numbered ? `<td class="tbl__ref">${esc(numbers.get(String(r["id"])) ?? "")}</td>` : "",
+        iconCell(r),
         `<td class="tbl__label">${esc(String(r["label"]))}</td>`,
         `<td>${inlineMarkup(String(r["description"]))}</td>`,
         `</tr>`,
@@ -77,8 +84,7 @@ function renderTable(
 
   return [
     `<table class="tbl tbl--${variant}"><thead><tr>`,
-    hasIcons ? `<th></th>` : "",
-    numbered ? `<th>Ítem</th>` : "",
+    withIcons ? `<th></th>` : "",
     `<th>${esc(String(node.props["labelHeader"]))}</th>`,
     `<th>${esc(String(node.props["descriptionHeader"]))}</th>`,
     `</tr></thead><tbody>${body}</tbody></table>`,
@@ -87,8 +93,15 @@ function renderTable(
 
 function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: RenderOptions): string {
   switch (node.type) {
-    case "prose":
-      return `<p class="prose">${inlineMarkup(String(node.props["text"]))}</p>`;
+    case "prose": {
+      const body = `<p class="prose">${inlineMarkup(String(node.props["text"]))}</p>`;
+      // An illustration, not a figure: no caption, no number.
+      return node.props["image"]
+        ? `${body}<p class="prose__shot"><img src="${esc(
+            asset(o.assetBase, String(node.props["image"])),
+          )}"></p>`
+        : body;
+    }
 
     case "callout": {
       const variant = String(node.props["variant"] ?? "info");
@@ -126,7 +139,13 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
         .map(
           (e) =>
             `<div class="term"><dt>${esc(String(e["term"]))}:</dt>` +
-            `<dd>${inlineMarkup(String(e["definition"]))}</dd></div>`,
+            `<dd>${inlineMarkup(String(e["definition"]))}</dd>` +
+            (e["image"]
+              ? `<p class="term__shot"><img src="${esc(
+                  asset(o.assetBase, String(e["image"])),
+                )}"></p>`
+              : "") +
+            `</div>`,
         )
         .join("")}</dl>`;
     }

@@ -76,8 +76,9 @@ children:
               term: Término
               definition: Su definición, en una línea.
             - id: cat.tl.dos
-              term: Otro término
-              definition: Cuando hace falta un párrafo entero, use lista de elementos.
+              term: Término con imagen
+              definition: La imagen es opcional y se muestra bajo la definición.
+              image: icons/back.png
 
   # ---------------------------------------------------------- procedure ---
   - id: cat.procedure
@@ -135,9 +136,10 @@ children:
               label: Buscar
               description: Fila con su ícono y su número de ítem.
             - id: cat.it.dos
-              icon: icons/filters.png
-              label: Filtrar
-              description: La numeración se recalcula en cada despliegue.
+              label: Control sin ícono todavía
+              description: >-
+                Sin imagen entregada, la celda muestra el número de ítem: es la
+                referencia con la que llegará esa imagen.
 
   # --------------------------------------------------------- data-table ---
   - id: cat.data-table

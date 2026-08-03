@@ -4,17 +4,25 @@ import type { BlockDefinition } from "../definition.js";
 export const proseProps = z.object({
   /** Paragraph text. `**bold**` is the only inline markup. */
   text: z.string().min(1),
+  /**
+   * Illustration for this paragraph. Optional, and NOT a figure: it carries no
+   * caption and takes no number. Use `figure` when the image must be
+   * referenceable.
+   */
+  image: z.string().optional(),
 });
 
 export type ProseProps = z.infer<typeof proseProps>;
 
 export const prose: BlockDefinition<ProseProps> = {
   type: "prose",
-  version: "0.1.0",
+  version: "0.2.0",
   description:
-    "A body paragraph. Use for explanatory text between structured blocks. " +
-    "Do not use it to fake a list, a table or a callout — those have their " +
-    "own block types and only they condition and renumber correctly.",
+    "A body paragraph, optionally illustrated. Use for explanatory text " +
+    "between structured blocks. Do not use it to fake a list, a table or a " +
+    "callout — those have their own block types and only they condition and " +
+    "renumber correctly. Use `figure` instead when the image needs a caption " +
+    "and a number so the text can refer back to it.",
   schema: proseProps,
   children: { kind: "none" },
 };
