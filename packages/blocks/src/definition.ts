@@ -6,8 +6,17 @@
  * structures. This file describes the shape those declarations take.
  */
 
-import type { ZodType } from "zod";
-import type { BlockType } from "./ast.js";
+import type { ZodType, ZodTypeDef } from "zod";
+import type { BlockType } from "./ast.ts";
+
+/**
+ * A block's props schema.
+ *
+ * The input type is left open because a schema may transform — `.default()`,
+ * `.coerce`, `.transform()` — so what an author writes is not always what the
+ * renderer receives. Only the OUTPUT type is pinned.
+ */
+export type PropsSchema<TProps> = ZodType<TProps, ZodTypeDef, unknown>;
 
 /** What a block may contain. */
 export type ChildPolicy =
@@ -37,7 +46,7 @@ export interface BlockDefinition<TProps = unknown> {
    * authors from improvising layout.
    */
   readonly description: string;
-  readonly schema: ZodType<TProps>;
+  readonly schema: PropsSchema<TProps>;
   readonly children: ChildPolicy;
   /** Present only if instances of this block are numbered. */
   readonly numbering?: NumberingPolicy;

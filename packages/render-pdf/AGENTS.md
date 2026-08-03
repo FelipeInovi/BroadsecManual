@@ -18,6 +18,15 @@ Committing before seeing the material is exactly the rushed decision this
 architecture is built to avoid. If you are asked to "just start on the
 renderer", say no and explain why.
 
+## A working path exists, and it is not a decision
+
+`render-web` + headless Chrome currently produces the PDF (see `cli`). It was
+built to prove the pipeline end to end with zero installs, and it works.
+
+That is evidence, not a verdict. It says the HTML route is viable; it does not
+say it is the right one for a 100-page manual with the design team's structures.
+Treat the engine as open until that material exists.
+
 ## What can be built now
 
 The renderer **interface** — `(manual: ResolvedManual, tokens: Tokens) => Buffer` —

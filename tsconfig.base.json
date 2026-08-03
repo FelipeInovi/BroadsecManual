@@ -10,6 +10,13 @@
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
     "verbatimModuleSyntax": true,
+    // Relative imports carry a .ts extension so Node's native type stripping
+    // resolves them directly — no build step, no runner. Requires noEmit.
+    "allowImportingTsExtensions": true,
+    // Node strips types, it does not compile them. Anything that would emit
+    // code — enums, parameter properties, namespaces — must fail here rather
+    // than at runtime.
+    "erasableSyntaxOnly": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,

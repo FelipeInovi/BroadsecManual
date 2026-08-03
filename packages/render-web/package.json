@@ -8,5 +8,10 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@broadsec-manual/blocks": "workspace:*",
+    "@broadsec-manual/tokens": "workspace:*",
+    "pagedjs": "^0.4.3"
   }
 }

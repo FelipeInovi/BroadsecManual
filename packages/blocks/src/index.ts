@@ -1,3 +1,4 @@
-export * from "./conditioning.js";
-export * from "./ast.js";
-export * from "./definition.js";
+export * from "./conditioning.ts";
+export * from "./ast.ts";
+export * from "./definition.ts";
+export * from "./catalog/index.ts";

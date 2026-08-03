@@ -11,7 +11,7 @@
  *    conditioning has removed content the target does not see.
  */
 
-import type { Conditioned } from "./conditioning.js";
+import type { Conditioned } from "./conditioning.ts";
 
 /**
  * Stable, author-assigned identifier, unique within a manual.

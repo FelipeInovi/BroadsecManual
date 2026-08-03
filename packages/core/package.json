@@ -8,5 +8,10 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@broadsec-manual/blocks": "workspace:*",
+    "zod": "^3.23.7",
+    "yaml": "^2.6.1"
   }
 }

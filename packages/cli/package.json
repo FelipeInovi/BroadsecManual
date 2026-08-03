@@ -8,5 +8,15 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@broadsec-manual/blocks": "workspace:*",
+    "@broadsec-manual/core": "workspace:*",
+    "@broadsec-manual/render-web": "workspace:*",
+    "@broadsec-manual/tokens": "workspace:*",
+    "yaml": "^2.6.1"
+  },
+  "bin": {
+    "broadsec-manual": "./src/main.ts"
   }
 }

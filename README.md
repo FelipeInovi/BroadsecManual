@@ -37,7 +37,16 @@ as tenant-tagged typed blocks, and each tenant's manual is assembled from it.
 pnpm install
 pnpm type-check
 pnpm test
+
+# Build one tenant's manual (PDF + HTML into manuals/<id>/output/)
+node packages/cli/src/main.ts build broadlineavida --tenant mv
+
+# Every configured tenant
+node packages/cli/src/main.ts build broadlineavida
 ```
+
+Rendering shells out to Chrome or Edge. Set `CHROME_PATH` if neither is found
+in the usual locations.
 
 Skills live in `skills/` and are agent-agnostic. To let your coding agent
 discover them, link that folder into its skills directory — see
