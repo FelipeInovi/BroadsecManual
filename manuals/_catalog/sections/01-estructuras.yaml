@@ -1,0 +1,221 @@
+# One example per block type, rendered by the real pipeline.
+# Text is deliberately about the structure itself, not about Broadsec.
+
+id: estructuras
+title: Catálogo de estructuras
+subtitle: Un ejemplo de cada bloque disponible
+
+children:
+  - id: cat.intro
+    type: prose
+    props:
+      text: >-
+        Cada bloque de este catálogo es una estructura fija. El contenido del
+        manual se escribe **instanciando** estos bloques, nunca componiendo
+        layout a mano. Lo que ve a continuación es la salida real del sistema.
+
+  # ------------------------------------------------------------- prose ---
+  - id: cat.prose
+    title: Párrafo
+    children:
+      - id: cat.prose.uso
+        type: prose
+        props:
+          text: >-
+            Texto corrido justificado. Se usa para explicar, nunca para
+            simular una lista, una tabla o un aviso: esas estructuras tienen su
+            propio bloque, y sólo ellas se condicionan y se renumeran bien. El
+            único marcado disponible es **negrita**.
+
+  # -------------------------------------------------------- field-list ---
+  - id: cat.field-list
+    title: Lista de elementos
+    children:
+      - id: cat.field-list.uso
+        type: prose
+        props:
+          text: >-
+            Elementos de la interfaz con nombre propio, cada uno con su
+            explicación y su imagen. Es la estructura más frecuente del manual:
+            campos de un filtro, widgets de un tablero, secciones de un panel.
+            Cada elemento se condiciona por separado.
+
+      - id: cat.field-list.demo
+        type: field-list
+        props:
+          items:
+            - id: cat.fl.uno
+              label: Elemento con imagen pendiente
+              text: >-
+                Cuando la captura todavía no existe, el bloque deja constancia
+                en lugar de dejar un hueco en blanco. El recuadro nombra la
+                imagen que falta.
+            - id: cat.fl.dos
+              label: Elemento con imagen
+              text: >-
+                Cuando la imagen está disponible, se muestra centrada bajo la
+                explicación del elemento.
+              image: top-bar.png
+
+  # ---------------------------------------------------------- term-list ---
+  - id: cat.term-list
+    title: Lista de términos
+    children:
+      - id: cat.term-list.uso
+        type: prose
+        props:
+          text: >-
+            Pares de término y definición, una línea cada uno, sin imágenes.
+            Para las opciones de un mismo control o un glosario corto.
+
+      - id: cat.term-list.demo
+        type: term-list
+        props:
+          entries:
+            - id: cat.tl.uno
+              term: Término
+              definition: Su definición, en una línea.
+            - id: cat.tl.dos
+              term: Otro término
+              definition: Cuando hace falta un párrafo entero, use lista de elementos.
+
+  # ---------------------------------------------------------- procedure ---
+  - id: cat.procedure
+    title: Procedimiento
+    children:
+      - id: cat.procedure.uso
+        type: prose
+        props:
+          text: >-
+            Una secuencia ordenada que el operador ejecuta. Los pasos se
+            numeran por su posición **después** de condicionar, de modo que un
+            despliegue que no ve un paso ve los siguientes corridos. El título
+            del paso nunca lleva el número escrito.
+
+      - id: cat.procedure.demo
+        type: procedure
+        props:
+          lead: Para ilustrar la estructura, siga estos pasos.
+          steps:
+            - id: cat.pr.uno
+              title: Un paso con acciones
+              text: >-
+                Cada paso tiene su título, su explicación y, opcionalmente, una
+                lista de acciones concretas y una imagen.
+              actions:
+                - Primera acción concreta.
+                - Segunda acción concreta.
+            - id: cat.pr.dos
+              title: Un paso con imagen
+              text: >-
+                La imagen del paso muestra el control que debe accionarse.
+              image: icons/add-case.png
+
+  # --------------------------------------------------------- icon-table ---
+  - id: cat.icon-table
+    title: Tabla de íconos
+    children:
+      - id: cat.icon-table.uso
+        type: prose
+        props:
+          text: >-
+            Controles que el operador debe reconocer en pantalla. Lleva la
+            imagen del ícono y un número de ítem por fila, para poder
+            referenciarlo. Las filas son datos: cada una se condiciona por
+            separado y la tabla se renumera sola.
+
+      - id: cat.icon-table.demo
+        type: icon-table
+        props:
+          labelHeader: Función
+          descriptionHeader: Descripción
+          rows:
+            - id: cat.it.uno
+              icon: icons/search.png
+              label: Buscar
+              description: Fila con su ícono y su número de ítem.
+            - id: cat.it.dos
+              icon: icons/filters.png
+              label: Filtrar
+              description: La numeración se recalcula en cada despliegue.
+
+  # --------------------------------------------------------- data-table ---
+  - id: cat.data-table
+    title: Tabla de referencia
+    children:
+      - id: cat.data-table.uso
+        type: prose
+        props:
+          text: >-
+            Tabla de consulta sin íconos ni numeración: estados, categorías,
+            capacidades. Misma mecánica de condicionado por fila.
+
+      - id: cat.data-table.demo
+        type: data-table
+        props:
+          labelHeader: Concepto
+          descriptionHeader: Descripción
+          rows:
+            - id: cat.dt.uno
+              label: Un concepto
+              description: Su descripción.
+            - id: cat.dt.dos
+              label: Otro concepto
+              description: Sin ícono y sin número de ítem, a diferencia de la anterior.
+
+  # ------------------------------------------------------------ figure ---
+  - id: cat.figure
+    title: Figura
+    children:
+      - id: cat.figure.uso
+        type: prose
+        props:
+          text: >-
+            Imagen numerada con epígrafe. El número lo asigna el sistema: el
+            epígrafe se escribe **sin** número.
+
+      - id: cat.figure.demo
+        type: figure
+        props:
+          src: top-bar.png
+          caption: Epígrafe de la figura, escrito sin número.
+          widthPercent: 80
+
+  # ---------------------------------------------- detail-header y callout ---
+  - id: cat.otros
+    title: Rótulo y avisos
+    children:
+      - id: cat.otros.uso
+        type: prose
+        props:
+          text: >-
+            El rótulo nombra un elemento dentro de la subsección sin crear una
+            división numerada. Los avisos destacan algo que el lector no debe
+            pasar por alto, en dos intensidades.
+
+      - id: cat.dh.demo
+        type: detail-header
+        props:
+          text: Esto es un rótulo
+
+      - id: cat.dh.texto
+        type: prose
+        props:
+          text: >-
+            El texto que explica ese elemento va debajo del rótulo. El rótulo no
+            lleva número y las figuras que estén bajo él siguen contando contra
+            la subsección.
+
+      - id: cat.callout.info
+        type: callout
+        props:
+          variant: info
+          text: >-
+            Aviso informativo. Para contexto que conviene destacar.
+
+      - id: cat.callout.important
+        type: callout
+        props:
+          variant: important
+          text: >-
+            Para algo que le va a costar caro al lector si lo pasa por alto.
