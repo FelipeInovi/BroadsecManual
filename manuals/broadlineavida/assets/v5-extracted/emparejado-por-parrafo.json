@@ -1,0 +1,301 @@
+[
+ {
+  "slot": "func.desp.buscar-ubicacion",
+  "caption": "Busque la ubicación",
+  "score": 0.889,
+  "page": 23,
+  "rect": [
+   88.92657470703125,
+   346.05291748046875,
+   457.4304504394531,
+   524.4757080078125
+  ],
+  "v5": "2.\t  Si el incidente aún no tiene ubicación asignada, haga la búsqueda"
+ },
+ {
+  "slot": "func.desp.info-agente",
+  "caption": "Revise la información del agente",
+  "score": 0.5,
+  "page": 24,
+  "rect": [
+   67.12249755859375,
+   224.7646484375,
+   411.1224060058594,
+   274.19439697265625
+  ],
+  "v5": "2.\t Hay 4 aspectos importantes que se muestra dentro de la información"
+ },
+ {
+  "slot": "func.desp.en-camino",
+  "caption": "Indique el estado del despacho",
+  "score": 0.833,
+  "page": 24,
+  "rect": [
+   104.24649047851562,
+   579.8150024414062,
+   464.2464904785156,
+   657.7736206054688
+  ],
+  "v5": "4.\t Seleccionar  \"En Camino\"  cuando se hace una solicitud externa o  "
+ },
+ {
+  "slot": "func.desp.chat",
+  "caption": "Converse con los agentes",
+  "score": 1.0,
+  "page": 25,
+  "rect": [
+   174.61416625976562,
+   82.87222290039062,
+   400.251953125,
+   272.12628173828125
+  ],
+  "v5": "6.\t   Desde la gestión del caso será posible chatear en vivo con los a"
+ },
+ {
+  "slot": "func.desp.en-sitio",
+  "caption": "Ponga al agente En Sitio",
+  "score": 0.722,
+  "page": 25,
+  "rect": [
+   95.34217834472656,
+   552.218505859375,
+   132.7032928466797,
+   587.6087036132812
+  ],
+  "v5": "8.\t   Mediante el siguiente ícono, ubicado en la parte derecha de la s"
+ },
+ {
+  "slot": "func.desp.prescindir",
+  "caption": "Prescinda de un agente",
+  "score": 0.923,
+  "page": 25,
+  "rect": [
+   95.11112976074219,
+   638.976806640625,
+   135.290283203125,
+   685.1448364257812
+  ],
+  "v5": "9.\t   También se puede prescindir de un Agente al que ya se le haya as"
+ },
+ {
+  "slot": "func.desp.finalizar",
+  "caption": "Finalice el caso",
+  "score": 1.0,
+  "page": 25,
+  "rect": [
+   93.9047622680664,
+   730.58837890625,
+   135.3252410888672,
+   775.0396118164062
+  ],
+  "v5": "10.\t  Una vez el Agente está en sitio, se puede gestionar la finalizac"
+ },
+ {
+  "slot": "funcionalidades.reporte-via.fig",
+  "caption": "Formulario del reporte: Detalles en Vía.",
+  "score": 0.857,
+  "page": 26,
+  "rect": [
+   184.81890869140625,
+   365.9038391113281,
+   399.11810302734375,
+   771.5416259765625
+  ],
+  "v5": "Una vez diligenciada la información, esta se guarda mediante el botón "
+ },
+ {
+  "slot": "funcionalidades.reporte-lesionados.fig",
+  "caption": "Formulario del reporte: Detalles de Lesionados.",
+  "score": 0.857,
+  "page": 27,
+  "rect": [
+   83.62203979492188,
+   242.21710205078125,
+   281.33856201171875,
+   574.8045654296875
+  ],
+  "v5": "Una vez diligenciada la información, esta se guarda mediante el botón "
+ },
+ {
+  "slot": "dashboard.filtros.rango.fig",
+  "caption": "Filtro de rango de tiempo del dashboard.",
+  "score": 0.8,
+  "page": 31,
+  "rect": [
+   157.51608276367188,
+   158.40985107421875,
+   434.8426513671875,
+   300.14215087890625
+  ],
+  "v5": "Permite filtrar por un rango de días incluyendo última semana, último "
+ },
+ {
+  "slot": "dashboard.variables.emergencia.fig",
+  "caption": "Filtro por tipo de emergencia.",
+  "score": 0.5,
+  "page": 32,
+  "rect": [
+   173.3876495361328,
+   144.93641662597656,
+   423.322509765625,
+   285.716064453125
+  ],
+  "v5": "Se muestran los tipos de emergecnia y sus subcategorias"
+ },
+ {
+  "slot": "dashboard.variables.fuerzas.fig",
+  "caption": "Filtro por fuerza de respuesta.",
+  "score": 1.0,
+  "page": 32,
+  "rect": [
+   184.0743408203125,
+   352.78375244140625,
+   441.03173828125,
+   494.51605224609375
+  ],
+  "v5": "Hace referencia a la fuerza que actuó en el incidente."
+ },
+ {
+  "slot": "dashboard.widget.total",
+  "caption": "Total de Emergencias",
+  "score": 0.875,
+  "page": 35,
+  "rect": [
+   122.8878173828125,
+   169.04083251953125,
+   472.3878173828125,
+   287.54083251953125
+  ],
+  "v5": "Muestra el total de emergencias registradas en el período de tiempo es"
+ },
+ {
+  "slot": "dashboard.widget.promedio-respuesta",
+  "caption": "Tiempo Promedio de Respuesta",
+  "score": 1.0,
+  "page": 35,
+  "rect": [
+   124.7628173828125,
+   339.54083251953125,
+   470.5128173828125,
+   456.54083251953125
+  ],
+  "v5": "Muestra el tiempo promedio de respuesta desde la recepción de la llama"
+ },
+ {
+  "slot": "dashboard.widget.sin-despacho",
+  "caption": "Casos sin despacho",
+  "score": 0.818,
+  "page": 35,
+  "rect": [
+   124.7628173828125,
+   508.54083251953125,
+   470.5128173828125,
+   623.2908325195312
+  ],
+  "v5": "Muestra todos los casos que no se despacharon en el período de tiempo "
+ },
+ {
+  "slot": "dashboard.widget.promedio-llegada",
+  "caption": "Tiempo Promedio de Llegada",
+  "score": 1.0,
+  "page": 35,
+  "rect": [
+   125.1378173828125,
+   675.2908325195312,
+   470.1378173828125,
+   790.7908325195312
+  ],
+  "v5": "Muestra el tiempo promedio desde el despacho del agente hasta su llega"
+ },
+ {
+  "slot": "dashboard.widget.tiempo-respuesta",
+  "caption": "Tiempo de respuesta",
+  "score": 1.0,
+  "page": 36,
+  "rect": [
+   199.96031188964844,
+   95.02389526367188,
+   395.315185546875,
+   265.10260009765625
+  ],
+  "v5": "Gráfico de torta con el porcentaje de casos atendidos en distintos ran"
+ },
+ {
+  "slot": "dashboard.widget.cantidad",
+  "caption": "Cantidad de Emergencias",
+  "score": 1.0,
+  "page": 36,
+  "rect": [
+   198.60464477539062,
+   317.10260009765625,
+   396.6709899902344,
+   487.1813049316406
+  ],
+  "v5": "Gráfico de líneas del número de emergencias atendidas a lo largo de dí"
+ },
+ {
+  "slot": "dashboard.widget.categoria",
+  "caption": "Emergencia por categoría",
+  "score": 0.9,
+  "page": 36,
+  "rect": [
+   198.0635986328125,
+   539.2449951171875,
+   397.2119140625,
+   709.1964721679688
+  ],
+  "v5": "Gráfico de torta con el porcentaje de casos según 9 categorías de clas"
+ },
+ {
+  "slot": "dashboard.widget.frecuentes",
+  "caption": "Tipos de Casos Frecuentes",
+  "score": 0.923,
+  "page": 37,
+  "rect": [
+   197.98910522460938,
+   95.02383422851562,
+   397.28643798828125,
+   265.1025390625
+  ],
+  "v5": "Gráfico de barras de los casos agrupados por las 5 tipologías (tipos d"
+ },
+ {
+  "slot": "dashboard.widgets.fig-modificar",
+  "caption": "Filtro de Variables de Gestión para los tipos de casos frecuentes.",
+  "score": 0.812,
+  "page": 37,
+  "rect": [
+   166.3634033203125,
+   343.29150390625,
+   428.9120788574219,
+   513.3388671875
+  ],
+  "v5": "Es posible modificar las especificaciones de este gráfico utilizando e"
+ },
+ {
+  "slot": "fuerzas.agentes.fig",
+  "caption": "Módulo de Agentes.",
+  "score": 0.857,
+  "page": 41,
+  "rect": [
+   199.84251403808594,
+   106.50387573242188,
+   364.6787109375,
+   310.107666015625
+  ],
+  "v5": "Este módulo permite visualizar a los Agentes disponibles y en turno pa"
+ },
+ {
+  "slot": "fuerzas.home.fig",
+  "caption": "Ícono para retornar al Home de Broadsec.",
+  "score": 1.0,
+  "page": 47,
+  "rect": [
+   85.74801635742188,
+   112.779541015625,
+   498.2480163574219,
+   157.779541015625
+  ],
+  "v5": "Finalmente se retorna al Home principal de Broadsec desde el siguiente"
+ }
+]
