@@ -32,7 +32,7 @@ children:
         type: figure
         props:
           caption: "Selector de capas del mapa."
-          widthPercent: 90
+          widthPercent: 63
 
       - id: funcionalidades.mapa.capas
         type: icon-table
@@ -163,7 +163,7 @@ children:
         type: figure
         props:
           caption: "Capa Mobile: ubicación de agentes móviles."
-          widthPercent: 90
+          widthPercent: 45
 
   - id: funcionalidades.capa-avl
     title: Capa AVL
@@ -204,7 +204,7 @@ children:
         type: figure
         props:
           caption: "Capa de Paneles, vista complementaria."
-          widthPercent: 90
+          widthPercent: 58
 
   - id: funcionalidades.filtros
     title: Filtros
@@ -261,7 +261,7 @@ children:
             type: figure
             props:
               caption: "Interruptor Solo mis casos, encendido."
-              widthPercent: 60
+              widthPercent: 21
 
       - id: funcionalidades.filtros.tipo-emergencia
         title: Tipo de Emergencia
@@ -471,7 +471,7 @@ children:
             type: figure
             props:
               caption: "Incidente finalizado, listo para gestión."
-              widthPercent: 90
+              widthPercent: 45
 
       - id: funcionalidades.plataforma
         title: Plataforma Broadsec
@@ -499,7 +499,7 @@ children:
             type: figure
             props:
               caption: "Formulario Crear Incidente, completado."
-              widthPercent: 90
+              widthPercent: 36
 
       - id: funcionalidades.general
         title: Para incidentes en general
@@ -562,7 +562,7 @@ children:
             type: figure
             props:
               caption: "Vista detallada de un incidente, con sus cuatro pestañas."
-              widthPercent: 90
+              widthPercent: 54
 
           - id: funcionalidades.pestana-incidente
             title: Pestaña Incidente

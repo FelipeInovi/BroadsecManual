@@ -302,5 +302,5 @@ children:
         type: figure
         props:
           caption: "Lista de casos, con la información de cada incidente reportado."
-          widthPercent: 90
+          widthPercent: 63
 

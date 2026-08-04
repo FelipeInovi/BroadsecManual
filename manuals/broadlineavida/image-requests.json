@@ -19,10 +19,54 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 252,
-    "delivered": 96,
-    "pending": 156
+    "delivered": 94,
+    "pending": 158
   },
   "pending": [
+    {
+      "slot": "introduccion.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "introduccion.fig",
+          "blockType": "figure",
+          "shows": "Vista principal de la plataforma."
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "med"
+      ],
+      "deliverTo": {
+        "shared": "_common/introduccion.fig.png",
+        "override": "<tenant>/introduccion.fig.png"
+      }
+    },
+    {
+      "slot": "broadsec.descripcion.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "broadsec.descripcion.fig",
+          "blockType": "figure",
+          "shows": "Interfaz principal integrada con Carbyne Apex."
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "med"
+      ],
+      "deliverTo": {
+        "shared": "_common/broadsec.descripcion.fig.png",
+        "override": "<tenant>/broadsec.descripcion.fig.png"
+      }
+    },
     {
       "slot": "funcionamiento.inicio.fig",
       "neededBy": [
@@ -3363,40 +3407,6 @@
     }
   ],
   "delivered": [
-    {
-      "slot": "introduccion.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "introduccion.fig",
-          "blockType": "figure",
-          "shows": "Vista principal de la plataforma."
-        }
-      ],
-      "files": [
-        "_common/introduccion/fig.jpeg"
-      ]
-    },
-    {
-      "slot": "broadsec.descripcion.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "broadsec.descripcion.fig",
-          "blockType": "figure",
-          "shows": "Interfaz principal integrada con Carbyne Apex."
-        }
-      ],
-      "files": [
-        "_common/broadsec/descripcion/fig.jpeg"
-      ]
-    },
     {
       "slot": "funcionamiento.acceso.fig",
       "neededBy": [
