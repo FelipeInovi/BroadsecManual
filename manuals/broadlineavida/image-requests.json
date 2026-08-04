@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 251,
-    "delivered": 93,
-    "pending": 158
+    "total": 250,
+    "delivered": 102,
+    "pending": 148
   },
   "pending": [
     {
@@ -486,204 +486,6 @@
       }
     },
     {
-      "slot": "func.estado.naranja",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.estado.naranja",
-          "blockType": "icon-table",
-          "shows": "Punto naranja"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.estado.naranja.png",
-        "override": "<tenant>/func.estado.naranja.png"
-      }
-    },
-    {
-      "slot": "func.estado.verde",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.estado.verde",
-          "blockType": "icon-table",
-          "shows": "Punto verde"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.estado.verde.png",
-        "override": "<tenant>/func.estado.verde.png"
-      }
-    },
-    {
-      "slot": "func.estado.azul",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.estado.azul",
-          "blockType": "icon-table",
-          "shows": "Punto azul"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.estado.azul.png",
-        "override": "<tenant>/func.estado.azul.png"
-      }
-    },
-    {
-      "slot": "func.estado.ojo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.estado.ojo",
-          "blockType": "icon-table",
-          "shows": "Ícono de ojo"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.estado.ojo.png",
-        "override": "<tenant>/func.estado.ojo.png"
-      }
-    },
-    {
-      "slot": "func.estado.padre",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.estado.padre",
-          "blockType": "icon-table",
-          "shows": "Ícono de asociado (padre)"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.estado.padre.png",
-        "override": "<tenant>/func.estado.padre.png"
-      }
-    },
-    {
-      "slot": "func.estado.hijo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.estado.hijo",
-          "blockType": "icon-table",
-          "shows": "Ícono de asociado (hijo)"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.estado.hijo.png",
-        "override": "<tenant>/func.estado.hijo.png"
-      }
-    },
-    {
-      "slot": "func.desp.agregar-ubicacion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.desp.agregar-ubicacion",
-          "blockType": "procedure",
-          "shows": "Agregue la ubicación"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.desp.agregar-ubicacion.png",
-        "override": "<tenant>/func.desp.agregar-ubicacion.png"
-      }
-    },
-    {
-      "slot": "func.desp.seleccionar-fuerzas",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.desp.seleccionar-fuerzas",
-          "blockType": "procedure",
-          "shows": "Seleccione las fuerzas"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.desp.seleccionar-fuerzas.png",
-        "override": "<tenant>/func.desp.seleccionar-fuerzas.png"
-      }
-    },
-    {
-      "slot": "func.desp.unidad-disponible",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.desp.unidad-disponible",
-          "blockType": "procedure",
-          "shows": "Elija una unidad disponible"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.desp.unidad-disponible.png",
-        "override": "<tenant>/func.desp.unidad-disponible.png"
-      }
-    },
-    {
       "slot": "func.desp.filtrar-tipo",
       "neededBy": [
         "mv",
@@ -703,28 +505,6 @@
       "deliverTo": {
         "shared": "_common/func.desp.filtrar-tipo.png",
         "override": "<tenant>/func.desp.filtrar-tipo.png"
-      }
-    },
-    {
-      "slot": "func.desp.despachar",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.desp.despachar",
-          "blockType": "procedure",
-          "shows": "Despache"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.desp.despachar.png",
-        "override": "<tenant>/func.desp.despachar.png"
       }
     },
     {
@@ -4064,7 +3844,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.filtros.tipo-llamada.fig.jpeg"
+        "_common/funcionalidades.filtros.tipo-llamada.fig.png"
       ]
     },
     {
@@ -4272,6 +4052,108 @@
       ]
     },
     {
+      "slot": "func.estado.naranja",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.naranja",
+          "blockType": "icon-table",
+          "shows": "Punto naranja"
+        }
+      ],
+      "files": [
+        "_common/func.estado.naranja.png"
+      ]
+    },
+    {
+      "slot": "func.estado.verde",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.verde",
+          "blockType": "icon-table",
+          "shows": "Punto verde"
+        }
+      ],
+      "files": [
+        "_common/func.estado.verde.png"
+      ]
+    },
+    {
+      "slot": "func.estado.azul",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.azul",
+          "blockType": "icon-table",
+          "shows": "Punto azul"
+        }
+      ],
+      "files": [
+        "_common/func.estado.azul.png"
+      ]
+    },
+    {
+      "slot": "func.estado.ojo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.ojo",
+          "blockType": "icon-table",
+          "shows": "Ícono de ojo"
+        }
+      ],
+      "files": [
+        "_common/func.estado.ojo.png"
+      ]
+    },
+    {
+      "slot": "func.estado.padre",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.padre",
+          "blockType": "icon-table",
+          "shows": "Ícono de asociado (padre)"
+        }
+      ],
+      "files": [
+        "_common/func.estado.padre.png"
+      ]
+    },
+    {
+      "slot": "func.estado.hijo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.hijo",
+          "blockType": "icon-table",
+          "shows": "Ícono de asociado (hijo)"
+        }
+      ],
+      "files": [
+        "_common/func.estado.hijo.png"
+      ]
+    },
+    {
       "slot": "funcionalidades.componentes.fig",
       "neededBy": [
         "mv",
@@ -4459,6 +4341,40 @@
       ]
     },
     {
+      "slot": "func.desp.seleccionar-fuerzas",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.seleccionar-fuerzas",
+          "blockType": "procedure",
+          "shows": "Seleccione las fuerzas"
+        }
+      ],
+      "files": [
+        "_common/func.desp.seleccionar-fuerzas.png"
+      ]
+    },
+    {
+      "slot": "func.desp.unidad-disponible",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.unidad-disponible",
+          "blockType": "procedure",
+          "shows": "Elija una unidad disponible"
+        }
+      ],
+      "files": [
+        "_common/func.desp.unidad-disponible.png"
+      ]
+    },
+    {
       "slot": "func.desp.info-agente",
       "neededBy": [
         "mv",
@@ -4490,6 +4406,23 @@
       ],
       "files": [
         "_common/func.desp.en-camino.png"
+      ]
+    },
+    {
+      "slot": "func.desp.despachar",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.despachar",
+          "blockType": "procedure",
+          "shows": "Despache"
+        }
+      ],
+      "files": [
+        "_common/func.desp.despachar.png"
       ]
     },
     {
