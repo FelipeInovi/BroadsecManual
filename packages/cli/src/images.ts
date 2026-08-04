@@ -1,7 +1,6 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join, posix, relative, sep } from "node:path";
 import { pathToFileURL } from "node:url";
-import { slotToPath } from "@broadsec-manual/blocks";
 import type { ResolvedImage, SlotState } from "@broadsec-manual/blocks";
 
 /**
@@ -121,14 +120,20 @@ export function buildImageIndex(figuresDir: string, tenant: string): ImageIndex 
       if (own) return hit(own, "tenant");
       const shared = common.get(slot);
       if (shared) return hit(shared, "common");
-      // The delivery path travels WITH the resolution so the draft build can
-      // print the exact name the capture team has to save. `_common` is the
-      // preferred destination: an override under `<tenant>/` is for the rare
-      // screen that genuinely differs, and the request document covers that.
+      // The delivery name travels WITH the resolution so the draft build can
+      // print exactly what the capture team has to save.
+      //
+      // FLAT, with the slot's own dots, not the folder tree. Both resolve to the
+      // same slot — the index turns folders into dots and a dotted filename
+      // already is dots — but only one of them can be handed to somebody outside
+      // this repository. A nested path asks them to rebuild a directory tree by
+      // hand for 200 files and get every level right; a flat name asks them to
+      // save files in one folder. The tree still works for anyone who has the
+      // repo and prefers to browse it.
       return {
         url: pathToFileURL(placeholder).href,
         state: "pending",
-        deliverTo: `${COMMON_SET}/${slotToPath(slot)}.png`,
+        deliverTo: `${COMMON_SET}/${slot}.png`,
       };
     },
 

@@ -51,12 +51,12 @@
     {
      "slot": "funcionamiento.acceso.fig",
      "caption": "Ícono de acceso al módulo Broadsec desde Apex.",
-     "guardarComo": "_common/funcionamiento/acceso/fig.png"
+     "guardarComo": "_common/funcionamiento.acceso.fig.png"
     },
     {
      "slot": "funcionamiento.inicio.fig",
      "caption": "Interfaz de inicio del módulo.",
-     "guardarComo": "_common/funcionamiento/inicio/fig.png"
+     "guardarComo": "_common/funcionamiento.inicio.fig.png"
     }
    ]
   },
@@ -114,7 +114,7 @@
     {
      "slot": "mapa.fig",
      "caption": "Vista general del mapa con sus controles de visualización.",
-     "guardarComo": "_common/mapa/fig.png"
+     "guardarComo": "_common/mapa.fig.png"
     },
     {
      "slot": "mapa.fig-capas",
@@ -134,7 +134,7 @@
     {
      "slot": "incidentes.fig",
      "caption": "Lista de casos, con la información de cada incidente reportado.",
-     "guardarComo": "_common/incidentes/fig.png"
+     "guardarComo": "_common/incidentes.fig.png"
     }
    ]
   },
@@ -412,317 +412,317 @@
     {
      "slot": "funcionalidades.mapa.fig",
      "caption": "Selector de capas del mapa.",
-     "guardarComo": "_common/funcionalidades/mapa/fig.png"
+     "guardarComo": "_common/funcionalidades.mapa.fig.png"
     },
     {
      "slot": "funcionalidades.mapa.fig-activo",
      "caption": "Selector de capas del mapa activo.",
-     "guardarComo": "_common/funcionalidades/mapa/fig-activo.png"
+     "guardarComo": "_common/funcionalidades.mapa.fig-activo.png"
     },
     {
      "slot": "funcionalidades.mapa.fig-visualizacion",
      "caption": "Visualización de capas del mapa.",
-     "guardarComo": "_common/funcionalidades/mapa/fig-visualizacion.png"
+     "guardarComo": "_common/funcionalidades.mapa.fig-visualizacion.png"
     },
     {
      "slot": "funcionalidades.mapa.fig-satelital",
      "caption": "Capa Satelital y capa de Tráfico.",
-     "guardarComo": "_common/funcionalidades/mapa/fig-satelital.png"
+     "guardarComo": "_common/funcionalidades.mapa.fig-satelital.png"
     },
     {
      "slot": "funcionalidades.incidentes.fig",
      "caption": "Acciones disponibles al seleccionar un incidente en el mapa.",
-     "guardarComo": "_common/funcionalidades/incidentes/fig.png"
+     "guardarComo": "_common/funcionalidades.incidentes.fig.png"
     },
     {
      "slot": "funcionalidades.capa-mobile.fig",
      "caption": "Capa Mobile: ubicación de agentes móviles.",
-     "guardarComo": "_common/funcionalidades/capa-mobile/fig.png"
+     "guardarComo": "_common/funcionalidades.capa-mobile.fig.png"
     },
     {
      "slot": "funcionalidades.capa-avl.fig",
      "caption": "Capa AVL: ubicación de fuerzas integradas.",
-     "guardarComo": "_common/funcionalidades/capa-avl/fig.png"
+     "guardarComo": "_common/funcionalidades.capa-avl.fig.png"
     },
     {
      "slot": "funcionalidades.capa-paneles.fig",
      "caption": "Capa de Paneles en el mapa.",
-     "guardarComo": "_common/funcionalidades/capa-paneles/fig.png"
+     "guardarComo": "_common/funcionalidades.capa-paneles.fig.png"
     },
     {
      "slot": "funcionalidades.capa-paneles.fig-complementaria",
      "caption": "Capa de Paneles, vista complementaria.",
-     "guardarComo": "_common/funcionalidades/capa-paneles/fig-complementaria.png"
+     "guardarComo": "_common/funcionalidades.capa-paneles.fig-complementaria.png"
     },
     {
      "slot": "funcionalidades.filtros.fig",
      "caption": "Panel de filtros de la lista de casos.",
-     "guardarComo": "_common/funcionalidades/filtros/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.fig.png"
     },
     {
      "slot": "func.filtro.rango",
      "caption": "Rango de tiempo",
-     "guardarComo": "_common/func/filtro/rango.png"
+     "guardarComo": "_common/func.filtro.rango.png"
     },
     {
      "slot": "func.filtro.restaurar",
      "caption": "Restaurar filtros",
-     "guardarComo": "_common/func/filtro/restaurar.png"
+     "guardarComo": "_common/func.filtro.restaurar.png"
     },
     {
      "slot": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
      "caption": "Interruptor Solo mis casos, apagado.",
-     "guardarComo": "_common/funcionalidades/filtros/solo-mis-casos/fig-apagado.png"
+     "guardarComo": "_common/funcionalidades.filtros.solo-mis-casos.fig-apagado.png"
     },
     {
      "slot": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
      "caption": "Interruptor Solo mis casos, encendido.",
-     "guardarComo": "_common/funcionalidades/filtros/solo-mis-casos/fig-encendido.png"
+     "guardarComo": "_common/funcionalidades.filtros.solo-mis-casos.fig-encendido.png"
     },
     {
      "slot": "funcionalidades.filtros.tipo-emergencia.fig",
      "caption": "Filtro por tipo de emergencia.",
-     "guardarComo": "_common/funcionalidades/filtros/tipo-emergencia/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.tipo-emergencia.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.tipo-emergencia.fig-lista",
      "caption": "Lista de tipos de emergencia.",
-     "guardarComo": "_common/funcionalidades/filtros/tipo-emergencia/fig-lista.png"
+     "guardarComo": "_common/funcionalidades.filtros.tipo-emergencia.fig-lista.png"
     },
     {
      "slot": "funcionalidades.filtros.origen.fig",
      "caption": "Filtro por origen del reporte.",
-     "guardarComo": "_common/funcionalidades/filtros/origen/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.origen.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.estado.fig",
      "caption": "Filtro por estado del incidente.",
-     "guardarComo": "_common/funcionalidades/filtros/estado/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.estado.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.tipo-llamada.fig",
      "caption": "Filtro por tipo de llamada.",
-     "guardarComo": "_common/funcionalidades/filtros/tipo-llamada/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.tipo-llamada.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.asociados.fig",
      "caption": "Filtro por casos asociados.",
-     "guardarComo": "_common/funcionalidades/filtros/asociados/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.asociados.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.enriquecidos.fig",
      "caption": "Filtro por datos enriquecidos.",
-     "guardarComo": "_common/funcionalidades/filtros/enriquecidos/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.enriquecidos.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.ubicacion.fig",
      "caption": "Filtro por ubicación.",
-     "guardarComo": "_common/funcionalidades/filtros/ubicacion/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.ubicacion.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.duracion.fig",
      "caption": "Filtro por duración de la llamada.",
-     "guardarComo": "_common/funcionalidades/filtros/duracion/fig.png"
+     "guardarComo": "_common/funcionalidades.filtros.duracion.fig.png"
     },
     {
      "slot": "funcionalidades.filtros.fig-aplicar",
      "caption": "Botones Aplicar y Cancelar de los filtros.",
-     "guardarComo": "_common/funcionalidades/filtros/fig-aplicar.png"
+     "guardarComo": "_common/funcionalidades.filtros.fig-aplicar.png"
     },
     {
      "slot": "funcionalidades.seccion-incidentes.fig",
      "caption": "Lista de casos con etiquetas de tipo de emergencia.",
-     "guardarComo": "_common/funcionalidades/seccion-incidentes/fig.png"
+     "guardarComo": "_common/funcionalidades.seccion-incidentes.fig.png"
     },
     {
      "slot": "funcionalidades.llamada-entrante.fig-vivo",
      "caption": "Incidente EN VIVO: grabación y monitoreo activo.",
-     "guardarComo": "_common/funcionalidades/llamada-entrante/fig-vivo.png"
+     "guardarComo": "_common/funcionalidades.llamada-entrante.fig-vivo.png"
     },
     {
      "slot": "funcionalidades.llamada-entrante.fig-estado",
      "caption": "Estado EN VIVO del incidente.",
-     "guardarComo": "_common/funcionalidades/llamada-entrante/fig-estado.png"
+     "guardarComo": "_common/funcionalidades.llamada-entrante.fig-estado.png"
     },
     {
      "slot": "funcionalidades.llamada-entrante.fig-final",
      "caption": "Incidente finalizado, listo para gestión.",
-     "guardarComo": "_common/funcionalidades/llamada-entrante/fig-final.png"
+     "guardarComo": "_common/funcionalidades.llamada-entrante.fig-final.png"
     },
     {
      "slot": "func.crear.boton",
      "caption": "Abra el formulario",
-     "guardarComo": "_common/func/crear/boton.png"
+     "guardarComo": "_common/func.crear.boton.png"
     },
     {
      "slot": "func.crear.formulario",
      "caption": "Diligencie el formulario",
-     "guardarComo": "_common/func/crear/formulario.png"
+     "guardarComo": "_common/func.crear.formulario.png"
     },
     {
      "slot": "funcionalidades.plataforma.fig-completado",
      "caption": "Formulario Crear Incidente, completado.",
-     "guardarComo": "_common/funcionalidades/plataforma/fig-completado.png"
+     "guardarComo": "_common/funcionalidades.plataforma.fig-completado.png"
     },
     {
      "slot": "funcionalidades.general.fig",
      "caption": "Tarjeta de incidente con label y estado de color.",
-     "guardarComo": "_common/funcionalidades/general/fig.png"
+     "guardarComo": "_common/funcionalidades.general.fig.png"
     },
     {
      "slot": "funcionalidades.componentes.fig",
      "caption": "Vista detallada de un incidente, con sus cuatro pestañas.",
-     "guardarComo": "_common/funcionalidades/componentes/fig.png"
+     "guardarComo": "_common/funcionalidades.componentes.fig.png"
     },
     {
      "slot": "func.pest1.duracion",
      "caption": "Duración",
-     "guardarComo": "_common/func/pest1/duracion.png"
+     "guardarComo": "_common/func.pest1.duracion.png"
     },
     {
      "slot": "func.pest1.transcripcion",
      "caption": "Transcripción",
-     "guardarComo": "_common/func/pest1/transcripcion.png"
+     "guardarComo": "_common/func.pest1.transcripcion.png"
     },
     {
      "slot": "func.pest1.audio",
      "caption": "Audio",
-     "guardarComo": "_common/func/pest1/audio.png"
+     "guardarComo": "_common/func.pest1.audio.png"
     },
     {
      "slot": "func.pest1.historial",
      "caption": "Historial de ubicaciones",
-     "guardarComo": "_common/func/pest1/historial.png"
+     "guardarComo": "_common/func.pest1.historial.png"
     },
     {
      "slot": "func.pest1.asociados",
      "caption": "Casos asociados",
-     "guardarComo": "_common/func/pest1/asociados.png"
+     "guardarComo": "_common/func.pest1.asociados.png"
     },
     {
      "slot": "funcionalidades.pestana-callai.fig",
      "caption": "Resumen de Call AI del incidente.",
-     "guardarComo": "_common/funcionalidades/pestana-callai/fig.png"
+     "guardarComo": "_common/funcionalidades.pestana-callai.fig.png"
     },
     {
      "slot": "funcionalidades.pestana-callai.fig-detalle",
      "caption": "Resumen de Call AI, detalle.",
-     "guardarComo": "_common/funcionalidades/pestana-callai/fig-detalle.png"
+     "guardarComo": "_common/funcionalidades.pestana-callai.fig-detalle.png"
     },
     {
      "slot": "funcionalidades.pestana-despacho.fig",
      "caption": "Panel de despacho del incidente.",
-     "guardarComo": "_common/funcionalidades/pestana-despacho/fig.png"
+     "guardarComo": "_common/funcionalidades.pestana-despacho.fig.png"
     },
     {
      "slot": "func.desp.ubicacion-existente",
      "caption": "Verifique la ubicación",
-     "guardarComo": "_common/func/desp/ubicacion-existente.png"
+     "guardarComo": "_common/func.desp.ubicacion-existente.png"
     },
     {
      "slot": "func.desp.buscar-ubicacion",
      "caption": "Busque la ubicación",
-     "guardarComo": "_common/func/desp/buscar-ubicacion.png"
+     "guardarComo": "_common/func.desp.buscar-ubicacion.png"
     },
     {
      "slot": "func.desp.agregar-ubicacion",
      "caption": "Agregue la ubicación",
-     "guardarComo": "_common/func/desp/agregar-ubicacion.png"
+     "guardarComo": "_common/func.desp.agregar-ubicacion.png"
     },
     {
      "slot": "func.desp.seleccionar-fuerzas",
      "caption": "Seleccione las fuerzas",
-     "guardarComo": "_common/func/desp/seleccionar-fuerzas.png"
+     "guardarComo": "_common/func.desp.seleccionar-fuerzas.png"
     },
     {
      "slot": "func.desp.unidad-disponible",
      "caption": "Elija una unidad disponible",
-     "guardarComo": "_common/func/desp/unidad-disponible.png"
+     "guardarComo": "_common/func.desp.unidad-disponible.png"
     },
     {
      "slot": "func.desp.info-agente",
      "caption": "Revise la información del agente",
-     "guardarComo": "_common/func/desp/info-agente.png"
+     "guardarComo": "_common/func.desp.info-agente.png"
     },
     {
      "slot": "func.desp.filtrar-tipo",
      "caption": "Filtre por tipo de agente",
-     "guardarComo": "_common/func/desp/filtrar-tipo.png"
+     "guardarComo": "_common/func.desp.filtrar-tipo.png"
     },
     {
      "slot": "func.desp.en-camino",
      "caption": "Indique el estado del despacho",
-     "guardarComo": "_common/func/desp/en-camino.png"
+     "guardarComo": "_common/func.desp.en-camino.png"
     },
     {
      "slot": "func.desp.despachar",
      "caption": "Despache",
-     "guardarComo": "_common/func/desp/despachar.png"
+     "guardarComo": "_common/func.desp.despachar.png"
     },
     {
      "slot": "func.desp.chat",
      "caption": "Converse con los agentes",
-     "guardarComo": "_common/func/desp/chat.png"
+     "guardarComo": "_common/func.desp.chat.png"
     },
     {
      "slot": "func.desp.notas",
      "caption": "Agregue notas adicionales",
-     "guardarComo": "_common/func/desp/notas.png"
+     "guardarComo": "_common/func.desp.notas.png"
     },
     {
      "slot": "func.desp.en-sitio",
      "caption": "Ponga al agente En Sitio",
-     "guardarComo": "_common/func/desp/en-sitio.png"
+     "guardarComo": "_common/func.desp.en-sitio.png"
     },
     {
      "slot": "func.desp.prescindir",
      "caption": "Prescinda de un agente",
-     "guardarComo": "_common/func/desp/prescindir.png"
+     "guardarComo": "_common/func.desp.prescindir.png"
     },
     {
      "slot": "func.desp.finalizar",
      "caption": "Finalice el caso",
-     "guardarComo": "_common/func/desp/finalizar.png"
+     "guardarComo": "_common/func.desp.finalizar.png"
     },
     {
      "slot": "funcionalidades.reporte-via.fig",
      "caption": "Formulario del reporte: Detalles en Vía.",
-     "guardarComo": "_common/funcionalidades/reporte-via/fig.png"
+     "guardarComo": "_common/funcionalidades.reporte-via.fig.png"
     },
     {
      "slot": "funcionalidades.reporte-lesionados.fig",
      "caption": "Formulario del reporte: Detalles de Lesionados.",
-     "guardarComo": "_common/funcionalidades/reporte-lesionados/fig.png"
+     "guardarComo": "_common/funcionalidades.reporte-lesionados.fig.png"
     },
     {
      "slot": "funcionalidades.reporte-comentarios.fig",
      "caption": "Formulario del reporte: Comentarios Generales.",
-     "guardarComo": "_common/funcionalidades/reporte-comentarios/fig.png"
+     "guardarComo": "_common/funcionalidades.reporte-comentarios.fig.png"
     },
     {
      "slot": "funcionalidades.reporte-actualizacion.fig-luz",
      "caption": "Luz roja titilante en el ítem de Reporte.",
-     "guardarComo": "_common/funcionalidades/reporte-actualizacion/fig-luz.png"
+     "guardarComo": "_common/funcionalidades.reporte-actualizacion.fig-luz.png"
     },
     {
      "slot": "func.act.flecha",
      "caption": "Despliegue el ítem de Reporte",
-     "guardarComo": "_common/func/act/flecha.png"
+     "guardarComo": "_common/func.act.flecha.png"
     },
     {
      "slot": "func.act.placa",
      "caption": "Despliegue la placa del agente",
-     "guardarComo": "_common/func/act/placa.png"
+     "guardarComo": "_common/func.act.placa.png"
     },
     {
      "slot": "func.act.gestionar",
      "caption": "Entre a gestionar la actualización",
-     "guardarComo": "_common/func/act/gestionar.png"
+     "guardarComo": "_common/func.act.gestionar.png"
     },
     {
      "slot": "funcionalidades.reporte-actualizacion.fig-modal",
      "caption": "Modal Información recibida del agente, para aceptar o rechazar cambios.",
-     "guardarComo": "_common/funcionalidades/reporte-actualizacion/fig-modal.png"
+     "guardarComo": "_common/funcionalidades.reporte-actualizacion.fig-modal.png"
     }
    ]
   },
@@ -910,172 +910,172 @@
     {
      "slot": "dashboard.fig",
      "caption": "Vista general del Security Dashboard.",
-     "guardarComo": "_common/dashboard/fig.png"
+     "guardarComo": "_common/dashboard.fig.png"
     },
     {
      "slot": "dashboard.area.filtros",
      "caption": "Filtros",
-     "guardarComo": "_common/dashboard/area/filtros.png"
+     "guardarComo": "_common/dashboard.area.filtros.png"
     },
     {
      "slot": "dashboard.area.ventanas",
      "caption": "Ventanas de Datos",
-     "guardarComo": "_common/dashboard/area/ventanas.png"
+     "guardarComo": "_common/dashboard.area.ventanas.png"
     },
     {
      "slot": "dashboard.area.mapa",
      "caption": "Mapa de Calor",
-     "guardarComo": "_common/dashboard/area/mapa.png"
+     "guardarComo": "_common/dashboard.area.mapa.png"
     },
     {
      "slot": "dashboard.filtros.rango.fig",
      "caption": "Filtro de rango de tiempo del dashboard.",
-     "guardarComo": "_common/dashboard/filtros/rango/fig.png"
+     "guardarComo": "_common/dashboard.filtros.rango.fig.png"
     },
     {
      "slot": "dashboard.filtros.ubicacion.fig-depto",
      "caption": "Filtro de ubicación por Departamento y Ciudad.",
-     "guardarComo": "_common/dashboard/filtros/ubicacion/fig-depto.png"
+     "guardarComo": "_common/dashboard.filtros.ubicacion.fig-depto.png"
     },
     {
      "slot": "dashboard.filtros.ubicacion.fig-zona",
      "caption": "Filtro de ubicación por Zona, Comuna y Barrio.",
-     "guardarComo": "_common/dashboard/filtros/ubicacion/fig-zona.png"
+     "guardarComo": "_common/dashboard.filtros.ubicacion.fig-zona.png"
     },
     {
      "slot": "dashboard.variables.emergencia.fig",
      "caption": "Filtro por tipo de emergencia.",
-     "guardarComo": "_common/dashboard/variables/emergencia/fig.png"
+     "guardarComo": "_common/dashboard.variables.emergencia.fig.png"
     },
     {
      "slot": "dashboard.variables.fuerzas.fig",
      "caption": "Filtro por fuerza de respuesta.",
-     "guardarComo": "_common/dashboard/variables/fuerzas/fig.png"
+     "guardarComo": "_common/dashboard.variables.fuerzas.fig.png"
     },
     {
      "slot": "dashboard.variables.finalizacion.fig",
      "caption": "Filtro por tipo de finalización.",
-     "guardarComo": "_common/dashboard/variables/finalizacion/fig.png"
+     "guardarComo": "_common/dashboard.variables.finalizacion.fig.png"
     },
     {
      "slot": "dashboard.variables.movilidad.fig",
      "caption": "Filtro por tipo de movilidad.",
-     "guardarComo": "_common/dashboard/variables/movilidad/fig.png"
+     "guardarComo": "_common/dashboard.variables.movilidad.fig.png"
     },
     {
      "slot": "dashboard.filtros.tiempos.fig",
      "caption": "Filtro por tiempos de gestión.",
-     "guardarComo": "_common/dashboard/filtros/tiempos/fig.png"
+     "guardarComo": "_common/dashboard.filtros.tiempos.fig.png"
     },
     {
      "slot": "dashboard.ventanas.fig",
      "caption": "Ventanas de datos del dashboard.",
-     "guardarComo": "_common/dashboard/ventanas/fig.png"
+     "guardarComo": "_common/dashboard.ventanas.fig.png"
     },
     {
      "slot": "dashboard.ventanas.quitar.fig",
      "caption": "Cerrar una ventana o widget del dashboard.",
-     "guardarComo": "_common/dashboard/ventanas/quitar/fig.png"
+     "guardarComo": "_common/dashboard.ventanas.quitar.fig.png"
     },
     {
      "slot": "dashboard.ventanas.fig-widgets",
      "caption": "Menú de Widgets para restaurar ventanas.",
-     "guardarComo": "_common/dashboard/ventanas/fig-widgets.png"
+     "guardarComo": "_common/dashboard.ventanas.fig-widgets.png"
     },
     {
      "slot": "dashboard.ventanas.fig-restaurado",
      "caption": "Widget restaurado en el dashboard.",
-     "guardarComo": "_common/dashboard/ventanas/fig-restaurado.png"
+     "guardarComo": "_common/dashboard.ventanas.fig-restaurado.png"
     },
     {
      "slot": "dashboard.ventanas.exportar.fig",
      "caption": "Botón de exportación del dashboard.",
-     "guardarComo": "_common/dashboard/ventanas/exportar/fig.png"
+     "guardarComo": "_common/dashboard.ventanas.exportar.fig.png"
     },
     {
      "slot": "dashboard.widget.total",
      "caption": "Total de Emergencias",
-     "guardarComo": "_common/dashboard/widget/total.png"
+     "guardarComo": "_common/dashboard.widget.total.png"
     },
     {
      "slot": "dashboard.widget.promedio-respuesta",
      "caption": "Tiempo Promedio de Respuesta",
-     "guardarComo": "_common/dashboard/widget/promedio-respuesta.png"
+     "guardarComo": "_common/dashboard.widget.promedio-respuesta.png"
     },
     {
      "slot": "dashboard.widget.sin-despacho",
      "caption": "Casos sin despacho",
-     "guardarComo": "_common/dashboard/widget/sin-despacho.png"
+     "guardarComo": "_common/dashboard.widget.sin-despacho.png"
     },
     {
      "slot": "dashboard.widget.promedio-llegada",
      "caption": "Tiempo Promedio de Llegada",
-     "guardarComo": "_common/dashboard/widget/promedio-llegada.png"
+     "guardarComo": "_common/dashboard.widget.promedio-llegada.png"
     },
     {
      "slot": "dashboard.widget.tiempo-respuesta",
      "caption": "Tiempo de respuesta",
-     "guardarComo": "_common/dashboard/widget/tiempo-respuesta.png"
+     "guardarComo": "_common/dashboard.widget.tiempo-respuesta.png"
     },
     {
      "slot": "dashboard.widget.cantidad",
      "caption": "Cantidad de Emergencias",
-     "guardarComo": "_common/dashboard/widget/cantidad.png"
+     "guardarComo": "_common/dashboard.widget.cantidad.png"
     },
     {
      "slot": "dashboard.widget.categoria",
      "caption": "Emergencia por categoría",
-     "guardarComo": "_common/dashboard/widget/categoria.png"
+     "guardarComo": "_common/dashboard.widget.categoria.png"
     },
     {
      "slot": "dashboard.widget.frecuentes",
      "caption": "Tipos de Casos Frecuentes",
-     "guardarComo": "_common/dashboard/widget/frecuentes.png"
+     "guardarComo": "_common/dashboard.widget.frecuentes.png"
     },
     {
      "slot": "dashboard.widgets.fig-modificar",
      "caption": "Filtro de Variables de Gestión para los tipos de casos frecuentes.",
-     "guardarComo": "_common/dashboard/widgets/fig-modificar.png"
+     "guardarComo": "_common/dashboard.widgets.fig-modificar.png"
     },
     {
      "slot": "dashboard.mapa-calor.fig",
      "caption": "Mapa de calor de casos en el dashboard.",
-     "guardarComo": "_common/dashboard/mapa-calor/fig.png"
+     "guardarComo": "_common/dashboard.mapa-calor.fig.png"
     },
     {
      "slot": "dashboard.mapa-calor.fig-opacidad",
      "caption": "Control de opacidad del mapa de casos.",
-     "guardarComo": "_common/dashboard/mapa-calor/fig-opacidad.png"
+     "guardarComo": "_common/dashboard.mapa-calor.fig-opacidad.png"
     },
     {
      "slot": "dashboard.mapa-calor.fig-maximizado",
      "caption": "Mapa de casos maximizado.",
-     "guardarComo": "_common/dashboard/mapa-calor/fig-maximizado.png"
+     "guardarComo": "_common/dashboard.mapa-calor.fig-maximizado.png"
     },
     {
      "slot": "dashboard.mapa-calor.fig-modo",
      "caption": "Alternar entre Mapa de calor y Marcadores.",
-     "guardarComo": "_common/dashboard/mapa-calor/fig-modo.png"
+     "guardarComo": "_common/dashboard.mapa-calor.fig-modo.png"
     },
     {
      "slot": "dashboard.mapa-calor.fig-marcadores",
      "caption": "Vista de casos individuales, con marcadores, en el mapa.",
-     "guardarComo": "_common/dashboard/mapa-calor/fig-marcadores.png"
+     "guardarComo": "_common/dashboard.mapa-calor.fig-marcadores.png"
     },
     {
      "slot": "dashboard.lista.fig-boton",
      "caption": "Botón Los Casos para el modo lista.",
-     "guardarComo": "_common/dashboard/lista/fig-boton.png"
+     "guardarComo": "_common/dashboard.lista.fig-boton.png"
     },
     {
      "slot": "dashboard.lista.fig-lista",
      "caption": "Visualización de casos en modo lista.",
-     "guardarComo": "_common/dashboard/lista/fig-lista.png"
+     "guardarComo": "_common/dashboard.lista.fig-lista.png"
     },
     {
      "slot": "dashboard.lista.fig-detalle",
      "caption": "Detalle de un caso seleccionado en la lista.",
-     "guardarComo": "_common/dashboard/lista/fig-detalle.png"
+     "guardarComo": "_common/dashboard.lista.fig-detalle.png"
     }
    ]
   },
@@ -1243,152 +1243,152 @@
     {
      "slot": "fuerzas.fig",
      "caption": "Interfaz principal: zonas Mapa, Barra Superior y Agentes.",
-     "guardarComo": "_common/fuerzas/fig.png"
+     "guardarComo": "_common/fuerzas.fig.png"
     },
     {
      "slot": "fuerzas.barra.fig",
      "caption": "Barra superior del módulo.",
-     "guardarComo": "_common/fuerzas/barra/fig.png"
+     "guardarComo": "_common/fuerzas.barra.fig.png"
     },
     {
      "slot": "fuerzas.agentes.fig",
      "caption": "Módulo de Agentes.",
-     "guardarComo": "_common/fuerzas/agentes/fig.png"
+     "guardarComo": "_common/fuerzas.agentes.fig.png"
     },
     {
      "slot": "fuerzas.agentes.filtro.fig",
      "caption": "Filtro de estados y turno de los agentes.",
-     "guardarComo": "_common/fuerzas/agentes/filtro/fig.png"
+     "guardarComo": "_common/fuerzas.agentes.filtro.fig.png"
     },
     {
      "slot": "fuerzas.perfil.fig-acceso",
      "caption": "Acceso al perfil desde la lista de agentes.",
-     "guardarComo": "_common/fuerzas/perfil/fig-acceso.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-acceso.png"
     },
     {
      "slot": "fuerzas.perfil.fig-tarjeta",
      "caption": "Tarjeta rápida del agente.",
-     "guardarComo": "_common/fuerzas/perfil/fig-tarjeta.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-tarjeta.png"
     },
     {
      "slot": "fuerzas.perfil.fig-perfil",
      "caption": "Perfil del agente.",
-     "guardarComo": "_common/fuerzas/perfil/fig-perfil.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-perfil.png"
     },
     {
      "slot": "fuerzas.perfil.fig-ubicacion",
      "caption": "Ubicación del agente en el mapa.",
-     "guardarComo": "_common/fuerzas/perfil/fig-ubicacion.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-ubicacion.png"
     },
     {
      "slot": "fuerzas.perfil.fig-turnos",
      "caption": "Pestaña Turnos del agente.",
-     "guardarComo": "_common/fuerzas/perfil/fig-turnos.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-turnos.png"
     },
     {
      "slot": "fuerzas.perfil.fig-asignar",
      "caption": "Pestaña Asignar del perfil del agente.",
-     "guardarComo": "_common/fuerzas/perfil/fig-asignar.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-asignar.png"
     },
     {
      "slot": "fuerzas.perfil.fig-confirmacion",
      "caption": "Confirmación de despacho del caso al agente.",
-     "guardarComo": "_common/fuerzas/perfil/fig-confirmacion.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-confirmacion.png"
     },
     {
      "slot": "fuerzas.perfil.fig-tarea",
      "caption": "Creación de una tarea desde el perfil del agente.",
-     "guardarComo": "_common/fuerzas/perfil/fig-tarea.png"
+     "guardarComo": "_common/fuerzas.perfil.fig-tarea.png"
     },
     {
      "slot": "fuerzas.operaciones.fig",
      "caption": "Módulo de Operaciones: historial de turnos.",
-     "guardarComo": "_common/fuerzas/operaciones/fig.png"
+     "guardarComo": "_common/fuerzas.operaciones.fig.png"
     },
     {
      "slot": "fuerzas.operaciones.filtro.fig",
      "caption": "Filtro de rango de tiempo en Operaciones.",
-     "guardarComo": "_common/fuerzas/operaciones/filtro/fig.png"
+     "guardarComo": "_common/fuerzas.operaciones.filtro.fig.png"
     },
     {
      "slot": "fuerzas.operaciones.filtro.fig-rango",
      "caption": "Selección de rango de fechas en el filtro.",
-     "guardarComo": "_common/fuerzas/operaciones/filtro/fig-rango.png"
+     "guardarComo": "_common/fuerzas.operaciones.filtro.fig-rango.png"
     },
     {
      "slot": "fuerzas.operaciones.resumen.fig",
      "caption": "Resumen de actividad del turno seleccionado.",
-     "guardarComo": "_common/fuerzas/operaciones/resumen/fig.png"
+     "guardarComo": "_common/fuerzas.operaciones.resumen.fig.png"
     },
     {
      "slot": "fuerzas.operaciones.resumen.fig-recorrido",
      "caption": "Recorrido del turno en el mapa.",
-     "guardarComo": "_common/fuerzas/operaciones/resumen/fig-recorrido.png"
+     "guardarComo": "_common/fuerzas.operaciones.resumen.fig-recorrido.png"
     },
     {
      "slot": "fuerzas.poligono.fig-incidente",
      "caption": "Polígono del incidente en el mapa.",
-     "guardarComo": "_common/fuerzas/poligono/fig-incidente.png"
+     "guardarComo": "_common/fuerzas.poligono.fig-incidente.png"
     },
     {
      "slot": "fuerzas.poligono.fig-tarea",
      "caption": "Polígono de la tarea en el mapa.",
-     "guardarComo": "_common/fuerzas/poligono/fig-tarea.png"
+     "guardarComo": "_common/fuerzas.poligono.fig-tarea.png"
     },
     {
      "slot": "fuerzas.callai.fig-hist-incidentes",
      "caption": "Acceso a Call AI desde el historial de incidentes.",
-     "guardarComo": "_common/fuerzas/callai/fig-hist-incidentes.png"
+     "guardarComo": "_common/fuerzas.callai.fig-hist-incidentes.png"
     },
     {
      "slot": "fuerzas.callai.fig-mapa-incidente",
      "caption": "Acceso a Call AI del incidente desde la ubicación en el mapa.",
-     "guardarComo": "_common/fuerzas/callai/fig-mapa-incidente.png"
+     "guardarComo": "_common/fuerzas.callai.fig-mapa-incidente.png"
     },
     {
      "slot": "fuerzas.callai.fig-resumen-incidente",
      "caption": "Resumen de Call AI del incidente.",
-     "guardarComo": "_common/fuerzas/callai/fig-resumen-incidente.png"
+     "guardarComo": "_common/fuerzas.callai.fig-resumen-incidente.png"
     },
     {
      "slot": "fuerzas.callai.fig-hist-tareas",
      "caption": "Acceso a Call AI desde el historial de tareas.",
-     "guardarComo": "_common/fuerzas/callai/fig-hist-tareas.png"
+     "guardarComo": "_common/fuerzas.callai.fig-hist-tareas.png"
     },
     {
      "slot": "fuerzas.callai.fig-mapa-tarea",
      "caption": "Acceso a Call AI de la tarea desde la ubicación en el mapa.",
-     "guardarComo": "_common/fuerzas/callai/fig-mapa-tarea.png"
+     "guardarComo": "_common/fuerzas.callai.fig-mapa-tarea.png"
     },
     {
      "slot": "fuerzas.callai.fig-resumen-tarea",
      "caption": "Resumen de Call AI de la tarea.",
-     "guardarComo": "_common/fuerzas/callai/fig-resumen-tarea.png"
+     "guardarComo": "_common/fuerzas.callai.fig-resumen-tarea.png"
     },
     {
      "slot": "fuerzas.anadir.fig",
      "caption": "Opciones del módulo Añadir: Nuevo Incidente y Nueva Tarea.",
-     "guardarComo": "_common/fuerzas/anadir/fig.png"
+     "guardarComo": "_common/fuerzas.anadir.fig.png"
     },
     {
      "slot": "fuerzas.anadir.incidente.fig",
      "caption": "Formulario para crear un nuevo incidente.",
-     "guardarComo": "_common/fuerzas/anadir/incidente/fig.png"
+     "guardarComo": "_common/fuerzas.anadir.incidente.fig.png"
     },
     {
      "slot": "fuerzas.anadir.incidente.fig-confirmacion",
      "caption": "Confirmación de incidente creado exitosamente.",
-     "guardarComo": "_common/fuerzas/anadir/incidente/fig-confirmacion.png"
+     "guardarComo": "_common/fuerzas.anadir.incidente.fig-confirmacion.png"
     },
     {
      "slot": "fuerzas.anadir.tarea.fig",
      "caption": "Formulario para crear una nueva tarea.",
-     "guardarComo": "_common/fuerzas/anadir/tarea/fig.png"
+     "guardarComo": "_common/fuerzas.anadir.tarea.fig.png"
     },
     {
      "slot": "fuerzas.home.fig",
      "caption": "Ícono para retornar al Home de Broadsec.",
-     "guardarComo": "_common/fuerzas/home/fig.png"
+     "guardarComo": "_common/fuerzas.home.fig.png"
     }
    ]
   },

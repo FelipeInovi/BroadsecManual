@@ -4,7 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
-import { catalog, slotToPath } from "@broadsec-manual/blocks";
+import { catalog } from "@broadsec-manual/blocks";
 import type { BuildTarget, ManualDocument, ManualNode } from "@broadsec-manual/blocks";
 import {
   assemble,
@@ -161,7 +161,13 @@ export function imageRequests(
 ): Record<string, unknown> {
   const bySlot = new Map<
     string,
-    { neededBy: string[]; pendingFor: string[]; files: Set<string>; uses: SlotUsePlace[] }
+    {
+      neededBy: string[];
+      pendingFor: string[];
+      files: Set<string>;
+      uses: SlotUsePlace[];
+      deliverTo?: string;
+    }
   >();
   const orphans = new Set<string>();
 
@@ -187,7 +193,12 @@ export function imageRequests(
       // missing for another the moment anybody adds a tenant-specific image.
       // Collapsing that to a single state would report the slot as done while a
       // deployment still renders the placeholder.
-      if (entry.state === "pending") acc.pendingFor.push(tenant);
+      if (entry.state === "pending") {
+        acc.pendingFor.push(tenant);
+        if (acc.deliverTo === undefined && entry.deliverTo !== undefined) {
+          acc.deliverTo = entry.deliverTo;
+        }
+      }
       else if (entry.file) acc.files.add(entry.file);
       for (const use of entry.uses) {
         if (!acc.uses.some((u) => u.nodeId === use.nodeId)) acc.uses.push(use);
@@ -205,8 +216,9 @@ export function imageRequests(
       ? {
           pendingFor: acc.pendingFor,
           deliverTo: {
-            shared: `${COMMON_SET}/${slotToPath(slot)}.png`,
-            override: `<tenant>/${slotToPath(slot)}.png`,
+            // From the resolver, never rebuilt here — see ManifestSlot.deliverTo.
+            shared: acc.deliverTo ?? `${COMMON_SET}/${slot}.png`,
+            override: `<tenant>/${slot}.png`,
           },
         }
       : {}),
@@ -294,6 +306,15 @@ interface ManifestSlot {
   readonly slot: string;
   readonly state: ManifestImage["state"];
   readonly file?: string;
+  /**
+   * Where a pending image must be delivered, exactly as the resolver produced it.
+   *
+   * Carried through rather than recomputed here. It was recomputed once, and the
+   * two copies immediately disagreed: the draft printed a flat name while this
+   * document still asked for a folder tree, so the same image had two answers
+   * depending on which artefact somebody happened to be holding.
+   */
+  readonly deliverTo?: string;
   readonly uses: SlotUsePlace[];
 }
 
@@ -325,6 +346,7 @@ function manifestSlots(
       slot: use.slot,
       state: resolved.state,
       ...(resolved.file ? { file: resolved.file } : {}),
+      ...(resolved.deliverTo ? { deliverTo: resolved.deliverTo } : {}),
       uses: [place],
     });
   }
