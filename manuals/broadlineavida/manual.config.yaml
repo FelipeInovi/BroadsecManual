@@ -47,13 +47,27 @@ axes:
         name: Demostración
 
 # One PDF per target. Client-facing: only that tenant's content, no badges.
+#
+# ONLY `mv` and `med` are built: they are the manuals under contract. The other
+# four deployments are deferred, not dropped.
+#
+# That is why `axes.tenant.values` above still lists all six while only two are
+# built, and the mismatch is deliberate — do not "tidy" it by deleting the
+# unused values:
+#
+#  - The value list mirrors the product's own deployment registry
+#    (`src/render/config/<id>.config.ts`) and is re-derived by `extract`.
+#    Deleting entries would put this file in disagreement with the source.
+#  - Content is tagged against those ids. `tenant: [lv, ant, mv, med, demo]`
+#    means "every deployment except amva" — a fact taken from the product's
+#    feature gating. Narrowing those tags to the two built targets would destroy
+#    it, and it would have to be re-derived from source when the others return.
+#
+# Adding a deployment back is one line here. Recovering deleted tenant tagging
+# is a re-extraction.
 targets:
-  - { tenant: lv }
-  - { tenant: amva }
-  - { tenant: ant }
   - { tenant: mv }
   - { tenant: med }
-  - { tenant: demo }
 
 output:
   dir: output

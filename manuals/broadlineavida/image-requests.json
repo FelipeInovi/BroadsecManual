@@ -13,14 +13,10 @@
     "preferShared": "deliver to _common/ unless the screen genuinely differs by deployment — six copies of one icon are six things to update"
   },
   "deploymentsCovered": [
-    "lv",
-    "amva",
-    "ant",
     "mv",
-    "med",
-    "demo"
+    "med"
   ],
-  "deploymentsConfigured": 6,
+  "deploymentsConfigured": 2,
   "counts": {
     "total": 66,
     "delivered": 13,
@@ -30,12 +26,8 @@
     {
       "slot": "mapa.ctrl.visualizacion",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -45,12 +37,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/ctrl/visualizacion.png",
@@ -60,12 +48,8 @@
     {
       "slot": "mapa.ctrl.agrupar",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -75,12 +59,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/ctrl/agrupar.png",
@@ -90,12 +70,8 @@
     {
       "slot": "mapa.ctrl.street-view",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -105,12 +81,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/ctrl/street-view.png",
@@ -120,12 +92,8 @@
     {
       "slot": "mapa.ctrl.salir-street-view",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -135,12 +103,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/ctrl/salir-street-view.png",
@@ -150,12 +114,8 @@
     {
       "slot": "mapa.ctrl.navegacion-3d",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -165,12 +125,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/ctrl/navegacion-3d.png",
@@ -180,12 +136,8 @@
     {
       "slot": "mapa.ctrl.controles",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -195,12 +147,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/ctrl/controles.png",
@@ -210,12 +158,8 @@
     {
       "slot": "mapa.capa.trafico",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -225,12 +169,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/capa/trafico.png",
@@ -240,12 +180,8 @@
     {
       "slot": "mapa.capa.incidentes",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -255,12 +191,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/capa/incidentes.png",
@@ -270,11 +202,8 @@
     {
       "slot": "mapa.capa.avl",
       "neededBy": [
-        "lv",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -284,11 +213,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/capa/avl.png",
@@ -298,11 +224,8 @@
     {
       "slot": "mapa.capa.mobile",
       "neededBy": [
-        "lv",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -312,11 +235,8 @@
         }
       ],
       "pendingFor": [
-        "lv",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "deliverTo": {
         "shared": "_common/mapa/capa/mobile.png",
@@ -346,8 +266,7 @@
     {
       "slot": "mapa.capa.paneles",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -357,8 +276,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/mapa/capa/paneles.png",
@@ -368,8 +286,7 @@
     {
       "slot": "bot.seccion.mapa",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -379,8 +296,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/seccion/mapa.png",
@@ -390,8 +306,7 @@
     {
       "slot": "bot.seccion.prt",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -401,8 +316,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/seccion/prt.png",
@@ -412,8 +326,7 @@
     {
       "slot": "bot.seccion.recursos",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -423,8 +336,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/seccion/recursos.png",
@@ -434,8 +346,7 @@
     {
       "slot": "bot.seccion.cctv",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -445,8 +356,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/seccion/cctv.png",
@@ -456,8 +366,7 @@
     {
       "slot": "bot.seccion.pmv",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -467,8 +376,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/seccion/pmv.png",
@@ -478,8 +386,7 @@
     {
       "slot": "bot.seccion.alarmas",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -489,8 +396,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/seccion/alarmas.png",
@@ -500,8 +406,7 @@
     {
       "slot": "bot.prt.paso.buscar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -511,8 +416,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/prt/paso/buscar.png",
@@ -522,8 +426,7 @@
     {
       "slot": "bot.prt.paso.filtrar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -533,8 +436,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/prt/paso/filtrar.png",
@@ -544,8 +446,7 @@
     {
       "slot": "bot.prt.paso.limpiar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -555,8 +456,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/prt/paso/limpiar.png",
@@ -566,8 +466,7 @@
     {
       "slot": "bot.recursos.paso.ubicar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -577,8 +476,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/recursos/paso/ubicar.png",
@@ -588,8 +486,7 @@
     {
       "slot": "bot.recursos.paso.asignar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -599,8 +496,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/recursos/paso/asignar.png",
@@ -610,8 +506,7 @@
     {
       "slot": "bot.recursos.paso.caso",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -621,8 +516,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/recursos/paso/caso.png",
@@ -632,8 +526,7 @@
     {
       "slot": "bot.recursos.paso.resultado",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -643,8 +536,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/recursos/paso/resultado.png",
@@ -654,8 +546,7 @@
     {
       "slot": "bot.recursos.paso.pj-accionar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -665,8 +556,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/recursos/paso/pj-accionar.png",
@@ -676,8 +566,7 @@
     {
       "slot": "bot.recursos.paso.pj-confirmar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -687,8 +576,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/recursos/paso/pj-confirmar.png",
@@ -698,8 +586,7 @@
     {
       "slot": "bot.cctv.fn.lista",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -709,8 +596,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/cctv/fn/lista.png",
@@ -720,8 +606,7 @@
     {
       "slot": "bot.cctv.fn.grilla",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -731,8 +616,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/cctv/fn/grilla.png",
@@ -742,8 +626,7 @@
     {
       "slot": "bot.cctv.fn.estado",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -753,8 +636,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/cctv/fn/estado.png",
@@ -764,8 +646,7 @@
     {
       "slot": "bot.cctv.fn.ptz",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -775,8 +656,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/cctv/fn/ptz.png",
@@ -786,8 +666,7 @@
     {
       "slot": "bot.cctv.paso.encuadrar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -797,8 +676,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/cctv/paso/encuadrar.png",
@@ -808,8 +686,7 @@
     {
       "slot": "bot.cctv.paso.nombrar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -819,8 +696,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/cctv/paso/nombrar.png",
@@ -830,8 +706,7 @@
     {
       "slot": "bot.cctv.paso.reutilizar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -841,8 +716,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/cctv/paso/reutilizar.png",
@@ -852,8 +726,7 @@
     {
       "slot": "bot.pmv.paso.identificar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -863,8 +736,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv/paso/identificar.png",
@@ -874,8 +746,7 @@
     {
       "slot": "bot.pmv.paso.clasificar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -885,8 +756,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv/paso/clasificar.png",
@@ -896,8 +766,7 @@
     {
       "slot": "bot.pmv.paso.destino",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -907,8 +776,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv/paso/destino.png",
@@ -918,8 +786,7 @@
     {
       "slot": "bot.pmv.paso.contenido",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -929,8 +796,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv/paso/contenido.png",
@@ -940,8 +806,7 @@
     {
       "slot": "bot.pmv.paso.vigencia",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -951,8 +816,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv/paso/vigencia.png",
@@ -962,8 +826,7 @@
     {
       "slot": "bot.pmv.paso.guardar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -973,8 +836,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv/paso/guardar.png",
@@ -984,8 +846,7 @@
     {
       "slot": "bot.pmv-gestion.paso.desactivar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -995,8 +856,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-gestion/paso/desactivar.png",
@@ -1006,8 +866,7 @@
     {
       "slot": "bot.pmv-gestion.paso.elegir",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1017,8 +876,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-gestion/paso/elegir.png",
@@ -1028,8 +886,7 @@
     {
       "slot": "bot.pmv-gestion.paso.reactivar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1039,8 +896,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-gestion/paso/reactivar.png",
@@ -1050,8 +906,7 @@
     {
       "slot": "bot.pmv-variables.s.familias",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1061,8 +916,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-variables/s/familias.png",
@@ -1072,8 +926,7 @@
     {
       "slot": "bot.pmv-variables.s.grupos",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1083,8 +936,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-variables/s/grupos.png",
@@ -1094,8 +946,7 @@
     {
       "slot": "bot.pmv-variables.s.predefinidos",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1105,8 +956,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-variables/s/predefinidos.png",
@@ -1116,8 +966,7 @@
     {
       "slot": "bot.pmv-variables.paso.anadir",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1127,8 +976,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-variables/paso/anadir.png",
@@ -1138,8 +986,7 @@
     {
       "slot": "bot.pmv-variables.paso.nombrar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1149,8 +996,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-variables/paso/nombrar.png",
@@ -1160,8 +1006,7 @@
     {
       "slot": "bot.pmv-variables.paso.seleccionar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1171,8 +1016,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/pmv-variables/paso/seleccionar.png",
@@ -1182,8 +1026,7 @@
     {
       "slot": "bot.alarmas.paso.filtrar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1193,8 +1036,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/alarmas/paso/filtrar.png",
@@ -1204,8 +1046,7 @@
     {
       "slot": "bot.alarmas.paso.seleccionar",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1215,8 +1056,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/alarmas/paso/seleccionar.png",
@@ -1226,8 +1066,7 @@
     {
       "slot": "bot.alarmas.paso.reconocer",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1237,8 +1076,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/alarmas/paso/reconocer.png",
@@ -1248,8 +1086,7 @@
     {
       "slot": "bot.alarmas.paso.resultado",
       "neededBy": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "uses": [
         {
@@ -1259,8 +1096,7 @@
         }
       ],
       "pendingFor": [
-        "mv",
-        "demo"
+        "mv"
       ],
       "deliverTo": {
         "shared": "_common/bot/alarmas/paso/resultado.png",
@@ -1272,12 +1108,8 @@
     {
       "slot": "interfaz-general.fig-home",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1293,12 +1125,8 @@
     {
       "slot": "mapa.fig-capas",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1314,12 +1142,8 @@
     {
       "slot": "barra-superior.fig",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1335,12 +1159,8 @@
     {
       "slot": "barra.busqueda",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1356,12 +1176,8 @@
     {
       "slot": "barra.filtros",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1377,12 +1193,8 @@
     {
       "slot": "barra.eventos",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1398,12 +1210,8 @@
     {
       "slot": "barra.anadir-caso",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1419,12 +1227,8 @@
     {
       "slot": "barra.dashboard",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1440,12 +1244,8 @@
     {
       "slot": "barra.fuerzas",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1461,12 +1261,8 @@
     {
       "slot": "barra.mapa",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1482,12 +1278,8 @@
     {
       "slot": "barra.back",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1503,12 +1295,8 @@
     {
       "slot": "barra.admin",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
@@ -1524,12 +1312,8 @@
     {
       "slot": "barra.filtro.fig",
       "neededBy": [
-        "lv",
-        "amva",
-        "ant",
         "mv",
-        "med",
-        "demo"
+        "med"
       ],
       "uses": [
         {
