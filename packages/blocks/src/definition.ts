@@ -54,6 +54,21 @@ export interface NumberingPolicy {
    * by that name.
    */
   readonly itemsProp?: string;
+  /**
+   * Name of the prop by which one instance continues another's count.
+   *
+   * Only meaningful under `block` scope, which is otherwise sealed: a
+   * throwaway counter is exactly what makes a procedure's steps local to that
+   * procedure. But a step sometimes needs a table or a callout between it and
+   * the next step, and that is only expressible as a sibling node — which ends
+   * the block and would restart the count at 1 in the middle of a procedure the
+   * reader is following.
+   *
+   * The author writes the id of the block to continue, not a starting number.
+   * A number would go stale the moment a step is inserted above it, and the
+   * failure would be a silently misnumbered manual rather than an error.
+   */
+  readonly continuesProp?: string;
 }
 
 /**

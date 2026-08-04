@@ -81,6 +81,40 @@ export function assignNumbers(
   // regardless of how many sections or recursion frames the walk crosses.
   const documentCounters = new Map<string, number>();
 
+  /**
+   * Where each block instance's own count ended, so a later block can continue
+   * it. Only ever written for blocks that number something, and only ever read
+   * through `continuesProp`.
+   */
+  const endedAt = new Map<NodeId, number>();
+
+  /**
+   * The seed for a `block`-scoped counter that continues another instance.
+   *
+   * Throws rather than starting from zero. A `continues` pointing at nothing
+   * would renumber a fourteen-step procedure as 1..9 then 1..5 — a wrong manual
+   * that builds cleanly, passes every test, and is only caught by someone
+   * reading the page.
+   */
+  const continuedCount = (
+    node: { readonly id: NodeId; readonly props: Readonly<Record<string, unknown>> },
+    labelKey: string,
+    continuesProp: string | undefined,
+  ): Array<[string, number]> => {
+    if (continuesProp === undefined) return [];
+    const target = node.props[continuesProp];
+    if (typeof target !== "string") return [];
+    const reached = endedAt.get(target);
+    if (reached === undefined) {
+      throw new Error(
+        `"${node.id}" continues the numbering of "${target}", but "${target}" ` +
+          `has not been numbered. Either it does not exist, or it comes after ` +
+          `"${node.id}" — a count can only continue something already counted.`,
+      );
+    }
+    return [[labelKey, reached]];
+  };
+
   const walk = (
     children: readonly ManualNode[],
     prefix: readonly number[],
@@ -128,9 +162,11 @@ export function assignNumbers(
 
       if (!def.numbering) continue;
 
-      const { scope, labelKey, itemsProp } = def.numbering;
+      const { scope, labelKey, itemsProp, continuesProp } = def.numbering;
       // `block` scope gets a throwaway counter map: nothing outside this one
-      // block instance may share or continue its count.
+      // block instance may share or continue its count — unless the block names
+      // the instance it continues, which is the only way to interleave a table
+      // between two steps without restarting at 1.
       const counters =
         scope === "document"
           ? documentCounters
@@ -138,7 +174,7 @@ export function assignNumbers(
             ? sectionCounters
             : scope === "subsection"
               ? subsectionCounters
-              : new Map<string, number>();
+              : new Map<string, number>(continuedCount(node, labelKey, continuesProp));
       const ordinalPrefix =
         scope === "section" ? topLevelPrefix : scope === "subsection" ? prefix : [];
 
@@ -154,11 +190,13 @@ export function assignNumbers(
           numbers.set(String((item as { id: unknown }).id), [...ordinalPrefix, n].join("."));
         }
         counters.set(labelKey, n);
+        endedAt.set(node.id, n);
         continue;
       }
 
       const n = (counters.get(labelKey) ?? 0) + 1;
       counters.set(labelKey, n);
+      endedAt.set(node.id, n);
       numbers.set(node.id, [...ordinalPrefix, n].join("."));
     }
   };

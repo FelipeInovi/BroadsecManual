@@ -64,13 +64,23 @@ const subCounterBlock: BlockDefinition<z.infer<typeof testCounterProps>> = {
 };
 
 /** Numbers its own items, held in a prop that is NOT called `rows`. */
-const stepsBlock: BlockDefinition<{ steps: Array<{ id: string }> }> = {
+const stepsProps = z.object({
+  steps: z.array(z.object({ id: z.string() })),
+  continues: z.string().optional(),
+});
+
+const stepsBlock: BlockDefinition<z.infer<typeof stepsProps>> = {
   type: "test-steps",
   version: "0.1.0",
   description: "Test-only container numbered with `block` scope.",
-  schema: z.object({ steps: z.array(z.object({ id: z.string() })) }),
+  schema: stepsProps,
   children: { kind: "none" },
-  numbering: { scope: "block", labelKey: "step", itemsProp: "steps" },
+  numbering: {
+    scope: "block",
+    labelKey: "step",
+    itemsProp: "steps",
+    continuesProp: "continues",
+  },
 };
 
 /** Numbered block that merely happens to own an unrelated `rows` prop. */
@@ -96,11 +106,14 @@ const docItem = (id: string): BlockNode => ({ kind: "block", id, type: docCounte
 const subItem = (id: string): BlockNode => ({ kind: "block", id, type: subCounterBlock.type, props: {} });
 const secItem = (id: string): BlockNode => ({ kind: "block", id, type: sectionCounterBlock.type, props: {} });
 
-const steps = (id: string, stepIds: readonly string[]): BlockNode => ({
+const steps = (id: string, stepIds: readonly string[], continues?: string): BlockNode => ({
   kind: "block",
   id,
   type: stepsBlock.type,
-  props: { steps: stepIds.map((s) => ({ id: s })) },
+  props: {
+    steps: stepIds.map((s) => ({ id: s })),
+    ...(continues === undefined ? {} : { continues }),
+  },
 });
 
 describe("assignNumbers", () => {
@@ -216,6 +229,65 @@ describe("assignNumbers", () => {
     // A second procedure in the same section restarts — steps are local to
     // their procedure, unlike table rows which continue across sibling tables.
     expect(n.get("s3")).toBe("1");
+  });
+
+  // A block-scoped counter is deliberately throwaway, so the only way to put a
+  // table between step 9 and step 10 without the steps restarting at 1 is to say
+  // so explicitly. The reference is to a node id rather than a starting number,
+  // so inserting a step in the first half cannot leave the second half stale.
+  it("`continues` carries a block-scoped count into a later block of the same type", () => {
+    const { numbers: n } = assignNumbers(
+      [
+        section("a", [
+          steps("a.p1", ["s1", "s2"]),
+          table("a.t", ["r1"]),
+          steps("a.p2", ["s3", "s4"], "a.p1"),
+        ]),
+      ],
+      catalogWithTestBlocks,
+    );
+    expect(n.get("s2")).toBe("2");
+    expect(n.get("s3")).toBe("3");
+    expect(n.get("s4")).toBe("4");
+  });
+
+  it("`continues` chains, so a count can survive more than one interruption", () => {
+    const { numbers: n } = assignNumbers(
+      [
+        section("a", [
+          steps("a.p1", ["s1"]),
+          steps("a.p2", ["s2"], "a.p1"),
+          steps("a.p3", ["s3"], "a.p2"),
+        ]),
+      ],
+      catalogWithTestBlocks,
+    );
+    expect(n.get("s3")).toBe("3");
+  });
+
+  it("`continues` reaches across a section boundary when asked to", () => {
+    const { numbers: n } = assignNumbers(
+      [section("a", [steps("a.p", ["s1", "s2"])]), section("b", [steps("b.p", ["s3"], "a.p")])],
+      catalogWithTestBlocks,
+    );
+    expect(n.get("s3")).toBe("3");
+  });
+
+  // Silently starting from zero would produce a manual numbered 1..5 where it
+  // should read 10..14, with nothing failing and no warning anywhere.
+  it("refuses a `continues` naming a block that does not exist", () => {
+    expect(() =>
+      assignNumbers([section("a", [steps("a.p", ["s1"], "a.typo")])], catalogWithTestBlocks),
+    ).toThrow(/a\.typo/);
+  });
+
+  it("refuses a `continues` naming a block that has not been counted yet", () => {
+    expect(() =>
+      assignNumbers(
+        [section("a", [steps("a.p1", ["s1"], "a.p2"), steps("a.p2", ["s2"])])],
+        catalogWithTestBlocks,
+      ),
+    ).toThrow(/a\.p2/);
   });
 
   it("`block` scope restarts in every section too", () => {

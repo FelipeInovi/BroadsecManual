@@ -48,13 +48,28 @@ export const procedureProps = z.object({
   /** Sentence introducing the sequence. Optional. */
   lead: z.string().optional(),
   steps: z.array(procedureStep).min(1),
+  /**
+   * Id of the procedure whose step numbering this one continues.
+   *
+   * For one sequence that has to be interrupted — a reference table belongs
+   * after step 9, and a table can only be a sibling node, which ends the block.
+   * Without this the reader sees step 9, a table, then step 1 again.
+   *
+   * Write the id of the procedure to continue, never a starting number: a
+   * number goes stale the moment a step is inserted above it, and the result is
+   * a misnumbered manual that builds without complaint.
+   *
+   * Do not use it to glue together two sequences that are genuinely different
+   * activities. Those are two procedures and should each start at 1.
+   */
+  continues: z.string().min(1).optional(),
 });
 
 export type ProcedureProps = z.infer<typeof procedureProps>;
 
 export const procedure: BlockDefinition<ProcedureProps> = {
   type: "procedure",
-  version: "0.4.0",
+  version: "0.5.0",
   description:
     "An ordered sequence the reader performs: dispatch, login, updating a " +
     "report. Steps are numbered by position AFTER conditioning, so a target " +
@@ -63,7 +78,12 @@ export const procedure: BlockDefinition<ProcedureProps> = {
     "things to know rather than things to do, in no particular order.",
   schema: procedureProps,
   children: { kind: "none" },
-  numbering: { scope: "block", labelKey: "step", itemsProp: "steps" },
+  numbering: {
+    scope: "block",
+    labelKey: "step",
+    itemsProp: "steps",
+    continuesProp: "continues",
+  },
   images: {
     prop: "image",
     itemsProp: "steps",
