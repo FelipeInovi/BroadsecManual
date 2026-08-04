@@ -83,14 +83,19 @@ describe("imageRequests", () => {
     expect(pending[0]?.["neededBy"]).toEqual(["mv", "lv"]);
   });
 
-  it("says where a pending image goes — shared, with a per-deployment template", () => {
+  // Flat, with the slot's dots kept in the filename, even though the resolver
+  // accepts the same slot as a folder tree. The manifest is read by people
+  // outside this repository who are handed a list and a folder, and asking them
+  // to rebuild a directory structure from dotted names is how a file ends up one
+  // level too deep and silently resolves to nothing.
+  it("says where a pending image goes — one flat shared name, plus a per-deployment template", () => {
     const report = imageRequests(config, [
       target("mv", [{ slot: "barra.filtro.fig", state: "pending", uses: [use("barra.filtro.fig", "Filtros")] }]),
     ]);
     const pending = report["pending"] as Array<Record<string, unknown>>;
     expect(pending[0]?.["deliverTo"]).toEqual({
-      shared: "_common/barra/filtro/fig.png",
-      override: "<tenant>/barra/filtro/fig.png",
+      shared: "_common/barra.filtro.fig.png",
+      override: "<tenant>/barra.filtro.fig.png",
     });
   });
 
