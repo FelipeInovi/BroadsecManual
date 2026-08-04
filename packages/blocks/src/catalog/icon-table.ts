@@ -25,7 +25,11 @@ export const iconTableRow = z.object({
 export const iconTableProps = z.object({
   /** Middle column header — the source manual's own label. */
   labelHeader: z.string().min(1),
-  descriptionHeader: z.string().min(1),
+  /**
+   * Omit for a two-column table. Some legends carry an icon and a single line
+   * and nothing else; a third header over an empty column is furniture.
+   */
+  descriptionHeader: z.string().min(1).optional(),
   rows: z.array(iconTableRow).min(1),
 });
 

@@ -1,0 +1,474 @@
+# Ported from docs/manual-usuario.md § 9 (lines 660-846) as it stands.
+# Faithful port; see 04-introduccion.yaml for what the format changes and why.
+#
+# Observation for the later update pass, recorded and NOT acted on here: the
+# module map says `canViewTimeMetrics` is on for `lv` only, while this section's
+# "Tiempos de gestión" filter is documented for every deployment because the
+# legacy says `Tenants: Todos`. Left exactly as the legacy has it.
+
+id: security-dashboard
+title: Security Dashboard
+subtitle: Análisis y estadísticas en tiempo real
+
+children:
+  - id: dashboard.intro
+    type: prose
+    props:
+      text: >-
+        El módulo de Security Dashboard permite verificar, ordenar, categorizar,
+        clasificar y cuantificar los casos que se atienden en la plataforma.
+        Ofrece acceso rápido a indicadores clave, métricas y estadísticas en
+        tiempo real sobre los incidentes y casos registrados, con el fin de
+        facilitar la toma de decisiones y el seguimiento de la operación.
+
+  # Overview figure: the module at a glance, before any detail.
+  - id: dashboard.fig
+    type: figure
+    props:
+      caption: "Vista general del Security Dashboard."
+      widthPercent: 90
+
+  - id: dashboard.areas.intro
+    type: prose
+    props:
+      text: >-
+        El dashboard se organiza en tres áreas principales, que se detallan en las
+        siguientes subsecciones.
+
+  - id: dashboard.areas
+    type: field-list
+    props:
+      items:
+        - id: dashboard.area.filtros
+          label: Filtros
+          text: >-
+            Acotan la información mostrada según distintos criterios de tiempo.
+          layout: beside
+        - id: dashboard.area.ventanas
+          label: Ventanas de Datos
+          text: >-
+            Muestran métricas y gráficos de los casos (tiempos de respuesta,
+            cantidad de emergencias, categorías y casos frecuentes).
+          layout: beside
+        - id: dashboard.area.mapa
+          label: Mapa de Calor
+          text: "Representa geográficamente la concentración de los casos."
+          layout: beside
+
+  - id: dashboard.filtros
+    title: Filtros
+    children:
+      - id: dashboard.filtros.rango
+        title: Rango de tiempo
+        children:
+          - id: dashboard.filtros.rango.texto
+            type: prose
+            props:
+              text: >-
+                Permite filtrar por un rango de días: última semana, último mes,
+                último año, o un rango personalizado con fechas específicas.
+          - id: dashboard.filtros.rango.fig
+            type: figure
+            props:
+              caption: "Filtro de rango de tiempo del dashboard."
+              widthPercent: 70
+
+      - id: dashboard.filtros.ubicacion
+        title: Ubicación
+        children:
+          - id: dashboard.filtros.ubicacion.texto
+            type: prose
+            props:
+              text: >-
+                Permite filtrar por Departamento, Ciudad, Zona, Comuna y/o
+                Barrio. Al seleccionar el Departamento se habilita la selección
+                de ciudades.
+          - id: dashboard.filtros.ubicacion.fig-depto
+            type: figure
+            props:
+              caption: "Filtro de ubicación por Departamento y Ciudad."
+              widthPercent: 70
+          - id: dashboard.filtros.ubicacion.zona
+            type: prose
+            props:
+              text: >-
+                Al seleccionar la Zona se habilita la selección de Comuna y, tras
+                ella, la de Barrio.
+          - id: dashboard.filtros.ubicacion.fig-zona
+            type: figure
+            props:
+              caption: "Filtro de ubicación por Zona, Comuna y Barrio."
+              widthPercent: 70
+
+      - id: dashboard.filtros.variables
+        title: Variables de Gestión
+        children:
+          - id: dashboard.variables.emergencia
+            title: Tipo de Emergencia
+            children:
+              - id: dashboard.variables.emergencia.texto
+                type: prose
+                props:
+                  text: "Muestra los tipos de emergencia y sus subcategorías."
+              - id: dashboard.variables.emergencia.fig
+                type: figure
+                props:
+                  caption: "Filtro por tipo de emergencia."
+                  widthPercent: 70
+
+          - id: dashboard.variables.fuerzas
+            title: Fuerzas de Respuesta
+            children:
+              - id: dashboard.variables.fuerzas.texto
+                type: prose
+                props:
+                  text: "Hace referencia a la fuerza que actuó en el incidente."
+              - id: dashboard.variables.fuerzas.fig
+                type: figure
+                props:
+                  caption: "Filtro por fuerza de respuesta."
+                  widthPercent: 70
+
+          - id: dashboard.variables.finalizacion
+            title: Tipo de Finalización
+            children:
+              - id: dashboard.variables.finalizacion.intro
+                type: prose
+                props:
+                  text: "Filtra los casos según cómo finalizaron."
+              - id: dashboard.variables.finalizacion.lista
+                type: term-list
+                props:
+                  entries:
+                    - id: dashboard.fin.positivo
+                      term: Positivo
+                      definition: El agente gestionó el caso.
+                    - id: dashboard.fin.desistimiento
+                      term: Desistimiento en el sitio
+                      definition: >-
+                        Se cancela la operación por causas de fuerza mayor ajenas
+                        al control.
+                    - id: dashboard.fin.negativo
+                      term: Negativo en el sitio
+                      definition: >-
+                        Al llegar el agente, el incidente ya había sido atendido o
+                        despejado.
+                    - id: dashboard.fin.falsa-alarma
+                      term: Falsa alarma en el sitio
+                      definition: Al llegar al sitio, la emergencia no existía.
+                    - id: dashboard.fin.fuera
+                      term: Fuera de Medellín
+                      definition: Emergencia fuera de la jurisdicción.
+              - id: dashboard.variables.finalizacion.fig
+                type: figure
+                props:
+                  caption: "Filtro por tipo de finalización."
+                  widthPercent: 70
+
+          - id: dashboard.variables.movilidad
+            title: Tipo de Movilidad
+            children:
+              - id: dashboard.variables.movilidad.texto
+                type: prose
+                props:
+                  text: >-
+                    Tipo de actor vial involucrado en el incidente (motocicleta,
+                    cuatrimoto, bicicleta eléctrica, peatón, metro cable,
+                    patineta eléctrica, etc.).
+              - id: dashboard.variables.movilidad.fig
+                type: figure
+                props:
+                  caption: "Filtro por tipo de movilidad."
+                  widthPercent: 70
+
+      - id: dashboard.filtros.tiempos
+        title: Tiempos de gestión
+        children:
+          - id: dashboard.filtros.tiempos.intro
+            type: prose
+            props:
+              text: >-
+                Permite consultar y analizar los distintos tiempos asociados a la
+                atención de un incidente, para medir la eficiencia operativa.
+          - id: dashboard.filtros.tiempos.lista
+            type: term-list
+            props:
+              entries:
+                - id: dashboard.tiempo.gestion
+                  term: Tiempo de gestión
+                  definition: >-
+                    Período invertido en la atención y resolución del incidente.
+                - id: dashboard.tiempo.llegada
+                  term: Tiempo de llegada
+                  definition: >-
+                    Intervalo entre la recepción del incidente y la llegada del
+                    recurso asignado.
+                - id: dashboard.tiempo.total
+                  term: Tiempo total de respuesta
+                  definition: >-
+                    Suma de todos los tiempos involucrados en la atención.
+          - id: dashboard.filtros.tiempos.fig
+            type: figure
+            props:
+              caption: "Filtro por tiempos de gestión."
+              widthPercent: 70
+
+      - id: dashboard.filtros.aplicar
+        type: prose
+        props:
+          text: >-
+            Una vez aplicados los filtros deseados, use el botón **Aplicar**
+            ubicado en la parte inferior del panel de filtros.
+
+  - id: dashboard.ventanas
+    title: Ventanas de Datos
+    children:
+      - id: dashboard.ventanas.intro
+        type: prose
+        props:
+          text: >-
+            Las ventanas de datos presentan las métricas y los gráficos del
+            dashboard. Se pueden quitar para liberar espacio, volver a mostrar, y
+            exportar.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: dashboard.ventanas.fig
+        type: figure
+        props:
+          caption: "Ventanas de datos del dashboard."
+          widthPercent: 90
+
+      - id: dashboard.ventanas.quitar
+        title: Quitar y aplicar ventanas
+        children:
+          - id: dashboard.ventanas.quitar.texto
+            type: prose
+            props:
+              text: >-
+                Funcionalidad del Dashboard que permite cerrar una ventana
+                mediante el ícono **X**, liberando espacio en la interfaz para
+                mostrar otras estadísticas.
+          - id: dashboard.ventanas.quitar.fig
+            type: figure
+            props:
+              caption: "Cerrar una ventana o widget del dashboard."
+              widthPercent: 70
+          - id: dashboard.ventanas.restaurar
+            type: prose
+            props:
+              text: >-
+                Para volver a mostrar una ventana o estadística eliminada,
+                localícela en la opción **Widgets**, ubicada en la parte superior
+                del Dashboard.
+          - id: dashboard.ventanas.fig-widgets
+            type: figure
+            props:
+              caption: "Menú de Widgets para restaurar ventanas."
+              widthPercent: 70
+          - id: dashboard.ventanas.restaurada
+            type: prose
+            props:
+              text: "Al seleccionarla, la ventana se restaura en el dashboard."
+          - id: dashboard.ventanas.fig-restaurado
+            type: figure
+            props:
+              caption: "Widget restaurado en el dashboard."
+              widthPercent: 70
+
+      - id: dashboard.ventanas.exportar
+        title: Exportar
+        children:
+          - id: dashboard.ventanas.exportar.texto
+            type: prose
+            props:
+              text: >-
+                En la parte superior derecha se encuentra la funcionalidad
+                **Exportar**, que genera un archivo PDF con los gráficos
+                estadísticos y los datos del período seleccionado.
+          - id: dashboard.ventanas.exportar.fig
+            type: figure
+            props:
+              caption: "Botón de exportación del dashboard."
+              widthPercent: 60
+
+      - id: dashboard.widgets
+        title: Widgets del Dashboard
+        children:
+          - id: dashboard.widgets.intro
+            type: prose
+            props:
+              text: "Los widgets disponibles en el Dashboard son los siguientes."
+          - id: dashboard.widgets.lista
+            type: field-list
+            props:
+              items:
+                - id: dashboard.widget.total
+                  label: Total de Emergencias
+                  text: >-
+                    Muestra el total de emergencias registradas en el período
+                    establecido en el filtro.
+                  layout: beside
+                - id: dashboard.widget.promedio-respuesta
+                  label: Tiempo Promedio de Respuesta
+                  text: >-
+                    Muestra el tiempo promedio de respuesta desde la recepción de
+                    la llamada hasta el despacho.
+                  layout: beside
+                - id: dashboard.widget.sin-despacho
+                  label: Casos sin despacho
+                  text: >-
+                    Muestra todos los casos que no se despacharon en el período
+                    seleccionado, con su estadística.
+                  layout: beside
+                - id: dashboard.widget.promedio-llegada
+                  label: Tiempo Promedio de Llegada
+                  text: >-
+                    Muestra el tiempo promedio desde el despacho del agente hasta
+                    su llegada al incidente.
+                  layout: beside
+                - id: dashboard.widget.tiempo-respuesta
+                  label: Tiempo de respuesta
+                  text: >-
+                    Gráfico de torta con el porcentaje de casos atendidos en
+                    distintos rangos de tiempo de respuesta.
+                  layout: beside
+                - id: dashboard.widget.cantidad
+                  label: Cantidad de Emergencias
+                  text: >-
+                    Gráfico de líneas del número de emergencias atendidas a lo
+                    largo de días, semanas o meses.
+                  layout: beside
+                - id: dashboard.widget.categoria
+                  label: Emergencia por categoría
+                  text: >-
+                    Gráfico de torta con el porcentaje de casos según nueve
+                    categorías de clasificación de emergencias.
+                  layout: beside
+                - id: dashboard.widget.frecuentes
+                  label: Tipos de Casos Frecuentes
+                  text: >-
+                    Gráfico de barras de los casos agrupados por las cinco
+                    tipologías (tipos de emergencia) más frecuentes.
+                  layout: beside
+          - id: dashboard.widgets.modificar
+            type: prose
+            props:
+              text: >-
+                Es posible modificar las especificaciones de este gráfico usando
+                el filtro de la interfaz en **Variables de Gestión** y luego
+                **Tipo de Emergencia**.
+          - id: dashboard.widgets.fig-modificar
+            type: figure
+            props:
+              caption: >-
+                Filtro de Variables de Gestión para los tipos de casos
+                frecuentes.
+              widthPercent: 70
+
+  - id: dashboard.mapa-calor
+    title: Mapa de Calor
+    children:
+      - id: dashboard.mapa-calor.intro
+        type: prose
+        props:
+          text: >-
+            En la parte inferior del Dashboard se puede visualizar el **Mapa de
+            Casos**, que por defecto muestra el mapa de calor de los incidentes
+            registrados.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: dashboard.mapa-calor.fig
+        type: figure
+        props:
+          caption: "Mapa de calor de casos en el dashboard."
+          widthPercent: 90
+
+      - id: dashboard.mapa-calor.opacidad
+        type: prose
+        props:
+          text: >-
+            Se puede modificar la opacidad de los colores del mapa para tener una
+            visualización más clara de la densidad de incidentes por zona.
+
+      - id: dashboard.mapa-calor.fig-opacidad
+        type: figure
+        props:
+          caption: "Control de opacidad del mapa de casos."
+          widthPercent: 70
+
+      - id: dashboard.mapa-calor.maximizar
+        type: prose
+        props:
+          text: >-
+            También se puede maximizar el mapa mediante el ícono ubicado en la
+            esquina superior derecha del widget, para una visión más amplia.
+
+      - id: dashboard.mapa-calor.fig-maximizado
+        type: figure
+        props:
+          caption: "Mapa de casos maximizado."
+          widthPercent: 90
+
+      - id: dashboard.mapa-calor.modo
+        type: prose
+        props:
+          text: >-
+            Es posible cambiar el modo de visión de los casos para observarlos
+            individualmente, alternando entre **Mapa de calor** y **Marcadores**.
+
+      - id: dashboard.mapa-calor.fig-modo
+        type: figure
+        props:
+          caption: "Alternar entre Mapa de calor y Marcadores."
+          widthPercent: 70
+
+      - id: dashboard.mapa-calor.marcadores
+        type: prose
+        props:
+          text: >-
+            Al activar **Marcadores**, cada caso se muestra individualmente sobre
+            el mapa.
+
+      - id: dashboard.mapa-calor.fig-marcadores
+        type: figure
+        props:
+          caption: "Vista de casos individuales, con marcadores, en el mapa."
+          widthPercent: 90
+
+      - id: dashboard.lista
+        title: Visualización de Casos en Lista
+        children:
+          - id: dashboard.lista.texto
+            type: prose
+            props:
+              text: >-
+                Para ver todos los casos en modo lista, con distintas
+                especificaciones, haga clic sobre la opción **Los Casos** en el
+                Dashboard.
+          - id: dashboard.lista.fig-boton
+            type: figure
+            props:
+              caption: "Botón Los Casos para el modo lista."
+              widthPercent: 60
+          - id: dashboard.lista.reemplazo
+            type: prose
+            props:
+              text: >-
+                Al activarla, el mapa de la parte inferior se reemplaza por la
+                lista completa de casos con sus detalles.
+          - id: dashboard.lista.fig-lista
+            type: figure
+            props:
+              caption: "Visualización de casos en modo lista."
+              widthPercent: 90
+          - id: dashboard.lista.detalle
+            type: prose
+            props:
+              text: >-
+                Para ver información más específica, haga clic sobre un caso y se
+                mostrarán todos los detalles del incidente seleccionado.
+          - id: dashboard.lista.fig-detalle
+            type: figure
+            props:
+              caption: "Detalle de un caso seleccionado en la lista."
+              widthPercent: 90

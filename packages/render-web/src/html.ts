@@ -173,6 +173,9 @@ function renderTable(node: BlockNode, o: RenderOptions): string {
   const rows = node.props["rows"] as ReadonlyArray<Record<string, unknown>>;
   const withIcons = node.type === "icon-table";
   const variant = withIcons ? "icon-table" : "data-table";
+  // A legend of icons and one line each needs no third column, and a header over
+  // an empty column is furniture. Driven by the header being declared at all.
+  const twoColumn = node.props["descriptionHeader"] === undefined;
 
   // One column, always occupied: the control's icon once delivered, the
   // placeholder until then. An empty cell reads as "no control here".
@@ -195,7 +198,7 @@ function renderTable(node: BlockNode, o: RenderOptions): string {
         `<tr>`,
         iconCell(image),
         `<td class="tbl__label">${esc(String(r["label"]))}</td>`,
-        `<td>${description}</td>`,
+        described || !twoColumn ? `<td>${description}</td>` : "",
         `</tr>`,
       ].join("");
     })
@@ -205,7 +208,7 @@ function renderTable(node: BlockNode, o: RenderOptions): string {
     `<table class="tbl tbl--${variant}"><thead><tr>`,
     withIcons ? `<th></th>` : "",
     `<th>${esc(String(node.props["labelHeader"]))}</th>`,
-    `<th>${esc(String(node.props["descriptionHeader"]))}</th>`,
+    twoColumn ? "" : `<th>${esc(String(node.props["descriptionHeader"]))}</th>`,
     `</tr></thead><tbody>${body}</tbody></table>`,
   ].join("");
 }

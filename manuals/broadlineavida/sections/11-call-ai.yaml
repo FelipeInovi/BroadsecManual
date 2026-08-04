@@ -1,0 +1,223 @@
+# Ported from docs/manual-usuario.md § 11 (lines 1009-1074) as it stands.
+# Faithful port; see 04-introduccion.yaml for what the format changes and why.
+
+id: call-ai
+title: Call AI
+subtitle: Inteligencia artificial aplicada a emergencias
+
+children:
+  - id: callai.intro
+    type: prose
+    props:
+      text: >-
+        Call AI no es solo una herramienta de registro; es un copiloto
+        inteligente diseñado para potenciar las capacidades humanas en
+        situaciones de alta presión.
+
+  - id: callai.objetivo
+    type: callout
+    props:
+      variant: info
+      text: >-
+        **Objetivo:** reducir los tiempos de despacho y aumentar la precisión de
+        la respuesta mediante inteligencia artificial aplicada a cada llamada de
+        emergencia en tiempo real.
+
+  # Overview figure: the module at a glance, before any detail.
+  - id: callai.fig
+    type: figure
+    props:
+      caption: "Interfaz de Call AI durante una llamada activa."
+      widthPercent: 90
+
+  - id: callai.anatomia
+    title: Anatomía de una Respuesta Inteligente
+    children:
+      - id: callai.anatomia.intro
+        type: prose
+        props:
+          text: >-
+            Basado en la interfaz operativa actual, el sistema analiza la llamada
+            en vivo y despliega información estratégica en tres componentes
+            principales, que se detallan a continuación.
+
+      - id: callai.escucha
+        title: Escucha Activa y Resumen Narrativo
+        children:
+          - id: callai.escucha.texto
+            type: prose
+            props:
+              text: >-
+                La IA transcribe y procesa la conversación en tiempo real. En
+                lugar de tomar notas fragmentadas, el operador recibe un resumen
+                estructurado del contexto generado automáticamente, liberándolo
+                para enfocarse en la atención al llamante.
+          - id: callai.escucha.nota
+            type: callout
+            props:
+              variant: info
+              text: >-
+                El problema es que el operador intenta escribir mientras escucha
+                bajo presión. La solución de Call AI es la generación automática
+                del contexto completo del incidente.
+          - id: callai.escucha.fig
+            type: figure
+            props:
+              caption: "Escucha activa y resumen narrativo durante la llamada."
+              widthPercent: 90
+
+      - id: callai.caracterizacion
+        title: Caracterización y Priorización Automática
+        children:
+          - id: callai.caracterizacion.intro
+            type: prose
+            props:
+              text: >-
+                El sistema elimina la duda subjetiva. Al detectar palabras clave
+                y patrones de entonación, clasifica el incidente automáticamente.
+          - id: callai.caracterizacion.lista
+            type: term-list
+            props:
+              entries:
+                - id: callai.carac.incidente
+                  term: Incidente
+                  definition: >-
+                    Selecciona la emergencia adecuada para la llamada reportada.
+                - id: callai.carac.prioridad
+                  term: Prioridad
+                  definition: >-
+                    Alta, asignada automáticamente por la severidad de los datos.
+                - id: callai.carac.beneficio
+                  term: Beneficio
+                  definition: >-
+                    Asegura que los recursos críticos se asignen a las situaciones
+                    que realmente los necesitan.
+
+      - id: callai.oneclick
+        title: Agilidad One-Click
+        children:
+          - id: callai.oneclick.texto
+            type: prose
+            props:
+              text: >-
+                La interfaz permite copiar toda la información estructurada con un
+                solo clic. Esto facilita la transferencia de datos al sistema de
+                despacho sin reescritura manual, reduciendo el margen de error
+                humano.
+
+  - id: callai.asistente
+    title: Asistente Táctico para la Resolución
+    children:
+      - id: callai.asistente.intro
+        type: prose
+        props:
+          text: >-
+            Call AI no solo diagnostica, sino que guía. Durante la llamada, el
+            sistema despliega información de apoyo contextual.
+      - id: callai.asistente.lista
+        type: term-list
+        props:
+          entries:
+            - id: callai.asist.protocolos
+              term: Protocolos Sugeridos
+              definition: >-
+                Pasos de respuesta estándar basados en el tipo de incidente
+                detectado.
+            - id: callai.asist.recursos
+              term: Recursos Cercanos
+              definition: Mapeo de unidades disponibles en el sector.
+            - id: callai.asist.guiones
+              term: Guiones Dinámicos
+              definition: >-
+                Sugerencia de preguntas clave si el operador olvida indagar sobre
+                el estado de consciencia o peligros adicionales del entorno.
+
+  - id: callai.observaciones
+    title: Gestión Post-Llamada — Módulo de Observaciones
+    children:
+      - id: callai.observaciones.texto
+        type: prose
+        props:
+          text: >-
+            El factor humano sigue siendo insustituible. Al finalizar la llamada,
+            se habilita el campo de Observaciones.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: callai.observaciones.fig
+        type: figure
+        props:
+          caption: "Campo de Observaciones posterior a la llamada."
+          widthPercent: 90
+
+      - id: callai.observaciones.uso
+        type: prose
+        props:
+          text: >-
+            **Uso:** espacio exclusivo para que el operador añada matices,
+            intuiciones o datos sensibles que la IA pudo no contextualizar
+            completamente.
+
+      - id: callai.observaciones.importante
+        type: callout
+        props:
+          variant: important
+          text: >-
+            Este campo se bloquea durante la llamada en vivo para mantener al
+            operador enfocado en la pantalla de análisis de Call AI. Solo se
+            activa al finalizar la llamada.
+
+  - id: callai.capacidades
+    title: Capacidades Principales del Módulo
+    children:
+      - id: callai.capacidades.intro
+        type: prose
+        props:
+          text: >-
+            Aprovechando las capacidades de última generación del sistema actual,
+            este módulo de IA procesa la información entrante para ofrecer lo
+            siguiente.
+
+      - id: callai.capacidades.tabla
+        type: data-table
+        props:
+          labelHeader: Capacidad
+          descriptionHeader: Descripción
+          rows:
+            - id: callai.cap.analisis
+              label: Análisis y Resumen Inteligente
+              description: >-
+                La IA escucha activamente la llamada y genera un resumen
+                estructurado del incidente con los aspectos más relevantes.
+            - id: callai.cap.caracterizacion
+              label: Caracterización Automática
+              description: >-
+                Clasifica automáticamente el tipo de emergencia y su nivel de
+                prioridad basándose en el análisis de los datos en tiempo real.
+            - id: callai.cap.protocolos
+              label: Protocolos Sugeridos
+              description: >-
+                Presenta los pasos de respuesta estándar basados en la
+                caracterización del tipo de incidente detectado por la IA.
+            - id: callai.cap.recursos
+              label: Recursos Disponibles
+              description: >-
+                Identifica unidades cercanas junto con su estado y especialización
+                para optimizar el despacho.
+            - id: callai.cap.guiones
+              label: Guiones Dinámicos
+              description: >-
+                Sugiere preguntas clave al operador para cubrir aspectos críticos
+                como estado de consciencia, número de personas, etc.
+            - id: callai.cap.comunicacion
+              label: Recomendaciones de Comunicación
+              description: >-
+                Sugiere información vital a transmitir a las unidades en campo
+                para asegurar una respuesta coordinada y efectiva.
+
+      - id: callai.cierre
+        type: prose
+        props:
+          text: >-
+            Este módulo transforma cada llamada de emergencia en una oportunidad
+            para una respuesta más rápida, precisa y efectiva, elevando el
+            estándar operativo de todo el equipo.

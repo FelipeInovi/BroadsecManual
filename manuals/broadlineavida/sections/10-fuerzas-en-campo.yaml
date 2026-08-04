@@ -1,0 +1,426 @@
+# Ported from docs/manual-usuario.md § 10 (lines 850-1005) as it stands.
+# Faithful port; see 04-introduccion.yaml for what the format changes and why.
+#
+# Observation for the later update pass, recorded and NOT acted on here: the
+# module map says `canSeeForcesInField` is on for demo, dev and mv only, while
+# the legacy documents this module for every deployment (`Tenants: Todos`).
+# Left exactly as the legacy has it.
+
+id: fuerzas-en-campo
+title: Fuerzas en Campo
+subtitle: Gestión de agentes y operaciones
+
+children:
+  - id: fuerzas.intro
+    type: prose
+    props:
+      text: >-
+        El módulo de Fuerzas en Campo permite visualizar todos los agentes que
+        operan de modo activo a través de la aplicación, así como los historiales
+        de turno que han desempeñado. Según el estado de disponibilidad de los
+        agentes, se muestran distintas opciones de asignación y despacho.
+
+  # Overview figure: the module at a glance, before any detail.
+  - id: fuerzas.fig
+    type: figure
+    props:
+      caption: "Interfaz principal: zonas Mapa, Barra Superior y Agentes."
+      widthPercent: 90
+
+  - id: fuerzas.zonas
+    type: prose
+    props:
+      text: >-
+        La interfaz principal se compone de tres zonas: el **Mapa**, la **Barra
+        Superior** y el listado de **Agentes**.
+
+  - id: fuerzas.barra
+    title: Barra Superior de Fuerzas en Campo
+    children:
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: fuerzas.barra.fig
+        type: figure
+        props:
+          caption: "Barra superior del módulo."
+          widthPercent: 90
+
+      - id: fuerzas.barra.tabla
+        type: icon-table
+        props:
+          labelHeader: Elemento
+          descriptionHeader: Descripción
+          rows:
+            - id: fuerzas.barra.buscar
+              label: Buscar
+              description: Permite buscar un agente por su nombre o placa.
+            - id: fuerzas.barra.filtro
+              label: Filtro
+              description: >-
+                Genera funciones de filtro según el módulo en el que se esté
+                navegando (Agentes u Operaciones).
+            - id: fuerzas.barra.agentes
+              label: Módulo de Agentes
+              description: Visualiza los agentes según su estado de disponibilidad.
+            - id: fuerzas.barra.operaciones
+              label: Módulo de Operaciones
+              description: >-
+                Muestra el historial de actividades de los agentes y sus turnos.
+            - id: fuerzas.barra.anadir
+              label: Añadir
+              description: >-
+                Permite crear un nuevo incidente o una nueva tarea desde el
+                aplicativo web.
+            - id: fuerzas.barra.mapa
+              label: Mapa
+              description: Activa o desactiva la visualización del mapa.
+            - id: fuerzas.barra.home
+              label: Home
+              description: Vuelve al Home principal de Broadsec.
+
+  - id: fuerzas.agentes
+    title: Módulo de Agentes
+    children:
+      - id: fuerzas.agentes.texto
+        type: prose
+        props:
+          text: >-
+            Este módulo permite visualizar los agentes disponibles y en turno,
+            para una asignación de caso de emergencia inmediata.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: fuerzas.agentes.fig
+        type: figure
+        props:
+          caption: "Módulo de Agentes."
+          widthPercent: 90
+
+      - id: fuerzas.agentes.estados
+        title: Visualización de estados de Agentes
+        children:
+          - id: fuerzas.agentes.estados.tabla
+            type: icon-table
+            props:
+              labelHeader: Estado
+              descriptionHeader: Descripción
+              rows:
+                - id: fuerzas.estado.no-disponible
+                  label: No disponible
+                  description: El agente no puede recibir casos en este momento.
+                - id: fuerzas.estado.disponible
+                  label: Disponible
+                  description: El agente está listo para recibir asignaciones.
+                - id: fuerzas.estado.con-caso
+                  label: Con caso asignado
+                  description: El agente tiene un caso activo en gestión.
+
+      - id: fuerzas.agentes.filtro
+        title: Filtro
+        children:
+          - id: fuerzas.agentes.filtro.texto
+            type: prose
+            props:
+              text: >-
+                El filtro de este módulo permite ver a todos los agentes
+                —disponibles, no disponibles o en otros estados, como
+                emergencia— y también según si están en turno o no.
+          - id: fuerzas.agentes.filtro.fig
+            type: figure
+            props:
+              caption: "Filtro de estados y turno de los agentes."
+              widthPercent: 70
+
+      - id: fuerzas.perfil
+        title: Perfil de Agente
+        children:
+          - id: fuerzas.perfil.texto
+            type: prose
+            props:
+              text: >-
+                Al hacer clic sobre un agente en la lista se navega a su perfil,
+                con información relevante como nombre, estado, placa e historial
+                de turnos.
+          - id: fuerzas.perfil.fig-acceso
+            type: figure
+            props:
+              caption: "Acceso al perfil desde la lista de agentes."
+              widthPercent: 70
+          - id: fuerzas.perfil.fig-tarjeta
+            type: figure
+            props:
+              caption: "Tarjeta rápida del agente."
+              widthPercent: 60
+          - id: fuerzas.perfil.fig-perfil
+            type: figure
+            props:
+              caption: "Perfil del agente."
+              widthPercent: 90
+          - id: fuerzas.perfil.mapa
+            type: prose
+            props:
+              text: >-
+                Sin embargo, desde la interfaz del Mapa también es posible navegar
+                al perfil del agente, ubicándolo en el mapa y haciendo clic en la
+                opción que se muestra.
+          - id: fuerzas.perfil.ubicacion
+            type: prose
+            props:
+              text: >-
+                Por otro lado, cuando ingresamos al perfil de un agente, su
+                ubicación automáticamente se configura en el mapa con el objetivo
+                de saber en dónde se encuentra ubicado actualmente.
+          - id: fuerzas.perfil.fig-ubicacion
+            type: figure
+            props:
+              caption: "Ubicación del agente en el mapa."
+              widthPercent: 90
+          - id: fuerzas.perfil.turnos
+            type: prose
+            props:
+              text: >-
+                Al entrar en la pestaña **Turnos**, ubicada en la barra superior
+                del perfil, se muestra una visualización organizada de los turnos
+                que el agente ha ejercido a lo largo del tiempo.
+          - id: fuerzas.perfil.fig-turnos
+            type: figure
+            props:
+              caption: "Pestaña Turnos del agente."
+              widthPercent: 90
+          - id: fuerzas.perfil.asignar
+            type: prose
+            props:
+              text: >-
+                Al entrar en la pestaña **Asignar**, se pueden despachar casos al
+                agente del perfil de forma directa, simplemente escogiendo el caso
+                a asignar.
+          - id: fuerzas.perfil.fig-asignar
+            type: figure
+            props:
+              caption: "Pestaña Asignar del perfil del agente."
+              widthPercent: 90
+          - id: fuerzas.perfil.fig-confirmacion
+            type: figure
+            props:
+              caption: "Confirmación de despacho del caso al agente."
+              widthPercent: 70
+          - id: fuerzas.perfil.tarea
+            type: prose
+            props:
+              text: >-
+                Cuando la pestaña Asignar está seleccionada, automáticamente se
+                activa una nueva pestaña llamada **Tarea**, desde la cual se puede
+                asignar una tarea de forma directa al agente del perfil.
+          - id: fuerzas.perfil.fig-tarea
+            type: figure
+            props:
+              caption: "Creación de una tarea desde el perfil del agente."
+              widthPercent: 90
+
+  - id: fuerzas.operaciones
+    title: Módulo de Operaciones
+    children:
+      - id: fuerzas.operaciones.texto
+        type: prose
+        props:
+          text: >-
+            Módulo diseñado para ver distintas clases de historial de agentes;
+            permite visualizar los turnos activos y los ya finalizados.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: fuerzas.operaciones.fig
+        type: figure
+        props:
+          caption: "Módulo de Operaciones: historial de turnos."
+          widthPercent: 90
+
+      - id: fuerzas.operaciones.intro-estados
+        type: prose
+        props:
+          text: "El estado de cada turno se identifica con un ícono."
+
+      # Two columns: the legacy table is a legend of two icons and one line each.
+      - id: fuerzas.operaciones.estados
+        type: icon-table
+        props:
+          labelHeader: Descripción
+          rows:
+            - id: fuerzas.turno.activo
+              label: Indica que el agente está con un turno activo.
+            - id: fuerzas.turno.finalizado
+              label: Indica que el turno ya se ha finalizado.
+
+      - id: fuerzas.operaciones.filtro
+        title: Filtro del módulo de Operaciones
+        children:
+          - id: fuerzas.operaciones.filtro.texto
+            type: prose
+            props:
+              text: >-
+                El filtro permite establecer un rango de tiempo específico para el
+                cual se mostrarán todos los turnos registrados de los agentes.
+          - id: fuerzas.operaciones.filtro.fig
+            type: figure
+            props:
+              caption: "Filtro de rango de tiempo en Operaciones."
+              widthPercent: 70
+          - id: fuerzas.operaciones.filtro.fig-rango
+            type: figure
+            props:
+              caption: "Selección de rango de fechas en el filtro."
+              widthPercent: 70
+
+      - id: fuerzas.operaciones.resumen
+        title: Resumen de Actividad en Módulo de Operaciones
+        children:
+          - id: fuerzas.operaciones.resumen.texto
+            type: prose
+            props:
+              text: >-
+                Al hacer clic en cualquier turno de un agente específico, se
+                muestra el resumen de actividades de dicho agente a lo largo de
+                ese turno.
+          - id: fuerzas.operaciones.resumen.fig
+            type: figure
+            props:
+              caption: "Resumen de actividad del turno seleccionado."
+              widthPercent: 90
+          - id: fuerzas.operaciones.resumen.recorrido
+            type: prose
+            props:
+              text: >-
+                En la interfaz superior se muestra el mapa donde se representa el
+                recorrido que realizó el agente durante el turno.
+          - id: fuerzas.operaciones.resumen.fig-recorrido
+            type: figure
+            props:
+              caption: "Recorrido del turno en el mapa."
+              widthPercent: 90
+          - id: fuerzas.operaciones.resumen.opciones
+            type: prose
+            props:
+              text: >-
+                Cada tarea o incidente del historial tiene la opción de
+                **polígono** y la opción de **Call AI**.
+
+          - id: fuerzas.poligono
+            title: Polígono
+            children:
+              - id: fuerzas.poligono.texto
+                type: prose
+                props:
+                  text: "Muestra en el mapa el polígono del incidente o de la tarea."
+              - id: fuerzas.poligono.fig-incidente
+                type: figure
+                props:
+                  caption: "Polígono del incidente en el mapa."
+                  widthPercent: 90
+              - id: fuerzas.poligono.fig-tarea
+                type: figure
+                props:
+                  caption: "Polígono de la tarea en el mapa."
+                  widthPercent: 90
+
+          - id: fuerzas.callai
+            title: Call AI
+            children:
+              - id: fuerzas.callai.texto
+                type: prose
+                props:
+                  text: >-
+                    Cuando se accede al Call AI, se muestra un diálogo con el
+                    resumen que Call AI realizó del incidente o la tarea en
+                    cuestión. En ambos casos se puede acceder mediante el **ícono
+                    de ojo** o mediante la **ubicación en el mapa**.
+              - id: fuerzas.callai.fig-hist-incidentes
+                type: figure
+                props:
+                  caption: "Acceso a Call AI desde el historial de incidentes."
+                  widthPercent: 90
+              - id: fuerzas.callai.fig-mapa-incidente
+                type: figure
+                props:
+                  caption: >-
+                    Acceso a Call AI del incidente desde la ubicación en el mapa.
+                  widthPercent: 90
+              - id: fuerzas.callai.fig-resumen-incidente
+                type: figure
+                props:
+                  caption: "Resumen de Call AI del incidente."
+                  widthPercent: 90
+              - id: fuerzas.callai.fig-hist-tareas
+                type: figure
+                props:
+                  caption: "Acceso a Call AI desde el historial de tareas."
+                  widthPercent: 90
+              - id: fuerzas.callai.fig-mapa-tarea
+                type: figure
+                props:
+                  caption: >-
+                    Acceso a Call AI de la tarea desde la ubicación en el mapa.
+                  widthPercent: 90
+              - id: fuerzas.callai.fig-resumen-tarea
+                type: figure
+                props:
+                  caption: "Resumen de Call AI de la tarea."
+                  widthPercent: 90
+
+  - id: fuerzas.anadir
+    title: Módulo de Añadir
+    children:
+      - id: fuerzas.anadir.texto
+        type: prose
+        props:
+          text: >-
+            Módulo mediante el cual el operador puede crear un nuevo incidente o
+            una nueva tarea directamente desde la plataforma.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: fuerzas.anadir.fig
+        type: figure
+        props:
+          caption: "Opciones del módulo Añadir: Nuevo Incidente y Nueva Tarea."
+          widthPercent: 70
+
+      - id: fuerzas.anadir.incidente
+        title: Nuevo Incidente
+        children:
+          - id: fuerzas.anadir.incidente.fig
+            type: figure
+            props:
+              caption: "Formulario para crear un nuevo incidente."
+              widthPercent: 90
+          - id: fuerzas.anadir.incidente.texto
+            type: prose
+            props:
+              text: >-
+                Al crear un nuevo incidente, la aplicación redirecciona
+                automáticamente a la gestión activa de este.
+          - id: fuerzas.anadir.incidente.fig-confirmacion
+            type: figure
+            props:
+              caption: "Confirmación de incidente creado exitosamente."
+              widthPercent: 70
+
+      - id: fuerzas.anadir.tarea
+        title: Nueva Tarea
+        children:
+          - id: fuerzas.anadir.tarea.fig
+            type: figure
+            props:
+              caption: "Formulario para crear una nueva tarea."
+              widthPercent: 90
+
+  - id: fuerzas.home
+    title: Módulo de Retornar a Home
+    children:
+      - id: fuerzas.home.texto
+        type: prose
+        props:
+          text: >-
+            Finalmente se retorna al Home principal de Broadsec desde el
+            siguiente ícono.
+
+      - id: fuerzas.home.fig
+        type: figure
+        props:
+          caption: "Ícono para retornar al Home de Broadsec."
+          widthPercent: 40
