@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 66,
-    "delivered": 19,
-    "pending": 47
+    "delivered": 25,
+    "pending": 41
   },
   "pending": [
     {
@@ -153,126 +153,6 @@
       "deliverTo": {
         "shared": "_common/mapa/ctrl/controles.png",
         "override": "<tenant>/mapa/ctrl/controles.png"
-      }
-    },
-    {
-      "slot": "bot.seccion.mapa",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.seccion.mapa",
-          "blockType": "icon-table",
-          "shows": "Mapa"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot/seccion/mapa.png",
-        "override": "<tenant>/bot/seccion/mapa.png"
-      }
-    },
-    {
-      "slot": "bot.seccion.prt",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.seccion.prt",
-          "blockType": "icon-table",
-          "shows": "PRT"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot/seccion/prt.png",
-        "override": "<tenant>/bot/seccion/prt.png"
-      }
-    },
-    {
-      "slot": "bot.seccion.recursos",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.seccion.recursos",
-          "blockType": "icon-table",
-          "shows": "Recursos"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot/seccion/recursos.png",
-        "override": "<tenant>/bot/seccion/recursos.png"
-      }
-    },
-    {
-      "slot": "bot.seccion.cctv",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.seccion.cctv",
-          "blockType": "icon-table",
-          "shows": "CCTV"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot/seccion/cctv.png",
-        "override": "<tenant>/bot/seccion/cctv.png"
-      }
-    },
-    {
-      "slot": "bot.seccion.pmv",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.seccion.pmv",
-          "blockType": "icon-table",
-          "shows": "PMV"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot/seccion/pmv.png",
-        "override": "<tenant>/bot/seccion/pmv.png"
-      }
-    },
-    {
-      "slot": "bot.seccion.alarmas",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.seccion.alarmas",
-          "blockType": "icon-table",
-          "shows": "Alarmas"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot/seccion/alarmas.png",
-        "override": "<tenant>/bot/seccion/alarmas.png"
       }
     },
     {
@@ -1295,6 +1175,102 @@
       ],
       "files": [
         "_common/barra/filtro/fig.png"
+      ]
+    },
+    {
+      "slot": "bot.seccion.mapa",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.mapa",
+          "blockType": "icon-table",
+          "shows": "Mapa"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/mapa.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.prt",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.prt",
+          "blockType": "icon-table",
+          "shows": "PRT"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/prt.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.recursos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.recursos",
+          "blockType": "icon-table",
+          "shows": "Recursos"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/recursos.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.cctv",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.cctv",
+          "blockType": "icon-table",
+          "shows": "CCTV"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/cctv.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.pmv",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.pmv",
+          "blockType": "icon-table",
+          "shows": "PMV"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/pmv.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.alarmas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.alarmas",
+          "blockType": "icon-table",
+          "shows": "Alarmas"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/alarmas.svg"
       ]
     }
   ]

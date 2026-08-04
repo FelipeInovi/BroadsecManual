@@ -84,16 +84,22 @@ deployment actually shows, for one — and it is not this skill's job.
 |---|---|---|
 | Static asset the app ships (`assets/images/**`) | **Yes** | A real file, reachable through the join |
 | SVG drawn as the product's own component (`assets/icons/*.tsx`) | Usually **no** | The geometry is here, but the colour is not: these carry Tailwind classes like `fill-white` because they sit on a dark control. Extracted standalone there is no Tailwind, so the glyph turns black — or `stroke="white"` renders invisible on the page. Deliverable only with a deliberate recolouring, which is a design decision |
-| Icon from `@mui/icons-material`, `@tabler/icons-react` | Not as a file | Ships as a JS component with inline SVG path data. Extractable only by parsing it, and it arrives unstyled — not what the operator sees |
+| Icon from `@tabler/icons-react` | **Yes, via the base package** | The React wrapper holds no files, but its dependency `@tabler/icons` ships `icons/outline/*.svg` — real SVG, MIT. Copy the file; do not parse the wrapper. Needs recolouring, below |
+| Icon from `@mui/icons-material` | Not as a file | JS only, no SVG anywhere in the package. Extractable solely by parsing the path data out of a module |
 | Icon from `@iconify/react` | **No** | Resolved from a remote API at runtime. Without `@iconify/json` installed there is nothing on disk |
 | Native control of an embedded third party (Google Maps street view, 3D, zoom) | **No** | Drawn by their SDK at runtime. Nothing exists in this repository to take |
 | A screen, a panel, a populated list | **No** | Needs the app running against real data. This is what the capture team is for |
 
-Expect a mixed verdict inside ONE table of the manual. The six map controls
-documented under `mapa.ctrl.*` resolve to: one MUI icon, one product-drawn SVG
-that is white-on-dark, and four Google Maps native controls — so zero of six are
-deliverable, while the six map LAYERS beside them were all files. Judge per row,
-never per section.
+Expect a mixed verdict inside ONE table of the manual, and judge per row, never
+per section. Measured on this manual:
+
+| Table | Deliverable | Why |
+|---|---|---|
+| six map layers (`mapa.capa.*`) | **6 of 6** | Product's own `.webp`/`.png`, joined through `LayersMap.tsx` |
+| six BoT sections (`bot.seccion.*`) | **6 of 6** | Tabler outline SVGs, joined through `BOTSidebar.tsx`, recoloured |
+| six map controls (`mapa.ctrl.*`) | **0 of 6** | One MUI icon, one Tailwind-white product SVG, four Google Maps native controls |
+
+The first and third sit on the same page.
 
 ### Where the join lives, in order of strength
 
@@ -112,6 +118,36 @@ answers, and a product that draws its own icons as files changes them entirely.
 The mix matters more than the total. This product ships 389 image files AND
 three icon libraries, so "does the repo have images" is the wrong question. The
 right one is "does the control I need render from a file".
+
+## A monochrome outline must be recoloured, and that is not optional
+
+An icon library's SVG is drawn with `stroke="currentColor"` so the app can colour
+it from CSS. **That does not survive being loaded as an image.** Inside
+`<img src="…svg">` the file is an independent document: `currentColor` cannot
+inherit from the page, so it resolves to black.
+
+The manual's icon column is dark navy. A black outline on it is not invisible —
+it is worse than invisible, it is *almost* legible, so nobody notices it is
+wrong. It looks fine in a 400 dpi crop and reads as a smudge at its real 20pt.
+
+So on copy, replace `currentColor` with the column's own foreground
+(`tokens.color.headerInk`, `#E8EDF2`) and record two things IN the file:
+
+```svg
+<!-- @tabler/icons (MIT), stroke recoloured to #E8EDF2 for the manual's dark icon column -->
+```
+
+- **the licence**, because a third-party glyph is now shipped in a client document
+- **the recolouring**, because it couples this asset to how the icon column is
+  styled today. If that column ever goes light, these icons disappear and the
+  comment is the only thing that will explain why.
+
+Verify by looking at the rendered page at real size, not zoomed. This is the one
+failure mode a manifest cannot catch: the slot is filled, the count is right, and
+the reader still cannot see the control.
+
+A photographic asset (`.webp`, `.png` screenshots of controls) needs none of
+this — it carries its own pixels.
 
 ## Formats
 
