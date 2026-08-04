@@ -62,14 +62,49 @@ If any hop cannot be made, **stop and leave the slot pending.** A missing image
 is a known state the pipeline is built around. Do not close the gap by
 reasoning about what the file probably is.
 
+## No slot, no delivery
+
+**Extraction cannot create demand.** An asset is only worth taking if a slot in
+the manual is already asking for it. Check the request document first.
+
+This is not bureaucracy. The product ships 85 incident-type label images and a
+dictionary in `CustomTag.tsx` mapping 338 incident names onto 68 of them — the
+strongest join in the repository. And not one of them can be delivered, because
+the manual has no incident-typification table: nothing asks. Copying them in
+would produce 85 orphans, and `undeclared` would report every one.
+
+When a rich asset family has no slot, the gap is in the CONTENT, not in the
+extraction. Say so, and let someone decide whether that subsection should exist.
+Writing it is authoring work with its own decisions — which of 68 labels a given
+deployment actually shows, for one — and it is not this skill's job.
+
 ## What can be taken, and what cannot
 
 | Kind | Can it be taken? | Why |
 |---|---|---|
 | Static asset the app ships (`assets/images/**`) | **Yes** | A real file, reachable through the join |
+| SVG drawn as the product's own component (`assets/icons/*.tsx`) | Usually **no** | The geometry is here, but the colour is not: these carry Tailwind classes like `fill-white` because they sit on a dark control. Extracted standalone there is no Tailwind, so the glyph turns black — or `stroke="white"` renders invisible on the page. Deliverable only with a deliberate recolouring, which is a design decision |
 | Icon from `@mui/icons-material`, `@tabler/icons-react` | Not as a file | Ships as a JS component with inline SVG path data. Extractable only by parsing it, and it arrives unstyled — not what the operator sees |
 | Icon from `@iconify/react` | **No** | Resolved from a remote API at runtime. Without `@iconify/json` installed there is nothing on disk |
+| Native control of an embedded third party (Google Maps street view, 3D, zoom) | **No** | Drawn by their SDK at runtime. Nothing exists in this repository to take |
 | A screen, a panel, a populated list | **No** | Needs the app running against real data. This is what the capture team is for |
+
+Expect a mixed verdict inside ONE table of the manual. The six map controls
+documented under `mapa.ctrl.*` resolve to: one MUI icon, one product-drawn SVG
+that is white-on-dark, and four Google Maps native controls — so zero of six are
+deliverable, while the six map LAYERS beside them were all files. Judge per row,
+never per section.
+
+### Where the join lives, in order of strength
+
+1. **A literal dictionary** — `"Accidente de Tránsito": LabelAccidenteTransito`.
+   The product itself states the mapping; nothing is inferred.
+2. **An object literal pairing asset and i18n key** —
+   `{ img: layer_camera, tittle: t("layers.cameras") }`.
+3. **A hardcoded label beside the asset** — `{ img: layer_avl, tittle: "AVL" }`.
+   One hop shorter than the i18n route and just as sound.
+
+Anything weaker than these three is a guess. Leave the slot pending.
 
 Check `package.json` before assuming: an icon library added later changes these
 answers, and a product that draws its own icons as files changes them entirely.
