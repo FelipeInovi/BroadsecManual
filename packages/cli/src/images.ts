@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join, posix, relative, sep } from "node:path";
 import { pathToFileURL } from "node:url";
+import { slotToPath } from "@broadsec-manual/blocks";
 import type { ResolvedImage, SlotState } from "@broadsec-manual/blocks";
 
 /**
@@ -121,7 +122,15 @@ export function buildImageIndex(figuresDir: string, tenant: string): ImageIndex 
       if (own) return hit(own, "tenant");
       const shared = common.get(slot);
       if (shared) return hit(shared, "common");
-      return { url: pathToFileURL(placeholder).href, state: "pending" };
+      // The delivery path travels WITH the resolution so the draft build can
+      // print the exact name the capture team has to save. `_common` is the
+      // preferred destination: an override under `<tenant>/` is for the rare
+      // screen that genuinely differs, and the request document covers that.
+      return {
+        url: pathToFileURL(placeholder).href,
+        state: "pending",
+        deliverTo: `${COMMON_SET}/${slotToPath(slot)}.png`,
+      };
     },
 
     undeclared() {

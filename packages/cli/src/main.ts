@@ -485,7 +485,24 @@ export function parseOutPath(args: readonly string[], manualId: string): string 
   return value;
 }
 
-async function build(manualDir: string, filters: ReadonlyMap<string, string>): Promise<void> {
+/**
+ * Mark a draft's filename so it can never be mistaken for the deliverable.
+ *
+ * `manual-operador-mv-v0.1.0.pdf` -> `manual-operador-mv-v0.1.0-BORRADOR.pdf`.
+ * A draft carries slot names — pipeline internals invariant 4 keeps out of
+ * client-facing output — so the two files must not be distinguishable only by
+ * their contents.
+ */
+export function draftFilename(name: string): string {
+  const dot = name.lastIndexOf(".");
+  return dot <= 0 ? `${name}-BORRADOR` : `${name.slice(0, dot)}-BORRADOR${name.slice(dot)}`;
+}
+
+async function build(
+  manualDir: string,
+  filters: ReadonlyMap<string, string>,
+  draft: boolean,
+): Promise<void> {
   const { config, doc, warnings, targets, figuresDir } = loadManual(manualDir, filters);
   const outDir = join(manualDir, config.output.dir);
   mkdirSync(outDir, { recursive: true });
@@ -496,23 +513,31 @@ async function build(manualDir: string, filters: ReadonlyMap<string, string>): P
   for (const target of targets) {
     const manual = assemble(doc, target, catalog);
     const tenant = requireAxisValue(target, "tenant");
-    const name = config.output.filename
+    const rendered = config.output.filename
       .replace("{tenant}", tenant)
       .replace("{contentVersion}", config.manual.contentVersion);
+    const name = draft ? draftFilename(rendered) : rendered;
 
     const { entries, slots, images } = resolveTargetImages(manual, figuresDir, tenant);
 
     const html = renderHtml(manual, {
-      header: `BROADSEC  |  ${config.manual.title}  |  v${config.manual.contentVersion}`,
+      header: draft
+        ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${config.manual.contentVersion}  |  NO DISTRIBUIR`
+        : `BROADSEC  |  ${config.manual.title}  |  v${config.manual.contentVersion}`,
       slots,
       images: (slot) => images.resolve(slot),
+      draft,
       polyfill,
       cover: {
-        brand: "BROADSEC",
+        brand: draft ? "BORRADOR INTERNO" : "BROADSEC",
         title: config.manual.title,
         version: config.manual.contentVersion,
-        lede: `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, "tenant", requireAxisValue(target, "tenant"))}.`,
-        meta: "© 2026 Inovisec  |  Todos los Derechos Reservados  |  Documento Confidencial",
+        lede: draft
+          ? "Borrador para la toma de capturas. Cada imagen pendiente lleva debajo la ruta y el nombre exactos con los que debe entregarse el archivo. Guárdela tal cual, sin cambiar mayúsculas ni extensión. No distribuir."
+          : `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, "tenant", requireAxisValue(target, "tenant"))}.`,
+        meta: draft
+          ? "© 2026 Inovisec  |  Documento de trabajo interno  |  No es la versión para el cliente"
+          : "© 2026 Inovisec  |  Todos los Derechos Reservados  |  Documento Confidencial",
       },
     });
 
@@ -568,8 +593,10 @@ export async function run(argv: readonly string[]): Promise<number> {
   const axisFlags = "[--tenant <id>] [--axis <name>=<value> ...]";
   if ((command !== "build" && command !== "images") || !manualId) {
     console.error(
-      `usage: broadsec-manual build <manual> ${axisFlags}\n` +
-        `       broadsec-manual images <manual> ${axisFlags} [--out <path>]`,
+      `usage: broadsec-manual build <manual> ${axisFlags} [--draft]\n` +
+        `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n\n` +
+        `  --draft  internal build: prints the filename every pending image must\n` +
+        `           be delivered under. Never distribute a draft to a client.`,
     );
     return 2;
   }
@@ -589,8 +616,12 @@ export async function run(argv: readonly string[]): Promise<number> {
       return 0;
     }
 
-    console.log(`building ${manualId}${label ? ` (${label})` : ""}`);
-    await build(manualDir, filters);
+    const draft = rest.includes("--draft");
+    console.log(
+      `building ${draft ? "DRAFT " : ""}${manualId}${label ? ` (${label})` : ""}` +
+        `${draft ? " — internal, shows pending image names" : ""}`,
+    );
+    await build(manualDir, filters, draft);
     return 0;
   } catch (error) {
     console.error(`\n${formatCliError(error)}`);

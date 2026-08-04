@@ -29,6 +29,12 @@ const base = {
   },
   font: {
     sans: "Helvetica, Arial, sans-serif",
+    /**
+     * For text that is transcribed rather than read — a filename someone has to
+     * reproduce exactly. In a proportional face `l`, `1` and `I` are the same
+     * shape, and a mistyped image name is a delivery nobody can match to a slot.
+     */
+    mono: "Consolas, 'DejaVu Sans Mono', Menlo, monospace",
   },
   size: {
     xs: "7pt",
@@ -153,6 +159,17 @@ export const tokens = {
     titleColor: base.color.white,
     subtitleColor: base.color.teal400,
     metaColor: base.color.slate400,
+  },
+  /**
+   * The draft build only. Amber rather than the brand palette, and deliberately
+   * loud: a draft carries the filenames the capture team must reproduce, and it
+   * must be impossible to mistake for the document a client receives.
+   */
+  draft: {
+    accent: base.color.amber500,
+    background: base.color.amberSurface,
+    slotColor: base.color.slate700,
+    slotSize: base.size.xs,
   },
   space: base.space,
   font: base.font,

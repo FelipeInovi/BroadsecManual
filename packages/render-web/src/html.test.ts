@@ -1,0 +1,126 @@
+import { describe, expect, it } from "vitest";
+import type { BlockNode, ManualNode, ResolvedImage, ResolvedManual } from "@broadsec-manual/blocks";
+import { renderHtml, type RenderOptions } from "./html.ts";
+
+const PENDING: ResolvedImage = {
+  url: "file:///figures/_pending.svg",
+  state: "pending",
+  deliverTo: "_common/barra/busqueda.png",
+};
+
+const DELIVERED: ResolvedImage = {
+  url: "file:///figures/_common/barra/busqueda.png",
+  state: "common",
+};
+
+const block = (id: string, type: string, props: Record<string, unknown>): BlockNode => ({
+  kind: "block",
+  id,
+  type,
+  props,
+});
+
+const manual = (children: readonly ManualNode[]): ResolvedManual => ({
+  manualId: "m",
+  version: "0.1.0",
+  target: { tenant: "mv" },
+  children,
+  numbers: new Map([["s.fig", "1.1"]]),
+});
+
+const render = (
+  children: readonly ManualNode[],
+  slots: Array<[string, string]>,
+  resolved: ResolvedImage,
+  draft?: boolean,
+): string => {
+  const options: RenderOptions = {
+    header: "BROADSEC",
+    slots: new Map(slots),
+    images: () => resolved,
+    ...(draft === undefined ? {} : { draft }),
+    cover: { brand: "B", title: "T", version: "0.1.0", lede: "L", meta: "M" },
+  };
+  return renderHtml(manual(children), options);
+};
+
+/**
+ * The rendered BODY only.
+ *
+ * The stylesheet is inlined in `<head>` and names every class it styles, so
+ * asserting a class is absent from the whole document would always fail — and
+ * would have hidden whether the markup actually carries it.
+ */
+const body = (html: string): string => html.slice(html.indexOf("</style>"));
+
+const figure = [block("s.fig", "figure", { caption: "Barra de búsqueda", widthPercent: 80 })];
+const figureSlots: Array<[string, string]> = [["s.fig", "barra.busqueda"]];
+
+describe("pending image names", () => {
+  // The whole reason the draft build exists: whoever captures the screenshots
+  // works from this PDF and has no other way to know what to call the file.
+  it("prints the delivery path beside a pending image in a draft", () => {
+    const html = body(render(figure, figureSlots, PENDING, true));
+    expect(html).toContain("_common/barra/busqueda.png");
+    expect(html).toContain('class="shot__name"');
+  });
+
+  // Invariant 4: a tenant's PDF carries no trace of the pipeline's internals.
+  // This is the test that keeps a slot path out of a document marked Confidential.
+  it("never prints it in a client build, even though the image is pending", () => {
+    const html = body(render(figure, figureSlots, PENDING));
+    expect(html).not.toContain("_common/barra/busqueda.png");
+    expect(html).not.toContain("shot__name");
+    // The placeholder itself still renders — a pending slot is never a gap.
+    expect(html).toContain("_pending.svg");
+  });
+
+  it("prints nothing for a delivered image, draft or not", () => {
+    for (const draft of [true, false]) {
+      const html = body(render(figure, figureSlots, DELIVERED, draft));
+      expect(html, `draft=${draft}`).not.toContain("shot__name");
+    }
+  });
+
+  it("escapes the path, so it cannot inject markup", () => {
+    const html = body(
+      render(
+        figure,
+        figureSlots,
+        {
+          url: "file:///x.svg",
+          state: "pending",
+          deliverTo: "_common/<script>alert(1)</script>.png",
+        },
+        true,
+      ),
+    );
+    expect(html).not.toContain("<script>alert(1)</script>");
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("puts a table row's name in the description cell, not the 34pt icon column", () => {
+    const table = [
+      block("s.tabla", "icon-table", {
+        labelHeader: "Control",
+        descriptionHeader: "Función",
+        rows: [{ id: "r1", label: "Buscar", description: "Busca casos." }],
+      }),
+    ];
+    const html = body(render(table, [["r1", "barra.busqueda"]], PENDING, true));
+    const iconCell = html.slice(html.indexOf('class="tbl__icon'), html.indexOf('class="tbl__label'));
+    expect(iconCell).not.toContain("shot__name");
+    expect(html).toContain("Busca casos.");
+    expect(html.indexOf("shot__name")).toBeGreaterThan(html.indexOf("Busca casos."));
+  });
+});
+
+describe("image slots the renderer was not given", () => {
+  // The renderer holds no image policy: a node absent from the slots map has no
+  // image, full stop. If it invented one, prose would sprout placeholders.
+  it("renders no image at all for a node with no slot", () => {
+    const html = body(render([block("s.p", "prose", { text: "Sin ilustración." })], [], PENDING, true));
+    expect(html).not.toContain("_pending.svg");
+    expect(html).not.toContain("shot");
+  });
+});

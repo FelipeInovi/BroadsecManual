@@ -33,6 +33,17 @@ export interface RenderOptions {
   readonly slots: ReadonlyMap<NodeId, string>;
   /** Turns a slot into a URL and tells whether it is still pending. */
   readonly images: ImageResolver;
+  /**
+   * Draft build: print the filename every pending image must be delivered
+   * under, beside the placeholder that stands in for it.
+   *
+   * OFF for anything a client receives. A slot name is a trace of the pipeline's
+   * internals and invariant 4 keeps those out of client-facing output — but the
+   * person walking through the product with this document in hand has no other
+   * way to know what to call the file they just captured. Two builds of the same
+   * content, not one compromise.
+   */
+  readonly draft?: boolean;
   /** Inlined at the end of <body>; used to load the pagination polyfill. */
   readonly polyfill?: string;
 }
@@ -51,6 +62,13 @@ const plain = (inline: readonly Inline[]): string =>
 interface Shot {
   readonly img: string;
   readonly pending: boolean;
+  /**
+   * The filename label for a pending image — present only in a draft build.
+   *
+   * Empty in a client build even when the image is pending: the placeholder
+   * says an image is coming, and that is all a client needs to know.
+   */
+  readonly name: string;
 }
 
 /**
@@ -69,20 +87,19 @@ function shot(id: NodeId, o: RenderOptions, attrs = ""): Shot | undefined {
   return {
     img: `<img class="${cls}" src="${esc(resolved.url)}"${attrs}>`,
     pending,
+    name: o.draft && pending && resolved.deliverTo ? pendingName(resolved.deliverTo) : "",
   };
 }
 
-/*
- * There is deliberately NO caption naming a pending image.
+/**
+ * The filename a pending image must be delivered under.
  *
- * The placeholder already says an image is coming, and every slot sits directly
- * under the thing it depicts — a field's label, a step's title, a figure's
- * caption, a row's label. A note would repeat the line above it in every single
- * case. The slot id, which is the one thing not otherwise visible, must not
- * appear either: the PDF is client-facing (invariant 4) and a slot id is a
- * trace of the pipeline's internals. It lives in the image manifest, which only
- * we read.
+ * Draft builds only. Printed as the path itself rather than prose around it: it
+ * is text to be transcribed exactly, and every extra word is a chance to
+ * transcribe the wrong part of the line.
  */
+const pendingName = (deliverTo: string): string =>
+  `<span class="shot__name">${esc(deliverTo)}</span>`;
 
 /**
  * `icon-table` and `data-table` render through one function.
@@ -98,25 +115,28 @@ function renderTable(node: BlockNode, o: RenderOptions): string {
 
   // One column, always occupied: the control's icon once delivered, the
   // placeholder until then. An empty cell reads as "no control here".
-  // No pending note — the column is 34pt wide, there is nowhere to put it.
-  const iconCell = (r: Record<string, unknown>): string => {
+  const iconCell = (image: Shot | undefined): string => {
     if (!withIcons) return "";
-    const image = shot(String(r["id"]), o);
     if (!image) return `<td class="tbl__icon"></td>`;
     const cls = image.pending ? "tbl__icon tbl__icon--pending" : "tbl__icon";
     return `<td class="${cls}">${image.img}</td>`;
   };
 
   const body = rows
-    .map((r) =>
-      [
+    .map((r) => {
+      const image = withIcons ? shot(String(r["id"]), o) : undefined;
+      // A draft's filename goes in the DESCRIPTION cell, not under the icon:
+      // the icon column is 34pt wide and a path would either wrap to shreds or
+      // stretch the column and wreck the table.
+      const description = inlineMarkup(String(r["description"])) + (image?.name ?? "");
+      return [
         `<tr>`,
-        iconCell(r),
+        iconCell(image),
         `<td class="tbl__label">${esc(String(r["label"]))}</td>`,
-        `<td>${inlineMarkup(String(r["description"]))}</td>`,
+        `<td>${description}</td>`,
         `</tr>`,
-      ].join(""),
-    )
+      ].join("");
+    })
     .join("");
 
   return [
@@ -136,7 +156,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
       // either — a paragraph has no short label to name, and the placeholder
       // already says an image is coming.
       const image = shot(node.id, o);
-      return image ? `${body}<p class="prose__shot">${image.img}</p>` : body;
+      return image ? `${body}<p class="prose__shot">${image.img}${image.name}</p>` : body;
     }
 
     case "callout": {
@@ -156,7 +176,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
         .map((f) => {
           const label = String(f["label"]);
           const image = shot(String(f["id"]), o);
-          const figure = image ? `<p class="field__shot">${image.img}</p>` : "";
+          const figure = image ? `<p class="field__shot">${image.img}${image.name}</p>` : "";
           return [
             `<div class="field">`,
             `<p class="field__label">${esc(label)}</p>`,
@@ -176,7 +196,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
           return (
             `<div class="term"><dt>${esc(String(e["term"]))}:</dt>` +
             `<dd>${inlineMarkup(String(e["definition"]))}</dd>` +
-            (image ? `<p class="term__shot">${image.img}</p>` : "") +
+            (image ? `<p class="term__shot">${image.img}${image.name}</p>` : "") +
             `</div>`
           );
         })
@@ -200,7 +220,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
             : "";
           const title = String(s["title"]);
           const image = shot(String(s["id"]), o);
-          const figure = image ? `<p class="step__shot">${image.img}</p>` : "";
+          const figure = image ? `<p class="step__shot">${image.img}${image.name}</p>` : "";
           return [
             `<div class="step">`,
             `<p class="step__title"><span class="step__marker">Paso ${esc(n)}:</span> ${esc(
@@ -226,6 +246,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
         `<figure>`,
         image?.img ?? "",
         `<figcaption>${label}${esc(caption)}</figcaption>`,
+        image?.name ?? "",
         `</figure>`,
       ].join("");
     }

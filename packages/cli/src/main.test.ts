@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   axisValueName,
+  draftFilename,
   formatCliError,
   imageRequests,
   manualConfigSchema,
@@ -34,6 +35,29 @@ describe("parseOutPath", () => {
   it("rejects --out with no value, and with a following flag", () => {
     expect(() => parseOutPath(["--out"], "m")).toThrow(/requires a path/);
     expect(() => parseOutPath(["--out", "--tenant"], "m")).toThrow(/requires a path/);
+  });
+});
+
+describe("draftFilename", () => {
+  // A draft carries slot paths, which invariant 4 keeps out of client-facing
+  // output. The two files must not be distinguishable only by their contents.
+  it("marks the draft before the extension", () => {
+    expect(draftFilename("manual-operador-mv-v0.1.0.pdf")).toBe(
+      "manual-operador-mv-v0.1.0-BORRADOR.pdf",
+    );
+  });
+
+  it("appends when there is no extension", () => {
+    expect(draftFilename("manual")).toBe("manual-BORRADOR");
+  });
+
+  // A version number is full of dots; the mark belongs before the LAST one.
+  it("uses the last dot, not the first", () => {
+    expect(draftFilename("a.b.c.pdf")).toBe("a.b.c-BORRADOR.pdf");
+  });
+
+  it("leaves a dotfile alone rather than splitting on its leading dot", () => {
+    expect(draftFilename(".hidden")).toBe(".hidden-BORRADOR");
   });
 });
 

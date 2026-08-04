@@ -161,6 +161,15 @@ export interface ResolvedImage {
   /** Where the renderer loads it from. */
   readonly url: string;
   readonly state: SlotState;
+  /**
+   * Where the file has to be delivered. Present only while pending.
+   *
+   * Carried on the resolution rather than derived by the renderer because the
+   * layout of the figures folder is the CLI's business — see
+   * `packages/cli/AGENTS.md`. The draft build prints it; the client build never
+   * does.
+   */
+  readonly deliverTo?: string;
 }
 
 /**

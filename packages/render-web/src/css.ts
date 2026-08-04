@@ -362,6 +362,33 @@ img.shot--pending {
   /* The placeholder draws its own dashed frame; a second border would double it. */
   border: 0;
 }
+
+/* DRAFT BUILDS ONLY — the filename the capture team must save the image under.
+   Never emitted for a client build; see RenderOptions.draft in html.ts.
+
+   Monospaced because this is text to be transcribed, not read: in the body face
+   lowercase L, one and uppercase i are the same shape, and a mistyped name is a
+   delivery that silently matches no slot. Amber, because it must not read as
+   part of the manual's own design language. */
+/* inline-block, not block: it must hug the path and sit under the placeholder it
+   belongs to. A full-column band under a 40%-wide image reads as unrelated to
+   it, which for a filename is worse than ugly. */
+.shot__name {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: ${t.space.xs};
+  font-family: ${t.font.mono};
+  font-size: ${t.draft.slotSize};
+  color: ${t.draft.slotColor};
+  background: ${t.draft.background};
+  border-left: 2pt solid ${t.draft.accent};
+  padding: 2pt 4pt;
+  /* A path must break where it is safe to break, never mid-segment. */
+  word-break: break-all;
+}
+/* Inside a table cell, its own line: someone works down a table row by row, and
+   a name trailing the end of a description sentence is one they can skip. */
+table.tbl .shot__name { display: block; margin-top: ${t.space.xs}; }
 /* A pending icon gets a little more room than a delivered one: at 20pt only
    its frame is legible, and the row's label already names the control. */
 td.tbl__icon--pending img { max-width: 24pt; max-height: 24pt; opacity: 0.75; }

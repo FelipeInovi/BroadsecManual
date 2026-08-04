@@ -88,11 +88,31 @@ reader has no way to detect the lie.
 The placeholder is deliberately the same everywhere. It is a *shape held open*,
 not a description of what is missing: every slot sits directly under the thing
 it depicts — a field's label, a step's title, a figure's caption, a row's label
-— so the page already says which image is coming. What each slot needs in words
-lives in the image manifest, not on the page.
+— so the page already says which image is coming.
 
-Never write a slot id into content that the reader sees. The PDF is
-client-facing (invariant 4) and a slot id is a trace of the pipeline.
+Never write a slot id into content. The PDF is client-facing (invariant 4) and a
+slot id is a trace of the pipeline.
+
+### Two builds, because two people read this document
+
+Whoever captures the screenshots works from the PDF in hand and has no other way
+to know what to call the file. Whoever receives the manual must not see a path
+from our repository in a document marked Confidential. Both are true, so there
+are two builds of the same content:
+
+| Build | Pending images render as | For |
+|---|---|---|
+| `build <manual>` | The placeholder, nothing else | The client |
+| `build <manual> --draft` | The placeholder **plus the exact filename to deliver it under** | Whoever takes the captures |
+
+The draft is marked at every level so it cannot be handed over by accident: its
+filename gains `-BORRADOR`, its cover reads BORRADOR INTERNO, and its running
+header says NO DISTRIBUIR. The client build is the default; you have to ask for
+the draft.
+
+Give the capture team the draft PDF **and** the request document. The PDF shows
+them where each image goes and what to name it; the document is the full list
+with what each one shows and which deployments need it.
 
 ### Where an image belongs
 
