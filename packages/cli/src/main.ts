@@ -602,7 +602,19 @@ async function build(
   // The build reports the image state but does not write the request document:
   // that is an explicit export (`images`), because it leaves the repository for
   // another team and should not be a side effect nobody asked for.
-  printUndeclaredImages(new Set([...seenOnDisk].filter((s) => !askedFor.has(s))));
+  // Only every deployment together can answer this. An image one deployment uses
+  // is legitimately unused by the others, so a filtered build sees a tenant-specific
+  // file as an orphan — `build --tenant med` reported MV's map-layer icons as
+  // deliveries nobody asked for. Judge it only when the whole set was built.
+  if (targets.length === config.targets.length) {
+    printUndeclaredImages(new Set([...seenOnDisk].filter((s) => !askedFor.has(s))));
+  } else {
+    console.log(
+      `
+  (undeclared-image check skipped: it needs every deployment, and this ` +
+        `build covered ${targets.length} of ${config.targets.length})`,
+    );
+  }
   printWarnings(warnings);
 }
 

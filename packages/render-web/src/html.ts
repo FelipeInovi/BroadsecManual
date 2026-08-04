@@ -336,7 +336,7 @@ function renderSection(
       ? `<p class="section-header__subtitle">${esc(plain(node.subtitle))}</p>`
       : "";
     return [
-      `<header class="section-header">`,
+      `<header class="section-header" id="${esc(node.id)}">`,
       `<h1 class="section-header__title">${esc(title)}</h1>`,
       subtitle,
       `</header>`,
@@ -344,7 +344,7 @@ function renderSection(
     ].join("\n");
   }
   if (depth === 1) {
-    return `<h2 class="subsection-header">${esc(title)}</h2>\n${children}`;
+    return `<h2 class="subsection-header" id="${esc(node.id)}">${esc(title)}</h2>\n${children}`;
   }
   // Deeper divisions are detail blocks: subordinate, unnumbered in the design.
   return `<h3 class="detail-header">${esc(plain(node.title))}</h3>\n${children}`;
@@ -374,6 +374,53 @@ function renderCover(c: CoverData): string {
   ].join("\n");
 }
 
+
+/**
+ * The table of contents.
+ *
+ * Generated furniture, like the cover — never authored. It cannot be written by
+ * hand or by an agent for two reasons that both bite per build: the section
+ * ordinals are assigned after conditioning, so `mv` and `med` do not share them,
+ * and the page numbers do not exist until the document has been paginated.
+ *
+ * The page number comes from `target-counter(attr(href), page)`, which the
+ * paginator resolves once the layout is final. That is why every section header
+ * carries its node id as an anchor.
+ *
+ * Two levels deep, matching the manual this replaces. Deeper divisions render as
+ * unnumbered detail headings and would turn a map of the document into a second
+ * copy of it.
+ */
+function renderToc(manual: ResolvedManual): string {
+  const entry = (node: SectionNode, level: 1 | 2): string => {
+    const n = manual.numbers.get(node.id);
+    const label = n ? `${n}. ${plain(node.title)}` : plain(node.title);
+    return (
+      `<a class="toc__entry toc__entry--l${level}" href="#${esc(node.id)}">` +
+      `<span class="toc__text">${esc(label)}</span>` +
+      `</a>`
+    );
+  };
+
+  const rows = manual.children
+    .filter((c): c is SectionNode => c.kind === "section")
+    .map((section) => {
+      const subs = section.children
+        .filter((c): c is SectionNode => c.kind === "section")
+        .map((sub) => entry(sub, 2))
+        .join("");
+      return entry(section, 1) + subs;
+    })
+    .join("");
+
+  return [
+    `<nav class="toc">`,
+    `<h1 class="toc__title">Tabla de Contenido</h1>`,
+    rows,
+    `</nav>`,
+  ].join("\n");
+}
+
 /** Render a resolved manual to a self-contained HTML document. */
 export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
   const body = manual.children.map((c) => renderNode(c, 0, manual.numbers, o)).join("\n");
@@ -383,6 +430,7 @@ export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
 <style>${stylesheet(tokens, o.header)}</style>
 </head><body>
 ${renderCover(o.cover)}
+${renderToc(manual)}
 <main class="content">
 ${body}
 </main>

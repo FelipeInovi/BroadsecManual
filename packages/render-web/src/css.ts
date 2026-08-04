@@ -182,6 +182,55 @@ body {
   font-size: ${t.runningFooter.textSize};
 }
 
+/* ---- table of contents ----------------------------------------------- */
+
+/* Generated, never authored — see renderToc in html.ts. Two levels, matching the
+   manual this replaces, with the page number resolved by the paginator through
+   target-counter once the layout is final. */
+.toc {
+  break-after: page;
+  padding-top: ${t.space.lg};
+}
+.toc__title {
+  font-size: 24pt;
+  font-weight: bold;
+  color: ${t.prose.color};
+  margin: 0 0 ${t.space.sm};
+  padding-bottom: ${t.space.sm};
+  border-bottom: 2pt solid ${t.sectionHeader.accent};
+}
+.toc__entry {
+  display: flex;
+  align-items: baseline;
+  gap: ${t.space.sm};
+  text-decoration: none;
+  border-bottom: 0.5pt solid ${t.runningFooter.rule};
+  padding: 3.5pt 0;
+  break-inside: avoid;
+}
+.toc__entry--l1 {
+  color: ${t.prose.color};
+  font-size: ${t.prose.size};
+  font-weight: bold;
+  margin-top: ${t.space.xs};
+}
+.toc__entry--l2 {
+  color: ${t.subsectionHeader.titleColor};
+  font-size: ${t.table.cellSize};
+  padding-left: ${t.space.xl};
+}
+/* The text takes the slack so the page number sits hard against the right edge. */
+.toc__text { flex: 1 1 auto; }
+/* The page the entry points at. Resolved by the paginator, which is the only
+   thing that knows it: a hand-written number would be wrong for the next build,
+   and wrong per deployment, since conditioning changes what lands on each page. */
+.toc__entry::after {
+  content: target-counter(attr(href), page);
+  font-variant-numeric: tabular-nums;
+  color: ${t.runningFooter.pageNumberColor};
+  font-weight: bold;
+}
+
 /* ---- headings ------------------------------------------------------- */
 
 .section-header {
