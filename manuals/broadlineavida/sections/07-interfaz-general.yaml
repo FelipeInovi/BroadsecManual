@@ -101,15 +101,17 @@ children:
               description: >-
                 Muestra los incidentes activos, agrupados por cercanía y
                 tipificados por su categoría.
-            # LayersMap.tsx:225-226, 240-241, 266-267 — hidden for AMVA.
+            # LayersMap.tsx:76 — the entry only exists when
+            # `config.name === "MV" || config.name === "DEMO"`.
             - id: mapa.capa.avl
               label: AVL
               description: >-
                 Muestra la ubicación en tiempo real de los vehículos con
                 seguimiento automático.
               when:
-                tenant: [lv, ant, mv, med, demo]
-            # LayersMap.tsx:225-226, 240-241, 266-267 — hidden for AMVA.
+                tenant: [mv, demo]
+            # LayersMap.tsx:89 unconditional entry, 225-226/240-241/266-267
+            # hide it for AMVA — so every deployment except AMVA.
             - id: mapa.capa.mobile
               label: Mobile
               description: >-
@@ -117,7 +119,8 @@ children:
                 aplicación móvil.
               when:
                 tenant: [lv, ant, mv, med, demo]
-            # LayersMap.tsx:98, 105, 112, 138 — MV only.
+            # LayersMap.tsx:98 — the entry only exists when
+            # `config.name === "MV"`.
             - id: mapa.capa.camaras
               label: Cámaras
               description: >-
@@ -125,14 +128,15 @@ children:
                 acceder a su transmisión.
               when:
                 tenant: [mv]
-            # LayersMap.tsx:76 — MV and DEMO only.
+            # LayersMap.tsx:138 — the entry only exists when
+            # `config.name === "MV"`.
             - id: mapa.capa.paneles
               label: Paneles
               description: >-
                 Muestra los paneles de mensajería variable y su contenido
                 actual.
               when:
-                tenant: [mv, demo]
+                tenant: [mv]
 
       - id: mapa.fig-capas
         type: figure

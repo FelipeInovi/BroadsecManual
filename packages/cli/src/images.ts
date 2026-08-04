@@ -38,13 +38,15 @@ export interface ImageIndex {
   /** Resolve a slot, recording that it was asked for. */
   resolve(slot: string): ManifestImage;
   /**
-   * Slots that exist on disk but that no content asked for, sorted.
+   * Every slot this deployment can see on disk — its own set plus the shared
+   * one — whether or not anything asked for it.
    *
-   * This is the failure mode the whole slot scheme exists to catch: an image
-   * delivered under a name no slot declares leaves the page showing a
-   * placeholder while the build reports success.
+   * Deciding what is undeclared needs ALL deployments: an image used only by one
+   * of them is legitimately unused by the others, so a per-deployment answer
+   * would report every tenant-specific image as an orphan. See `imageRequests`,
+   * which subtracts what any deployment asked for from what all of them saw.
    */
-  undeclared(): readonly string[];
+  indexed(): readonly string[];
 }
 
 const extensionOf = (name: string): string => {
@@ -92,8 +94,7 @@ function indexSet(root: string, label: string): Map<string, string> {
  * Index what has been delivered for one deployment.
  *
  * Built once per target rather than probing the disk per slot: the same index
- * answers every lookup, catches two files claiming one slot, and knows which
- * delivered images nothing asked for.
+ * answers every lookup and catches two files claiming one slot.
  */
 export function buildImageIndex(figuresDir: string, tenant: string): ImageIndex {
   const placeholder = join(figuresDir, PENDING_PLACEHOLDER);
@@ -107,7 +108,6 @@ export function buildImageIndex(figuresDir: string, tenant: string): ImageIndex 
 
   const perTenant = indexSet(join(figuresDir, tenant), `the "${tenant}" set`);
   const common = indexSet(join(figuresDir, COMMON_SET), `the "${COMMON_SET}" set`);
-  const asked = new Set<string>();
 
   const hit = (path: string, state: SlotState): ManifestImage => ({
     url: pathToFileURL(path).href,
@@ -117,7 +117,6 @@ export function buildImageIndex(figuresDir: string, tenant: string): ImageIndex 
 
   return {
     resolve(slot) {
-      asked.add(slot);
       const own = perTenant.get(slot);
       if (own) return hit(own, "tenant");
       const shared = common.get(slot);
@@ -133,11 +132,8 @@ export function buildImageIndex(figuresDir: string, tenant: string): ImageIndex 
       };
     },
 
-    undeclared() {
-      const extra = new Set<string>();
-      for (const slot of perTenant.keys()) if (!asked.has(slot)) extra.add(slot);
-      for (const slot of common.keys()) if (!asked.has(slot)) extra.add(slot);
-      return [...extra].sort();
+    indexed() {
+      return [...new Set([...perTenant.keys(), ...common.keys()])].sort();
     },
   };
 }

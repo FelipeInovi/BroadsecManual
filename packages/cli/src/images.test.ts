@@ -89,27 +89,31 @@ describe("buildImageIndex", () => {
     expect(buildImageIndex(figures, "mv").resolve("barra.busqueda").state).toBe("pending");
   });
 
-  // The failure mode this whole scheme exists to catch: an image arrives under
-  // a name no slot asks for, the manual keeps showing a placeholder, and
-  // nobody notices because the build succeeded.
-  it("reports delivered images that no slot asked for", () => {
+  // Reports what it SAW, never what it judged unused: deciding that needs every
+  // deployment, because an image one of them uses is legitimately unused by the
+  // others. That judgement belongs to `imageRequests`.
+  it("lists every slot on disk, from both its own set and the shared one", () => {
     put("_common/barra/buscar.png");
     put("mv/barra/otro.png");
     const index = buildImageIndex(figures, "mv");
-    index.resolve("barra.busqueda");
-    expect(index.undeclared()).toEqual(["barra.buscar", "barra.otro"]);
+    expect(index.indexed()).toEqual(["barra.buscar", "barra.otro"]);
   });
 
-  it("does not report an image once a slot has claimed it", () => {
+  it("lists a slot whether or not anything resolved it", () => {
     put("_common/barra/busqueda.png");
     const index = buildImageIndex(figures, "mv");
     index.resolve("barra.busqueda");
-    expect(index.undeclared()).toEqual([]);
+    expect(index.indexed()).toEqual(["barra.busqueda"]);
   });
 
-  it("never reports the placeholder as an undeclared delivery", () => {
+  it("never lists the placeholder as a delivered slot", () => {
     const index = buildImageIndex(figures, "mv");
-    expect(index.undeclared()).toEqual([]);
+    expect(index.indexed()).toEqual([]);
+  });
+
+  it("ignores another deployment's folder when listing", () => {
+    put("amva/barra/busqueda.png");
+    expect(buildImageIndex(figures, "mv").indexed()).toEqual([]);
   });
 
   // The placeholder is infrastructure: without it a pending slot renders a

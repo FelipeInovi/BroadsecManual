@@ -70,7 +70,7 @@ describe("imageRequests", () => {
   const target = (tenant: string, entries: TargetImages["entries"]): TargetImages => ({
     tenant,
     entries,
-    undeclared: [],
+    indexed: entries.map((e) => e.slot),
   });
 
   const use = (nodeId: string, shows: string) => ({ nodeId, blockType: "icon-table", shows });
@@ -137,12 +137,29 @@ describe("imageRequests", () => {
     ]);
   });
 
-  it("unions undeclared deliveries across deployments", () => {
+  it("reports an image no deployment asked for", () => {
     const report = imageRequests(config, [
-      { tenant: "mv", entries: [], undeclared: ["barra.buscar"] },
-      { tenant: "lv", entries: [], undeclared: ["barra.buscar", "otro.slot"] },
+      { tenant: "mv", entries: [], indexed: ["barra.buscar"] },
+      { tenant: "lv", entries: [], indexed: ["barra.buscar", "otro.slot"] },
     ]);
     expect(report["undeclared"]).toEqual(["barra.buscar", "otro.slot"]);
+  });
+
+  // The false positive that made the check worthless: a slot only ONE deployment
+  // needs sits in the shared set, so every other deployment sees a file it never
+  // asked for. Judged per deployment, every tenant-specific image was an orphan.
+  it("does not report an image that only one deployment asked for", () => {
+    const mvOnly = {
+      slot: "mapa.capa.camaras",
+      state: "common" as const,
+      file: "_common/mapa/capa/camaras.webp",
+      uses: [use("mapa.capa.camaras", "Cámaras")],
+    };
+    const report = imageRequests(config, [
+      { tenant: "mv", entries: [mvOnly], indexed: ["mapa.capa.camaras"] },
+      { tenant: "lv", entries: [], indexed: ["mapa.capa.camaras"] },
+    ]);
+    expect("undeclared" in report).toBe(false);
   });
 
   it("omits the undeclared key entirely when every delivery is claimed", () => {

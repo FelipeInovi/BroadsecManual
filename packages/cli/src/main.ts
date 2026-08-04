@@ -113,7 +113,8 @@ function loadDocument(
 export interface TargetImages {
   readonly tenant: string;
   readonly entries: readonly ManifestSlot[];
-  readonly undeclared: readonly string[];
+  /** Every slot this deployment saw on disk, asked for or not. */
+  readonly indexed: readonly string[];
 }
 
 /** One image in the export, with every deployment that needs it. */
@@ -163,9 +164,18 @@ export function imageRequests(
   >();
   const orphans = new Set<string>();
 
-  for (const { tenant, entries, undeclared } of perTarget) {
-    for (const slot of undeclared) orphans.add(slot);
+  // What every deployment SAW, minus what any deployment ASKED FOR. Computed
+  // across all of them because an image used by one deployment is legitimately
+  // unused by the others: judging it per deployment reported every
+  // tenant-specific image as an orphan, which is noise that trains people to
+  // ignore the one report that matters.
+  const seen = new Set<string>();
+  const asked = new Set<string>();
+
+  for (const { tenant, entries, indexed } of perTarget) {
+    for (const slot of indexed) seen.add(slot);
     for (const entry of entries) {
+      asked.add(entry.slot);
       let acc = bySlot.get(entry.slot);
       if (!acc) {
         acc = { neededBy: [], pendingFor: [], files: new Set(), uses: [] };
@@ -183,6 +193,8 @@ export function imageRequests(
       }
     }
   }
+
+  for (const slot of seen) if (!asked.has(slot)) orphans.add(slot);
 
   const all: RequestedImage[] = [...bySlot.entries()].map(([slot, acc]) => ({
     slot,
@@ -451,7 +463,7 @@ function exportImages(
     const tenant = requireAxisValue(target, "tenant");
     const manual = assemble(doc, target, catalog);
     const { entries, images } = resolveTargetImages(manual, figuresDir, tenant);
-    return { tenant, entries, undeclared: images.undeclared() };
+    return { tenant, entries, indexed: images.indexed() };
   });
 
   const report = imageRequests(config, perTarget);
@@ -508,7 +520,10 @@ async function build(
   mkdirSync(outDir, { recursive: true });
 
   const polyfill = pagedRuntime();
-  const orphans = new Set<string>();
+  // Undeclared images can only be judged once EVERY target has been resolved —
+  // an image one deployment uses is legitimately unused by another.
+  const seenOnDisk = new Set<string>();
+  const askedFor = new Set<string>();
 
   for (const target of targets) {
     const manual = assemble(doc, target, catalog);
@@ -547,9 +562,8 @@ async function build(
     writeFileSync(htmlPath, html, "utf8");
     const { pages } = await printToPdf(htmlPath, pdfPath);
 
-    // Read after rendering: `undeclared` can only be answered once every slot
-    // this target uses has been resolved.
-    for (const slot of images.undeclared()) orphans.add(slot);
+    for (const slot of images.indexed()) seenOnDisk.add(slot);
+    for (const entry of entries) askedFor.add(entry.slot);
     const delivered = entries.filter((e) => e.state !== "pending").length;
 
     const sections = manual.children.length;
@@ -565,7 +579,7 @@ async function build(
   // The build reports the image state but does not write the request document:
   // that is an explicit export (`images`), because it leaves the repository for
   // another team and should not be a side effect nobody asked for.
-  printUndeclaredImages(orphans);
+  printUndeclaredImages(new Set([...seenOnDisk].filter((s) => !askedFor.has(s))));
   printWarnings(warnings);
 }
 

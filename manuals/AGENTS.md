@@ -39,6 +39,7 @@ restate them, because a rule stated twice is a rule that drifts.
 | `block-authoring` | Choosing and filling a block type |
 | `tenant-conditioning` | Tagging content per deployment |
 | `source-extraction` | Getting facts out of the product |
+| `source-assets` | Taking images from the product's own asset files |
 | `manual-import` | Migrating the legacy document |
 
 ## Authoring rules

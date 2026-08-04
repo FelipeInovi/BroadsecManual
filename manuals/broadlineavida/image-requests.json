@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 66,
-    "delivered": 13,
-    "pending": 53
+    "delivered": 19,
+    "pending": 47
   },
   "pending": [
     {
@@ -153,134 +153,6 @@
       "deliverTo": {
         "shared": "_common/mapa/ctrl/controles.png",
         "override": "<tenant>/mapa/ctrl/controles.png"
-      }
-    },
-    {
-      "slot": "mapa.capa.trafico",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.trafico",
-          "blockType": "icon-table",
-          "shows": "Tráfico"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa/capa/trafico.png",
-        "override": "<tenant>/mapa/capa/trafico.png"
-      }
-    },
-    {
-      "slot": "mapa.capa.incidentes",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.incidentes",
-          "blockType": "icon-table",
-          "shows": "Incidentes"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa/capa/incidentes.png",
-        "override": "<tenant>/mapa/capa/incidentes.png"
-      }
-    },
-    {
-      "slot": "mapa.capa.avl",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.avl",
-          "blockType": "icon-table",
-          "shows": "AVL"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa/capa/avl.png",
-        "override": "<tenant>/mapa/capa/avl.png"
-      }
-    },
-    {
-      "slot": "mapa.capa.mobile",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.mobile",
-          "blockType": "icon-table",
-          "shows": "Mobile"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa/capa/mobile.png",
-        "override": "<tenant>/mapa/capa/mobile.png"
-      }
-    },
-    {
-      "slot": "mapa.capa.camaras",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.camaras",
-          "blockType": "icon-table",
-          "shows": "Cámaras"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa/capa/camaras.png",
-        "override": "<tenant>/mapa/capa/camaras.png"
-      }
-    },
-    {
-      "slot": "mapa.capa.paneles",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.paneles",
-          "blockType": "icon-table",
-          "shows": "Paneles"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa/capa/paneles.png",
-        "override": "<tenant>/mapa/capa/paneles.png"
       }
     },
     {
@@ -1120,6 +992,105 @@
       ],
       "files": [
         "_common/interfaz-general/fig-home.png"
+      ]
+    },
+    {
+      "slot": "mapa.capa.trafico",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.trafico",
+          "blockType": "icon-table",
+          "shows": "Tráfico"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/trafico.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.incidentes",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.incidentes",
+          "blockType": "icon-table",
+          "shows": "Incidentes"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/incidentes.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.avl",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.avl",
+          "blockType": "icon-table",
+          "shows": "AVL"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/avl.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.mobile",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.mobile",
+          "blockType": "icon-table",
+          "shows": "Mobile"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/mobile.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.camaras",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.camaras",
+          "blockType": "icon-table",
+          "shows": "Cámaras"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/camaras.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.paneles",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.paneles",
+          "blockType": "icon-table",
+          "shows": "Paneles"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/paneles.png"
       ]
     },
     {
