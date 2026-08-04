@@ -3455,7 +3455,7 @@
         }
       ],
       "files": [
-        "_common/mapa.fig.png"
+        "_common/mapa.fig.jpeg"
       ]
     },
     {
@@ -3792,7 +3792,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.mapa.fig.png"
+        "_common/funcionalidades.mapa.fig.jpeg"
       ]
     },
     {
@@ -3809,7 +3809,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.mapa.fig-activo.png"
+        "_common/funcionalidades.mapa.fig-activo.jpeg"
       ]
     },
     {
@@ -3860,7 +3860,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.capa-mobile.fig.png"
+        "_common/funcionalidades.capa-mobile.fig.jpeg"
       ]
     },
     {
@@ -3877,7 +3877,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.capa-avl.fig.png"
+        "_common/funcionalidades.capa-avl.fig.jpeg"
       ]
     },
     {
@@ -3894,7 +3894,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.capa-paneles.fig.png"
+        "_common/funcionalidades.capa-paneles.fig.jpeg"
       ]
     },
     {
@@ -3911,7 +3911,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.capa-paneles.fig-complementaria.png"
+        "_common/funcionalidades.capa-paneles.fig-complementaria.jpeg"
       ]
     },
     {
@@ -3979,7 +3979,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.filtros.solo-mis-casos.fig-encendido.png"
+        "_common/funcionalidades.filtros.solo-mis-casos.fig-encendido.jpeg"
       ]
     },
     {
@@ -4064,7 +4064,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.filtros.tipo-llamada.fig.png"
+        "_common/funcionalidades.filtros.tipo-llamada.fig.jpeg"
       ]
     },
     {
@@ -4166,7 +4166,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.seccion-incidentes.fig.png"
+        "_common/funcionalidades.seccion-incidentes.fig.jpeg"
       ]
     },
     {
@@ -4217,7 +4217,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.llamada-entrante.fig-final.png"
+        "_common/funcionalidades.llamada-entrante.fig-final.jpeg"
       ]
     },
     {
@@ -4234,7 +4234,7 @@
         }
       ],
       "files": [
-        "_common/func.crear.boton.png"
+        "_common/func.crear.boton.jpeg"
       ]
     },
     {
@@ -4251,7 +4251,7 @@
         }
       ],
       "files": [
-        "_common/func.crear.formulario.png"
+        "_common/func.crear.formulario.jpeg"
       ]
     },
     {
@@ -4268,7 +4268,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.plataforma.fig-completado.png"
+        "_common/funcionalidades.plataforma.fig-completado.jpeg"
       ]
     },
     {
@@ -4302,7 +4302,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.componentes.fig.png"
+        "_common/funcionalidades.componentes.fig.jpeg"
       ]
     },
     {
@@ -4404,7 +4404,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.pestana-callai.fig.png"
+        "_common/funcionalidades.pestana-callai.fig.jpeg"
       ]
     },
     {
@@ -4421,7 +4421,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.pestana-callai.fig-detalle.png"
+        "_common/funcionalidades.pestana-callai.fig-detalle.jpeg"
       ]
     },
     {
@@ -4438,7 +4438,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.pestana-despacho.fig.png"
+        "_common/funcionalidades.pestana-despacho.fig.jpeg"
       ]
     },
     {
@@ -4455,7 +4455,7 @@
         }
       ],
       "files": [
-        "_common/func.desp.ubicacion-existente.png"
+        "_common/func.desp.ubicacion-existente.jpeg"
       ]
     },
     {
@@ -4472,7 +4472,7 @@
         }
       ],
       "files": [
-        "_common/func.desp.buscar-ubicacion.png"
+        "_common/func.desp.buscar-ubicacion.jpeg"
       ]
     },
     {
@@ -4489,7 +4489,7 @@
         }
       ],
       "files": [
-        "_common/func.desp.info-agente.png"
+        "_common/func.desp.info-agente.jpeg"
       ]
     },
     {
@@ -4523,7 +4523,7 @@
         }
       ],
       "files": [
-        "_common/func.desp.chat.png"
+        "_common/func.desp.chat.jpeg"
       ]
     },
     {
@@ -4540,7 +4540,7 @@
         }
       ],
       "files": [
-        "_common/func.desp.en-sitio.png"
+        "_common/func.desp.en-sitio.jpeg"
       ]
     },
     {
@@ -4591,7 +4591,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.reporte-via.fig.png"
+        "_common/funcionalidades.reporte-via.fig.jpeg"
       ]
     },
     {
@@ -4608,7 +4608,7 @@
         }
       ],
       "files": [
-        "_common/funcionalidades.reporte-lesionados.fig.png"
+        "_common/funcionalidades.reporte-lesionados.fig.jpeg"
       ]
     },
     {
@@ -4829,7 +4829,7 @@
         }
       ],
       "files": [
-        "_common/fuerzas.agentes.fig.png"
+        "_common/fuerzas.agentes.fig.jpeg"
       ]
     },
     {
@@ -4846,7 +4846,7 @@
         }
       ],
       "files": [
-        "_common/fuerzas.home.fig.png"
+        "_common/fuerzas.home.fig.jpeg"
       ]
     },
     {

@@ -28,6 +28,16 @@ export const fieldListItem = z.object({
    * because someone edited a word would be a layout nobody can rely on.
    */
   layout: z.enum(["below", "beside"]).default("below"),
+  /**
+   * Rendered width of this item's image, as a percentage of the space it sits in
+   * — the text column when the layout is `below`, the figure column when it is
+   * `beside`. Omit to let the stylesheet cap it.
+   *
+   * Declared per item because a control strip and a full screen do not want the
+   * same width, and cropping the file instead would be undone by the next
+   * delivery.
+   */
+  widthPercent: z.number().int().min(10).max(100).optional(),
   when: selectorSchema.optional(),
 });
 
@@ -39,7 +49,7 @@ export type FieldListProps = z.infer<typeof fieldListProps>;
 
 export const fieldList: BlockDefinition<FieldListProps> = {
   type: "field-list",
-  version: "0.3.0",
+  version: "0.4.0",
   description:
     "A run of named UI elements, each with its own explanation and its own " +
     "screenshot — filter fields, dashboard widgets, panel controls. Use this " +

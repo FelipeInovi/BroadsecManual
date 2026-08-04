@@ -63,6 +63,9 @@ const esc = (s: string): string =>
 const inlineMarkup = (s: string): string =>
   esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 
+/** A declared width, or `undefined` so the stylesheet's cap applies. */
+const numberOr = (v: unknown): number | undefined => (typeof v === "number" ? v : undefined);
+
 const plain = (inline: readonly Inline[]): string =>
   inline.map((i) => ("value" in i ? i.value : "")).join("");
 
@@ -115,17 +118,17 @@ function figureFor(
   id: NodeId,
   caption: string,
   o: RenderOptions,
-  attrs = "",
+  width?: number,
 ): string {
+  const attrs = width === undefined ? "" : ` style="width:${width}%"`;
   const image = shot(id, o, attrs);
   if (!image) return "";
   const n = o.figures.get(id);
   const label = n ? `Figura ${esc(n)}. ` : "";
-  // A `figure` block declares its own width; an item's image has none to declare,
-  // so it is capped in CSS instead. Without the distinction a control screenshot
-  // would render at the full column width, which is how a button ends up bigger
-  // than the paragraph explaining it.
-  const cls = attrs ? "figure" : "figure figure--item";
+  // An image that declares no width is capped in CSS instead. Without that a
+  // control screenshot would render at the full column width, which is how a
+  // button ends up bigger than the paragraph explaining it.
+  const cls = width === undefined ? "figure figure--item" : "figure";
   return [
     `<figure class="${cls}">`,
     image.img,
@@ -241,7 +244,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
             `<p class="field__label">${esc(label)}</p>`,
             pair(
               `<p class="prose">${inlineMarkup(String(f["text"]))}</p>`,
-              figureFor(String(f["id"]), label, o),
+              figureFor(String(f["id"]), label, o, numberOr(f["widthPercent"])),
               f["layout"],
             ),
             `</div>`,
@@ -281,7 +284,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
                 .join("")}</ol>`
             : "";
           const title = String(s["title"]);
-          const figure = figureFor(String(s["id"]), title, o);
+          const figure = figureFor(String(s["id"]), title, o, numberOr(s["widthPercent"]));
           return [
             `<div class="step">`,
             `<p class="step__title"><span class="step__marker">Paso ${esc(n)}:</span> ${esc(
@@ -300,8 +303,8 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
     }
 
     case "figure": {
-      const width = Number(node.props["widthPercent"] ?? 100);
-      return figureFor(node.id, String(node.props["caption"]), o, ` style="width:${width}%"`);
+      return figureFor(node.id, String(node.props["caption"]), o,
+        Number(node.props["widthPercent"] ?? 100));
     }
 
     // Both table types share this renderer. They stayed separate block types

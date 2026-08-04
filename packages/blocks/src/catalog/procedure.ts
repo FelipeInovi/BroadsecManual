@@ -29,6 +29,16 @@ export const procedureStep = z.object({
    * because someone edited a word would be a layout nobody can rely on.
    */
   layout: z.enum(["below", "beside"]).default("below"),
+  /**
+   * Rendered width of this item's image, as a percentage of the space it sits in
+   * — the text column when the layout is `below`, the figure column when it is
+   * `beside`. Omit to let the stylesheet cap it.
+   *
+   * Declared per item because a control strip and a full screen do not want the
+   * same width, and cropping the file instead would be undone by the next
+   * delivery.
+   */
+  widthPercent: z.number().int().min(10).max(100).optional(),
   /** Sub-actions inside this step, in order. */
   actions: z.array(z.string().min(1)).optional(),
   when: selectorSchema.optional(),
@@ -44,7 +54,7 @@ export type ProcedureProps = z.infer<typeof procedureProps>;
 
 export const procedure: BlockDefinition<ProcedureProps> = {
   type: "procedure",
-  version: "0.3.0",
+  version: "0.4.0",
   description:
     "An ordered sequence the reader performs: dispatch, login, updating a " +
     "report. Steps are numbered by position AFTER conditioning, so a target " +

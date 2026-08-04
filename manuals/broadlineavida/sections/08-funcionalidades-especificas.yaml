@@ -483,23 +483,29 @@ children:
                 Un operador puede crear un incidente desde la plataforma Broadsec
                 siguiendo estos pasos.
               steps:
+                # Composite: the home bar plus the button panel. Below, full
+                # width — in the beside column neither half was legible.
                 - id: func.crear.boton
                   title: Abra el formulario
                   text: >-
                     En la barra del *home*, haga clic en el botón **Nuevo
                     incidente**.
-                  layout: beside
+                  widthPercent: 100
+                # Paired with `funcionalidades.plataforma.fig-completado` below:
+                # the empty form and the completed one, same width so the reader
+                # compares them rather than the sizes.
                 - id: func.crear.formulario
                   title: Diligencie el formulario
                   text: >-
                     Diligencie el formulario por pasos para el nuevo incidente y,
                     al finalizar, haga clic en **Crear Incidente**.
-                  layout: beside
+                  widthPercent: 55
           - id: funcionalidades.plataforma.fig-completado
             type: figure
             props:
               caption: "Formulario Crear Incidente, completado."
-              widthPercent: 36
+              # Same width as the empty form above it, on purpose.
+              widthPercent: 55
 
       - id: funcionalidades.general
         title: Para incidentes en general
@@ -732,6 +738,7 @@ children:
                             Mediante el ícono ubicado a la derecha de la sección
                             del caso, ponga al agente **En Sitio** para generar el
                             reporte de llegada.
+                          widthPercent: 35
                           layout: beside
                         - id: func.desp.prescindir
                           title: Prescinda de un agente
@@ -739,12 +746,14 @@ children:
                             También se puede prescindir de un agente al que ya se
                             le haya asignado el caso, para que la gestión quede en
                             manos de otro agente.
+                          widthPercent: 35
                           layout: beside
                         - id: func.desp.finalizar
                           title: Finalice el caso
                           text: >-
                             Una vez el agente está en sitio, se puede gestionar la
                             **finalización** del caso mediante el mismo ícono.
+                          widthPercent: 35
                           layout: beside
 
                   - id: funcionalidades.despacho-pasos.aspectos
