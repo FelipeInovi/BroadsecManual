@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 252,
-    "delivered": 58,
-    "pending": 194
+    "delivered": 73,
+    "pending": 179
   },
   "pending": [
     {
@@ -442,116 +442,6 @@
       }
     },
     {
-      "slot": "funcionalidades.llamada-entrante.fig-final",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.llamada-entrante.fig-final",
-          "blockType": "figure",
-          "shows": "Incidente finalizado, listo para gestión."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.llamada-entrante.fig-final.png",
-        "override": "<tenant>/funcionalidades.llamada-entrante.fig-final.png"
-      }
-    },
-    {
-      "slot": "func.crear.boton",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.crear.boton",
-          "blockType": "procedure",
-          "shows": "Abra el formulario"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.crear.boton.png",
-        "override": "<tenant>/func.crear.boton.png"
-      }
-    },
-    {
-      "slot": "func.crear.formulario",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.crear.formulario",
-          "blockType": "procedure",
-          "shows": "Diligencie el formulario"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.crear.formulario.png",
-        "override": "<tenant>/func.crear.formulario.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.plataforma.fig-completado",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.plataforma.fig-completado",
-          "blockType": "figure",
-          "shows": "Formulario Crear Incidente, completado."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.plataforma.fig-completado.png",
-        "override": "<tenant>/funcionalidades.plataforma.fig-completado.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.general.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.general.fig",
-          "blockType": "figure",
-          "shows": "Tarjeta de incidente con label y estado de color."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.general.fig.png",
-        "override": "<tenant>/funcionalidades.general.fig.png"
-      }
-    },
-    {
       "slot": "func.estado.naranja",
       "neededBy": [
         "mv",
@@ -681,226 +571,6 @@
       "deliverTo": {
         "shared": "_common/func.estado.hijo.png",
         "override": "<tenant>/func.estado.hijo.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.componentes.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.componentes.fig",
-          "blockType": "figure",
-          "shows": "Vista detallada de un incidente, con sus cuatro pestañas."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.componentes.fig.png",
-        "override": "<tenant>/funcionalidades.componentes.fig.png"
-      }
-    },
-    {
-      "slot": "func.pest1.duracion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.pest1.duracion",
-          "blockType": "field-list",
-          "shows": "Duración"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.pest1.duracion.png",
-        "override": "<tenant>/func.pest1.duracion.png"
-      }
-    },
-    {
-      "slot": "func.pest1.transcripcion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.pest1.transcripcion",
-          "blockType": "field-list",
-          "shows": "Transcripción"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.pest1.transcripcion.png",
-        "override": "<tenant>/func.pest1.transcripcion.png"
-      }
-    },
-    {
-      "slot": "func.pest1.audio",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.pest1.audio",
-          "blockType": "field-list",
-          "shows": "Audio"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.pest1.audio.png",
-        "override": "<tenant>/func.pest1.audio.png"
-      }
-    },
-    {
-      "slot": "func.pest1.historial",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.pest1.historial",
-          "blockType": "field-list",
-          "shows": "Historial de ubicaciones"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.pest1.historial.png",
-        "override": "<tenant>/func.pest1.historial.png"
-      }
-    },
-    {
-      "slot": "func.pest1.asociados",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.pest1.asociados",
-          "blockType": "field-list",
-          "shows": "Casos asociados"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.pest1.asociados.png",
-        "override": "<tenant>/func.pest1.asociados.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.pestana-callai.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.pestana-callai.fig",
-          "blockType": "figure",
-          "shows": "Resumen de Call AI del incidente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.pestana-callai.fig.png",
-        "override": "<tenant>/funcionalidades.pestana-callai.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.pestana-callai.fig-detalle",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.pestana-callai.fig-detalle",
-          "blockType": "figure",
-          "shows": "Resumen de Call AI, detalle."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.pestana-callai.fig-detalle.png",
-        "override": "<tenant>/funcionalidades.pestana-callai.fig-detalle.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.pestana-despacho.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.pestana-despacho.fig",
-          "blockType": "figure",
-          "shows": "Panel de despacho del incidente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.pestana-despacho.fig.png",
-        "override": "<tenant>/funcionalidades.pestana-despacho.fig.png"
-      }
-    },
-    {
-      "slot": "func.desp.ubicacion-existente",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.desp.ubicacion-existente",
-          "blockType": "procedure",
-          "shows": "Verifique la ubicación"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.desp.ubicacion-existente.png",
-        "override": "<tenant>/func.desp.ubicacion-existente.png"
       }
     },
     {
@@ -5027,6 +4697,261 @@
       ],
       "files": [
         "_common/funcionalidades.llamada-entrante.fig-estado.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.llamada-entrante.fig-final",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.llamada-entrante.fig-final",
+          "blockType": "figure",
+          "shows": "Incidente finalizado, listo para gestión."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.llamada-entrante.fig-final.png"
+      ]
+    },
+    {
+      "slot": "func.crear.boton",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.crear.boton",
+          "blockType": "procedure",
+          "shows": "Abra el formulario"
+        }
+      ],
+      "files": [
+        "_common/func.crear.boton.png"
+      ]
+    },
+    {
+      "slot": "func.crear.formulario",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.crear.formulario",
+          "blockType": "procedure",
+          "shows": "Diligencie el formulario"
+        }
+      ],
+      "files": [
+        "_common/func.crear.formulario.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.plataforma.fig-completado",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.plataforma.fig-completado",
+          "blockType": "figure",
+          "shows": "Formulario Crear Incidente, completado."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.plataforma.fig-completado.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.general.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.general.fig",
+          "blockType": "figure",
+          "shows": "Tarjeta de incidente con label y estado de color."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.general.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.componentes.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.componentes.fig",
+          "blockType": "figure",
+          "shows": "Vista detallada de un incidente, con sus cuatro pestañas."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.componentes.fig.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.duracion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.duracion",
+          "blockType": "field-list",
+          "shows": "Duración"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.duracion.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.transcripcion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.transcripcion",
+          "blockType": "field-list",
+          "shows": "Transcripción"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.transcripcion.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.audio",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.audio",
+          "blockType": "field-list",
+          "shows": "Audio"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.audio.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.historial",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.historial",
+          "blockType": "field-list",
+          "shows": "Historial de ubicaciones"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.historial.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.asociados",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.asociados",
+          "blockType": "field-list",
+          "shows": "Casos asociados"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.asociados.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.pestana-callai.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.pestana-callai.fig",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.pestana-callai.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.pestana-callai.fig-detalle",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.pestana-callai.fig-detalle",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI, detalle."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.pestana-callai.fig-detalle.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.pestana-despacho.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.pestana-despacho.fig",
+          "blockType": "figure",
+          "shows": "Panel de despacho del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.pestana-despacho.fig.png"
+      ]
+    },
+    {
+      "slot": "func.desp.ubicacion-existente",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.ubicacion-existente",
+          "blockType": "procedure",
+          "shows": "Verifique la ubicación"
+        }
+      ],
+      "files": [
+        "_common/func.desp.ubicacion-existente.png"
       ]
     },
     {
