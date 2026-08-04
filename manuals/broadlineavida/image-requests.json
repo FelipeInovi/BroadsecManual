@@ -18,8 +18,8 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 252,
-    "delivered": 94,
+    "total": 251,
+    "delivered": 93,
     "pending": 158
   },
   "pending": [
@@ -4251,24 +4251,7 @@
         }
       ],
       "files": [
-        "_common/func.crear.formulario.jpeg"
-      ]
-    },
-    {
-      "slot": "funcionalidades.plataforma.fig-completado",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.plataforma.fig-completado",
-          "blockType": "figure",
-          "shows": "Formulario Crear Incidente, completado."
-        }
-      ],
-      "files": [
-        "_common/funcionalidades.plataforma.fig-completado.jpeg"
+        "_common/func.crear.formulario.png"
       ]
     },
     {
@@ -4996,5 +4979,8 @@
         "_common/bot/seccion/alarmas.svg"
       ]
     }
+  ],
+  "undeclared": [
+    "funcionalidades.plataforma.fig-completado"
   ]
 }

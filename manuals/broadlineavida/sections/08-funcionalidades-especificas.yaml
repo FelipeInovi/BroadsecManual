@@ -491,21 +491,16 @@ children:
                     En la barra del *home*, haga clic en el botón **Nuevo
                     incidente**.
                   widthPercent: 100
-                # Paired with `funcionalidades.plataforma.fig-completado` below:
-                # the empty form and the completed one, same width so the reader
-                # compares them rather than the sizes.
+                # One illustration, both forms side by side as the v5 shows them:
+                # the empty form and the completed one. They were two slots and two
+                # captions, which put them on separate lines at different sizes —
+                # the reader was comparing sizes instead of forms.
                 - id: func.crear.formulario
                   title: Diligencie el formulario
                   text: >-
                     Diligencie el formulario por pasos para el nuevo incidente y,
                     al finalizar, haga clic en **Crear Incidente**.
-                  widthPercent: 55
-          - id: funcionalidades.plataforma.fig-completado
-            type: figure
-            props:
-              caption: "Formulario Crear Incidente, completado."
-              # Same width as the empty form above it, on purpose.
-              widthPercent: 55
+                  widthPercent: 85
 
       - id: funcionalidades.general
         title: Para incidentes en general
@@ -861,7 +856,7 @@ children:
                     type: figure
                     props:
                       caption: "Formulario del reporte: Detalles en Vía."
-                      widthPercent: 90
+                      widthPercent: 36
 
               - id: funcionalidades.reporte-lesionados
                 title: Detalles de Lesionados
@@ -903,7 +898,7 @@ children:
                     type: figure
                     props:
                       caption: "Formulario del reporte: Detalles de Lesionados."
-                      widthPercent: 90
+                      widthPercent: 36
 
               - id: funcionalidades.reporte-comentarios
                 title: Comentarios Generales
