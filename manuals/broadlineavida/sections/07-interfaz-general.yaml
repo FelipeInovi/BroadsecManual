@@ -40,6 +40,13 @@ children:
             Permite ubicar cada incidente, agrupar elementos cercanos y cambiar
             entre los distintos modos de vista disponibles.
 
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: mapa.fig
+        type: figure
+        props:
+          caption: "Vista general del mapa con sus controles de visualización."
+          widthPercent: 90
+
       - id: mapa.controles
         type: icon-table
         props:
@@ -290,3 +297,10 @@ children:
           text: >-
             La lista se actualiza en tiempo real. Un caso recién creado aparece
             en el primer lugar sin necesidad de recargar la pantalla.
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: incidentes.fig
+        type: figure
+        props:
+          caption: "Lista de casos, con la información de cada incidente reportado."
+          widthPercent: 90
+

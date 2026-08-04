@@ -1,10 +1,10 @@
 ---
 name: module-completeness
-description: Defines when a manual module is finished — every submodule covered, each with what it does, how to reach it, its main functions, its step-by-step procedures and the control the operator must press. Also covers the image rule: content declares image slots, never file paths, and every declared slot always renders — the delivered image, or one temporary placeholder holding its place until an external team supplies it. Use when writing a new module, extending an existing one, reviewing a module before it ships, deciding whether a section is complete, naming images so they can be synchronised from an external folder, or working out which images an external team must produce.
+description: Defines when a manual module is finished — every submodule covered, each opening with an overview figure of the whole screen and then stating what it does, how to reach it, its main functions, its step-by-step procedures and the control the operator must press. Also covers the image rule: content declares image slots, never file paths, and every declared slot always renders — the delivered image, or one temporary placeholder holding its place until an external team supplies it. Use when writing a new module, extending an existing one, reviewing a module before it ships, deciding whether a section is complete, naming images so they can be synchronised from an external folder, or working out which images an external team must produce.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "2.0"
+  version: "2.1"
 ---
 
 # When a module is finished
@@ -27,9 +27,37 @@ Before writing, list the submodules from `knowledge/module-map.json` (or, until
 the map exists, from the product's own navigation). That list is the checklist.
 Cover it or state explicitly why an item is out of scope.
 
+## Every module and every submodule opens with an overview figure
+
+**Before any table, any procedure, any detail: one image of the whole thing.**
+
+A reader arriving at a module has no picture of it. Text alone forces them to
+assemble the screen in their head from a paragraph, and they will assemble it
+wrong. The company's manuals have always opened this way, and it is the first
+thing an operator uses to confirm they are looking at the right screen.
+
+It applies at BOTH levels, and the second is the one that gets forgotten:
+
+- **The module** — the whole screen, so the reader recognises where they are.
+- **Each submodule** — the section as it appears once opened, before its detail.
+
+A module that goes straight from one paragraph into its first submodule has
+skipped this. So has a submodule that names what it does and then drops the
+reader into a nine-column table.
+
+Placement is fixed: after *what it does* and *how to reach it*, before the first
+table, list or procedure. The reader learns what it is, how to get there, sees
+it, and only then works through it.
+
+The figure is a `figure` block with `widthPercent: 90` and a caption saying what
+the image shows — not the section's own title again, which the heading above it
+already gave. The slot stays pending until someone captures it, like any other,
+and that is fine: it is declared, the manifest asks for it, and the placeholder
+holds its place.
+
 ## What every submodule needs
 
-Five things. Skip one and the operator is left guessing.
+Six things. Skip one and the operator is left guessing.
 
 ### 1. What it does
 
@@ -48,13 +76,18 @@ The path from where the operator is standing, in the product's own words.
 If you cannot establish the route from source, **say nothing** rather than
 guessing. A wrong route costs more than a missing one.
 
-### 3. Main functions
+### 3. What it looks like
+
+The overview figure described above, in its fixed position: after the route,
+before the detail.
+
+### 4. Main functions
 
 What the operator can actually do there. A `field-list` when each function
 needs a paragraph and a screenshot; a `term-list` when one line each is enough;
 a `data-table` when the reader will scan rather than read.
 
-### 4. Step by step
+### 5. Step by step
 
 Every procedure the operator performs, as a `procedure` block. Each step names
 **the control to press** and carries its image.
@@ -62,7 +95,7 @@ Every procedure the operator performs, as a `procedure` block. Each step names
 Never write the ordinal into a step title: numbering is assigned after
 conditioning, so a deployment that skips a step sees the rest shift up.
 
-### 5. What to expect
+### 6. What to expect
 
 Where the operator lands and what changed. A procedure that ends without
 telling the reader whether it worked is unfinished.
@@ -120,7 +153,9 @@ with what each one shows and which deployments need it.
   panel, the button's image goes beside the instruction. This is the single
   most useful thing the manual does, and it is what the source manual does
   throughout.
-- **A screen the operator must recognise** — usually.
+- **The screen a module or submodule opens on** — always. That is the overview
+  figure above, and it is the one image a reader looks for first.
+- **Any other screen the operator must recognise** — usually.
 - **Decoration** — never. An image that carries no information costs a page and
   a delivery request.
 
@@ -251,6 +286,7 @@ A module ships when all of these hold:
 
 - [ ] Every submodule the product offers is covered, or its absence is justified
 - [ ] Each one states what it does, how to reach it, and its main functions
+- [ ] The module opens with an overview figure, and so does every submodule
 - [ ] Every procedure is a `procedure` block, naming the control at each step
 - [ ] Every procedure says where the operator lands
 - [ ] Every control the reader must press has an image slot, delivered or pending

@@ -18,11 +18,33 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 66,
+    "total": 80,
     "delivered": 25,
-    "pending": 41
+    "pending": 55
   },
   "pending": [
+    {
+      "slot": "mapa.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.fig",
+          "blockType": "figure",
+          "shows": "Vista general del mapa con sus controles de visualización."
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "med"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/fig.png",
+        "override": "<tenant>/mapa/fig.png"
+      }
+    },
     {
       "slot": "mapa.ctrl.visualizacion",
       "neededBy": [
@@ -156,6 +178,108 @@
       }
     },
     {
+      "slot": "incidentes.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "incidentes.fig",
+          "blockType": "figure",
+          "shows": "Lista de casos, con la información de cada incidente reportado."
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "med"
+      ],
+      "deliverTo": {
+        "shared": "_common/incidentes/fig.png",
+        "override": "<tenant>/incidentes/fig.png"
+      }
+    },
+    {
+      "slot": "bot.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.fig",
+          "blockType": "figure",
+          "shows": "Pantalla general del módulo: el panel lateral de navegación y el área de trabajo."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/fig.png",
+        "override": "<tenant>/bot/fig.png"
+      }
+    },
+    {
+      "slot": "bot.navegacion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.navegacion.fig",
+          "blockType": "figure",
+          "shows": "El panel lateral con las secciones del módulo y el estado de las integraciones."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/navegacion/fig.png",
+        "override": "<tenant>/bot/navegacion/fig.png"
+      }
+    },
+    {
+      "slot": "bot.mapa.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.mapa.fig",
+          "blockType": "figure",
+          "shows": "La operación sobre el mapa: paneles, vehículos, puntos semaforizados y cámaras."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/mapa/fig.png",
+        "override": "<tenant>/bot/mapa/fig.png"
+      }
+    },
+    {
+      "slot": "bot.prt.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.fig",
+          "blockType": "figure",
+          "shows": "El personal y los vehículos desplegados en vía, con su asignación."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/prt/fig.png",
+        "override": "<tenant>/bot/prt/fig.png"
+      }
+    },
+    {
       "slot": "bot.prt.paso.buscar",
       "neededBy": [
         "mv"
@@ -213,6 +337,26 @@
       "deliverTo": {
         "shared": "_common/bot/prt/paso/limpiar.png",
         "override": "<tenant>/bot/prt/paso/limpiar.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.fig",
+          "blockType": "figure",
+          "shows": "El listado de recursos desde donde se monitorea y despacha."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/recursos/fig.png",
+        "override": "<tenant>/bot/recursos/fig.png"
       }
     },
     {
@@ -333,6 +477,26 @@
       "deliverTo": {
         "shared": "_common/bot/recursos/paso/pj-confirmar.png",
         "override": "<tenant>/bot/recursos/paso/pj-confirmar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fig",
+          "blockType": "figure",
+          "shows": "El mosaico de cámaras con la lista de cámaras disponibles."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/fig.png",
+        "override": "<tenant>/bot/cctv/fig.png"
       }
     },
     {
@@ -476,6 +640,26 @@
       }
     },
     {
+      "slot": "bot.pmv.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.fig",
+          "blockType": "figure",
+          "shows": "El formulario de programación de un mensaje y su vigencia."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv/fig.png",
+        "override": "<tenant>/bot/pmv/fig.png"
+      }
+    },
+    {
       "slot": "bot.pmv.paso.identificar",
       "neededBy": [
         "mv"
@@ -596,6 +780,26 @@
       }
     },
     {
+      "slot": "bot.pmv-gestion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-gestion.fig",
+          "blockType": "figure",
+          "shows": "El listado de mensajes existentes con su estado y su vigencia."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-gestion/fig.png",
+        "override": "<tenant>/bot/pmv-gestion/fig.png"
+      }
+    },
+    {
       "slot": "bot.pmv-gestion.paso.desactivar",
       "neededBy": [
         "mv"
@@ -653,6 +857,26 @@
       "deliverTo": {
         "shared": "_common/bot/pmv-gestion/paso/reactivar.png",
         "override": "<tenant>/bot/pmv-gestion/paso/reactivar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-variables.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.fig",
+          "blockType": "figure",
+          "shows": "La administración de clasificaciones, agrupaciones y textos predefinidos."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-variables/fig.png",
+        "override": "<tenant>/bot/pmv-variables/fig.png"
       }
     },
     {
@@ -773,6 +997,66 @@
       "deliverTo": {
         "shared": "_common/bot/pmv-variables/paso/seleccionar.png",
         "override": "<tenant>/bot/pmv-variables/paso/seleccionar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-monitoreo.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-monitoreo.fig",
+          "blockType": "figure",
+          "shows": "El estado de comunicación de cada panel y el mensaje que tiene activo."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-monitoreo/fig.png",
+        "override": "<tenant>/bot/pmv-monitoreo/fig.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-auditoria.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-auditoria.fig",
+          "blockType": "figure",
+          "shows": "El registro de auditoría, con un asiento por acción realizada."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-auditoria/fig.png",
+        "override": "<tenant>/bot/pmv-auditoria/fig.png"
+      }
+    },
+    {
+      "slot": "bot.alarmas.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.fig",
+          "blockType": "figure",
+          "shows": "El listado de alarmas desde donde se supervisan y se reconocen."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/alarmas/fig.png",
+        "override": "<tenant>/bot/alarmas/fig.png"
       }
     },
     {

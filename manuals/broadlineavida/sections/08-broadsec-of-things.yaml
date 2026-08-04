@@ -44,6 +44,13 @@ children:
         administrador. Los perfiles de supervisor y de agente no lo visualizan.
 
   # ============================================================ Navegación ===
+  # Overview figure: the module/submodule at a glance, before any detail.
+  - id: bot.fig
+    type: figure
+    props:
+      caption: "Pantalla general del módulo: el panel lateral de navegación y el área de trabajo."
+      widthPercent: 90
+
   - id: bot.navegacion
     title: Panel lateral de navegación
     children:
@@ -63,6 +70,13 @@ children:
             Sobre el área de trabajo, la barra superior indica en todo momento
             la sección activa e incluye el botón de inicio, que devuelve al
             operador a la pantalla principal de la plataforma.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.navegacion.fig
+        type: figure
+        props:
+          caption: "El panel lateral con las secciones del módulo y el estado de las integraciones."
+          widthPercent: 90
 
       - id: bot.secciones
         type: icon-table
@@ -151,6 +165,13 @@ children:
             Diríjase a **Mapa** en el panel lateral. Es la sección que se
             muestra al ingresar al módulo.
 
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.mapa.fig
+        type: figure
+        props:
+          caption: "La operación sobre el mapa: paneles, vehículos, puntos semaforizados y cámaras."
+          widthPercent: 90
+
       - id: bot.mapa.funciones
         type: term-list
         props:
@@ -185,6 +206,13 @@ children:
         type: prose
         props:
           text: Diríjase a **PRT** en el panel lateral.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.prt.fig
+        type: figure
+        props:
+          caption: "El personal y los vehículos desplegados en vía, con su asignación."
+          widthPercent: 90
 
       - id: bot.prt.columnas
         type: data-table
@@ -259,6 +287,13 @@ children:
         type: prose
         props:
           text: Diríjase a **Recursos** en el panel lateral.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.recursos.fig
+        type: figure
+        props:
+          caption: "El listado de recursos desde donde se monitorea y despacha."
+          widthPercent: 90
 
       - id: bot.recursos.columnas
         type: data-table
@@ -378,6 +413,13 @@ children:
             mapa, lo que abre el mosaico en vista individual con esa cámara ya
             cargada.
 
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.cctv.fig
+        type: figure
+        props:
+          caption: "El mosaico de cámaras con la lista de cámaras disponibles."
+          widthPercent: 90
+
       - id: bot.cctv.funciones
         type: field-list
         props:
@@ -441,6 +483,13 @@ children:
         type: prose
         props:
           text: Despliegue **PMV** en el panel lateral y seleccione **Programación**.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.pmv.fig
+        type: figure
+        props:
+          caption: "El formulario de programación de un mensaje y su vigencia."
+          widthPercent: 90
 
       - id: bot.pmv.programar
         type: procedure
@@ -514,6 +563,13 @@ children:
           text: >-
             Despliegue **PMV** en el panel lateral y seleccione **Gestión**. La
             plataforma también lo trae aquí al guardar un mensaje nuevo.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.pmv-gestion.fig
+        type: figure
+        props:
+          caption: "El listado de mensajes existentes con su estado y su vigencia."
+          widthPercent: 90
 
       - id: bot.pmv-gestion.filtros
         type: term-list
@@ -598,6 +654,13 @@ children:
         props:
           text: Despliegue **PMV** en el panel lateral y seleccione **Variables**.
 
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.pmv-variables.fig
+        type: figure
+        props:
+          caption: "La administración de clasificaciones, agrupaciones y textos predefinidos."
+          widthPercent: 90
+
       - id: bot.pmv-variables.secciones
         type: field-list
         props:
@@ -659,6 +722,13 @@ children:
             El listado puede filtrarse por **Todos**, **Comunica** o **No
             comunica**. Si ningún panel coincide, la plataforma lo indica.
 
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.pmv-monitoreo.fig
+        type: figure
+        props:
+          caption: "El estado de comunicación de cada panel y el mensaje que tiene activo."
+          widthPercent: 90
+
       - id: bot.pmv-monitoreo.columnas
         type: data-table
         props:
@@ -701,6 +771,13 @@ children:
             El registro puede filtrarse por **Usuario**, **Panel** y **Fecha**.
             La plataforma informa cuántos registros coinciden, y avisa cuando no
             se encuentra ninguno con los filtros aplicados.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.pmv-auditoria.fig
+        type: figure
+        props:
+          caption: "El registro de auditoría, con un asiento por acción realizada."
+          widthPercent: 90
 
       - id: bot.pmv-auditoria.acciones
         type: data-table
@@ -747,6 +824,13 @@ children:
         type: prose
         props:
           text: Diríjase a **Alarmas** en el panel lateral.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.alarmas.fig
+        type: figure
+        props:
+          caption: "El listado de alarmas desde donde se supervisan y se reconocen."
+          widthPercent: 90
 
       - id: bot.alarmas.columnas
         type: data-table
