@@ -602,13 +602,15 @@ children:
                         relacionadas con el incidente (movimientos del llamante,
                         etc.).
                       layout: beside
+                    # Its figure is a composite — the collapsed row with its open
+                    # list panel on top — so it needs the full column. Squeezed
+                    # into the beside column the case ids were unreadable.
                     - id: func.pest1.asociados
                       label: Casos asociados
                       text: >-
                         Presenta la relación con otros casos vinculados, ya sean
                         secundarios o el caso padre, lo que facilita la
                         trazabilidad.
-                      layout: beside
 
           - id: funcionalidades.pestana-callai
             title: Pestaña Call AI

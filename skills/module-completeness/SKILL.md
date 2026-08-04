@@ -102,6 +102,15 @@ left, image on the right. Use `beside` when the explanations are short: an image
 stacked under two lines of prose leaves a band of empty page beside it, and a
 procedure of those is mostly white.
 
+**An image made of more than one screenshot never goes beside the text.** A
+composite — a collapsed row with its open panel, three views of a control side by
+side — carries several times the detail of a single capture, and the beside column
+is 42% of the page. Measured on this manual: a 369x139 composite of case ids
+rendered there is unreadable, while a plain 369x101 audio bar at a *wider* ratio
+reads fine. Aspect is not the signal and neither is file size; the number of
+screenshots is. Put it below the paragraph at full width and take the exception to
+the rule below.
+
 **Within one procedure, every step uses the same layout.** This is not a
 preference. A sequence with one step's figure right-aligned and the next two
 centred makes the eye jump, and the odd one out reads as a different kind of
@@ -110,7 +119,8 @@ by looking at its shortest step, then apply it to all of them.
 
 A `field-list` takes the same prop and is NOT bound by that rule: its items are
 independent of each other, not a sequence, so one item may sit beside its image
-while another does not.
+while another does not. A composite image is the one case where a single step may
+break its procedure's rhythm — an unreadable figure is worse than an uneven page.
 
 ### 6. What to expect
 
