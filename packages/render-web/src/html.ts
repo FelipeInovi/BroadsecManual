@@ -146,6 +146,23 @@ const pendingName = (deliverTo: string): string =>
   `<span class="shot__name">${esc(deliverTo)}</span>`;
 
 /**
+ * Text and its figure, arranged as the item asked for.
+ *
+ * `beside` puts the explanation and the image in two columns. The heading above
+ * them — a step's "Paso N", a field's label — deliberately stays full width, so
+ * the markers still line up down the page and a procedure remains scannable.
+ */
+function pair(text: string, figure: string, layout: unknown): string {
+  if (layout !== "beside" || !figure) return `${text}${figure}`;
+  return (
+    `<div class="pair">` +
+    `<div class="pair__text">${text}</div>` +
+    `<div class="pair__figure">${figure}</div>` +
+    `</div>`
+  );
+}
+
+/**
  * `icon-table` and `data-table` render through one function.
  *
  * What actually differs is three switches — an icon column, an item-number
@@ -218,8 +235,11 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
           return [
             `<div class="field">`,
             `<p class="field__label">${esc(label)}</p>`,
-            `<p class="prose">${inlineMarkup(String(f["text"]))}</p>`,
-            figureFor(String(f["id"]), label, o),
+            pair(
+              `<p class="prose">${inlineMarkup(String(f["text"]))}</p>`,
+              figureFor(String(f["id"]), label, o),
+              f["layout"],
+            ),
             `</div>`,
           ].join("");
         })
@@ -263,9 +283,11 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
             `<p class="step__title"><span class="step__marker">Paso ${esc(n)}:</span> ${esc(
               title,
             )}</p>`,
-            `<p class="prose">${inlineMarkup(String(s["text"]))}</p>`,
-            actions,
-            figure,
+            pair(
+              `<p class="prose">${inlineMarkup(String(s["text"]))}</p>${actions}`,
+              figure,
+              s["layout"],
+            ),
             `</div>`,
           ].join("");
         })

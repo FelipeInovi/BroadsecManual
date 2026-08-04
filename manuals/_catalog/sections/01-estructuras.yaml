@@ -113,6 +113,31 @@ children:
                 La imagen del paso muestra el control que debe accionarse, como
                 figura numerada con el título del paso por epígrafe.
 
+      - id: cat.procedure.beside-uso
+        type: prose
+        props:
+          text: >-
+            Cuando la explicación de un paso es corta, la imagen apilada debajo
+            deja una franja de página vacía al costado. En ese caso el paso se
+            declara con la imagen **al lado** del texto. La decisión se toma por
+            paso, pero un procedimiento es una secuencia: **todos** sus pasos
+            llevan la misma disposición, o el ojo salta.
+
+      - id: cat.procedure.beside
+        type: procedure
+        props:
+          steps:
+            - id: cat.prb.uno
+              title: Un paso con la imagen al lado
+              text: Explicación corta, a la izquierda de su imagen.
+              layout: beside
+            - id: cat.prb.dos
+              title: El siguiente, con la misma disposición
+              text: >-
+                La secuencia mantiene un solo ritmo y las figuras quedan
+                alineadas sobre el mismo borde.
+              layout: beside
+
   # --------------------------------------------------------- icon-table ---
   - id: cat.icon-table
     title: Tabla de íconos

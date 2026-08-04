@@ -15,6 +15,20 @@ export const procedureStep = z.object({
    * placeholder until the image arrives.
    */
   image: imageRefSchema.optional(),
+  /**
+   * How this item's text and image sit together.
+   *
+   * - `below` — the image under the text, full column width. The default, and
+   *   right whenever the explanation is long enough to stand on its own.
+   * - `beside` — text on the left, image on the right. For a short explanation
+   *   whose image would otherwise leave a band of empty page beside two lines
+   *   of prose.
+   *
+   * Declared per item, never inferred from how long the text happens to be:
+   * every procedure here mixes short and long steps, and a layout that changed
+   * because someone edited a word would be a layout nobody can rely on.
+   */
+  layout: z.enum(["below", "beside"]).default("below"),
   /** Sub-actions inside this step, in order. */
   actions: z.array(z.string().min(1)).optional(),
   when: selectorSchema.optional(),
@@ -30,7 +44,7 @@ export type ProcedureProps = z.infer<typeof procedureProps>;
 
 export const procedure: BlockDefinition<ProcedureProps> = {
   type: "procedure",
-  version: "0.2.0",
+  version: "0.3.0",
   description:
     "An ordered sequence the reader performs: dispatch, login, updating a " +
     "report. Steps are numbered by position AFTER conditioning, so a target " +

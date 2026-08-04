@@ -4,7 +4,7 @@ description: Defines when a manual module is finished — every submodule covere
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "2.1"
+  version: "2.2"
 ---
 
 # When a module is finished
@@ -94,6 +94,23 @@ Every procedure the operator performs, as a `procedure` block. Each step names
 
 Never write the ordinal into a step title: numbering is assigned after
 conditioning, so a deployment that skips a step sees the rest shift up.
+
+#### Where the step's image goes
+
+A step declares `layout: below` (the default) or `layout: beside` — text on the
+left, image on the right. Use `beside` when the explanations are short: an image
+stacked under two lines of prose leaves a band of empty page beside it, and a
+procedure of those is mostly white.
+
+**Within one procedure, every step uses the same layout.** This is not a
+preference. A sequence with one step's figure right-aligned and the next two
+centred makes the eye jump, and the odd one out reads as a different kind of
+thing — tried, looked wrong, and that is why the rule exists. Pick per procedure
+by looking at its shortest step, then apply it to all of them.
+
+A `field-list` takes the same prop and is NOT bound by that rule: its items are
+independent of each other, not a sequence, so one item may sit beside its image
+while another does not.
 
 ### 6. What to expect
 
@@ -288,6 +305,7 @@ A module ships when all of these hold:
 - [ ] Each one states what it does, how to reach it, and its main functions
 - [ ] The module opens with an overview figure, and so does every submodule
 - [ ] Every procedure is a `procedure` block, naming the control at each step
+- [ ] All steps of one procedure share a layout — none mixes `below` and `beside`
 - [ ] Every procedure says where the operator lands
 - [ ] Every control the reader must press has an image slot, delivered or pending
 - [ ] No image slot renders as a blank gap

@@ -255,16 +255,19 @@ children:
           lead: Para localizar a un agente o a un vehículo, siga estos pasos.
           steps:
             - id: bot.prt.paso.buscar
+              layout: beside
               title: Escriba el criterio de búsqueda
               text: >-
                 Use el campo de búsqueda. Admite nombre, cédula, placa o
                 vehículo, de forma indistinta.
             - id: bot.prt.paso.filtrar
+              layout: beside
               title: Acote por tipo de vehículo
               text: >-
                 El selector de vehículo permite restringir el listado a un tipo
                 en particular. La opción **Todos los vehículos** lo restablece.
             - id: bot.prt.paso.limpiar
+              layout: beside
               title: Restablezca el listado
               text: >-
                 El botón **Limpiar** descarta todos los filtros aplicados. Si
@@ -338,23 +341,27 @@ children:
           lead: Para asignar un recurso a un incidente, siga estos pasos.
           steps:
             - id: bot.recursos.paso.ubicar
+              layout: beside
               title: Ubique el recurso
               text: >-
                 Use el campo de búsqueda o el filtro por columna hasta encontrar
                 el recurso disponible.
             - id: bot.recursos.paso.asignar
+              layout: beside
               title: Abra la asignación
               text: >-
                 En la columna **Despacho**, accione **ASIGNAR**. La plataforma
                 abre la ventana *Asignar recurso a un incidente*, con el recurso
                 y su placa a la vista.
             - id: bot.recursos.paso.caso
+              layout: beside
               title: Elija el incidente
               text: >-
                 Seleccione el caso de la lista y confirme con **Confirmar
                 asignación**. Si no hay casos disponibles, la plataforma lo
                 indica y permite volver a la lista.
             - id: bot.recursos.paso.resultado
+              layout: beside
               title: Verifique el resultado
               text: >-
                 La columna **Despacho** pasa a mostrar **ASIGNADO**. Al
@@ -368,11 +375,13 @@ children:
           lead: Para marcar un recurso como Policía Judicial, siga estos pasos.
           steps:
             - id: bot.recursos.paso.pj-accionar
+              layout: beside
               title: Accione la marca en la columna PJ
               text: >-
                 La plataforma solicita confirmación antes de aplicar el cambio,
                 indicando el recurso y la acción a realizar.
             - id: bot.recursos.paso.pj-confirmar
+              layout: beside
               title: Confirme
               text: >-
                 Al confirmar, la plataforma informa que el recurso quedó marcado
@@ -452,16 +461,19 @@ children:
           lead: Para guardar y reutilizar una posición de cámara, siga estos pasos.
           steps:
             - id: bot.cctv.paso.encuadrar
+              layout: beside
               title: Encuadre la vista
               text: >-
                 Con el control PTZ, desplace la cámara y ajuste el zoom hasta
                 obtener el encuadre deseado.
             - id: bot.cctv.paso.nombrar
+              layout: beside
               title: Nombre la posición
               text: >-
                 En **Presets de posición**, escriba un nombre y accione
                 **Guardar posición actual**.
             - id: bot.cctv.paso.reutilizar
+              layout: beside
               title: Reutilice la posición
               text: >-
                 El preset queda listado y puede invocarse en cualquier momento
@@ -498,18 +510,21 @@ children:
           steps:
             # Field labels from locales → pmv.programming
             - id: bot.pmv.paso.identificar
+              layout: beside
               title: Identifique el mensaje
               text: >-
                 Indique el **Título Interno**. Este título identifica el mensaje
                 dentro de la plataforma y no se muestra en el panel. Seleccione
                 a continuación el **Tipo** de mensaje.
             - id: bot.pmv.paso.clasificar
+              layout: beside
               title: Clasifique el mensaje
               text: >-
                 De forma opcional, asocie el mensaje a una **Familia de
                 Mensajes** y a una **Subfamilia**. La clasificación permite
                 reutilizar mensajes predefinidos y ordenar el catálogo.
             - id: bot.pmv.paso.destino
+              layout: beside
               title: Seleccione los paneles de destino
               text: >-
                 Elija un **Grupo de Paneles** o seleccione los paneles de forma
@@ -517,6 +532,7 @@ children:
                 seleccionó paneles sueltos, la plataforma advierte antes de
                 aplicar un grupo, y a la inversa.
             - id: bot.pmv.paso.contenido
+              layout: beside
               title: Componga el contenido
               text: >-
                 Defina las **Páginas del Panel** y el **Texto a Mostrar** de
@@ -525,6 +541,7 @@ children:
                 texto de una página no puede quedar vacío. Si corresponde,
                 seleccione un **Pictograma**.
             - id: bot.pmv.paso.vigencia
+              layout: beside
               title: Defina la vigencia
               text: >-
                 Establezca el rango de fechas durante el cual el mensaje estará
@@ -532,6 +549,7 @@ children:
                 vencido, y advierte cuando el mensaje entra en conflicto de
                 programación con otro ya existente sobre el mismo panel.
             - id: bot.pmv.paso.guardar
+              layout: beside
               title: Guarde el mensaje
               text: >-
                 Al guardar, la plataforma lo redirige a **PMV › Gestión**, donde
@@ -622,16 +640,19 @@ children:
           lead: Para desactivar un mensaje, siga estos pasos.
           steps:
             - id: bot.pmv-gestion.paso.desactivar
+              layout: beside
               title: Accione Desactivar sobre el mensaje
               text: >-
                 Si el mensaje no se está ejecutando, se desactiva de inmediato.
             - id: bot.pmv-gestion.paso.elegir
+              layout: beside
               title: Elija cómo retirarlo si está corriendo
               text: >-
                 Cuando el mensaje se está ejecutando, la plataforma pregunta
                 cómo desea desactivarlo y ofrece **Esperar a que termine** o
                 **Quitar ya**.
             - id: bot.pmv-gestion.paso.reactivar
+              layout: beside
               title: Reactive si corresponde
               text: >-
                 Un mensaje desactivado puede volver a ponerse en circulación con
@@ -690,13 +711,16 @@ children:
           lead: Para crear un grupo de paneles, siga estos pasos.
           steps:
             - id: bot.pmv-variables.paso.anadir
+              layout: beside
               title: Inicie la creación
               text: Accione **Añadir Grupo** en la sección de grupos.
             - id: bot.pmv-variables.paso.nombrar
+              layout: beside
               title: Nombre el grupo
               text: >-
                 Indique el nombre con el que aparecerá al programar un mensaje.
             - id: bot.pmv-variables.paso.seleccionar
+              layout: beside
               title: Seleccione los paneles
               text: >-
                 Elija los paneles que formarán parte del grupo y guarde. La
@@ -867,21 +891,25 @@ children:
           lead: Para reconocer una o varias alarmas, siga estos pasos.
           steps:
             - id: bot.alarmas.paso.filtrar
+              layout: beside
               title: Acote el listado
               text: >-
                 Filtre por columna o use la búsqueda para ubicar las alarmas que
                 va a atender. **Limpiar** descarta los filtros aplicados.
             - id: bot.alarmas.paso.seleccionar
+              layout: beside
               title: Seleccione las alarmas
               text: >-
                 Marque una o varias. La plataforma indica cuántas quedaron
                 seleccionadas.
             - id: bot.alarmas.paso.reconocer
+              layout: beside
               title: Accione Reconocer
               text: >-
                 La plataforma abre una ventana de confirmación, que indica si se
                 reconoce una alarma o varias, y permite escribir un comentario.
             - id: bot.alarmas.paso.resultado
+              layout: beside
               title: Verifique el resultado
               text: >-
                 Al confirmar, la columna **Gestión** refleja el reconocimiento.

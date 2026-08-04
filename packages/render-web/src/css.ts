@@ -414,6 +414,31 @@ table.tbl .shot__name { display: block; margin-top: ${t.space.xs}; }
    its frame is legible, and the row's label already names the control. */
 td.tbl__icon--pending img { max-width: 24pt; max-height: 24pt; opacity: 0.75; }
 
+/* ---- side-by-side text and figure -------------------------------------- */
+
+/* For a short explanation whose figure, stacked underneath, would leave a band
+   of empty page beside two lines of prose. Declared per item — see the layout
+   prop on a procedure step and a field-list item.
+
+   Kept together on one page: the pair is one unit of meaning, and a step whose
+   image landed on the next page would be worse than the stacked version. */
+.pair {
+  display: flex;
+  align-items: flex-start;
+  gap: ${t.space.md};
+  break-inside: avoid;
+}
+.pair__text { flex: 1 1 0; min-width: 0; }
+.pair__figure { flex: 0 0 42%; }
+/* The figure now sizes against ITS COLUMN, not the text column, so the caps that
+   keep a stacked image from dominating the page have to be lifted here.
+   Both selectors carry two classes and two elements, which outweighs the
+   item-cap and pending-cap rules above — those win on specificity, not on source
+   order, so matching their weight is the only thing that works. */
+.pair__figure figure { margin: 0; }
+.pair__figure figure img { max-width: 100%; }
+.pair__figure figure img.shot--pending { max-width: 100%; }
+
 .content { padding-right: ${gutter}; }
 `;
 }
