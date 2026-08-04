@@ -526,6 +526,7 @@ async function build(
         : `BROADSEC  |  ${config.manual.title}  |  v${config.manual.contentVersion}`,
       slots,
       images: (slot) => images.resolve(slot),
+      figures: manual.figures,
       draft,
       polyfill,
       cover: {

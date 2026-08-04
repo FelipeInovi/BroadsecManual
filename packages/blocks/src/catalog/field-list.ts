@@ -35,5 +35,11 @@ export const fieldList: BlockDefinition<FieldListProps> = {
     "entries are short definitions with no screenshots.",
   schema: fieldListProps,
   children: { kind: "none" },
-  images: { prop: "image", itemsProp: "items", showsProp: "label", policy: "always" },
+  images: {
+    prop: "image",
+    itemsProp: "items",
+    showsProp: "label",
+    policy: "always",
+    convention: "figure",
+  },
 };

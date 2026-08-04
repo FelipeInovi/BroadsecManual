@@ -40,5 +40,11 @@ export const procedure: BlockDefinition<ProcedureProps> = {
   schema: procedureProps,
   children: { kind: "none" },
   numbering: { scope: "block", labelKey: "step", itemsProp: "steps" },
-  images: { prop: "image", itemsProp: "steps", showsProp: "title", policy: "always" },
+  images: {
+    prop: "image",
+    itemsProp: "steps",
+    showsProp: "title",
+    policy: "always",
+    convention: "figure",
+  },
 };

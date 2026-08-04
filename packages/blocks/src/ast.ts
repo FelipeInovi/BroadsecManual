@@ -82,4 +82,16 @@ export interface ResolvedManual {
   readonly target: Readonly<Record<string, string>>;
   readonly children: readonly ManualNode[];
   readonly numbers: ReadonlyMap<NodeId, string>;
+  /**
+   * Figure ordinals, keyed by the node or item that carries the image.
+   *
+   * Separate from `numbers` because one node can need both: a procedure step is
+   * "Paso 2" AND carries "Figura 1.7". One map cannot hold two ordinals for one
+   * id, and merging them would make the renderer guess which it was handed.
+   *
+   * One counter per top-level section, shared by every figure in it whatever
+   * block produced it — so a standalone figure and a step's screenshot
+   * interleave in reading order instead of running two competing sequences.
+   */
+  readonly figures: ReadonlyMap<NodeId, string>;
 }

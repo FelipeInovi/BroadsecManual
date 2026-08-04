@@ -28,6 +28,5 @@ export const figure: BlockDefinition<FigureProps> = {
     "until the delivering area supplies it.",
   schema: figureProps,
   children: { kind: "none" },
-  numbering: { scope: "section", labelKey: "figure" },
-  images: { prop: "image", showsProp: "caption", policy: "always" },
+  images: { prop: "image", showsProp: "caption", policy: "always", convention: "figure" },
 };

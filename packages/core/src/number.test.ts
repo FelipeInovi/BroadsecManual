@@ -8,7 +8,7 @@ const fig = (id: string): BlockNode => ({
   kind: "block",
   id,
   type: "figure",
-  props: { src: "x.png", caption: "c", widthPercent: 100 },
+  props: { caption: "c", widthPercent: 100 },
 });
 
 const table = (id: string, rowIds: readonly string[]): BlockNode => ({
@@ -45,6 +45,15 @@ const docCounterBlock: BlockDefinition<z.infer<typeof testCounterProps>> = {
   numbering: { scope: "document", labelKey: "item" },
 };
 
+const sectionCounterBlock: BlockDefinition<z.infer<typeof testCounterProps>> = {
+  type: "test-section-counter",
+  version: "0.1.0",
+  description: "Test-only block numbered with `section` scope.",
+  schema: testCounterProps,
+  children: { kind: "none" },
+  numbering: { scope: "section", labelKey: "plate" },
+};
+
 const subCounterBlock: BlockDefinition<z.infer<typeof testCounterProps>> = {
   type: "test-sub-counter",
   version: "0.1.0",
@@ -77,6 +86,7 @@ const rowsNamedBlock: BlockDefinition<{ rows: string[] }> = {
 const catalogWithTestBlocks: BlockCatalog = new Map([
   ...catalog,
   [docCounterBlock.type, docCounterBlock],
+  [sectionCounterBlock.type, sectionCounterBlock],
   [subCounterBlock.type, subCounterBlock],
   [stepsBlock.type, stepsBlock as never],
   [rowsNamedBlock.type, rowsNamedBlock as never],
@@ -84,6 +94,7 @@ const catalogWithTestBlocks: BlockCatalog = new Map([
 
 const docItem = (id: string): BlockNode => ({ kind: "block", id, type: docCounterBlock.type, props: {} });
 const subItem = (id: string): BlockNode => ({ kind: "block", id, type: subCounterBlock.type, props: {} });
+const secItem = (id: string): BlockNode => ({ kind: "block", id, type: sectionCounterBlock.type, props: {} });
 
 const steps = (id: string, stepIds: readonly string[]): BlockNode => ({
   kind: "block",
@@ -94,13 +105,13 @@ const steps = (id: string, stepIds: readonly string[]): BlockNode => ({
 
 describe("assignNumbers", () => {
   it("numbers top-level sections from one", () => {
-    const n = assignNumbers([section("a", []), section("b", [])], catalog);
+    const { numbers: n, figures } = assignNumbers([section("a", []), section("b", [])], catalog);
     expect(n.get("a")).toBe("1");
     expect(n.get("b")).toBe("2");
   });
 
   it("numbers nested sections by their position in the tree", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [section("a.x", []), section("a.y", [section("a.y.1", [])])])],
       catalog,
     );
@@ -111,36 +122,36 @@ describe("assignNumbers", () => {
 
   it("renumbers after an earlier section is absent", () => {
     // Conditioning removed what would have been section 1.
-    const n = assignNumbers([section("b", []), section("c", [])], catalog);
+    const { numbers: n, figures } = assignNumbers([section("b", []), section("c", [])], catalog);
     expect(n.get("b")).toBe("1");
     expect(n.get("c")).toBe("2");
   });
 
   it("numbers figures within their section and resets per section", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [
         section("a", [fig("a.f1"), fig("a.f2")]),
         section("b", [fig("b.f1")]),
       ],
       catalog,
     );
-    expect(n.get("a.f1")).toBe("1.1");
-    expect(n.get("a.f2")).toBe("1.2");
-    expect(n.get("b.f1")).toBe("2.1");
+    expect(figures.get("a.f1")).toBe("1.1");
+    expect(figures.get("a.f2")).toBe("1.2");
+    expect(figures.get("b.f1")).toBe("2.1");
   });
 
   it("figure is `section`-scoped: nested subsections keep counting against their top-level section, not their own subsection", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [fig("a.f1"), section("a.x", [fig("a.x.f1")])])],
       catalog,
     );
-    expect(n.get("a.f1")).toBe("1.1");
+    expect(figures.get("a.f1")).toBe("1.1");
     // Nested one level deeper, but still counted against top-level section "a".
-    expect(n.get("a.x.f1")).toBe("1.2");
+    expect(figures.get("a.x.f1")).toBe("1.2");
   });
 
   it("`document` scope keeps one counter for the whole manual, never reset", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [
         section("a", [docItem("a.d1"), docItem("a.d2")]),
         section("b", [section("b.x", [docItem("b.x.d1")])]),
@@ -153,22 +164,22 @@ describe("assignNumbers", () => {
   });
 
   it("`section` scope resets at each top-level section and ignores nesting depth", () => {
-    const n = assignNumbers(
+    const { numbers: n } = assignNumbers(
       [
-        section("a", [fig("a.f1"), section("a.x", [fig("a.x.f1"), fig("a.x.f2")])]),
-        section("b", [fig("b.f1")]),
+        section("a", [secItem("a.p1"), section("a.x", [secItem("a.x.p1"), secItem("a.x.p2")])]),
+        section("b", [secItem("b.p1")]),
       ],
-      catalog,
+      catalogWithTestBlocks,
     );
-    expect(n.get("a.f1")).toBe("1.1");
-    expect(n.get("a.x.f1")).toBe("1.2");
-    expect(n.get("a.x.f2")).toBe("1.3");
+    expect(n.get("a.p1")).toBe("1.1");
+    expect(n.get("a.x.p1")).toBe("1.2");
+    expect(n.get("a.x.p2")).toBe("1.3");
     // A new top-level section resets the counter.
-    expect(n.get("b.f1")).toBe("2.1");
+    expect(n.get("b.p1")).toBe("2.1");
   });
 
   it("`subsection` scope resets at every section, at any depth", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [subItem("a.s1"), section("a.x", [subItem("a.x.s1")])])],
       catalogWithTestBlocks,
     );
@@ -177,7 +188,7 @@ describe("assignNumbers", () => {
   });
 
   it("numbers table rows against the owning subsection", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [section("a.x", [table("a.x.t", ["r1", "r2", "r3"])])])],
       catalog,
     );
@@ -187,7 +198,7 @@ describe("assignNumbers", () => {
   });
 
   it("renumbers rows after conditioning removed one", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [section("a.x", [table("a.x.t", ["r1", "r3"])])])],
       catalog,
     );
@@ -196,7 +207,7 @@ describe("assignNumbers", () => {
   });
 
   it("`block` scope numbers items with a bare ordinal, restarting per instance", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [steps("a.p1", ["s1", "s2"]), steps("a.p2", ["s3"])])],
       catalogWithTestBlocks,
     );
@@ -208,7 +219,7 @@ describe("assignNumbers", () => {
   });
 
   it("`block` scope restarts in every section too", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [steps("a.p", ["s1", "s2"])]), section("b", [steps("b.p", ["s3"])])],
       catalogWithTestBlocks,
     );
@@ -217,7 +228,7 @@ describe("assignNumbers", () => {
   });
 
   it("renumbers items after conditioning removed one", () => {
-    const n = assignNumbers(
+    const { numbers: n, figures } = assignNumbers(
       [section("a", [steps("a.p", ["s1", "s3"])])],
       catalogWithTestBlocks,
     );
@@ -232,7 +243,7 @@ describe("assignNumbers", () => {
       type: rowsNamedBlock.type,
       props: { rows: ["not", "numbered", "items"] },
     };
-    const n = assignNumbers([section("a", [widget])], catalogWithTestBlocks);
+    const { numbers: n, figures } = assignNumbers([section("a", [widget])], catalogWithTestBlocks);
     // The block gets the ordinal; the strings inside `rows` get nothing.
     expect(n.get("a.w")).toBe("1.1");
   });

@@ -18,11 +18,13 @@ export function assemble(
   catalog: BlockCatalog,
 ): ResolvedManual {
   const children = conditionNodes(doc.children, target);
+  const { numbers, figures } = assignNumbers(children, catalog);
   return {
     manualId: doc.manualId,
     version: doc.version,
     target,
     children,
-    numbers: assignNumbers(children, catalog),
+    numbers,
+    figures,
   };
 }

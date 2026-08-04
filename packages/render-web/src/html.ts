@@ -34,6 +34,14 @@ export interface RenderOptions {
   /** Turns a slot into a URL and tells whether it is still pending. */
   readonly images: ImageResolver;
   /**
+   * Figure ordinals, keyed by the node or item carrying the image — one counter
+   * per top-level section, shared by every block that produces a figure.
+   *
+   * Separate from `numbers` because a procedure step needs both its step ordinal
+   * and its figure number.
+   */
+  readonly figures: ReadonlyMap<NodeId, string>;
+  /**
    * Draft build: print the filename every pending image must be delivered
    * under, beside the placeholder that stands in for it.
    *
@@ -89,6 +97,42 @@ function shot(id: NodeId, o: RenderOptions, attrs = ""): Shot | undefined {
     pending,
     name: o.draft && pending && resolved.deliverTo ? pendingName(resolved.deliverTo) : "",
   };
+}
+
+/**
+ * Every image outside a table, as a captioned and numbered figure.
+ *
+ * The manual has exactly two image conventions — this one and an icon in an
+ * icon table — so a step's control, an element's screenshot and a standalone
+ * illustration all arrive here. A bare centred screenshot with nothing under it
+ * is not a third convention, it is the absence of one: nothing can refer to it.
+ *
+ * The number comes from `figures`, one counter per top-level section shared by
+ * every block that produces a figure. The caption is what the block declared the
+ * image shows.
+ */
+function figureFor(
+  id: NodeId,
+  caption: string,
+  o: RenderOptions,
+  attrs = "",
+): string {
+  const image = shot(id, o, attrs);
+  if (!image) return "";
+  const n = o.figures.get(id);
+  const label = n ? `Figura ${esc(n)}. ` : "";
+  // A `figure` block declares its own width; an item's image has none to declare,
+  // so it is capped in CSS instead. Without the distinction a control screenshot
+  // would render at the full column width, which is how a button ends up bigger
+  // than the paragraph explaining it.
+  const cls = attrs ? "figure" : "figure figure--item";
+  return [
+    `<figure class="${cls}">`,
+    image.img,
+    `<figcaption>${label}${esc(caption)}</figcaption>`,
+    image.name,
+    `</figure>`,
+  ].join("");
 }
 
 /**
@@ -150,14 +194,10 @@ function renderTable(node: BlockNode, o: RenderOptions): string {
 
 function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: RenderOptions): string {
   switch (node.type) {
-    case "prose": {
-      const body = `<p class="prose">${inlineMarkup(String(node.props["text"]))}</p>`;
-      // An illustration, not a figure: no caption, no number. No pending note
-      // either — a paragraph has no short label to name, and the placeholder
-      // already says an image is coming.
-      const image = shot(node.id, o);
-      return image ? `${body}<p class="prose__shot">${image.img}${image.name}</p>` : body;
-    }
+    // Carries no image: an illustrated paragraph is a paragraph followed by a
+    // `figure`, because every image outside a table is a numbered figure.
+    case "prose":
+      return `<p class="prose">${inlineMarkup(String(node.props["text"]))}</p>`;
 
     case "callout": {
       const variant = String(node.props["variant"] ?? "info");
@@ -175,13 +215,11 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
       return `<div class="field-list">${items
         .map((f) => {
           const label = String(f["label"]);
-          const image = shot(String(f["id"]), o);
-          const figure = image ? `<p class="field__shot">${image.img}${image.name}</p>` : "";
           return [
             `<div class="field">`,
             `<p class="field__label">${esc(label)}</p>`,
             `<p class="prose">${inlineMarkup(String(f["text"]))}</p>`,
-            figure,
+            figureFor(String(f["id"]), label, o),
             `</div>`,
           ].join("");
         })
@@ -192,11 +230,11 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
       const entries = node.props["entries"] as ReadonlyArray<Record<string, unknown>>;
       return `<dl class="term-list">${entries
         .map((e) => {
-          const image = shot(String(e["id"]), o);
+          const term = String(e["term"]);
           return (
-            `<div class="term"><dt>${esc(String(e["term"]))}:</dt>` +
+            `<div class="term"><dt>${esc(term)}:</dt>` +
             `<dd>${inlineMarkup(String(e["definition"]))}</dd>` +
-            (image ? `<p class="term__shot">${image.img}${image.name}</p>` : "") +
+            figureFor(String(e["id"]), term, o) +
             `</div>`
           );
         })
@@ -219,8 +257,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
                 .join("")}</ol>`
             : "";
           const title = String(s["title"]);
-          const image = shot(String(s["id"]), o);
-          const figure = image ? `<p class="step__shot">${image.img}${image.name}</p>` : "";
+          const figure = figureFor(String(s["id"]), title, o);
           return [
             `<div class="step">`,
             `<p class="step__title"><span class="step__marker">Paso ${esc(n)}:</span> ${esc(
@@ -237,18 +274,8 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
     }
 
     case "figure": {
-      const n = numbers.get(node.id);
-      const label = n ? `Figura ${n}. ` : "";
-      const caption = String(node.props["caption"]);
       const width = Number(node.props["widthPercent"] ?? 100);
-      const image = shot(node.id, o, ` style="width:${width}%"`);
-      return [
-        `<figure>`,
-        image?.img ?? "",
-        `<figcaption>${label}${esc(caption)}</figcaption>`,
-        image?.name ?? "",
-        `</figure>`,
-      ].join("");
+      return figureFor(node.id, String(node.props["caption"]), o, ` style="width:${width}%"`);
     }
 
     // Both table types share this renderer. They stayed separate block types

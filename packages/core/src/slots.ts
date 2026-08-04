@@ -1,8 +1,8 @@
-import { slotFor } from "@broadsec-manual/blocks";
+import { declaredRef, slotFor } from "@broadsec-manual/blocks";
 import type {
   BlockCatalog,
   BlockNode,
-  ImageRef,
+  ImageConvention,
   ImageSlotPolicy,
   ManualNode,
   ResolvedManual,
@@ -22,20 +22,10 @@ export interface ImageSlotUse {
   /** The node or item that declares it. */
   readonly nodeId: string;
   readonly blockType: string;
-  /** What the image shows, in the manual's own words. */
+  /** What the image shows, in the manual's own words. Also the figure caption. */
   readonly shows: string;
-}
-
-/** Read a declared image reference, applying the block type's policy. */
-function refOf(
-  source: Readonly<Record<string, unknown>>,
-  images: ImageSlotPolicy,
-): ImageRef | undefined {
-  const written = source[images.prop];
-  if (written !== undefined) return written as ImageRef;
-  // `always` means the slot exists whether or not anyone has written it down —
-  // that is what makes a module writable before a single capture is delivered.
-  return images.policy === "always" ? true : undefined;
+  /** Which of the manual's two image conventions this one follows. */
+  readonly convention: ImageConvention;
 }
 
 function useOf(
@@ -44,7 +34,7 @@ function useOf(
   blockType: string,
   images: ImageSlotPolicy,
 ): ImageSlotUse | undefined {
-  const ref = refOf(source, images);
+  const ref = declaredRef(source, images);
   if (ref === undefined) return undefined;
   let slot: string;
   try {
@@ -65,6 +55,7 @@ function useOf(
     nodeId: id,
     blockType,
     shows: typeof shows === "string" ? shows : "",
+    convention: images.convention,
   };
 }
 

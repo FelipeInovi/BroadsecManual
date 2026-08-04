@@ -25,7 +25,8 @@ const manual = (children: readonly ManualNode[]): ResolvedManual => ({
   version: "0.1.0",
   target: { tenant: "mv" },
   children,
-  numbers: new Map([["s.fig", "1.1"]]),
+  numbers: new Map(),
+  figures: new Map([["s.fig", "1.1"]]),
 });
 
 const render = (
@@ -38,6 +39,7 @@ const render = (
     header: "BROADSEC",
     slots: new Map(slots),
     images: () => resolved,
+    figures: new Map(slots.map(([id], i) => [id, `1.${i + 1}`])),
     ...(draft === undefined ? {} : { draft }),
     cover: { brand: "B", title: "T", version: "0.1.0", lede: "L", meta: "M" },
   };

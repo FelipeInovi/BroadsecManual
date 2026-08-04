@@ -45,5 +45,11 @@ export const iconTable: BlockDefinition<IconTableProps> = {
   // placeholder, and the slot — not the ordinal — is what the delivering area
   // receives in the manifest.
   numbering: { scope: "subsection", labelKey: "row", itemsProp: "rows" },
-  images: { prop: "icon", itemsProp: "rows", showsProp: "label", policy: "always" },
+  images: {
+    prop: "icon",
+    itemsProp: "rows",
+    showsProp: "label",
+    policy: "always",
+    convention: "icon",
+  },
 };

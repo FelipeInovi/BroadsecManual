@@ -227,6 +227,15 @@ figure img {
   max-width: 100%;
   border: 0.6pt solid ${t.table.rule};
 }
+/* An item's image — a step's control, an element's screenshot — has no
+   widthPercent to declare, so it is capped here. A figure BLOCK sets its own
+   width inline and must not be capped by this, which is why the class exists
+   rather than a blanket rule on every figure.
+
+   (No backticks anywhere in this file: the whole stylesheet is one JS template
+   literal, and a backtick in a comment ends it.) */
+figure.figure--item img { max-width: 70%; }
+
 figcaption {
   margin-top: ${t.space.sm};
   color: ${t.figure.captionColor};
@@ -301,14 +310,7 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
   font-weight: bold;
   margin: ${t.space.md} 0 ${t.space.xs};
 }
-.prose__shot, .term__shot { text-align: center; margin: 0 0 ${t.space.md}; }
-.prose__shot img, .term__shot img {
-  max-width: 62%;
-  border: 0.6pt solid ${t.table.rule};
-}
 
-.field__shot { text-align: center; margin: ${t.space.sm} 0 0; }
-.field__shot img { max-width: 62%; border: 0.6pt solid ${t.table.rule}; }
 
 /* ---- term-list ------------------------------------------------------- */
 
@@ -342,9 +344,6 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
   line-height: ${t.prose.lineHeight};
 }
 .step__actions li { margin-bottom: ${t.space.xs}; }
-.step__shot { text-align: center; margin: ${t.space.sm} 0 0; }
-.step__shot img { max-width: 70%; border: 0.6pt solid ${t.table.rule}; }
-
 /* ---- pending images -------------------------------------------------- */
 
 /* Every image slot renders something: the delivered image, or the single
@@ -357,7 +356,11 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
    so only source order makes the placeholder one consistent size everywhere.
    Move this block up and the placeholders silently go back to being sized by
    whichever block they happen to sit in. */
-img.shot--pending {
+/* Qualified with the parent element so it OUTWEIGHS the item cap above: that
+   selector carries a class plus two elements, so a bare img-plus-class loses to
+   it and every placeholder silently rendered at the item width instead of the
+   placeholder width. Specificity first, source order second. */
+figure img.shot--pending {
   max-width: 40%;
   /* The placeholder draws its own dashed frame; a second border would double it. */
   border: 0;

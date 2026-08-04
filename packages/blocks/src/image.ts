@@ -148,6 +148,26 @@ export function slotToPath(slot: string): string {
   return slot.split(".").join("/");
 }
 
+/**
+ * The image reference a node or item declares, applying its block type's policy.
+ *
+ * `always` means the slot exists whether or not anyone wrote it down — that is
+ * what makes a module writable before a single capture is delivered.
+ *
+ * Lives here, beside the policy it applies, because BOTH numbering and slot
+ * collection have to agree on which nodes carry an image. Two walks answering
+ * that question separately would eventually disagree, and the symptom would be a
+ * figure number assigned to a node the renderer draws no figure for.
+ */
+export function declaredRef(
+  source: Readonly<Record<string, unknown>>,
+  policy: { readonly prop: string; readonly policy: "always" | "optional" },
+): ImageRef | undefined {
+  const written = source[policy.prop];
+  if (written !== undefined) return written as ImageRef;
+  return policy.policy === "always" ? true : undefined;
+}
+
 /** Which of the three resolution steps answered for a slot. */
 export type SlotState =
   /** An image made for this deployment. */

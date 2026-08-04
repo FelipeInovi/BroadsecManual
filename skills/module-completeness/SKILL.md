@@ -124,20 +124,37 @@ with what each one shows and which deployments need it.
 - **Decoration** — never. An image that carries no information costs a page and
   a delivery request.
 
-### Which block carries the image
+### Two conventions, and no third
 
-| Block | Image slot | Declared |
+**Every image in the manual is one of exactly two things.** There is no third
+kind, and a bare centred screenshot with nothing under it is not one — it is the
+absence of a convention, because nothing can refer to it.
+
+| Convention | Looks like | Numbered |
 |---|---|---|
-| `icon-table` | Icon column, one per row | Always — omit the prop |
-| `field-list` | One per item | Always — omit the prop |
-| `procedure` | One per step | Always — omit the prop |
-| `figure` | The image itself, with a caption | Always — omit the prop |
-| `prose`, `term-list` | Optional illustration | Opt-in — write `image: true` |
+| **Figure** | The image, with a caption underneath | `Figura <section>.<n>`, one sequence per top-level section |
+| **Icon** | A control's icon in an icon table's first column | No — the row's label names it |
+
+Everything outside a table is a figure: a standalone illustration, an element's
+screenshot, the control a step tells the operator to press. They all share one
+counter per top-level section, so a `figure` block and a procedure step's
+screenshot interleave in reading order instead of running two sequences.
+
+| Block | Image slot | Declared | Caption comes from |
+|---|---|---|---|
+| `figure` | The image itself | Always — omit the prop | its `caption` |
+| `field-list` | One per item | Always — omit the prop | the item's `label` |
+| `procedure` | One per step | Always — omit the prop | the step's `title` |
+| `icon-table` | Icon column, one per row | Always — omit the prop | — (icon convention) |
+| `term-list` | One per entry | Opt-in — write `image: true` | the entry's `term` |
+| `prose` | **None** | — | — |
 
 "Always" means the slot exists whether or not you write anything: leave the prop
-out and it is derived. "Opt-in" means no declaration, no slot — a paragraph does
-not inherently need an illustration, and filling the manual with placeholders
-nobody asked for would drown the ones genuinely awaited.
+out and it is derived. `prose` carries no image at all — an illustrated paragraph
+is a paragraph followed by a `figure`, which is what `figure` is for.
+
+You never write a caption for an item's image. It is the label or title already
+there, so the caption cannot drift from the thing it captions.
 
 ## Content declares slots, never files
 
@@ -238,6 +255,7 @@ A module ships when all of these hold:
 - [ ] Every procedure says where the operator lands
 - [ ] Every control the reader must press has an image slot, delivered or pending
 - [ ] No image slot renders as a blank gap
+- [ ] Every image is a figure or a table icon — there is no third convention
 - [ ] No filename or path appears anywhere in the content
 - [ ] Every claim traces to a file and line, or to the module map
 - [ ] UI labels are taken from the i18n catalogue, not retyped

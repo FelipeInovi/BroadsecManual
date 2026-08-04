@@ -70,6 +70,21 @@ export interface NumberingPolicy {
 export type ImagePolicy = "always" | "optional";
 
 /**
+ * How an image presents itself. The manual has exactly TWO, and no third.
+ *
+ * - `figure` — a captioned, numbered figure, so the text can refer back to it.
+ *   Every image outside a table is one of these, wherever it sits: a step's
+ *   control, an element's screenshot, a standalone illustration.
+ * - `icon` — a control's icon inside an icon table's first column. Not
+ *   numbered as a figure and not captioned: the row's label names it.
+ *
+ * Declared per block type rather than decided by the renderer, because "these
+ * two and no others" is a rule about the MANUAL, and a rule the renderer holds
+ * privately is a rule the next block type will quietly break.
+ */
+export type ImageConvention = "figure" | "icon";
+
+/**
  * Where a block keeps its image references, so slots can be enumerated for the
  * manifest without re-implementing the renderer's per-type knowledge.
  *
@@ -84,12 +99,17 @@ export interface ImageSlotPolicy {
   readonly itemsProp?: string;
   /**
    * Prop whose text says what the image shows — a caption, a control's label, a
-   * step title. It is copied into the image manifest, which is the only
-   * description the area producing the screenshots ever sees. A manifest row
-   * reading just `barra.busqueda` is not a request anyone can fulfil.
+   * step title.
+   *
+   * Serves two readers from one fact. It is the figure's CAPTION on the page,
+   * and it is the description in the image manifest, which is the only thing the
+   * area producing the screenshots ever sees. A manifest row reading just
+   * `barra.busqueda` is not a request anyone can fulfil, and a figure with no
+   * caption cannot be referred to.
    */
   readonly showsProp: string;
   readonly policy: ImagePolicy;
+  readonly convention: ImageConvention;
 }
 
 export interface BlockDefinition<TProps = unknown> {

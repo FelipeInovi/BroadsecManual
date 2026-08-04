@@ -22,12 +22,19 @@ export const termList: BlockDefinition<TermListProps> = {
   type: "term-list",
   version: "0.3.0",
   description:
-    "A tight run of term-and-definition pairs, one line each, no images — the " +
-    "options of a single control, a short glossary. Use field-list instead " +
-    "when an entry needs a full paragraph or a screenshot; use data-table " +
-    "when the entries are numerous enough that a reader will scan rather " +
-    "than read them.",
+    "A tight run of term-and-definition pairs, one line each — the options of a " +
+    "single control, a short glossary. Entries normally carry no image; one that " +
+    "does renders as a numbered figure like any other, which interrupts the " +
+    "list, so prefer field-list when an entry needs a full paragraph or a " +
+    "screenshot. Use data-table when the entries are numerous enough that a " +
+    "reader will scan rather than read them.",
   schema: termListProps,
   children: { kind: "none" },
-  images: { prop: "image", itemsProp: "entries", showsProp: "term", policy: "optional" },
+  images: {
+    prop: "image",
+    itemsProp: "entries",
+    showsProp: "term",
+    policy: "optional",
+    convention: "figure",
+  },
 };

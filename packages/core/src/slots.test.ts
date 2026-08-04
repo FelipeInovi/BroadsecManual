@@ -23,6 +23,7 @@ const manual = (children: readonly ManualNode[]): ResolvedManual => ({
   target: { tenant: "mv" },
   children,
   numbers: new Map(),
+  figures: new Map(),
 });
 
 describe("collectSlots", () => {
@@ -37,6 +38,7 @@ describe("collectSlots", () => {
         nodeId: "mapa.fig-capas",
         blockType: "figure",
         shows: "Capas del mapa",
+        convention: "figure",
       },
     ]);
   });
@@ -90,7 +92,11 @@ describe("collectSlots", () => {
   // nobody requested. Only a declared illustration becomes a slot.
   it("ignores an optional image that was never declared", () => {
     const slots = collectSlots(
-      manual([block("intro", "prose", { text: "Un párrafo sin ilustración." })]),
+      manual([
+        block("glosario", "term-list", {
+          entries: [{ id: "glosario.caso", term: "Caso", definition: "Un incidente." }],
+        }),
+      ]),
       catalog,
     );
     expect(slots).toEqual([]);
@@ -98,10 +104,32 @@ describe("collectSlots", () => {
 
   it("collects an optional image once declared with `true`", () => {
     const slots = collectSlots(
-      manual([block("intro", "prose", { text: "Un párrafo ilustrado.", image: true })]),
+      manual([
+        block("glosario", "term-list", {
+          entries: [
+            { id: "glosario.caso", term: "Caso", definition: "Un incidente.", image: true },
+          ],
+        }),
+      ]),
       catalog,
     );
-    expect(slots.map((s) => s.slot)).toEqual(["intro"]);
+    expect(slots.map((s) => s.slot)).toEqual(["glosario.caso"]);
+  });
+
+  // Two conventions and no third: a table icon is not a figure, and the
+  // manifest and the renderer both need to know which one they are handling.
+  it("marks a table icon as the icon convention, not a figure", () => {
+    const slots = collectSlots(
+      manual([
+        block("barra.tabla", "icon-table", {
+          labelHeader: "Control",
+          descriptionHeader: "Función",
+          rows: [{ id: "barra.busqueda", label: "Búsqueda", description: "Busca casos" }],
+        }),
+      ]),
+      catalog,
+    );
+    expect(slots[0]?.convention).toBe("icon");
   });
 
   it("walks nested sections in document order", () => {

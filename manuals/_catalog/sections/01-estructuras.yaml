@@ -53,8 +53,8 @@ children:
             - id: cat.fl.dos
               label: Elemento con imagen
               text: >-
-                Cuando la imagen está disponible, se muestra centrada bajo la
-                explicación del elemento.
+                Cuando la imagen está disponible, se muestra como figura
+                numerada, con el nombre del elemento como epígrafe.
 
   # ---------------------------------------------------------- term-list ---
   - id: cat.term-list
@@ -76,7 +76,9 @@ children:
               definition: Su definición, en una línea.
             - id: cat.tl.dos
               term: Término con imagen
-              definition: La imagen es opcional y se muestra bajo la definición.
+              definition: >-
+                La imagen es opcional; cuando se declara, es una figura numerada
+                como cualquier otra.
               image: true
 
   # ---------------------------------------------------------- procedure ---
@@ -108,7 +110,8 @@ children:
             - id: cat.pr.dos
               title: Un paso con imagen
               text: >-
-                La imagen del paso muestra el control que debe accionarse.
+                La imagen del paso muestra el control que debe accionarse, como
+                figura numerada con el título del paso por epígrafe.
 
   # --------------------------------------------------------- icon-table ---
   - id: cat.icon-table
@@ -170,8 +173,10 @@ children:
         type: prose
         props:
           text: >-
-            Imagen numerada con epígrafe. El número lo asigna el sistema: el
-            epígrafe se escribe **sin** número.
+            Imagen numerada con epígrafe, para que el texto pueda referirse a
+            ella. El número lo asigna el sistema: el epígrafe se escribe **sin**
+            número. Todas las imágenes del manual salen así, salvo los íconos de
+            las tablas: son las dos únicas convenciones.
 
       - id: cat.figure.demo
         type: figure
