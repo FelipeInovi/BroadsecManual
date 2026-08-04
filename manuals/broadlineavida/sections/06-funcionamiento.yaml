@@ -1,0 +1,51 @@
+# Ported from docs/manual-usuario.md § 6 (lines 159-176) as it stands.
+# Faithful port; see 04-introduccion.yaml for what the format changes and why.
+
+id: funcionamiento
+title: Funcionamiento
+subtitle: Acceso e ingreso al sistema
+
+children:
+  - id: funcionamiento.acceso
+    title: Acceso y Login
+    children:
+      - id: funcionamiento.acceso.ubicacion
+        type: prose
+        props:
+          text: >-
+            El módulo de Incidentes (Broadsec) se encuentra ubicado en la barra
+            lateral derecha de Apex, identificado con el ícono correspondiente.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionamiento.acceso.fig
+        type: figure
+        props:
+          caption: "Ícono de acceso al módulo Broadsec desde Apex."
+          widthPercent: 90
+
+      - id: funcionamiento.acceso.ingreso
+        type: prose
+        props:
+          text: >-
+            Se ingresa con el usuario y la contraseña proporcionados por el
+            administrador y, a continuación, se hace clic en el botón **Iniciar
+            Sesión**.
+
+  - id: funcionamiento.inicio
+    title: Interfaz de Inicio
+    children:
+      - id: funcionamiento.inicio.texto
+        type: prose
+        props:
+          text: >-
+            Al iniciar sesión se accede al módulo de Broadsec, que presenta una
+            interfaz renovada orientada a mejorar la gestión de incidentes y a
+            hacer más eficiente el flujo de atención de emergencias para los
+            operadores.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionamiento.inicio.fig
+        type: figure
+        props:
+          caption: "Interfaz de inicio del módulo."
+          widthPercent: 90

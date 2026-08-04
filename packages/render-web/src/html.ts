@@ -189,7 +189,8 @@ function renderTable(node: BlockNode, o: RenderOptions): string {
       // A draft's filename goes in the DESCRIPTION cell, not under the icon:
       // the icon column is 34pt wide and a path would either wrap to shreds or
       // stretch the column and wreck the table.
-      const description = inlineMarkup(String(r["description"])) + (image?.name ?? "");
+      const described = typeof r["description"] === "string" ? inlineMarkup(r["description"]) : "";
+      const description = described + (image?.name ?? "");
       return [
         `<tr>`,
         iconCell(image),

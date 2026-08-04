@@ -12,7 +12,12 @@ export const iconTableRow = z.object({
    */
   icon: imageRefSchema.optional(),
   label: z.string().min(1),
-  description: z.string().min(1),
+  /**
+   * Optional. Some tables are a legend and nothing more — six agent types with
+   * their icons, no explanation to give. Requiring a description there would
+   * force whoever ports the content to invent sentences the source never said.
+   */
+  description: z.string().min(1).optional(),
   /** Conditioning for this ROW. Omitted means every target sees it. */
   when: selectorSchema.optional(),
 });
@@ -28,7 +33,7 @@ export type IconTableProps = z.infer<typeof iconTableProps>;
 
 export const iconTable: BlockDefinition<IconTableProps> = {
   type: "icon-table",
-  version: "0.2.0",
+  version: "0.3.0",
   description:
     "A table describing icon-based UI controls, one row per control. The first " +
     "column always shows something: the control's icon once it is delivered, " +

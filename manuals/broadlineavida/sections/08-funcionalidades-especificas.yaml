@@ -1,0 +1,1051 @@
+# Ported from docs/manual-usuario.md § 8 (lines 264-656) as it stands.
+#
+# Faithful port. Wording is the legacy document's own; nothing was re-verified
+# against the product and nothing was corrected. `Tenants: Todos`, so nothing
+# here is tagged.
+#
+# What the format changed, and only this:
+#   - no ordinal is written anywhere; every number is assigned per build
+#   - figure captions keep the legacy description and drop its "Figura 8.n —"
+#   - the legacy's icon-table numbers (8.1.1, 8.7.7 …) are gone: they were the
+#     references its images would arrive under, and slots are derived from node
+#     ids now
+
+id: funcionalidades
+title: Funcionalidades Específicas
+subtitle: Capas de visualización
+
+children:
+  - id: funcionalidades.mapa
+    title: Mapa
+    children:
+      - id: funcionalidades.mapa.intro
+        type: prose
+        props:
+          text: >-
+            Broadsec ofrece una gestión avanzada del mapa con varias capas de
+            visualización que garantizan la precisión en la localización de
+            incidentes y recursos.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionalidades.mapa.fig
+        type: figure
+        props:
+          caption: "Selector de capas del mapa."
+          widthPercent: 90
+
+      - id: funcionalidades.mapa.capas
+        type: icon-table
+        props:
+          labelHeader: Capa
+          descriptionHeader: Función
+          rows:
+            - id: func.capa.trafico
+              label: Tráfico
+              description: >-
+                Información vial en tiempo real. Valida la dirección por Calle,
+                Carrera, Diagonal, etc.
+            - id: func.capa.avl
+              label: AVL
+              description: >-
+                Muestra la ubicación de las fuerzas integradas para el monitoreo
+                y la coordinación de recursos.
+            - id: func.capa.mobile
+              label: Mobile
+              description: >-
+                Visualiza la ubicación de los agentes que operan desde la
+                aplicación Broadsec Mobile.
+            - id: func.capa.paneles
+              label: Paneles
+              description: Muestra todos los paneles disponibles en el mapa.
+            - id: func.capa.satelital
+              label: Satelital
+              description: >-
+                Permite tomar puntos de referencia con una vista aérea de alta
+                resolución.
+            - id: func.capa.360
+              label: 360°
+              description: >-
+                Identifica el punto exacto del incidente con una visión
+                tridimensional del entorno.
+
+      - id: funcionalidades.mapa.funcionalidad
+        type: prose
+        props:
+          text: >-
+            **Funcionalidad de capas.** Al hacer clic en el botón de capas,
+            disponible tanto en la esquina inferior izquierda como en la inferior
+            derecha, es posible visualizar y seleccionar las distintas capas
+            disponibles. Esta funcionalidad permite adaptar la vista del mapa a
+            las necesidades operativas del momento.
+
+      - id: funcionalidades.mapa.fig-activo
+        type: figure
+        props:
+          caption: "Selector de capas del mapa activo."
+          widthPercent: 90
+
+      - id: funcionalidades.mapa.fig-visualizacion
+        type: figure
+        props:
+          caption: "Visualización de capas del mapa."
+          widthPercent: 90
+
+      - id: funcionalidades.mapa.fig-satelital
+        type: figure
+        props:
+          caption: "Capa Satelital y capa de Tráfico."
+          widthPercent: 90
+
+      - id: funcionalidades.mapa.vista360
+        type: prose
+        props:
+          text: >-
+            Mediante la vista 360° es posible identificar el punto exacto donde
+            ocurre el incidente, asegurando que la fuerza en campo llegue con la
+            mayor precisión al lugar correcto.
+
+  - id: funcionalidades.incidentes
+    title: Incidentes
+    children:
+      - id: funcionalidades.incidentes.intro
+        type: prose
+        props:
+          text: >-
+            Al seleccionar un incidente sobre el mapa se accede a un conjunto de
+            acciones para atenderlo.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionalidades.incidentes.fig
+        type: figure
+        props:
+          caption: "Acciones disponibles al seleccionar un incidente en el mapa."
+          widthPercent: 90
+
+      - id: funcionalidades.incidentes.acciones
+        type: icon-table
+        props:
+          labelHeader: Función
+          descriptionHeader: Descripción
+          rows:
+            - id: func.inc.resumen
+              label: Resumen
+              description: Accede al resumen creado por el Call AI sobre el incidente.
+            - id: func.inc.detalle
+              label: Detalle
+              description: >-
+                Accede al detalle del incidente, donde está la información más
+                completa y desde donde también se puede gestionar.
+            - id: func.inc.despacho
+              label: Despacho
+              description: >-
+                Accede al módulo de despacho de agentes, donde se observan los
+                agentes más idóneos para atender la emergencia.
+            - id: func.inc.gestion
+              label: Gestión
+              description: >-
+                Si el caso no requiere despacho, permite gestionarlo para
+                cerrarlo de forma correcta.
+
+  - id: funcionalidades.capa-mobile
+    title: Capa Mobile
+    children:
+      - id: funcionalidades.capa-mobile.texto
+        type: prose
+        props:
+          text: >-
+            Permite visualizar en el mapa la ubicación de los agentes que operan
+            desde la aplicación Broadsec Mobile. Esta capa facilita el monitoreo
+            en tiempo real del personal desplegado en campo.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionalidades.capa-mobile.fig
+        type: figure
+        props:
+          caption: "Capa Mobile: ubicación de agentes móviles."
+          widthPercent: 90
+
+  - id: funcionalidades.capa-avl
+    title: Capa AVL
+    children:
+      - id: funcionalidades.capa-avl.texto
+        type: prose
+        props:
+          text: >-
+            Permite mostrar en el mapa la ubicación de las fuerzas integradas,
+            facilitando el monitoreo y la coordinación de los recursos
+            disponibles en tiempo real.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionalidades.capa-avl.fig
+        type: figure
+        props:
+          caption: "Capa AVL: ubicación de fuerzas integradas."
+          widthPercent: 90
+
+  - id: funcionalidades.capa-paneles
+    title: Capa de Paneles
+    children:
+      - id: funcionalidades.capa-paneles.texto
+        type: prose
+        props:
+          text: >-
+            Permite visualizar todos los paneles disponibles en el mapa,
+            gestionados directamente desde *Broadsec of Things*.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionalidades.capa-paneles.fig
+        type: figure
+        props:
+          caption: "Capa de Paneles en el mapa."
+          widthPercent: 90
+
+      - id: funcionalidades.capa-paneles.fig-complementaria
+        type: figure
+        props:
+          caption: "Capa de Paneles, vista complementaria."
+          widthPercent: 90
+
+  - id: funcionalidades.filtros
+    title: Filtros
+    children:
+      - id: funcionalidades.filtros.intro
+        type: prose
+        props:
+          text: >-
+            Los componentes del filtro permiten acotar la lista de casos según
+            distintos criterios. A continuación se detalla cada uno.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionalidades.filtros.fig
+        type: figure
+        props:
+          caption: "Panel de filtros de la lista de casos."
+          widthPercent: 90
+
+      - id: funcionalidades.filtros.rango
+        title: Rango de tiempo y Restaurar filtros
+        children:
+          - id: funcionalidades.filtros.rango.lista
+            type: field-list
+            props:
+              items:
+                - id: func.filtro.rango
+                  label: Rango de tiempo
+                  text: >-
+                    Permite filtrar por un rango de días: hoy, ayer, 7 días, 15
+                    días y 30 días.
+                  layout: beside
+                - id: func.filtro.restaurar
+                  label: Restaurar filtros
+                  text: >-
+                    Limpia todos los filtros aplicados, incluido el rango de
+                    tiempo, y cierra el panel de filtros.
+                  layout: beside
+
+      - id: funcionalidades.filtros.solo-mis-casos
+        title: Solo mis casos
+        children:
+          - id: funcionalidades.filtros.solo-mis-casos.texto
+            type: prose
+            props:
+              text: >-
+                Interruptor que, encendido, filtra por los casos despachados del
+                usuario con sesión iniciada; apagado, no aplica ningún filtro.
+          - id: funcionalidades.filtros.solo-mis-casos.fig-apagado
+            type: figure
+            props:
+              caption: "Interruptor Solo mis casos, apagado."
+              widthPercent: 60
+          - id: funcionalidades.filtros.solo-mis-casos.fig-encendido
+            type: figure
+            props:
+              caption: "Interruptor Solo mis casos, encendido."
+              widthPercent: 60
+
+      - id: funcionalidades.filtros.tipo-emergencia
+        title: Tipo de Emergencia
+        children:
+          - id: funcionalidades.filtros.tipo-emergencia.texto
+            type: prose
+            props:
+              text: >-
+                Filtra los incidentes según una lista de tipos de emergencia
+                predefinidos, que funcionan como categorías para agrupar y
+                clasificar los casos.
+          - id: funcionalidades.filtros.tipo-emergencia.fig
+            type: figure
+            props:
+              caption: "Filtro por tipo de emergencia."
+              widthPercent: 70
+          - id: funcionalidades.filtros.tipo-emergencia.fig-lista
+            type: figure
+            props:
+              caption: "Lista de tipos de emergencia."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.origen
+        title: Origen del Reporte
+        children:
+          - id: funcionalidades.filtros.origen.texto
+            type: prose
+            props:
+              text: >-
+                Filtra los incidentes según su origen de creación. Por defecto
+                muestra los que entran desde Carbyne y los creados manualmente;
+                con la opción *Mobile*, se filtran los creados desde la
+                aplicación móvil; con *Incident*, los provenientes de Broadsec
+                Desktop.
+          - id: funcionalidades.filtros.origen.fig
+            type: figure
+            props:
+              caption: "Filtro por origen del reporte."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.estado
+        title: Estado del incidente
+        children:
+          - id: funcionalidades.filtros.estado.texto
+            type: prose
+            props:
+              text: >-
+                Filtra y visualiza los incidentes según su estado actual, para
+                identificar fácilmente el progreso de cada caso.
+          - id: funcionalidades.filtros.estado.fig
+            type: figure
+            props:
+              caption: "Filtro por estado del incidente."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.tipo-llamada
+        title: Tipo de llamada
+        children:
+          - id: funcionalidades.filtros.tipo-llamada.texto
+            type: prose
+            props:
+              text: >-
+                *Entrante*: llamadas que realiza un usuario. *Saliente*: llamadas
+                salientes desde operación.
+          - id: funcionalidades.filtros.tipo-llamada.fig
+            type: figure
+            props:
+              caption: "Filtro por tipo de llamada."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.asociados
+        title: Casos Asociados
+        children:
+          - id: funcionalidades.filtros.asociados.texto
+            type: prose
+            props:
+              text: >-
+                Filtra los incidentes según sus casos relacionados, ya sea por
+                casos secundarios vinculados o por el caso principal (caso
+                padre).
+          - id: funcionalidades.filtros.asociados.fig
+            type: figure
+            props:
+              caption: "Filtro por casos asociados."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.enriquecidos
+        title: Datos Enriquecidos
+        children:
+          - id: funcionalidades.filtros.enriquecidos.texto
+            type: prose
+            props:
+              text: >-
+                Casos que cuentan con información complementaria: ubicación,
+                imágenes, videos, chat o datos adicionales del llamante.
+          - id: funcionalidades.filtros.enriquecidos.fig
+            type: figure
+            props:
+              caption: "Filtro por datos enriquecidos."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.ubicacion
+        title: Ubicación
+        children:
+          - id: funcionalidades.filtros.ubicacion.texto
+            type: prose
+            props:
+              text: >-
+                Filtra casos según la ubicación asignada, útil para análisis
+                geoespaciales de incidentes.
+          - id: funcionalidades.filtros.ubicacion.fig
+            type: figure
+            props:
+              caption: "Filtro por ubicación."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.duracion
+        title: Duración de la llamada
+        children:
+          - id: funcionalidades.filtros.duracion.texto
+            type: prose
+            props:
+              text: >-
+                Filtra y visualiza los incidentes según el tiempo total de la
+                llamada asociada, facilitando el análisis según su extensión
+                temporal.
+          - id: funcionalidades.filtros.duracion.fig
+            type: figure
+            props:
+              caption: "Filtro por duración de la llamada."
+              widthPercent: 70
+
+      - id: funcionalidades.filtros.aplicar
+        type: prose
+        props:
+          text: >-
+            Una vez aplicados los filtros deseados, use el botón **Aplicar**, en
+            la parte inferior del panel, o **Cancelar** para revertir los cambios
+            sin aplicarlos.
+
+      - id: funcionalidades.filtros.fig-aplicar
+        type: figure
+        props:
+          caption: "Botones Aplicar y Cancelar de los filtros."
+          widthPercent: 60
+
+  - id: funcionalidades.seccion-incidentes
+    title: Sección de Incidentes
+    children:
+      - id: funcionalidades.seccion-incidentes.intro
+        type: prose
+        props:
+          text: >-
+            La lista de casos muestra todas las llamadas, tanto entrantes como
+            salientes, de la plataforma Carbyne, así como todos los incidentes
+            creados directamente en Broadsec. Se recomienda buscar los casos por
+            número de ticket o número de teléfono.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: funcionalidades.seccion-incidentes.fig
+        type: figure
+        props:
+          caption: "Lista de casos con etiquetas de tipo de emergencia."
+          widthPercent: 90
+
+      - id: funcionalidades.seccion-incidentes.origen
+        type: prose
+        props:
+          text: >-
+            Un incidente puede generarse de dos maneras: por **llamada entrante**
+            o mediante la **plataforma web** de Broadsec.
+
+      - id: funcionalidades.llamada-entrante
+        title: Llamada entrante
+        children:
+          - id: funcionalidades.llamada-entrante.inicio
+            type: prose
+            props:
+              text: >-
+                Justo en el momento en que se empieza a atender un incidente en
+                vivo, comienza a operar la tecnología de transcripción, análisis
+                de IA y grabación automática.
+          - id: funcionalidades.llamada-entrante.fig-vivo
+            type: figure
+            props:
+              caption: "Incidente EN VIVO: grabación y monitoreo activo."
+              widthPercent: 90
+          - id: funcionalidades.llamada-entrante.estado
+            type: prose
+            props:
+              text: >-
+                El incidente pasa al estado **EN VIVO**, lo cual indica que la
+                llamada está siendo grabada, monitoreada, transcrita y analizada
+                por el sistema de IA en tiempo real.
+          - id: funcionalidades.llamada-entrante.fig-estado
+            type: figure
+            props:
+              caption: "Estado EN VIVO del incidente."
+              widthPercent: 70
+          - id: funcionalidades.llamada-entrante.final
+            type: prose
+            props:
+              text: >-
+                Una vez finalizada la llamada, el incidente queda de primero en
+                la lista para ser gestionado y despachado rápidamente.
+          - id: funcionalidades.llamada-entrante.fig-final
+            type: figure
+            props:
+              caption: "Incidente finalizado, listo para gestión."
+              widthPercent: 90
+
+      - id: funcionalidades.plataforma
+        title: Plataforma Broadsec
+        children:
+          - id: funcionalidades.plataforma.crear
+            type: procedure
+            props:
+              lead: >-
+                Un operador puede crear un incidente desde la plataforma Broadsec
+                siguiendo estos pasos.
+              steps:
+                - id: func.crear.boton
+                  title: Abra el formulario
+                  text: >-
+                    En la barra del *home*, haga clic en el botón **Nuevo
+                    incidente**.
+                  layout: beside
+                - id: func.crear.formulario
+                  title: Diligencie el formulario
+                  text: >-
+                    Diligencie el formulario por pasos para el nuevo incidente y,
+                    al finalizar, haga clic en **Crear Incidente**.
+                  layout: beside
+          - id: funcionalidades.plataforma.fig-completado
+            type: figure
+            props:
+              caption: "Formulario Crear Incidente, completado."
+              widthPercent: 90
+
+      - id: funcionalidades.general
+        title: Para incidentes en general
+        children:
+          - id: funcionalidades.general.texto
+            type: prose
+            props:
+              text: >-
+                El operador puede gestionar los incidentes que hayan quedado
+                registrados en la fila, sin importar si llegaron por llamada o
+                fueron creados manualmente.
+          - id: funcionalidades.general.fig
+            type: figure
+            props:
+              caption: "Tarjeta de incidente con label y estado de color."
+              widthPercent: 90
+          - id: funcionalidades.general.estado
+            type: prose
+            props:
+              text: >-
+                El estado del caso se identifica por un **punto de color** en la
+                tarjeta del incidente. El **Label** que aparece en la parte
+                superior derecha indica el tipo de emergencia al que está
+                asociado, lo que facilita la identificación rápida.
+          - id: funcionalidades.general.tabla
+            type: icon-table
+            props:
+              labelHeader: Elemento
+              descriptionHeader: Descripción
+              rows:
+                - id: func.estado.naranja
+                  label: Punto naranja
+                  description: Caso despachado.
+                - id: func.estado.verde
+                  label: Punto verde
+                  description: Caso en sitio.
+                - id: func.estado.azul
+                  label: Punto azul
+                  description: Caso cerrado.
+                - id: func.estado.ojo
+                  label: Ícono de ojo
+                  description: Caso visualizado por otro operador (no editable).
+                - id: func.estado.padre
+                  label: Ícono de asociado (padre)
+                  description: Caso padre que tiene otros casos hijos asociados.
+                - id: func.estado.hijo
+                  label: Ícono de asociado (hijo)
+                  description: Caso hijo vinculado a un caso padre.
+
+      - id: funcionalidades.componentes
+        title: Componentes de un Incidente
+        children:
+          - id: funcionalidades.componentes.intro
+            type: prose
+            props:
+              text: >-
+                Al hacer clic en el caso se accede a su información en detalle,
+                organizada en cuatro pestañas.
+          - id: funcionalidades.componentes.fig
+            type: figure
+            props:
+              caption: "Vista detallada de un incidente, con sus cuatro pestañas."
+              widthPercent: 90
+
+          - id: funcionalidades.pestana-incidente
+            title: Pestaña Incidente
+            children:
+              - id: funcionalidades.pestana-incidente.intro
+                type: prose
+                props:
+                  text: "Dentro de esta pestaña se encuentra:"
+              - id: funcionalidades.pestana-incidente.lista
+                type: field-list
+                props:
+                  items:
+                    - id: func.pest1.duracion
+                      label: Duración
+                      text: >-
+                        Muestra en tiempo real el tiempo transcurrido desde el
+                        inicio de la llamada asociada al incidente.
+                      layout: beside
+                    - id: func.pest1.transcripcion
+                      label: Transcripción
+                      text: >-
+                        Permite visualizar la transcripción automática de la
+                        llamada, ofreciendo un registro en texto de la
+                        conversación.
+                      layout: beside
+                    - id: func.pest1.audio
+                      label: Audio
+                      text: >-
+                        Da acceso a la reproducción del audio y el video grabados
+                        durante la llamada, útil para revisiones o validaciones
+                        posteriores.
+                      layout: beside
+                    - id: func.pest1.historial
+                      label: Historial de ubicaciones
+                      text: >-
+                        Muestra el registro cronológico de las posiciones
+                        relacionadas con el incidente (movimientos del llamante,
+                        etc.).
+                      layout: beside
+                    - id: func.pest1.asociados
+                      label: Casos asociados
+                      text: >-
+                        Presenta la relación con otros casos vinculados, ya sean
+                        secundarios o el caso padre, lo que facilita la
+                        trazabilidad.
+                      layout: beside
+
+          - id: funcionalidades.pestana-callai
+            title: Pestaña Call AI
+            children:
+              - id: funcionalidades.pestana-callai.texto
+                type: prose
+                props:
+                  text: >-
+                    Muestra un resumen generado por la IA de Broadsec con los
+                    aspectos más relevantes del caso: tipo de emergencia,
+                    vehículos, ubicación, prioridad y resumen general. El
+                    operador puede copiarlo y compartirlo rápidamente con las
+                    autoridades competentes.
+              - id: funcionalidades.pestana-callai.fig
+                type: figure
+                props:
+                  caption: "Resumen de Call AI del incidente."
+                  widthPercent: 90
+              - id: funcionalidades.pestana-callai.fig-detalle
+                type: figure
+                props:
+                  caption: "Resumen de Call AI, detalle."
+                  widthPercent: 90
+
+          - id: funcionalidades.pestana-despacho
+            title: Pestaña Despacho
+            children:
+              - id: funcionalidades.pestana-despacho.texto
+                type: prose
+                props:
+                  text: >-
+                    Es la sección desde la cual el operador puede despachar el
+                    caso a un agente que esté disponible en ese momento.
+              - id: funcionalidades.pestana-despacho.fig
+                type: figure
+                props:
+                  caption: "Panel de despacho del incidente."
+                  widthPercent: 90
+
+              - id: funcionalidades.despacho-pasos
+                title: Despacho paso a paso
+                children:
+                  - id: funcionalidades.despacho-pasos.proc
+                    type: procedure
+                    props:
+                      lead: "Para despachar un incidente, realice los siguientes pasos."
+                      steps:
+                        - id: func.desp.ubicacion-existente
+                          title: Verifique la ubicación
+                          text: >-
+                            Si el incidente ya tiene una ubicación asignada,
+                            salte al paso de selección de fuerzas.
+                          layout: beside
+                        - id: func.desp.buscar-ubicacion
+                          title: Busque la ubicación
+                          text: >-
+                            Si el incidente aún no tiene una ubicación asignada,
+                            haga la búsqueda de la ubicación a despachar.
+                          layout: beside
+                        - id: func.desp.agregar-ubicacion
+                          title: Agregue la ubicación
+                          text: "Presione el botón **Agregar Ubicación**."
+                          layout: beside
+                        - id: func.desp.seleccionar-fuerzas
+                          title: Seleccione las fuerzas
+                          text: >-
+                            Seleccione las fuerzas a despachar haciendo clic
+                            directamente en el input o en el ícono
+                            correspondiente.
+                          layout: beside
+                        - id: func.desp.unidad-disponible
+                          title: Elija una unidad disponible
+                          text: "Si la unidad se encuentra disponible, se podrá seleccionar."
+                          layout: beside
+                        - id: func.desp.info-agente
+                          title: Revise la información del agente
+                          text: >-
+                            Dentro de la información de un agente se muestran
+                            cuatro aspectos importantes.
+                          layout: beside
+                        - id: func.desp.filtrar-tipo
+                          title: Filtre por tipo de agente
+                          text: >-
+                            Se puede filtrar según el tipo de agente para el
+                            despacho del caso.
+                          layout: beside
+                        - id: func.desp.en-camino
+                          title: Indique el estado del despacho
+                          text: >-
+                            Seleccione **En Camino** cuando se hace una solicitud
+                            externa, o **No Requiere Despacho** cuando no se
+                            requiere de ninguna fuerza.
+                          layout: beside
+                        - id: func.desp.despachar
+                          title: Despache
+                          text: >-
+                            Una vez se tengan el o los agentes seleccionados,
+                            haga clic en **Despachar** para que el caso quede en
+                            gestión.
+                          layout: beside
+                        - id: func.desp.chat
+                          title: Converse con los agentes
+                          text: >-
+                            Desde la gestión del caso será posible chatear en
+                            vivo con los agentes despachados.
+                          layout: beside
+                        - id: func.desp.notas
+                          title: Agregue notas adicionales
+                          text: >-
+                            Durante el manejo de una emergencia es posible
+                            agregar **Notas adicionales**, que quedan reflejadas
+                            en la Gestión del Caso. Para ello, use el botón verde
+                            ubicado en la esquina inferior izquierda de la
+                            Gestión del Caso.
+                          layout: beside
+                        - id: func.desp.en-sitio
+                          title: Ponga al agente En Sitio
+                          text: >-
+                            Mediante el ícono ubicado a la derecha de la sección
+                            del caso, ponga al agente **En Sitio** para generar el
+                            reporte de llegada.
+                          layout: beside
+                        - id: func.desp.prescindir
+                          title: Prescinda de un agente
+                          text: >-
+                            También se puede prescindir de un agente al que ya se
+                            le haya asignado el caso, para que la gestión quede en
+                            manos de otro agente.
+                          layout: beside
+                        - id: func.desp.finalizar
+                          title: Finalice el caso
+                          text: >-
+                            Una vez el agente está en sitio, se puede gestionar la
+                            **finalización** del caso mediante el mismo ícono.
+                          layout: beside
+
+                  - id: funcionalidades.despacho-pasos.aspectos
+                    type: icon-table
+                    props:
+                      labelHeader: Aspecto
+                      descriptionHeader: Descripción
+                      rows:
+                        - id: func.agente.tipo
+                          label: Tipo de agente
+                          description: >-
+                            Muestra el tipo de agente (por ejemplo, policía) e
+                            información relevante como "Más rápido" o "Más
+                            cercano", lo que ayuda a determinar qué agentes
+                            pueden atender más rápido la emergencia.
+                        - id: func.agente.perfil
+                          label: Perfil del agente
+                          description: Logo o imagen del perfil del agente.
+                        - id: func.agente.dotacion
+                          label: Dotación y vehículo
+                          description: Dotación y vehículo con el que cuenta el agente.
+                        - id: func.agente.placa
+                          label: Placa, distancia y tiempo
+                          description: >-
+                            Placa del agente, distancia al punto del incidente y
+                            tiempo estimado de llegada (tiene en cuenta el
+                            vehículo que usa).
+
+                  - id: funcionalidades.despacho-pasos.tipos
+                    type: icon-table
+                    props:
+                      labelHeader: Tipo de agente
+                      descriptionHeader: Descripción
+                      rows:
+                        - id: func.tipo.salud
+                          label: Salud
+                        - id: func.tipo.bomberos
+                          label: Bomberos
+                        - id: func.tipo.policia
+                          label: Policía
+                        - id: func.tipo.transito
+                          label: Tránsito
+                        - id: func.tipo.defensa-civil
+                          label: Defensa Civil
+                        - id: func.tipo.gaula
+                          label: Gaula
+
+          - id: funcionalidades.pestana-reportes
+            title: Pestaña Reportes
+            children:
+              - id: funcionalidades.pestana-reportes.intro
+                type: prose
+                props:
+                  text: >-
+                    El reporte está compuesto por tres partes diferenciadas, cada
+                    una destinada a registrar un tipo específico de información
+                    sobre el incidente.
+
+              - id: funcionalidades.reporte-via
+                title: Detalles en Vía
+                children:
+                  - id: funcionalidades.reporte-via.intro
+                    type: prose
+                    props:
+                      text: >-
+                        Permite registrar los elementos principales que
+                        conformaron el incidente.
+                  - id: funcionalidades.reporte-via.lista
+                    type: term-list
+                    props:
+                      entries:
+                        - id: func.via.ubicacion
+                          term: Ubicación
+                          definition: Ubicación del suceso.
+                        - id: func.via.eventualidades
+                          term: Eventualidades
+                          definition: Tipo de eventualidades acontecidas.
+                        - id: func.via.involucrados
+                          term: Involucrados
+                          definition: Relaciones de involucrados.
+                        - id: func.via.vehiculos
+                          term: Vehículos y actores viales
+                          definition: >-
+                            Tipos de vehículos y actores u objetos viales
+                            involucrados.
+                        - id: func.via.resumen
+                          term: Resumen
+                          definition: Resumen del caso generado por Call AI.
+                  - id: funcionalidades.reporte-via.nota
+                    type: callout
+                    props:
+                      variant: info
+                      text: >-
+                        Desde esta sección se puede visualizar el resumen
+                        automático del caso elaborado por Call AI, lo que brinda
+                        una visión general del origen del incidente.
+                  - id: funcionalidades.reporte-via.guardar
+                    type: prose
+                    props:
+                      text: >-
+                        Una vez diligenciada la información, se guarda mediante el
+                        botón ubicado en la parte inferior derecha del
+                        formulario.
+                  - id: funcionalidades.reporte-via.fig
+                    type: figure
+                    props:
+                      caption: "Formulario del reporte: Detalles en Vía."
+                      widthPercent: 90
+
+              - id: funcionalidades.reporte-lesionados
+                title: Detalles de Lesionados
+                children:
+                  - id: funcionalidades.reporte-lesionados.intro
+                    type: prose
+                    props:
+                      text: >-
+                        En esta sección se registra el impacto humano y operativo
+                        del incidente. Permite consignar:
+                  - id: funcionalidades.reporte-lesionados.lista
+                    type: term-list
+                    props:
+                      entries:
+                        - id: func.les.cantidad
+                          term: Lesionados y fallecidos
+                          definition: Número de lesionados y fallecidos.
+                        - id: func.les.recursos
+                          term: Recursos
+                          definition: Recursos requeridos para la atención del caso.
+                        - id: func.les.afectaciones
+                          term: Afectaciones
+                          definition: >-
+                            Afectaciones generales en la vía del lugar de los
+                            hechos.
+                        - id: func.les.cctv
+                          term: CCTV ID
+                          definition: >-
+                            CCTV ID de las cámaras de PONAL o Movilidad que hayan
+                            registrado el incidente.
+                  - id: funcionalidades.reporte-lesionados.guardar
+                    type: prose
+                    props:
+                      text: >-
+                        Una vez diligenciada la información, se guarda mediante el
+                        botón ubicado en la parte inferior derecha del
+                        formulario.
+                  - id: funcionalidades.reporte-lesionados.fig
+                    type: figure
+                    props:
+                      caption: "Formulario del reporte: Detalles de Lesionados."
+                      widthPercent: 90
+
+              - id: funcionalidades.reporte-comentarios
+                title: Comentarios Generales
+                children:
+                  - id: funcionalidades.reporte-comentarios.texto
+                    type: prose
+                    props:
+                      text: >-
+                        Está destinada a registrar observaciones adicionales que
+                        no hayan podido ser cubiertas en las secciones
+                        anteriores. Es un espacio libre para complementar la
+                        información del incidente.
+                  - id: funcionalidades.reporte-comentarios.enviar
+                    type: prose
+                    props:
+                      text: >-
+                        Una vez diligenciada la información, el reporte completo
+                        se puede enviar haciendo clic en el botón ubicado en la
+                        parte inferior derecha del formulario.
+                  - id: funcionalidades.reporte-comentarios.fig
+                    type: figure
+                    props:
+                      caption: "Formulario del reporte: Comentarios Generales."
+                      widthPercent: 90
+
+              - id: funcionalidades.reporte-actualizacion
+                title: Actualización de Reporte de Agente
+                children:
+                  - id: funcionalidades.reporte-actualizacion.intro
+                    type: prose
+                    props:
+                      text: >-
+                        Los agentes en campo pueden enviar información del
+                        incidente mientras lo están atendiendo, en tiempo real.
+                        Esta información debe recibirse y gestionarse desde el
+                        módulo del caso para actualizar el Reporte de forma
+                        acertada y eficiente con datos que provienen
+                        directamente del lugar de los hechos.
+                  - id: funcionalidades.reporte-actualizacion.pasos-intro
+                    type: prose
+                    props:
+                      text: "El proceso de actualización consta de dos pasos."
+                  - id: funcionalidades.reporte-actualizacion.paso1
+                    type: prose
+                    props:
+                      text: >-
+                        **Paso 1: Observación y recepción de los datos.** Cuando
+                        existe una actualización proveniente del reporte de un
+                        agente móvil (en campo), el sistema lo notifica
+                        visualmente: en el ítem de Reporte aparece una luz roja
+                        titilante.
+                  - id: funcionalidades.reporte-actualizacion.fig-luz
+                    type: figure
+                    props:
+                      caption: "Luz roja titilante en el ítem de Reporte."
+                      widthPercent: 70
+                  - id: funcionalidades.reporte-actualizacion.acceso
+                    type: procedure
+                    props:
+                      lead: >-
+                        Para acceder a la actualización del reporte del agente en
+                        campo, siga estos pasos.
+                      steps:
+                        - id: func.act.flecha
+                          title: Despliegue el ítem de Reporte
+                          text: >-
+                            Haga clic en la flecha ubicada al lado del ícono de
+                            Reporte.
+                          layout: beside
+                        - id: func.act.placa
+                          title: Despliegue la placa del agente
+                          text: "Despliegue la placa del o los agentes."
+                          layout: beside
+                        - id: func.act.gestionar
+                          title: Entre a gestionar la actualización
+                          text: >-
+                            Haga clic sobre la placa para entrar a gestionar la
+                            actualización correspondiente.
+                          layout: beside
+                  - id: funcionalidades.reporte-actualizacion.paso2
+                    type: prose
+                    props:
+                      text: >-
+                        **Paso 2: Gestión de la información.** Una vez se accede
+                        a la información de actualización del caso del agente,
+                        esta aparece en un modal informativo que muestra en
+                        detalle todas las novedades que el agente en campo desea
+                        reportar. Como operador, usted puede contrastar la
+                        información recibida del agente con la ya disponible en
+                        el caso, y aceptar o rechazar cambios específicos dentro
+                        del Reporte.
+                  - id: funcionalidades.reporte-actualizacion.fig-modal
+                    type: figure
+                    props:
+                      caption: >-
+                        Modal Información recibida del agente, para aceptar o
+                        rechazar cambios.
+                      widthPercent: 90
+
+              - id: funcionalidades.reporte-ciclo
+                title: Ciclo de Vida de un Reporte
+                children:
+                  - id: funcionalidades.reporte-ciclo.intro
+                    type: prose
+                    props:
+                      text: >-
+                        El módulo de Reporte está diseñado para adaptarse a las
+                        distintas fases de atención de un caso. A continuación se
+                        describe su comportamiento a lo largo del ciclo de vida
+                        del caso.
+                  - id: funcionalidades.reporte-ciclo.activa
+                    type: prose
+                    props:
+                      text: >-
+                        **Durante la atención activa del caso.** Mientras el caso
+                        está abierto y en gestión, el módulo de Reporte puede
+                        recibir cuantas modificaciones sean necesarias, sin
+                        ningún límite, provenientes de los agentes en campo que lo
+                        están atendiendo. Esta flexibilidad permite ajustar
+                        continuamente la información para contar con los datos
+                        más precisos posibles.
+                  - id: funcionalidades.reporte-ciclo.nota-activa
+                    type: callout
+                    props:
+                      variant: info
+                      text: >-
+                        La capacidad de actualización sin restricciones durante la
+                        atención activa garantiza que la información del reporte
+                        siempre refleje la realidad del incidente en tiempo real.
+                  - id: funcionalidades.reporte-ciclo.cierre
+                    type: prose
+                    props:
+                      text: >-
+                        **Después del cierre del caso.** Una vez que un caso se
+                        cierra, los agentes en campo no pueden enviar nuevas
+                        modificaciones al reporte a través del dispositivo móvil,
+                        ya que en esta etapa ningún agente tiene responsabilidad
+                        activa sobre el caso.
+                  - id: funcionalidades.reporte-ciclo.operador
+                    type: prose
+                    props:
+                      text: >-
+                        Sin embargo, el operador conserva la capacidad de añadir o
+                        ajustar datos directamente en el reporte incluso después
+                        del cierre. Esta posibilidad incrementa la precisión y la
+                        completitud de la información, asegurando que el registro
+                        final del caso sea lo más completo y exacto posible.
+                  - id: funcionalidades.reporte-ciclo.nota-final
+                    type: callout
+                    props:
+                      variant: info
+                      text: >-
+                        La combinación de actualizaciones en tiempo real durante
+                        la atención y la edición posterior al cierre por parte del
+                        operador garantiza la máxima integridad del registro de
+                        cada incidente.

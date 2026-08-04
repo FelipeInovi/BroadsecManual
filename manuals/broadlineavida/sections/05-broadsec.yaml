@@ -1,0 +1,28 @@
+# Ported from docs/manual-usuario.md § 5 (lines 145-156) as it stands.
+# Faithful port; see 04-introduccion.yaml for what the format changes and why.
+
+id: broadsec
+title: Broadsec
+subtitle: Descripción de la plataforma
+
+children:
+  - id: broadsec.descripcion
+    title: Descripción general del aplicativo
+    children:
+      - id: broadsec.descripcion.texto
+        type: prose
+        props:
+          text: >-
+            Todos los módulos de la aplicación Broadsec están cimentados en
+            tecnología de vanguardia que amplía las funcionalidades del sistema
+            de gestión de emergencias. La plataforma ofrece una interfaz
+            unificada para la gestión en tiempo real de incidentes, el despacho
+            de recursos, el monitoreo de fuerzas en campo y el análisis
+            estadístico de operaciones.
+
+      # Overview figure: the submodule at a glance, before any detail.
+      - id: broadsec.descripcion.fig
+        type: figure
+        props:
+          caption: "Interfaz principal integrada con Carbyne Apex."
+          widthPercent: 90
