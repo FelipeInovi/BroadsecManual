@@ -1,0 +1,1294 @@
+{
+ "note": "Pairing worksheet. Order within a section is the only signal the v5 PDF offers: it carries no figure captions. Sections whose counts match are safe to align by order; the others need a human pair.",
+ "sections": [
+  {
+   "section": "introduccion",
+   "alignable": true,
+   "images": [
+    {
+     "file": "p03-01.jpeg",
+     "page": 3,
+     "heading": "INTRODUCCIÓN"
+    }
+   ],
+   "slots": [
+    {
+     "slot": "introduccion.fig",
+     "caption": "Vista principal de la plataforma."
+    }
+   ]
+  },
+  {
+   "section": "broadsec",
+   "alignable": true,
+   "images": [
+    {
+     "file": "p04-01.jpeg",
+     "page": 4,
+     "heading": "BROADSEC"
+    }
+   ],
+   "slots": [
+    {
+     "slot": "broadsec.descripcion.fig",
+     "caption": "Interfaz principal integrada con Carbyne Apex."
+    }
+   ]
+  },
+  {
+   "section": "funcionamiento",
+   "alignable": false,
+   "images": [
+    {
+     "file": "p05-02.png",
+     "page": 5,
+     "heading": "FUNCIONAMIENTO"
+    }
+   ],
+   "slots": [
+    {
+     "slot": "funcionamiento.acceso.fig",
+     "caption": "Ícono de acceso al módulo Broadsec desde Apex."
+    },
+    {
+     "slot": "funcionamiento.inicio.fig",
+     "caption": "Interfaz de inicio del módulo."
+    }
+   ]
+  },
+  {
+   "section": "interfaz-general",
+   "alignable": false,
+   "images": [
+    {
+     "file": "p06-01.jpeg",
+     "page": 6,
+     "heading": "INTERFAZ GENERAL"
+    },
+    {
+     "file": "p07-01.jpeg",
+     "page": 7,
+     "heading": "Mapa"
+    },
+    {
+     "file": "p08-01.jpeg",
+     "page": 8,
+     "heading": "Filtro | Barra Superior"
+    },
+    {
+     "file": "p09-01.png",
+     "page": 9,
+     "heading": "Añadir Caso | Dashboard | Centro de datos unificados que permite cuant"
+    },
+    {
+     "file": "p09-02.png",
+     "page": 9,
+     "heading": "Añadir Caso | Dashboard | Centro de datos unificados que permite cuant"
+    },
+    {
+     "file": "p10-01.jpeg",
+     "page": 10,
+     "heading": "Incidentes — Lista de Casos | Fuerzas en Campo | Botón de Back | Menú "
+    },
+    {
+     "file": "p10-02.jpeg",
+     "page": 10,
+     "heading": "Incidentes — Lista de Casos | Fuerzas en Campo | Botón de Back | Menú "
+    },
+    {
+     "file": "p10-05.jpeg",
+     "page": 10,
+     "heading": "Incidentes — Lista de Casos | Fuerzas en Campo | Botón de Back | Menú "
+    }
+   ],
+   "slots": [
+    {
+     "slot": "interfaz-general.fig-home",
+     "caption": "Componentes del Home — Mapa, Barra Superior e Incidentes."
+    },
+    {
+     "slot": "mapa.fig",
+     "caption": "Vista general del mapa con sus controles de visualización."
+    },
+    {
+     "slot": "mapa.fig-capas",
+     "caption": "Visualización de capas sobre el mapa."
+    },
+    {
+     "slot": "barra-superior.fig",
+     "caption": "Barra superior de la plataforma."
+    },
+    {
+     "slot": "barra.filtro.fig",
+     "caption": "Panel de filtros de la barra superior."
+    },
+    {
+     "slot": "incidentes.fig",
+     "caption": "Lista de casos, con la información de cada incidente reportado."
+    }
+   ]
+  },
+  {
+   "section": "funcionalidades",
+   "alignable": false,
+   "images": [
+    {
+     "file": "p11-01.jpeg",
+     "page": 11,
+     "heading": "FUNCIONALIDADES ESPECÍFICAS"
+    },
+    {
+     "file": "p11-07.jpeg",
+     "page": 11,
+     "heading": "FUNCIONALIDADES ESPECÍFICAS"
+    },
+    {
+     "file": "p12-01.jpeg",
+     "page": 12,
+     "heading": "Mediante la vista | 360° | permite identificar el punto exacto donde o"
+    },
+    {
+     "file": "p12-03.jpeg",
+     "page": 12,
+     "heading": "Mediante la vista | 360° | permite identificar el punto exacto donde o"
+    },
+    {
+     "file": "p12-04.jpeg",
+     "page": 12,
+     "heading": "Mediante la vista | 360° | permite identificar el punto exacto donde o"
+    },
+    {
+     "file": "p12-05.jpeg",
+     "page": 12,
+     "heading": "Mediante la vista | 360° | permite identificar el punto exacto donde o"
+    },
+    {
+     "file": "p13-01.jpeg",
+     "page": 13,
+     "heading": "Capa AVL | Capa Mobile | Incidentes"
+    },
+    {
+     "file": "p13-06.jpeg",
+     "page": 13,
+     "heading": "Capa AVL | Capa Mobile | Incidentes"
+    },
+    {
+     "file": "p13-07.jpeg",
+     "page": 13,
+     "heading": "Capa AVL | Capa Mobile | Incidentes"
+    },
+    {
+     "file": "p14-01.jpeg",
+     "page": 14,
+     "heading": "Capa de Paneles"
+    },
+    {
+     "file": "p14-02.jpeg",
+     "page": 14,
+     "heading": "Capa de Paneles"
+    },
+    {
+     "file": "p15-01.png",
+     "page": 15,
+     "heading": "6.1 Componentes del Filtro | Filtros | Rango de tiempo y Restaurar fil"
+    },
+    {
+     "file": "p15-04.png",
+     "page": 15,
+     "heading": "6.1 Componentes del Filtro | Filtros | Rango de tiempo y Restaurar fil"
+    },
+    {
+     "file": "p15-05.png",
+     "page": 15,
+     "heading": "6.1 Componentes del Filtro | Filtros | Rango de tiempo y Restaurar fil"
+    },
+    {
+     "file": "p15-06.png",
+     "page": 15,
+     "heading": "6.1 Componentes del Filtro | Filtros | Rango de tiempo y Restaurar fil"
+    },
+    {
+     "file": "p16-01.png",
+     "page": 16,
+     "heading": "Estado del incidente: | Permite filtrar y visualizar los incidentes se"
+    },
+    {
+     "file": "p16-02.png",
+     "page": 16,
+     "heading": "Estado del incidente: | Permite filtrar y visualizar los incidentes se"
+    },
+    {
+     "file": "p16-03.jpeg",
+     "page": 16,
+     "heading": "Estado del incidente: | Permite filtrar y visualizar los incidentes se"
+    },
+    {
+     "file": "p16-04.png",
+     "page": 16,
+     "heading": "Estado del incidente: | Permite filtrar y visualizar los incidentes se"
+    },
+    {
+     "file": "p17-01.png",
+     "page": 17,
+     "heading": "Ubicación: | Permite filtrar casos con especificaciones respecto a la "
+    },
+    {
+     "file": "p17-02.png",
+     "page": 17,
+     "heading": "Ubicación: | Permite filtrar casos con especificaciones respecto a la "
+    },
+    {
+     "file": "p17-03.png",
+     "page": 17,
+     "heading": "Ubicación: | Permite filtrar casos con especificaciones respecto a la "
+    },
+    {
+     "file": "p17-04.png",
+     "page": 17,
+     "heading": "Ubicación: | Permite filtrar casos con especificaciones respecto a la "
+    },
+    {
+     "file": "p18-01.jpeg",
+     "page": 18,
+     "heading": "Sección de Incidentes | Llamada entrante:"
+    },
+    {
+     "file": "p18-02.png",
+     "page": 18,
+     "heading": "Sección de Incidentes | Llamada entrante:"
+    },
+    {
+     "file": "p19-02.jpeg",
+     "page": 19,
+     "heading": "Para Incidentes en general: | El operador podrá gestionar incidentes q"
+    },
+    {
+     "file": "p19-05.png",
+     "page": 19,
+     "heading": "Para Incidentes en general: | El operador podrá gestionar incidentes q"
+    },
+    {
+     "file": "p20-01.jpeg",
+     "page": 20,
+     "heading": "Componentes de un Incidente | Pestaña 1 — Incidente:"
+    },
+    {
+     "file": "p20-02.png",
+     "page": 20,
+     "heading": "Componentes de un Incidente | Pestaña 1 — Incidente:"
+    },
+    {
+     "file": "p20-03.png",
+     "page": 20,
+     "heading": "Componentes de un Incidente | Pestaña 1 — Incidente:"
+    },
+    {
+     "file": "p20-04.png",
+     "page": 20,
+     "heading": "Componentes de un Incidente | Pestaña 1 — Incidente:"
+    },
+    {
+     "file": "p21-01.png",
+     "page": 21,
+     "heading": "Historial de ubicaciones: | Muestra el registro cronológico de posicio"
+    },
+    {
+     "file": "p21-02.png",
+     "page": 21,
+     "heading": "Historial de ubicaciones: | Muestra el registro cronológico de posicio"
+    },
+    {
+     "file": "p21-03.png",
+     "page": 21,
+     "heading": "Historial de ubicaciones: | Muestra el registro cronológico de posicio"
+    },
+    {
+     "file": "p22-01.jpeg",
+     "page": 22,
+     "heading": "Esta sección muestra un resumen generado por la IA de BroadSec con los"
+    },
+    {
+     "file": "p22-02.jpeg",
+     "page": 22,
+     "heading": "Esta sección muestra un resumen generado por la IA de BroadSec con los"
+    },
+    {
+     "file": "p23-01.jpeg",
+     "page": 23,
+     "heading": "Despacho — Paso a Paso | Pestaña 3 — Despacho:"
+    },
+    {
+     "file": "p23-02.jpeg",
+     "page": 23,
+     "heading": "Despacho — Paso a Paso | Pestaña 3 — Despacho:"
+    },
+    {
+     "file": "p23-04.jpeg",
+     "page": 23,
+     "heading": "Despacho — Paso a Paso | Pestaña 3 — Despacho:"
+    },
+    {
+     "file": "p23-05.png",
+     "page": 23,
+     "heading": "Despacho — Paso a Paso | Pestaña 3 — Despacho:"
+    },
+    {
+     "file": "p24-02.jpeg",
+     "page": 24,
+     "heading": "Hay 4 aspectos importantes que se muestra dentro de la información de "
+    },
+    {
+     "file": "p24-03.jpeg",
+     "page": 24,
+     "heading": "Hay 4 aspectos importantes que se muestra dentro de la información de "
+    },
+    {
+     "file": "p24-08.jpeg",
+     "page": 24,
+     "heading": "Hay 4 aspectos importantes que se muestra dentro de la información de "
+    },
+    {
+     "file": "p24-15.png",
+     "page": 24,
+     "heading": "Hay 4 aspectos importantes que se muestra dentro de la información de "
+    },
+    {
+     "file": "p24-16.jpeg",
+     "page": 24,
+     "heading": "Hay 4 aspectos importantes que se muestra dentro de la información de "
+    },
+    {
+     "file": "p25-01.jpeg",
+     "page": 25,
+     "heading": "Desde la gestión del caso será posible chatear en vivo con los agentes"
+    },
+    {
+     "file": "p25-03.png",
+     "page": 25,
+     "heading": "Desde la gestión del caso será posible chatear en vivo con los agentes"
+    },
+    {
+     "file": "p25-04.jpeg",
+     "page": 25,
+     "heading": "Desde la gestión del caso será posible chatear en vivo con los agentes"
+    },
+    {
+     "file": "p26-01.jpeg",
+     "page": 26,
+     "heading": "Detalles en Vía | Reportes"
+    },
+    {
+     "file": "p27-01.jpeg",
+     "page": 27,
+     "heading": "Detalles de Lesionados | Comentarios Generales"
+    },
+    {
+     "file": "p27-02.jpeg",
+     "page": 27,
+     "heading": "Detalles de Lesionados | Comentarios Generales"
+    },
+    {
+     "file": "p28-01.png",
+     "page": 28,
+     "heading": "Actualización de Reporte de Agente | Paso 1: Observación y Recepción d"
+    },
+    {
+     "file": "p28-03.jpeg",
+     "page": 28,
+     "heading": "Actualización de Reporte de Agente | Paso 1: Observación y Recepción d"
+    }
+   ],
+   "slots": [
+    {
+     "slot": "funcionalidades.mapa.fig",
+     "caption": "Selector de capas del mapa."
+    },
+    {
+     "slot": "funcionalidades.mapa.fig-activo",
+     "caption": "Selector de capas del mapa activo."
+    },
+    {
+     "slot": "funcionalidades.mapa.fig-visualizacion",
+     "caption": "Visualización de capas del mapa."
+    },
+    {
+     "slot": "funcionalidades.mapa.fig-satelital",
+     "caption": "Capa Satelital y capa de Tráfico."
+    },
+    {
+     "slot": "funcionalidades.incidentes.fig",
+     "caption": "Acciones disponibles al seleccionar un incidente en el mapa."
+    },
+    {
+     "slot": "funcionalidades.capa-mobile.fig",
+     "caption": "Capa Mobile: ubicación de agentes móviles."
+    },
+    {
+     "slot": "funcionalidades.capa-avl.fig",
+     "caption": "Capa AVL: ubicación de fuerzas integradas."
+    },
+    {
+     "slot": "funcionalidades.capa-paneles.fig",
+     "caption": "Capa de Paneles en el mapa."
+    },
+    {
+     "slot": "funcionalidades.capa-paneles.fig-complementaria",
+     "caption": "Capa de Paneles, vista complementaria."
+    },
+    {
+     "slot": "funcionalidades.filtros.fig",
+     "caption": "Panel de filtros de la lista de casos."
+    },
+    {
+     "slot": "func.filtro.rango",
+     "caption": "Rango de tiempo"
+    },
+    {
+     "slot": "func.filtro.restaurar",
+     "caption": "Restaurar filtros"
+    },
+    {
+     "slot": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
+     "caption": "Interruptor Solo mis casos, apagado."
+    },
+    {
+     "slot": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
+     "caption": "Interruptor Solo mis casos, encendido."
+    },
+    {
+     "slot": "funcionalidades.filtros.tipo-emergencia.fig",
+     "caption": "Filtro por tipo de emergencia."
+    },
+    {
+     "slot": "funcionalidades.filtros.tipo-emergencia.fig-lista",
+     "caption": "Lista de tipos de emergencia."
+    },
+    {
+     "slot": "funcionalidades.filtros.origen.fig",
+     "caption": "Filtro por origen del reporte."
+    },
+    {
+     "slot": "funcionalidades.filtros.estado.fig",
+     "caption": "Filtro por estado del incidente."
+    },
+    {
+     "slot": "funcionalidades.filtros.tipo-llamada.fig",
+     "caption": "Filtro por tipo de llamada."
+    },
+    {
+     "slot": "funcionalidades.filtros.asociados.fig",
+     "caption": "Filtro por casos asociados."
+    },
+    {
+     "slot": "funcionalidades.filtros.enriquecidos.fig",
+     "caption": "Filtro por datos enriquecidos."
+    },
+    {
+     "slot": "funcionalidades.filtros.ubicacion.fig",
+     "caption": "Filtro por ubicación."
+    },
+    {
+     "slot": "funcionalidades.filtros.duracion.fig",
+     "caption": "Filtro por duración de la llamada."
+    },
+    {
+     "slot": "funcionalidades.filtros.fig-aplicar",
+     "caption": "Botones Aplicar y Cancelar de los filtros."
+    },
+    {
+     "slot": "funcionalidades.seccion-incidentes.fig",
+     "caption": "Lista de casos con etiquetas de tipo de emergencia."
+    },
+    {
+     "slot": "funcionalidades.llamada-entrante.fig-vivo",
+     "caption": "Incidente EN VIVO: grabación y monitoreo activo."
+    },
+    {
+     "slot": "funcionalidades.llamada-entrante.fig-estado",
+     "caption": "Estado EN VIVO del incidente."
+    },
+    {
+     "slot": "funcionalidades.llamada-entrante.fig-final",
+     "caption": "Incidente finalizado, listo para gestión."
+    },
+    {
+     "slot": "func.crear.boton",
+     "caption": "Abra el formulario"
+    },
+    {
+     "slot": "func.crear.formulario",
+     "caption": "Diligencie el formulario"
+    },
+    {
+     "slot": "funcionalidades.plataforma.fig-completado",
+     "caption": "Formulario Crear Incidente, completado."
+    },
+    {
+     "slot": "funcionalidades.general.fig",
+     "caption": "Tarjeta de incidente con label y estado de color."
+    },
+    {
+     "slot": "funcionalidades.componentes.fig",
+     "caption": "Vista detallada de un incidente, con sus cuatro pestañas."
+    },
+    {
+     "slot": "func.pest1.duracion",
+     "caption": "Duración"
+    },
+    {
+     "slot": "func.pest1.transcripcion",
+     "caption": "Transcripción"
+    },
+    {
+     "slot": "func.pest1.audio",
+     "caption": "Audio"
+    },
+    {
+     "slot": "func.pest1.historial",
+     "caption": "Historial de ubicaciones"
+    },
+    {
+     "slot": "func.pest1.asociados",
+     "caption": "Casos asociados"
+    },
+    {
+     "slot": "funcionalidades.pestana-callai.fig",
+     "caption": "Resumen de Call AI del incidente."
+    },
+    {
+     "slot": "funcionalidades.pestana-callai.fig-detalle",
+     "caption": "Resumen de Call AI, detalle."
+    },
+    {
+     "slot": "funcionalidades.pestana-despacho.fig",
+     "caption": "Panel de despacho del incidente."
+    },
+    {
+     "slot": "func.desp.ubicacion-existente",
+     "caption": "Verifique la ubicación"
+    },
+    {
+     "slot": "func.desp.buscar-ubicacion",
+     "caption": "Busque la ubicación"
+    },
+    {
+     "slot": "func.desp.agregar-ubicacion",
+     "caption": "Agregue la ubicación"
+    },
+    {
+     "slot": "func.desp.seleccionar-fuerzas",
+     "caption": "Seleccione las fuerzas"
+    },
+    {
+     "slot": "func.desp.unidad-disponible",
+     "caption": "Elija una unidad disponible"
+    },
+    {
+     "slot": "func.desp.info-agente",
+     "caption": "Revise la información del agente"
+    },
+    {
+     "slot": "func.desp.filtrar-tipo",
+     "caption": "Filtre por tipo de agente"
+    },
+    {
+     "slot": "func.desp.en-camino",
+     "caption": "Indique el estado del despacho"
+    },
+    {
+     "slot": "func.desp.despachar",
+     "caption": "Despache"
+    },
+    {
+     "slot": "func.desp.chat",
+     "caption": "Converse con los agentes"
+    },
+    {
+     "slot": "func.desp.notas",
+     "caption": "Agregue notas adicionales"
+    },
+    {
+     "slot": "func.desp.en-sitio",
+     "caption": "Ponga al agente En Sitio"
+    },
+    {
+     "slot": "func.desp.prescindir",
+     "caption": "Prescinda de un agente"
+    },
+    {
+     "slot": "func.desp.finalizar",
+     "caption": "Finalice el caso"
+    },
+    {
+     "slot": "funcionalidades.reporte-via.fig",
+     "caption": "Formulario del reporte: Detalles en Vía."
+    },
+    {
+     "slot": "funcionalidades.reporte-lesionados.fig",
+     "caption": "Formulario del reporte: Detalles de Lesionados."
+    },
+    {
+     "slot": "funcionalidades.reporte-comentarios.fig",
+     "caption": "Formulario del reporte: Comentarios Generales."
+    },
+    {
+     "slot": "funcionalidades.reporte-actualizacion.fig-luz",
+     "caption": "Luz roja titilante en el ítem de Reporte."
+    },
+    {
+     "slot": "func.act.flecha",
+     "caption": "Despliegue el ítem de Reporte"
+    },
+    {
+     "slot": "func.act.placa",
+     "caption": "Despliegue la placa del agente"
+    },
+    {
+     "slot": "func.act.gestionar",
+     "caption": "Entre a gestionar la actualización"
+    },
+    {
+     "slot": "funcionalidades.reporte-actualizacion.fig-modal",
+     "caption": "Modal Información recibida del agente, para aceptar o rechazar cambios."
+    }
+   ]
+  },
+  {
+   "section": "security-dashboard",
+   "alignable": false,
+   "images": [
+    {
+     "file": "p30-01.png",
+     "page": 30,
+     "heading": "Security Dashboard | Filtros | Ventanas de Datos | Mapa de Calor"
+    },
+    {
+     "file": "p30-02.jpeg",
+     "page": 30,
+     "heading": "Security Dashboard | Filtros | Ventanas de Datos | Mapa de Calor"
+    },
+    {
+     "file": "p30-03.png",
+     "page": 30,
+     "heading": "Security Dashboard | Filtros | Ventanas de Datos | Mapa de Calor"
+    },
+    {
+     "file": "p30-04.png",
+     "page": 30,
+     "heading": "Security Dashboard | Filtros | Ventanas de Datos | Mapa de Calor"
+    },
+    {
+     "file": "p30-07.jpeg",
+     "page": 30,
+     "heading": "Security Dashboard | Filtros | Ventanas de Datos | Mapa de Calor"
+    },
+    {
+     "file": "p31-01.png",
+     "page": 31,
+     "heading": "Rango de tiempo: | Ubicación: | Filtros Security Dashboard"
+    },
+    {
+     "file": "p31-02.png",
+     "page": 31,
+     "heading": "Rango de tiempo: | Ubicación: | Filtros Security Dashboard"
+    },
+    {
+     "file": "p31-03.png",
+     "page": 31,
+     "heading": "Rango de tiempo: | Ubicación: | Filtros Security Dashboard"
+    },
+    {
+     "file": "p31-04.png",
+     "page": 31,
+     "heading": "Rango de tiempo: | Ubicación: | Filtros Security Dashboard"
+    },
+    {
+     "file": "p31-05.png",
+     "page": 31,
+     "heading": "Rango de tiempo: | Ubicación: | Filtros Security Dashboard"
+    },
+    {
+     "file": "p31-06.png",
+     "page": 31,
+     "heading": "Rango de tiempo: | Ubicación: | Filtros Security Dashboard"
+    },
+    {
+     "file": "p32-01.png",
+     "page": 32,
+     "heading": "Variables de Gestión | Fuerzas de Respuesta | Tipo de Finalización | T"
+    },
+    {
+     "file": "p32-02.png",
+     "page": 32,
+     "heading": "Variables de Gestión | Fuerzas de Respuesta | Tipo de Finalización | T"
+    },
+    {
+     "file": "p32-03.png",
+     "page": 32,
+     "heading": "Variables de Gestión | Fuerzas de Respuesta | Tipo de Finalización | T"
+    },
+    {
+     "file": "p33-01.png",
+     "page": 33,
+     "heading": "Una vez aplicados los filtros deseados, use el botón | \"Aplicar\" | ubi"
+    },
+    {
+     "file": "p33-02.png",
+     "page": 33,
+     "heading": "Una vez aplicados los filtros deseados, use el botón | \"Aplicar\" | ubi"
+    },
+    {
+     "file": "p34-01.png",
+     "page": 34,
+     "heading": "Quitar / Aplicar Ventanas: | Exportar: | Ventanas de Datos"
+    },
+    {
+     "file": "p34-02.png",
+     "page": 34,
+     "heading": "Quitar / Aplicar Ventanas: | Exportar: | Ventanas de Datos"
+    },
+    {
+     "file": "p34-03.png",
+     "page": 34,
+     "heading": "Quitar / Aplicar Ventanas: | Exportar: | Ventanas de Datos"
+    },
+    {
+     "file": "p34-04.png",
+     "page": 34,
+     "heading": "Quitar / Aplicar Ventanas: | Exportar: | Ventanas de Datos"
+    },
+    {
+     "file": "p35-01.png",
+     "page": 35,
+     "heading": "Total de Emergencias: | Tiempo Promedio de Respuesta: | Casos sin desp"
+    },
+    {
+     "file": "p35-02.png",
+     "page": 35,
+     "heading": "Total de Emergencias: | Tiempo Promedio de Respuesta: | Casos sin desp"
+    },
+    {
+     "file": "p35-03.png",
+     "page": 35,
+     "heading": "Total de Emergencias: | Tiempo Promedio de Respuesta: | Casos sin desp"
+    },
+    {
+     "file": "p35-04.png",
+     "page": 35,
+     "heading": "Total de Emergencias: | Tiempo Promedio de Respuesta: | Casos sin desp"
+    },
+    {
+     "file": "p36-01.png",
+     "page": 36,
+     "heading": "Tiempo de respuesta: | Gráfico de torta con el porcentaje de casos ate"
+    },
+    {
+     "file": "p36-02.png",
+     "page": 36,
+     "heading": "Tiempo de respuesta: | Gráfico de torta con el porcentaje de casos ate"
+    },
+    {
+     "file": "p36-03.png",
+     "page": 36,
+     "heading": "Tiempo de respuesta: | Gráfico de torta con el porcentaje de casos ate"
+    },
+    {
+     "file": "p37-01.png",
+     "page": 37,
+     "heading": "Tipos de Casos Frecuentes: | Gráfico de barras de los casos agrupados "
+    },
+    {
+     "file": "p37-02.png",
+     "page": 37,
+     "heading": "Tipos de Casos Frecuentes: | Gráfico de barras de los casos agrupados "
+    },
+    {
+     "file": "p38-01.jpeg",
+     "page": 38,
+     "heading": "Mapa de Casos"
+    },
+    {
+     "file": "p38-04.jpeg",
+     "page": 38,
+     "heading": "Mapa de Casos"
+    },
+    {
+     "file": "p38-05.jpeg",
+     "page": 38,
+     "heading": "Mapa de Casos"
+    },
+    {
+     "file": "p39-01.png",
+     "page": 39,
+     "heading": "Visualización de Casos en Lista"
+    },
+    {
+     "file": "p39-02.png",
+     "page": 39,
+     "heading": "Visualización de Casos en Lista"
+    },
+    {
+     "file": "p39-03.jpeg",
+     "page": 39,
+     "heading": "Visualización de Casos en Lista"
+    }
+   ],
+   "slots": [
+    {
+     "slot": "dashboard.fig",
+     "caption": "Vista general del Security Dashboard."
+    },
+    {
+     "slot": "dashboard.area.filtros",
+     "caption": "Filtros"
+    },
+    {
+     "slot": "dashboard.area.ventanas",
+     "caption": "Ventanas de Datos"
+    },
+    {
+     "slot": "dashboard.area.mapa",
+     "caption": "Mapa de Calor"
+    },
+    {
+     "slot": "dashboard.filtros.rango.fig",
+     "caption": "Filtro de rango de tiempo del dashboard."
+    },
+    {
+     "slot": "dashboard.filtros.ubicacion.fig-depto",
+     "caption": "Filtro de ubicación por Departamento y Ciudad."
+    },
+    {
+     "slot": "dashboard.filtros.ubicacion.fig-zona",
+     "caption": "Filtro de ubicación por Zona, Comuna y Barrio."
+    },
+    {
+     "slot": "dashboard.variables.emergencia.fig",
+     "caption": "Filtro por tipo de emergencia."
+    },
+    {
+     "slot": "dashboard.variables.fuerzas.fig",
+     "caption": "Filtro por fuerza de respuesta."
+    },
+    {
+     "slot": "dashboard.variables.finalizacion.fig",
+     "caption": "Filtro por tipo de finalización."
+    },
+    {
+     "slot": "dashboard.variables.movilidad.fig",
+     "caption": "Filtro por tipo de movilidad."
+    },
+    {
+     "slot": "dashboard.filtros.tiempos.fig",
+     "caption": "Filtro por tiempos de gestión."
+    },
+    {
+     "slot": "dashboard.ventanas.fig",
+     "caption": "Ventanas de datos del dashboard."
+    },
+    {
+     "slot": "dashboard.ventanas.quitar.fig",
+     "caption": "Cerrar una ventana o widget del dashboard."
+    },
+    {
+     "slot": "dashboard.ventanas.fig-widgets",
+     "caption": "Menú de Widgets para restaurar ventanas."
+    },
+    {
+     "slot": "dashboard.ventanas.fig-restaurado",
+     "caption": "Widget restaurado en el dashboard."
+    },
+    {
+     "slot": "dashboard.ventanas.exportar.fig",
+     "caption": "Botón de exportación del dashboard."
+    },
+    {
+     "slot": "dashboard.widget.total",
+     "caption": "Total de Emergencias"
+    },
+    {
+     "slot": "dashboard.widget.promedio-respuesta",
+     "caption": "Tiempo Promedio de Respuesta"
+    },
+    {
+     "slot": "dashboard.widget.sin-despacho",
+     "caption": "Casos sin despacho"
+    },
+    {
+     "slot": "dashboard.widget.promedio-llegada",
+     "caption": "Tiempo Promedio de Llegada"
+    },
+    {
+     "slot": "dashboard.widget.tiempo-respuesta",
+     "caption": "Tiempo de respuesta"
+    },
+    {
+     "slot": "dashboard.widget.cantidad",
+     "caption": "Cantidad de Emergencias"
+    },
+    {
+     "slot": "dashboard.widget.categoria",
+     "caption": "Emergencia por categoría"
+    },
+    {
+     "slot": "dashboard.widget.frecuentes",
+     "caption": "Tipos de Casos Frecuentes"
+    },
+    {
+     "slot": "dashboard.widgets.fig-modificar",
+     "caption": "Filtro de Variables de Gestión para los tipos de casos frecuentes."
+    },
+    {
+     "slot": "dashboard.mapa-calor.fig",
+     "caption": "Mapa de calor de casos en el dashboard."
+    },
+    {
+     "slot": "dashboard.mapa-calor.fig-opacidad",
+     "caption": "Control de opacidad del mapa de casos."
+    },
+    {
+     "slot": "dashboard.mapa-calor.fig-maximizado",
+     "caption": "Mapa de casos maximizado."
+    },
+    {
+     "slot": "dashboard.mapa-calor.fig-modo",
+     "caption": "Alternar entre Mapa de calor y Marcadores."
+    },
+    {
+     "slot": "dashboard.mapa-calor.fig-marcadores",
+     "caption": "Vista de casos individuales, con marcadores, en el mapa."
+    },
+    {
+     "slot": "dashboard.lista.fig-boton",
+     "caption": "Botón Los Casos para el modo lista."
+    },
+    {
+     "slot": "dashboard.lista.fig-lista",
+     "caption": "Visualización de casos en modo lista."
+    },
+    {
+     "slot": "dashboard.lista.fig-detalle",
+     "caption": "Detalle de un caso seleccionado en la lista."
+    }
+   ]
+  },
+  {
+   "section": "fuerzas-en-campo",
+   "alignable": false,
+   "images": [
+    {
+     "file": "p40-01.jpeg",
+     "page": 40,
+     "heading": "Fuerzas en Campo | Agentes | Barra Superior de Fuerzas en Campo | Mapa"
+    },
+    {
+     "file": "p40-02.jpeg",
+     "page": 40,
+     "heading": "Fuerzas en Campo | Agentes | Barra Superior de Fuerzas en Campo | Mapa"
+    },
+    {
+     "file": "p41-01.jpeg",
+     "page": 41,
+     "heading": "Visualización de estados de Agentes: | Filtro | Módulo de Agentes"
+    },
+    {
+     "file": "p41-05.png",
+     "page": 41,
+     "heading": "Visualización de estados de Agentes: | Filtro | Módulo de Agentes"
+    },
+    {
+     "file": "p42-01.jpeg",
+     "page": 42,
+     "heading": "Perfil de Agente: | Al hacer clic sobre un agente, se puede navegar a "
+    },
+    {
+     "file": "p42-02.jpeg",
+     "page": 42,
+     "heading": "Perfil de Agente: | Al hacer clic sobre un agente, se puede navegar a "
+    },
+    {
+     "file": "p42-04.jpeg",
+     "page": 42,
+     "heading": "Perfil de Agente: | Al hacer clic sobre un agente, se puede navegar a "
+    },
+    {
+     "file": "p42-05.jpeg",
+     "page": 42,
+     "heading": "Perfil de Agente: | Al hacer clic sobre un agente, se puede navegar a "
+    },
+    {
+     "file": "p43-01.jpeg",
+     "page": 43,
+     "heading": "Módulo de Operaciones"
+    },
+    {
+     "file": "p43-02.jpeg",
+     "page": 43,
+     "heading": "Módulo de Operaciones"
+    },
+    {
+     "file": "p43-03.png",
+     "page": 43,
+     "heading": "Módulo de Operaciones"
+    },
+    {
+     "file": "p43-04.jpeg",
+     "page": 43,
+     "heading": "Módulo de Operaciones"
+    },
+    {
+     "file": "p44-01.png",
+     "page": 44,
+     "heading": "Filtro del módulo de Operaciones: | Resumen de Actividad en Módulo de "
+    },
+    {
+     "file": "p44-02.png",
+     "page": 44,
+     "heading": "Filtro del módulo de Operaciones: | Resumen de Actividad en Módulo de "
+    },
+    {
+     "file": "p44-03.png",
+     "page": 44,
+     "heading": "Filtro del módulo de Operaciones: | Resumen de Actividad en Módulo de "
+    },
+    {
+     "file": "p44-04.jpeg",
+     "page": 44,
+     "heading": "Filtro del módulo de Operaciones: | Resumen de Actividad en Módulo de "
+    },
+    {
+     "file": "p44-05.jpeg",
+     "page": 44,
+     "heading": "Filtro del módulo de Operaciones: | Resumen de Actividad en Módulo de "
+    },
+    {
+     "file": "p45-01.jpeg",
+     "page": 45,
+     "heading": "Incidentes | Tareas | Incidentes | Tareas"
+    },
+    {
+     "file": "p45-02.jpeg",
+     "page": 45,
+     "heading": "Incidentes | Tareas | Incidentes | Tareas"
+    },
+    {
+     "file": "p45-04.jpeg",
+     "page": 45,
+     "heading": "Incidentes | Tareas | Incidentes | Tareas"
+    },
+    {
+     "file": "p45-05.jpeg",
+     "page": 45,
+     "heading": "Incidentes | Tareas | Incidentes | Tareas"
+    },
+    {
+     "file": "p45-08.jpeg",
+     "page": 45,
+     "heading": "Incidentes | Tareas | Incidentes | Tareas"
+    },
+    {
+     "file": "p45-09.jpeg",
+     "page": 45,
+     "heading": "Incidentes | Tareas | Incidentes | Tareas"
+    },
+    {
+     "file": "p46-01.png",
+     "page": 46,
+     "heading": "Módulo de Añadir"
+    },
+    {
+     "file": "p46-02.png",
+     "page": 46,
+     "heading": "Módulo de Añadir"
+    },
+    {
+     "file": "p46-03.png",
+     "page": 46,
+     "heading": "Módulo de Añadir"
+    },
+    {
+     "file": "p46-04.png",
+     "page": 46,
+     "heading": "Módulo de Añadir"
+    },
+    {
+     "file": "p46-05.png",
+     "page": 46,
+     "heading": "Módulo de Añadir"
+    },
+    {
+     "file": "p46-06.png",
+     "page": 46,
+     "heading": "Módulo de Añadir"
+    },
+    {
+     "file": "p46-07.png",
+     "page": 46,
+     "heading": "Módulo de Añadir"
+    },
+    {
+     "file": "p47-01.jpeg",
+     "page": 47,
+     "heading": "Módulo de Retornar a Home | Finalmente se retorna al Home principal de"
+    }
+   ],
+   "slots": [
+    {
+     "slot": "fuerzas.fig",
+     "caption": "Interfaz principal: zonas Mapa, Barra Superior y Agentes."
+    },
+    {
+     "slot": "fuerzas.barra.fig",
+     "caption": "Barra superior del módulo."
+    },
+    {
+     "slot": "fuerzas.agentes.fig",
+     "caption": "Módulo de Agentes."
+    },
+    {
+     "slot": "fuerzas.agentes.filtro.fig",
+     "caption": "Filtro de estados y turno de los agentes."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-acceso",
+     "caption": "Acceso al perfil desde la lista de agentes."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-tarjeta",
+     "caption": "Tarjeta rápida del agente."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-perfil",
+     "caption": "Perfil del agente."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-ubicacion",
+     "caption": "Ubicación del agente en el mapa."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-turnos",
+     "caption": "Pestaña Turnos del agente."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-asignar",
+     "caption": "Pestaña Asignar del perfil del agente."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-confirmacion",
+     "caption": "Confirmación de despacho del caso al agente."
+    },
+    {
+     "slot": "fuerzas.perfil.fig-tarea",
+     "caption": "Creación de una tarea desde el perfil del agente."
+    },
+    {
+     "slot": "fuerzas.operaciones.fig",
+     "caption": "Módulo de Operaciones: historial de turnos."
+    },
+    {
+     "slot": "fuerzas.operaciones.filtro.fig",
+     "caption": "Filtro de rango de tiempo en Operaciones."
+    },
+    {
+     "slot": "fuerzas.operaciones.filtro.fig-rango",
+     "caption": "Selección de rango de fechas en el filtro."
+    },
+    {
+     "slot": "fuerzas.operaciones.resumen.fig",
+     "caption": "Resumen de actividad del turno seleccionado."
+    },
+    {
+     "slot": "fuerzas.operaciones.resumen.fig-recorrido",
+     "caption": "Recorrido del turno en el mapa."
+    },
+    {
+     "slot": "fuerzas.poligono.fig-incidente",
+     "caption": "Polígono del incidente en el mapa."
+    },
+    {
+     "slot": "fuerzas.poligono.fig-tarea",
+     "caption": "Polígono de la tarea en el mapa."
+    },
+    {
+     "slot": "fuerzas.callai.fig-hist-incidentes",
+     "caption": "Acceso a Call AI desde el historial de incidentes."
+    },
+    {
+     "slot": "fuerzas.callai.fig-mapa-incidente",
+     "caption": "Acceso a Call AI del incidente desde la ubicación en el mapa."
+    },
+    {
+     "slot": "fuerzas.callai.fig-resumen-incidente",
+     "caption": "Resumen de Call AI del incidente."
+    },
+    {
+     "slot": "fuerzas.callai.fig-hist-tareas",
+     "caption": "Acceso a Call AI desde el historial de tareas."
+    },
+    {
+     "slot": "fuerzas.callai.fig-mapa-tarea",
+     "caption": "Acceso a Call AI de la tarea desde la ubicación en el mapa."
+    },
+    {
+     "slot": "fuerzas.callai.fig-resumen-tarea",
+     "caption": "Resumen de Call AI de la tarea."
+    },
+    {
+     "slot": "fuerzas.anadir.fig",
+     "caption": "Opciones del módulo Añadir: Nuevo Incidente y Nueva Tarea."
+    },
+    {
+     "slot": "fuerzas.anadir.incidente.fig",
+     "caption": "Formulario para crear un nuevo incidente."
+    },
+    {
+     "slot": "fuerzas.anadir.incidente.fig-confirmacion",
+     "caption": "Confirmación de incidente creado exitosamente."
+    },
+    {
+     "slot": "fuerzas.anadir.tarea.fig",
+     "caption": "Formulario para crear una nueva tarea."
+    },
+    {
+     "slot": "fuerzas.home.fig",
+     "caption": "Ícono para retornar al Home de Broadsec."
+    }
+   ]
+  },
+  {
+   "section": "call-ai",
+   "alignable": true,
+   "images": [
+    {
+     "file": "p48-01.jpeg",
+     "page": 48,
+     "heading": "CALL AI"
+    },
+    {
+     "file": "p48-02.jpeg",
+     "page": 48,
+     "heading": "CALL AI"
+    },
+    {
+     "file": "p49-01.png",
+     "page": 49,
+     "heading": "C. Agilidad \"One-Click\" | Asistente Táctico para la Resolución | Gesti"
+    }
+   ],
+   "slots": [
+    {
+     "slot": "callai.fig",
+     "caption": "Interfaz de Call AI durante una llamada activa."
+    },
+    {
+     "slot": "callai.escucha.fig",
+     "caption": "Escucha activa y resumen narrativo durante la llamada."
+    },
+    {
+     "slot": "callai.observaciones.fig",
+     "caption": "Campo de Observaciones posterior a la llamada."
+    }
+   ]
+  }
+ ]
+}
