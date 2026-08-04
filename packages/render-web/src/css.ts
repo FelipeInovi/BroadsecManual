@@ -290,9 +290,11 @@ figure {
   text-align: center;
   break-inside: avoid;
 }
+/* No border. A screenshot carries its own frame — a window chrome, a panel edge,
+   a grey field — and the manual this replaces sets its figures directly on the
+   page. A rule around them added a second, competing edge. */
 figure img {
   max-width: 100%;
-  border: 0.6pt solid ${t.table.rule};
 }
 /* An item's image — a step's control, an element's screenshot — has no
    widthPercent to declare, so it is capped here. A figure BLOCK sets its own
@@ -429,8 +431,6 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
    placeholder width. Specificity first, source order second. */
 figure img.shot--pending {
   max-width: 40%;
-  /* The placeholder draws its own dashed frame; a second border would double it. */
-  border: 0;
 }
 
 /* DRAFT BUILDS ONLY — the filename the capture team must save the image under.
