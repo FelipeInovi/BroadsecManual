@@ -696,31 +696,11 @@ children:
                             Dentro de la información de un agente se muestran
                             cuatro aspectos importantes.
                           layout: beside
-                        - id: func.desp.filtrar-tipo
-                          title: Filtre por tipo de agente
-                          text: >-
-                            Se puede filtrar según el tipo de agente para el
-                            despacho del caso.
-                          layout: beside
-                        - id: func.desp.en-camino
-                          title: Indique el estado del despacho
-                          text: >-
-                            Seleccione **En Camino** cuando se hace una solicitud
-                            externa, o **No Requiere Despacho** cuando no se
-                            requiere de ninguna fuerza.
-                          layout: beside
-                        - id: func.desp.despachar
-                          title: Despache
-                          text: >-
-                            Una vez se tengan el o los agentes seleccionados,
-                            haga clic en **Despachar** para que el caso quede en
-                            gestión.
-                          layout: beside
 
                   # The four aspects of the agent card, right after the step that
-                  # dispatches it. The sequence resumes below, continuing this
-                  # procedure's count, because a table can only be a sibling node
-                  # and a sibling ends the block.
+                  # tells the reader to look at them. The sequence resumes below,
+                  # continuing this procedure's count, because a table can only be
+                  # a sibling node and a sibling ends the block.
                   - id: funcionalidades.despacho-pasos.aspectos
                     type: icon-table
                     props:
@@ -747,14 +727,34 @@ children:
                             tiempo estimado de llegada (tiene en cuenta el
                             vehículo que usa).
 
-                  # Steps 10 to 14 of the same sequence, resumed after the table.
-                  # `continues` keeps the count going: the reader sees Paso 9,
-                  # the table, then Paso 10 — not Paso 1 again.
-                  - id: funcionalidades.despacho-pasos.proc-gestion
+                  # Steps 7 to 14 of the same sequence, resumed after the table.
+                  # `continues` keeps the count going: the reader sees Paso 6,
+                  # the table, then Paso 7 — not Paso 1 again.
+                  - id: funcionalidades.despacho-pasos.proc-cont
                     type: procedure
                     props:
                       continues: funcionalidades.despacho-pasos.proc
                       steps:
+                        - id: func.desp.filtrar-tipo
+                          title: Filtre por tipo de agente
+                          text: >-
+                            Se puede filtrar según el tipo de agente para el
+                            despacho del caso.
+                          layout: beside
+                        - id: func.desp.en-camino
+                          title: Indique el estado del despacho
+                          text: >-
+                            Seleccione **En Camino** cuando se hace una solicitud
+                            externa, o **No Requiere Despacho** cuando no se
+                            requiere de ninguna fuerza.
+                          layout: beside
+                        - id: func.desp.despachar
+                          title: Despache
+                          text: >-
+                            Una vez se tengan el o los agentes seleccionados,
+                            haga clic en **Despachar** para que el caso quede en
+                            gestión.
+                          layout: beside
                         - id: func.desp.chat
                           title: Converse con los agentes
                           text: >-
