@@ -100,6 +100,24 @@ export function stylesheet(t: Tokens, header: string): string {
 .pagedjs_cover_page .pagedjs_margin-top-right-corner-holder,
 .pagedjs_cover_page .pagedjs_margin-top-left-corner-holder { background: none; }
 
+/*
+ * Keep the first thing on a page off the running header bar.
+ *
+ * A margin cannot do this. The bar's height IS the page's top margin, because
+ * the paginator paints it on the margin row — so a bigger margin is a taller
+ * bar and the gap stays exactly zero. Nor can it be a margin on the content:
+ * the first block of a fragmented page has its top margin dropped, which is
+ * correct behaviour and precisely why a section header or a table would land
+ * flush against the bar. Two dark blocks touching read as one, and the table
+ * looked like part of the header.
+ *
+ * So it is padding on the paginator's own per-page flow box, which every page
+ * gets and nothing can collapse. The cover is exempt: it is a full-bleed panel
+ * and padding there would leave a white strip above it.
+ */
+.pagedjs_page_content { padding-top: ${t.page.contentTop}; }
+.pagedjs_cover_page .pagedjs_page_content { padding-top: 0; }
+
 * { box-sizing: border-box; }
 
 body {

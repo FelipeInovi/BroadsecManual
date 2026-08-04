@@ -63,6 +63,16 @@ export const tokens = {
     marginBottom: "52pt",
     marginX: "62pt",
     background: base.color.white,
+    /**
+     * Breathing room between the running header bar and the first thing on the
+     * page.
+     *
+     * Its own token rather than a `space` value: this is page geometry, not
+     * block rhythm, and it cannot be expressed as a margin. The header bar's
+     * height IS `marginTop` — the paginator paints the bar on the page's margin
+     * row — so enlarging the margin makes the bar taller and the gap stays zero.
+     */
+    contentTop: "16pt",
   },
   runningHeader: {
     background: base.color.navy900,
