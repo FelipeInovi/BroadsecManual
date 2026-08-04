@@ -1,0 +1,1546 @@
+{
+  "manual": "broadlineavida",
+  "contentVersion": "0.1.0",
+  "convention": {
+    "resolution": [
+      "<tenant>/<slot path>.<ext> — an image made for that one deployment",
+      "_common/<slot path>.<ext> — one image valid for every deployment (preferred)",
+      "otherwise the pending placeholder renders in its place"
+    ],
+    "slotPath": "a slot's dots are folders: `barra.filtro.fig` -> `barra/filtro/fig`",
+    "extensions": "png, jpg, jpeg, svg, webp or gif — the slot never names one",
+    "root": "manuals/<manual>/assets/figures/",
+    "preferShared": "deliver to _common/ unless the screen genuinely differs by deployment — six copies of one icon are six things to update"
+  },
+  "deploymentsCovered": [
+    "lv",
+    "amva",
+    "ant",
+    "mv",
+    "med",
+    "demo"
+  ],
+  "deploymentsConfigured": 6,
+  "counts": {
+    "total": 66,
+    "delivered": 13,
+    "pending": 53
+  },
+  "pending": [
+    {
+      "slot": "mapa.ctrl.visualizacion",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.visualizacion",
+          "blockType": "icon-table",
+          "shows": "Módulo de Visualización"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/ctrl/visualizacion.png",
+        "override": "<tenant>/mapa/ctrl/visualizacion.png"
+      }
+    },
+    {
+      "slot": "mapa.ctrl.agrupar",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.agrupar",
+          "blockType": "icon-table",
+          "shows": "Agrupar / Desagrupar"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/ctrl/agrupar.png",
+        "override": "<tenant>/mapa/ctrl/agrupar.png"
+      }
+    },
+    {
+      "slot": "mapa.ctrl.street-view",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.street-view",
+          "blockType": "icon-table",
+          "shows": "Modo Street View"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/ctrl/street-view.png",
+        "override": "<tenant>/mapa/ctrl/street-view.png"
+      }
+    },
+    {
+      "slot": "mapa.ctrl.salir-street-view",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.salir-street-view",
+          "blockType": "icon-table",
+          "shows": "Salir del modo Street View"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/ctrl/salir-street-view.png",
+        "override": "<tenant>/mapa/ctrl/salir-street-view.png"
+      }
+    },
+    {
+      "slot": "mapa.ctrl.navegacion-3d",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.navegacion-3d",
+          "blockType": "icon-table",
+          "shows": "Navegación 3D"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/ctrl/navegacion-3d.png",
+        "override": "<tenant>/mapa/ctrl/navegacion-3d.png"
+      }
+    },
+    {
+      "slot": "mapa.ctrl.controles",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.controles",
+          "blockType": "icon-table",
+          "shows": "Controles de Mapa"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/ctrl/controles.png",
+        "override": "<tenant>/mapa/ctrl/controles.png"
+      }
+    },
+    {
+      "slot": "mapa.capa.trafico",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.trafico",
+          "blockType": "icon-table",
+          "shows": "Tráfico"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/capa/trafico.png",
+        "override": "<tenant>/mapa/capa/trafico.png"
+      }
+    },
+    {
+      "slot": "mapa.capa.incidentes",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.incidentes",
+          "blockType": "icon-table",
+          "shows": "Incidentes"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/capa/incidentes.png",
+        "override": "<tenant>/mapa/capa/incidentes.png"
+      }
+    },
+    {
+      "slot": "mapa.capa.avl",
+      "neededBy": [
+        "lv",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.avl",
+          "blockType": "icon-table",
+          "shows": "AVL"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/capa/avl.png",
+        "override": "<tenant>/mapa/capa/avl.png"
+      }
+    },
+    {
+      "slot": "mapa.capa.mobile",
+      "neededBy": [
+        "lv",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.mobile",
+          "blockType": "icon-table",
+          "shows": "Mobile"
+        }
+      ],
+      "pendingFor": [
+        "lv",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/capa/mobile.png",
+        "override": "<tenant>/mapa/capa/mobile.png"
+      }
+    },
+    {
+      "slot": "mapa.capa.camaras",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.camaras",
+          "blockType": "icon-table",
+          "shows": "Cámaras"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/capa/camaras.png",
+        "override": "<tenant>/mapa/capa/camaras.png"
+      }
+    },
+    {
+      "slot": "mapa.capa.paneles",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.paneles",
+          "blockType": "icon-table",
+          "shows": "Paneles"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa/capa/paneles.png",
+        "override": "<tenant>/mapa/capa/paneles.png"
+      }
+    },
+    {
+      "slot": "bot.seccion.mapa",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.mapa",
+          "blockType": "icon-table",
+          "shows": "Mapa"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/seccion/mapa.png",
+        "override": "<tenant>/bot/seccion/mapa.png"
+      }
+    },
+    {
+      "slot": "bot.seccion.prt",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.prt",
+          "blockType": "icon-table",
+          "shows": "PRT"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/seccion/prt.png",
+        "override": "<tenant>/bot/seccion/prt.png"
+      }
+    },
+    {
+      "slot": "bot.seccion.recursos",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.recursos",
+          "blockType": "icon-table",
+          "shows": "Recursos"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/seccion/recursos.png",
+        "override": "<tenant>/bot/seccion/recursos.png"
+      }
+    },
+    {
+      "slot": "bot.seccion.cctv",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.cctv",
+          "blockType": "icon-table",
+          "shows": "CCTV"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/seccion/cctv.png",
+        "override": "<tenant>/bot/seccion/cctv.png"
+      }
+    },
+    {
+      "slot": "bot.seccion.pmv",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.pmv",
+          "blockType": "icon-table",
+          "shows": "PMV"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/seccion/pmv.png",
+        "override": "<tenant>/bot/seccion/pmv.png"
+      }
+    },
+    {
+      "slot": "bot.seccion.alarmas",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.alarmas",
+          "blockType": "icon-table",
+          "shows": "Alarmas"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/seccion/alarmas.png",
+        "override": "<tenant>/bot/seccion/alarmas.png"
+      }
+    },
+    {
+      "slot": "bot.prt.paso.buscar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.paso.buscar",
+          "blockType": "procedure",
+          "shows": "Escriba el criterio de búsqueda"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/prt/paso/buscar.png",
+        "override": "<tenant>/bot/prt/paso/buscar.png"
+      }
+    },
+    {
+      "slot": "bot.prt.paso.filtrar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.paso.filtrar",
+          "blockType": "procedure",
+          "shows": "Acote por tipo de vehículo"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/prt/paso/filtrar.png",
+        "override": "<tenant>/bot/prt/paso/filtrar.png"
+      }
+    },
+    {
+      "slot": "bot.prt.paso.limpiar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.paso.limpiar",
+          "blockType": "procedure",
+          "shows": "Restablezca el listado"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/prt/paso/limpiar.png",
+        "override": "<tenant>/bot/prt/paso/limpiar.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.ubicar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.ubicar",
+          "blockType": "procedure",
+          "shows": "Ubique el recurso"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/recursos/paso/ubicar.png",
+        "override": "<tenant>/bot/recursos/paso/ubicar.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.asignar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.asignar",
+          "blockType": "procedure",
+          "shows": "Abra la asignación"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/recursos/paso/asignar.png",
+        "override": "<tenant>/bot/recursos/paso/asignar.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.caso",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.caso",
+          "blockType": "procedure",
+          "shows": "Elija el incidente"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/recursos/paso/caso.png",
+        "override": "<tenant>/bot/recursos/paso/caso.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.resultado",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.resultado",
+          "blockType": "procedure",
+          "shows": "Verifique el resultado"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/recursos/paso/resultado.png",
+        "override": "<tenant>/bot/recursos/paso/resultado.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.pj-accionar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.pj-accionar",
+          "blockType": "procedure",
+          "shows": "Accione la marca en la columna PJ"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/recursos/paso/pj-accionar.png",
+        "override": "<tenant>/bot/recursos/paso/pj-accionar.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.pj-confirmar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.pj-confirmar",
+          "blockType": "procedure",
+          "shows": "Confirme"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/recursos/paso/pj-confirmar.png",
+        "override": "<tenant>/bot/recursos/paso/pj-confirmar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.fn.lista",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.lista",
+          "blockType": "field-list",
+          "shows": "Lista de cámaras"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/fn/lista.png",
+        "override": "<tenant>/bot/cctv/fn/lista.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.fn.grilla",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.grilla",
+          "blockType": "field-list",
+          "shows": "Grilla del mosaico"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/fn/grilla.png",
+        "override": "<tenant>/bot/cctv/fn/grilla.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.fn.estado",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.estado",
+          "blockType": "field-list",
+          "shows": "Estado de la transmisión"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/fn/estado.png",
+        "override": "<tenant>/bot/cctv/fn/estado.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.fn.ptz",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.ptz",
+          "blockType": "field-list",
+          "shows": "Control PTZ"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/fn/ptz.png",
+        "override": "<tenant>/bot/cctv/fn/ptz.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.paso.encuadrar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.paso.encuadrar",
+          "blockType": "procedure",
+          "shows": "Encuadre la vista"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/paso/encuadrar.png",
+        "override": "<tenant>/bot/cctv/paso/encuadrar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.paso.nombrar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.paso.nombrar",
+          "blockType": "procedure",
+          "shows": "Nombre la posición"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/paso/nombrar.png",
+        "override": "<tenant>/bot/cctv/paso/nombrar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.paso.reutilizar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.paso.reutilizar",
+          "blockType": "procedure",
+          "shows": "Reutilice la posición"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/cctv/paso/reutilizar.png",
+        "override": "<tenant>/bot/cctv/paso/reutilizar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paso.identificar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.identificar",
+          "blockType": "procedure",
+          "shows": "Identifique el mensaje"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv/paso/identificar.png",
+        "override": "<tenant>/bot/pmv/paso/identificar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paso.clasificar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.clasificar",
+          "blockType": "procedure",
+          "shows": "Clasifique el mensaje"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv/paso/clasificar.png",
+        "override": "<tenant>/bot/pmv/paso/clasificar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paso.destino",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.destino",
+          "blockType": "procedure",
+          "shows": "Seleccione los paneles de destino"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv/paso/destino.png",
+        "override": "<tenant>/bot/pmv/paso/destino.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paso.contenido",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.contenido",
+          "blockType": "procedure",
+          "shows": "Componga el contenido"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv/paso/contenido.png",
+        "override": "<tenant>/bot/pmv/paso/contenido.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paso.vigencia",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.vigencia",
+          "blockType": "procedure",
+          "shows": "Defina la vigencia"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv/paso/vigencia.png",
+        "override": "<tenant>/bot/pmv/paso/vigencia.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paso.guardar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.guardar",
+          "blockType": "procedure",
+          "shows": "Guarde el mensaje"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv/paso/guardar.png",
+        "override": "<tenant>/bot/pmv/paso/guardar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-gestion.paso.desactivar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-gestion.paso.desactivar",
+          "blockType": "procedure",
+          "shows": "Accione Desactivar sobre el mensaje"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-gestion/paso/desactivar.png",
+        "override": "<tenant>/bot/pmv-gestion/paso/desactivar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-gestion.paso.elegir",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-gestion.paso.elegir",
+          "blockType": "procedure",
+          "shows": "Elija cómo retirarlo si está corriendo"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-gestion/paso/elegir.png",
+        "override": "<tenant>/bot/pmv-gestion/paso/elegir.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-gestion.paso.reactivar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-gestion.paso.reactivar",
+          "blockType": "procedure",
+          "shows": "Reactive si corresponde"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-gestion/paso/reactivar.png",
+        "override": "<tenant>/bot/pmv-gestion/paso/reactivar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-variables.s.familias",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.familias",
+          "blockType": "field-list",
+          "shows": "Familias"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-variables/s/familias.png",
+        "override": "<tenant>/bot/pmv-variables/s/familias.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-variables.s.grupos",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.grupos",
+          "blockType": "field-list",
+          "shows": "Grupos"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-variables/s/grupos.png",
+        "override": "<tenant>/bot/pmv-variables/s/grupos.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-variables.s.predefinidos",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.predefinidos",
+          "blockType": "field-list",
+          "shows": "Mensajes Predefinidos"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-variables/s/predefinidos.png",
+        "override": "<tenant>/bot/pmv-variables/s/predefinidos.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-variables.paso.anadir",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.paso.anadir",
+          "blockType": "procedure",
+          "shows": "Inicie la creación"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-variables/paso/anadir.png",
+        "override": "<tenant>/bot/pmv-variables/paso/anadir.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-variables.paso.nombrar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.paso.nombrar",
+          "blockType": "procedure",
+          "shows": "Nombre el grupo"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-variables/paso/nombrar.png",
+        "override": "<tenant>/bot/pmv-variables/paso/nombrar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-variables.paso.seleccionar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.paso.seleccionar",
+          "blockType": "procedure",
+          "shows": "Seleccione los paneles"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/pmv-variables/paso/seleccionar.png",
+        "override": "<tenant>/bot/pmv-variables/paso/seleccionar.png"
+      }
+    },
+    {
+      "slot": "bot.alarmas.paso.filtrar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.filtrar",
+          "blockType": "procedure",
+          "shows": "Acote el listado"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/alarmas/paso/filtrar.png",
+        "override": "<tenant>/bot/alarmas/paso/filtrar.png"
+      }
+    },
+    {
+      "slot": "bot.alarmas.paso.seleccionar",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.seleccionar",
+          "blockType": "procedure",
+          "shows": "Seleccione las alarmas"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/alarmas/paso/seleccionar.png",
+        "override": "<tenant>/bot/alarmas/paso/seleccionar.png"
+      }
+    },
+    {
+      "slot": "bot.alarmas.paso.reconocer",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.reconocer",
+          "blockType": "procedure",
+          "shows": "Accione Reconocer"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/alarmas/paso/reconocer.png",
+        "override": "<tenant>/bot/alarmas/paso/reconocer.png"
+      }
+    },
+    {
+      "slot": "bot.alarmas.paso.resultado",
+      "neededBy": [
+        "mv",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.resultado",
+          "blockType": "procedure",
+          "shows": "Verifique el resultado"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot/alarmas/paso/resultado.png",
+        "override": "<tenant>/bot/alarmas/paso/resultado.png"
+      }
+    }
+  ],
+  "delivered": [
+    {
+      "slot": "interfaz-general.fig-home",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "interfaz-general.fig-home",
+          "blockType": "figure",
+          "shows": "Componentes del Home — Mapa, Barra Superior e Incidentes."
+        }
+      ],
+      "files": [
+        "_common/interfaz-general/fig-home.png"
+      ]
+    },
+    {
+      "slot": "mapa.fig-capas",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.fig-capas",
+          "blockType": "figure",
+          "shows": "Visualización de capas sobre el mapa."
+        }
+      ],
+      "files": [
+        "_common/mapa/fig-capas.png"
+      ]
+    },
+    {
+      "slot": "barra-superior.fig",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra-superior.fig",
+          "blockType": "figure",
+          "shows": "Barra superior de la plataforma."
+        }
+      ],
+      "files": [
+        "_common/barra-superior/fig.png"
+      ]
+    },
+    {
+      "slot": "barra.busqueda",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.busqueda",
+          "blockType": "icon-table",
+          "shows": "Barra de búsqueda"
+        }
+      ],
+      "files": [
+        "_common/barra/busqueda.png"
+      ]
+    },
+    {
+      "slot": "barra.filtros",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.filtros",
+          "blockType": "icon-table",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/barra/filtros.png"
+      ]
+    },
+    {
+      "slot": "barra.eventos",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.eventos",
+          "blockType": "icon-table",
+          "shows": "Eventos"
+        }
+      ],
+      "files": [
+        "_common/barra/eventos.png"
+      ]
+    },
+    {
+      "slot": "barra.anadir-caso",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.anadir-caso",
+          "blockType": "icon-table",
+          "shows": "Añadir caso"
+        }
+      ],
+      "files": [
+        "_common/barra/anadir-caso.png"
+      ]
+    },
+    {
+      "slot": "barra.dashboard",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.dashboard",
+          "blockType": "icon-table",
+          "shows": "Dashboard"
+        }
+      ],
+      "files": [
+        "_common/barra/dashboard.png"
+      ]
+    },
+    {
+      "slot": "barra.fuerzas",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.fuerzas",
+          "blockType": "icon-table",
+          "shows": "Fuerzas en campo"
+        }
+      ],
+      "files": [
+        "_common/barra/fuerzas.png"
+      ]
+    },
+    {
+      "slot": "barra.mapa",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.mapa",
+          "blockType": "icon-table",
+          "shows": "Mapa"
+        }
+      ],
+      "files": [
+        "_common/barra/mapa.png"
+      ]
+    },
+    {
+      "slot": "barra.back",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.back",
+          "blockType": "icon-table",
+          "shows": "Back"
+        }
+      ],
+      "files": [
+        "_common/barra/back.png"
+      ]
+    },
+    {
+      "slot": "barra.admin",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.admin",
+          "blockType": "icon-table",
+          "shows": "Menú de Administración"
+        }
+      ],
+      "files": [
+        "_common/barra/admin.png"
+      ]
+    },
+    {
+      "slot": "barra.filtro.fig",
+      "neededBy": [
+        "lv",
+        "amva",
+        "ant",
+        "mv",
+        "med",
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.filtro.fig",
+          "blockType": "figure",
+          "shows": "Panel de filtros de la barra superior."
+        }
+      ],
+      "files": [
+        "_common/barra/filtro/fig.png"
+      ]
+    }
+  ]
+}

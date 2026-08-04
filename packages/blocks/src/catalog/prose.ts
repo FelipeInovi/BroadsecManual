@@ -1,22 +1,23 @@
 import { z } from "zod";
-import type { BlockDefinition } from "../definition.js";
+import type { BlockDefinition } from "../definition.ts";
+import { imageRefSchema } from "../image.ts";
 
 export const proseProps = z.object({
   /** Paragraph text. `**bold**` is the only inline markup. */
   text: z.string().min(1),
   /**
-   * Illustration for this paragraph. Optional, and NOT a figure: it carries no
+   * Illustration for this paragraph. Opt-in, and NOT a figure: it carries no
    * caption and takes no number. Use `figure` when the image must be
-   * referenceable.
+   * referenceable. `true` uses this node's id as the slot.
    */
-  image: z.string().optional(),
+  image: imageRefSchema.optional(),
 });
 
 export type ProseProps = z.infer<typeof proseProps>;
 
 export const prose: BlockDefinition<ProseProps> = {
   type: "prose",
-  version: "0.2.0",
+  version: "0.3.0",
   description:
     "A body paragraph, optionally illustrated. Use for explanatory text " +
     "between structured blocks. Do not use it to fake a list, a table or a " +
@@ -25,4 +26,5 @@ export const prose: BlockDefinition<ProseProps> = {
     "and a number so the text can refer back to it.",
   schema: proseProps,
   children: { kind: "none" },
+  images: { prop: "image", showsProp: "text", policy: "optional" },
 };

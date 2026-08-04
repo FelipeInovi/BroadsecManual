@@ -56,6 +56,42 @@ export interface NumberingPolicy {
   readonly itemsProp?: string;
 }
 
+/**
+ * Whether a block's image slot is expected to exist.
+ *
+ * - `always` — the block is about something the reader must recognise on
+ *   screen, so the slot is declared even before the image exists and renders
+ *   the pending placeholder until it arrives. A figure with no image, or a step
+ *   that does not show the control to press, is unfinished content.
+ * - `optional` — an illustration that carries information only sometimes. No
+ *   declaration, no slot: filling a manual with placeholders nobody asked for
+ *   would drown the ones that are genuinely awaited.
+ */
+export type ImagePolicy = "always" | "optional";
+
+/**
+ * Where a block keeps its image references, so slots can be enumerated for the
+ * manifest without re-implementing the renderer's per-type knowledge.
+ *
+ * Declared, never inferred — the same reason `NumberingPolicy.itemsProp` is
+ * declared. A walker guessing which props hold images would silently miss the
+ * first block that names its own differently.
+ */
+export interface ImageSlotPolicy {
+  /** Prop holding the reference — on the block, or on each item. */
+  readonly prop: string;
+  /** Prop holding the items that each carry a reference, when it is a container. */
+  readonly itemsProp?: string;
+  /**
+   * Prop whose text says what the image shows — a caption, a control's label, a
+   * step title. It is copied into the image manifest, which is the only
+   * description the area producing the screenshots ever sees. A manifest row
+   * reading just `barra.busqueda` is not a request anyone can fulfil.
+   */
+  readonly showsProp: string;
+  readonly policy: ImagePolicy;
+}
+
 export interface BlockDefinition<TProps = unknown> {
   readonly type: BlockType;
   /** SemVer. Manuals pin a catalogue version; a breaking change bumps major. */
@@ -70,6 +106,8 @@ export interface BlockDefinition<TProps = unknown> {
   readonly children: ChildPolicy;
   /** Present only if instances of this block are numbered. */
   readonly numbering?: NumberingPolicy;
+  /** Present only if this block carries images. */
+  readonly images?: ImageSlotPolicy;
 }
 
 /** The full set of block types available to a manual. */

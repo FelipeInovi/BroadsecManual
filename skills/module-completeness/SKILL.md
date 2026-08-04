@@ -1,10 +1,10 @@
 ---
 name: module-completeness
-description: Defines when a manual module is finished — every submodule covered, each with what it does, how to reach it, its main functions, its step-by-step procedures and the control the operator must press. Also covers the image rule: this repository holds no real screenshots, so every image slot renders either the image or the reference it will be delivered under, never a blank gap. Use when writing a new module, extending an existing one, reviewing a module before it ships, deciding whether a section is complete, or working out which images an external team must produce.
+description: Defines when a manual module is finished — every submodule covered, each with what it does, how to reach it, its main functions, its step-by-step procedures and the control the operator must press. Also covers the image rule: content declares image slots, never file paths, and every declared slot always renders — the delivered image, or one temporary placeholder holding its place until an external team supplies it. Use when writing a new module, extending an existing one, reviewing a module before it ships, deciding whether a section is complete, naming images so they can be synchronised from an external folder, or working out which images an external team must produce.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "1.0"
+  version: "2.0"
 ---
 
 # When a module is finished
@@ -72,19 +72,27 @@ telling the reader whether it worked is unfinished.
 
 ## The image rule
 
-**Either the image, or the reference it will arrive under. Never a blank gap.**
+**A declared slot always renders. The delivered image, or the placeholder
+holding its place. Never a blank gap.**
 
-This repository holds no real screenshots. Images are produced and updated by a
-different area of the company, and delivered against the names the manual
-declares. So every image slot is in one of two states, and both are visible:
+Images are produced and updated by a different area of the company and arrive
+later, so a module is normally written before a single capture exists. That is
+not a reason to leave the page empty: a gap reads as finished content and the
+reader has no way to detect the lie.
 
 | State | Renders as |
 |---|---|
 | Delivered | The image |
-| Pending | Its reference — the item number in a table, a named placeholder elsewhere |
+| Pending | `_pending.svg` — one temporary image, identical in every slot |
 
-A slot that renders neither reads as "there is nothing here", which is a lie the
-reader has no way to detect.
+The placeholder is deliberately the same everywhere. It is a *shape held open*,
+not a description of what is missing: every slot sits directly under the thing
+it depicts — a field's label, a step's title, a figure's caption, a row's label
+— so the page already says which image is coming. What each slot needs in words
+lives in the image manifest, not on the page.
+
+Never write a slot id into content that the reader sees. The PDF is
+client-facing (invariant 4) and a slot id is a trace of the pipeline.
 
 ### Where an image belongs
 
@@ -98,36 +106,90 @@ reader has no way to detect.
 
 ### Which block carries the image
 
-| Block | Image slot | Numbered |
+| Block | Image slot | Declared |
 |---|---|---|
-| `icon-table` | Icon column, one per row | Item number, doubles as the pending reference |
-| `field-list` | One per item | No |
-| `procedure` | One per step | No |
-| `prose`, `term-list` | Optional illustration | No |
-| `figure` | The image itself, with a caption | Yes — use when the text refers back to it |
+| `icon-table` | Icon column, one per row | Always — omit the prop |
+| `field-list` | One per item | Always — omit the prop |
+| `procedure` | One per step | Always — omit the prop |
+| `figure` | The image itself, with a caption | Always — omit the prop |
+| `prose`, `term-list` | Optional illustration | Opt-in — write `image: true` |
 
-## Images are declared, not supplied
+"Always" means the slot exists whether or not you write anything: leave the prop
+out and it is derived. "Opt-in" means no declaration, no slot — a paragraph does
+not inherently need an illustration, and filling the manual with placeholders
+nobody asked for would drown the ones genuinely awaited.
 
-The manual's job is to declare **which** images it needs and **what** each one
-shows. Producing them is someone else's job.
+## Content declares slots, never files
 
-Consequences you must respect:
+**Never write a filename or a path into content.** Not `home-overview.png`, not
+`icons/search.png`. The build refuses it, and the refusal is the point.
 
-- Never leave an image slot undeclared because the file does not exist. Declare
-  it; the pending state exists precisely for this.
-- Never invent a filename mid-writing. Follow the naming convention so the
-  delivering team receives one coherent list.
-- The build emits the **image manifest** — every expected image, its reference,
-  what it shows and which deployments need it. That manifest is the contract
-  with the other area. If an image is not in the manifest, nobody will produce
-  it.
-- The same slot may need a different image per deployment, because the same
-  screen does not look identical everywhere. The manifest is therefore per
-  deployment, not global.
+A path cannot answer the two questions this pipeline exists to answer:
 
-> **Naming convention:** provisional. Agreed to be settled with the delivering
-> area. Until then, keep references derived from the node id so they stay
-> stable and unique, and do not improvise a second scheme in parallel.
+- The same screen does not look identical in every deployment, so one path
+  cannot serve six tenants.
+- The images arrive later, from somebody else, so there has to be a stable key
+  to deliver and re-synchronise against. A path buried in a content file is not
+  that key.
+
+### The naming convention
+
+**A slot's name is the id of the node that carries it.** Nothing to invent: node
+ids already exist, are already unique, are already validated, and are never
+positional — so a slot never shifts when a section moves.
+
+Write an explicit slot name **only** to share one delivered image between two
+places (`image: barra.busqueda`). Otherwise omit the prop.
+
+A slot's dots become folders, so the delivered tree mirrors the manual:
+
+```
+barra.filtro.fig  ->  barra/filtro/fig.png
+```
+
+Resolution, per deployment, in order:
+
+| Looked up | Meaning |
+|---|---|
+| `<tenant>/<slot path>.<ext>` | An image made for that one deployment |
+| `_common/<slot path>.<ext>` | One image valid for every deployment — **prefer this** |
+| `_pending.svg` | Not delivered yet |
+
+Prefer `_common`: most controls look identical everywhere, and six copies of one
+icon are six things to update when it changes. Use a tenant folder only when the
+screen genuinely differs.
+
+The extension is not part of the slot — `png`, `jpg`, `jpeg`, `svg`, `webp` and
+`gif` all resolve. Two files claiming one slot is a build error, because nothing
+can tell which delivery is current.
+
+### The image request document
+
+`broadsec-manual images <manual>` writes `image-requests.json` next to the
+manual: every slot, what it shows, which block uses it, which deployments need
+it, which ones are still missing, and **the exact path each file has to be
+dropped at**. That document is the contract with the delivering area. If an image
+is not in it, nobody will produce it.
+
+It is grouped by slot, not by deployment. A control that looks identical
+everywhere is one photograph, and `deliverTo.shared` is where one copy serves
+every deployment; `deliverTo.override` is the template for the rare screen that
+genuinely differs.
+
+Note what it is *not*: it is not build output. `build` reports the counts but
+writes no document — it leaves the repository for another team, so producing it
+is an explicit act. That is also why it does not live in `output/`, which is
+gitignored: a contract only whoever last ran a build can see is not a contract.
+
+It also reports the reverse — images sitting on disk that no slot asked for.
+That is the failure this whole scheme exists to catch: a delivery named
+`barra/buscar.png` when the slot is `barra.busqueda` leaves the page showing a
+placeholder while the build reports success. Read that list; a name that appears
+there is a name nobody is using.
+
+A slot delivered for one deployment and missing for another is still **pending**,
+and says so in `pendingFor`. Never treat a slot as done because some deployment
+has it.
 
 ## Use the catalogue, always
 
@@ -154,12 +216,14 @@ A module ships when all of these hold:
 - [ ] Each one states what it does, how to reach it, and its main functions
 - [ ] Every procedure is a `procedure` block, naming the control at each step
 - [ ] Every procedure says where the operator lands
-- [ ] Every control the reader must press has an image or a visible reference
+- [ ] Every control the reader must press has an image slot, delivered or pending
 - [ ] No image slot renders as a blank gap
+- [ ] No filename or path appears anywhere in the content
 - [ ] Every claim traces to a file and line, or to the module map
 - [ ] UI labels are taken from the i18n catalogue, not retyped
 - [ ] No number, anchor or figure ordinal is written by hand
 - [ ] Conditioning is tagged at the smallest unit that varies
-- [ ] The build succeeds for every deployment and the manifest lists what is missing
+- [ ] The build succeeds for every deployment
+- [ ] `images` was re-exported, and reports no undeclared delivery
 
 Anything unchecked is not a rough edge. It is the module not being done.

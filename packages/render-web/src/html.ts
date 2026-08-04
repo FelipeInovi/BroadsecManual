@@ -1,5 +1,6 @@
 import type {
   BlockNode,
+  ImageResolver,
   Inline,
   ManualNode,
   NodeId,
@@ -20,8 +21,18 @@ export interface CoverData {
 export interface RenderOptions {
   readonly header: string;
   readonly cover: CoverData;
-  /** Prefix for asset paths, e.g. a `file://` URL of the assets folder. */
-  readonly assetBase: string;
+  /**
+   * Which image slot each node declares, keyed by node or item id — exactly
+   * what `collectSlots` produced for this target.
+   *
+   * The renderer holds NO opinion about which blocks carry images or when a
+   * slot is implied: a node in this map has an image, a node absent from it
+   * does not. That policy lives in the block catalogue and is applied once, in
+   * core. Two places deciding it is two places to disagree.
+   */
+  readonly slots: ReadonlyMap<NodeId, string>;
+  /** Turns a slot into a URL and tells whether it is still pending. */
+  readonly images: ImageResolver;
   /** Inlined at the end of <body>; used to load the pagination polyfill. */
   readonly polyfill?: string;
 }
@@ -36,8 +47,42 @@ const inlineMarkup = (s: string): string =>
 const plain = (inline: readonly Inline[]): string =>
   inline.map((i) => ("value" in i ? i.value : "")).join("");
 
-const asset = (base: string, src: string): string =>
-  `${base.replace(/\/$/, "")}/${src.replace(/^\//, "")}`;
+/** A node's image, ready to place, or `undefined` if it declares none. */
+interface Shot {
+  readonly img: string;
+  readonly pending: boolean;
+}
+
+/**
+ * Render the image a node declares.
+ *
+ * Every image slot always renders something — the delivered image, or the one
+ * placeholder standing in its place. Never an empty gap: a gap reads as
+ * finished content, and the reader has no way to tell it is not.
+ */
+function shot(id: NodeId, o: RenderOptions, attrs = ""): Shot | undefined {
+  const slot = o.slots.get(id);
+  if (slot === undefined) return undefined;
+  const resolved = o.images(slot);
+  const pending = resolved.state === "pending";
+  const cls = pending ? "shot shot--pending" : "shot";
+  return {
+    img: `<img class="${cls}" src="${esc(resolved.url)}"${attrs}>`,
+    pending,
+  };
+}
+
+/*
+ * There is deliberately NO caption naming a pending image.
+ *
+ * The placeholder already says an image is coming, and every slot sits directly
+ * under the thing it depicts — a field's label, a step's title, a figure's
+ * caption, a row's label. A note would repeat the line above it in every single
+ * case. The slot id, which is the one thing not otherwise visible, must not
+ * appear either: the PDF is client-facing (invariant 4) and a slot id is a
+ * trace of the pipeline's internals. It lives in the image manifest, which only
+ * we read.
+ */
 
 /**
  * `icon-table` and `data-table` render through one function.
@@ -46,28 +91,20 @@ const asset = (base: string, src: string): string =>
  * column, and the header colour — so duplicating the markup for a second block
  * type would be two copies drifting apart over a boolean.
  */
-function renderTable(
-  node: BlockNode,
-  numbers: ReadonlyMap<NodeId, string>,
-  o: RenderOptions,
-): string {
+function renderTable(node: BlockNode, o: RenderOptions): string {
   const rows = node.props["rows"] as ReadonlyArray<Record<string, unknown>>;
   const withIcons = node.type === "icon-table";
   const variant = withIcons ? "icon-table" : "data-table";
 
-  // One column, two states. The icon if it exists; otherwise the row's item
-  // number, which IS the reference the pending image will be delivered under.
-  // Never both, never neither — an empty cell reads as "no control here".
+  // One column, always occupied: the control's icon once delivered, the
+  // placeholder until then. An empty cell reads as "no control here".
+  // No pending note — the column is 34pt wide, there is nowhere to put it.
   const iconCell = (r: Record<string, unknown>): string => {
     if (!withIcons) return "";
-    if (r["icon"]) {
-      return `<td class="tbl__icon"><img src="${esc(
-        asset(o.assetBase, String(r["icon"])),
-      )}"></td>`;
-    }
-    return `<td class="tbl__icon tbl__icon--pending">${esc(
-      numbers.get(String(r["id"])) ?? "",
-    )}</td>`;
+    const image = shot(String(r["id"]), o);
+    if (!image) return `<td class="tbl__icon"></td>`;
+    const cls = image.pending ? "tbl__icon tbl__icon--pending" : "tbl__icon";
+    return `<td class="${cls}">${image.img}</td>`;
   };
 
   const body = rows
@@ -95,12 +132,11 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
   switch (node.type) {
     case "prose": {
       const body = `<p class="prose">${inlineMarkup(String(node.props["text"]))}</p>`;
-      // An illustration, not a figure: no caption, no number.
-      return node.props["image"]
-        ? `${body}<p class="prose__shot"><img src="${esc(
-            asset(o.assetBase, String(node.props["image"])),
-          )}"></p>`
-        : body;
+      // An illustration, not a figure: no caption, no number. No pending note
+      // either — a paragraph has no short label to name, and the placeholder
+      // already says an image is coming.
+      const image = shot(node.id, o);
+      return image ? `${body}<p class="prose__shot">${image.img}</p>` : body;
     }
 
     case "callout": {
@@ -117,36 +153,33 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
     case "field-list": {
       const items = node.props["items"] as ReadonlyArray<Record<string, unknown>>;
       return `<div class="field-list">${items
-        .map((f) =>
-          [
+        .map((f) => {
+          const label = String(f["label"]);
+          const image = shot(String(f["id"]), o);
+          const figure = image ? `<p class="field__shot">${image.img}</p>` : "";
+          return [
             `<div class="field">`,
-            `<p class="field__label">${esc(String(f["label"]))}</p>`,
+            `<p class="field__label">${esc(label)}</p>`,
             `<p class="prose">${inlineMarkup(String(f["text"]))}</p>`,
-            f["image"]
-              ? `<p class="field__shot"><img src="${esc(
-                  asset(o.assetBase, String(f["image"])),
-                )}"></p>`
-              : `<p class="field__pending">[ ${esc(String(f["label"]))} — imagen pendiente ]</p>`,
+            figure,
             `</div>`,
-          ].join(""),
-        )
+          ].join("");
+        })
         .join("")}</div>`;
     }
 
     case "term-list": {
       const entries = node.props["entries"] as ReadonlyArray<Record<string, unknown>>;
       return `<dl class="term-list">${entries
-        .map(
-          (e) =>
+        .map((e) => {
+          const image = shot(String(e["id"]), o);
+          return (
             `<div class="term"><dt>${esc(String(e["term"]))}:</dt>` +
             `<dd>${inlineMarkup(String(e["definition"]))}</dd>` +
-            (e["image"]
-              ? `<p class="term__shot"><img src="${esc(
-                  asset(o.assetBase, String(e["image"])),
-                )}"></p>`
-              : "") +
-            `</div>`,
-        )
+            (image ? `<p class="term__shot">${image.img}</p>` : "") +
+            `</div>`
+          );
+        })
         .join("")}</dl>`;
     }
 
@@ -165,19 +198,17 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
                 .map((a) => `<li>${inlineMarkup(a)}</li>`)
                 .join("")}</ol>`
             : "";
-          const image = s["image"]
-            ? `<p class="step__shot"><img src="${esc(
-                asset(o.assetBase, String(s["image"])),
-              )}"></p>`
-            : "";
+          const title = String(s["title"]);
+          const image = shot(String(s["id"]), o);
+          const figure = image ? `<p class="step__shot">${image.img}</p>` : "";
           return [
             `<div class="step">`,
             `<p class="step__title"><span class="step__marker">Paso ${esc(n)}:</span> ${esc(
-              String(s["title"]),
+              title,
             )}</p>`,
             `<p class="prose">${inlineMarkup(String(s["text"]))}</p>`,
             actions,
-            image,
+            figure,
             `</div>`,
           ].join("");
         })
@@ -188,11 +219,13 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
     case "figure": {
       const n = numbers.get(node.id);
       const label = n ? `Figura ${n}. ` : "";
+      const caption = String(node.props["caption"]);
       const width = Number(node.props["widthPercent"] ?? 100);
+      const image = shot(node.id, o, ` style="width:${width}%"`);
       return [
         `<figure>`,
-        `<img src="${esc(asset(o.assetBase, String(node.props["src"])))}" style="width:${width}%">`,
-        `<figcaption>${label}${esc(String(node.props["caption"]))}</figcaption>`,
+        image?.img ?? "",
+        `<figcaption>${label}${esc(caption)}</figcaption>`,
         `</figure>`,
       ].join("");
     }
@@ -202,7 +235,7 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
     // numbers its rows, data-table does not, and one type cannot do both.
     case "icon-table":
     case "data-table":
-      return renderTable(node, numbers, o);
+      return renderTable(node, o);
 
     default:
       // A block type with no renderer is a broken block, not a silent skip.

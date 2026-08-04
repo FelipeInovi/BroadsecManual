@@ -5,6 +5,50 @@ import { loadSection, ContentError } from "./load.ts";
 const FILE = "sections/test.yaml";
 
 describe("loadSection", () => {
+  // The schema's messages are the only place an author is told why a perfectly
+  // reasonable-looking line is refused, so they have to survive the trip
+  // through zod and out of the loader — not arrive as "Invalid input".
+  describe("image slots, not file paths", () => {
+    const withFigure = (props: string): string => `
+id: s
+title: Section
+children:
+  - id: s.fig
+    type: figure
+    props:
+${props}
+`;
+
+    it("rejects a path in an image prop, and says what to write instead", () => {
+      const run = (): unknown =>
+        loadSection(withFigure("      image: icons/search.png\n      caption: Buscar"), FILE, catalog);
+      expect(run).toThrow(ContentError);
+      expect(run).toThrow(/file path/i);
+      expect(run).toThrow(/image: true/);
+      expect(run).toThrow(/s\.fig/);
+    });
+
+    it("rejects a bare filename", () => {
+      expect(() =>
+        loadSection(withFigure("      image: home-overview.png\n      caption: Inicio"), FILE, catalog),
+      ).toThrow(/extension/i);
+    });
+
+    it("accepts an omitted image — the slot is the node's own id", () => {
+      const { node } = loadSection(withFigure("      caption: Inicio"), FILE, catalog);
+      expect(node.kind).toBe("section");
+    });
+
+    it("accepts `true` and an explicit slot name", () => {
+      expect(() =>
+        loadSection(withFigure("      image: true\n      caption: Inicio"), FILE, catalog),
+      ).not.toThrow();
+      expect(() =>
+        loadSection(withFigure("      image: barra.busqueda\n      caption: Inicio"), FILE, catalog),
+      ).not.toThrow();
+    });
+  });
+
   describe("`when` selector validation", () => {
     it("accepts an array selector on a section", () => {
       const yaml = `

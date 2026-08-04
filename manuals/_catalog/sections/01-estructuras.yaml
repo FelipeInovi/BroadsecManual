@@ -47,15 +47,14 @@ children:
             - id: cat.fl.uno
               label: Elemento con imagen pendiente
               text: >-
-                Cuando la captura todavía no existe, el bloque deja constancia
-                en lugar de dejar un hueco en blanco. El recuadro nombra la
-                imagen que falta.
+                Cuando la captura todavía no existe, su lugar lo ocupa la
+                imagen temporal. Nunca un hueco en blanco: un hueco se lee como
+                contenido terminado, y el lector no tiene forma de notarlo.
             - id: cat.fl.dos
               label: Elemento con imagen
               text: >-
                 Cuando la imagen está disponible, se muestra centrada bajo la
                 explicación del elemento.
-              image: top-bar.png
 
   # ---------------------------------------------------------- term-list ---
   - id: cat.term-list
@@ -78,7 +77,7 @@ children:
             - id: cat.tl.dos
               term: Término con imagen
               definition: La imagen es opcional y se muestra bajo la definición.
-              image: icons/back.png
+              image: true
 
   # ---------------------------------------------------------- procedure ---
   - id: cat.procedure
@@ -110,7 +109,6 @@ children:
               title: Un paso con imagen
               text: >-
                 La imagen del paso muestra el control que debe accionarse.
-              image: icons/add-case.png
 
   # --------------------------------------------------------- icon-table ---
   - id: cat.icon-table
@@ -120,10 +118,10 @@ children:
         type: prose
         props:
           text: >-
-            Controles que el operador debe reconocer en pantalla. Lleva la
-            imagen del ícono y un número de ítem por fila, para poder
-            referenciarlo. Las filas son datos: cada una se condiciona por
-            separado y la tabla se renumera sola.
+            Controles que el operador debe reconocer en pantalla. La primera
+            columna siempre muestra algo: el ícono del control, o la imagen
+            temporal mientras no se haya entregado. Las filas son datos: cada
+            una se condiciona por separado y la tabla se renumera sola.
 
       - id: cat.icon-table.demo
         type: icon-table
@@ -132,14 +130,13 @@ children:
           descriptionHeader: Descripción
           rows:
             - id: cat.it.uno
-              icon: icons/search.png
               label: Buscar
-              description: Fila con su ícono y su número de ítem.
+              description: Fila con el ícono del control ya entregado.
             - id: cat.it.dos
               label: Control sin ícono todavía
               description: >-
-                Sin imagen entregada, la celda muestra el número de ítem: es la
-                referencia con la que llegará esa imagen.
+                Sin ícono entregado, la celda muestra la imagen temporal. Nunca
+                queda vacía: una celda vacía se lee como "acá no hay control".
 
   # --------------------------------------------------------- data-table ---
   - id: cat.data-table
@@ -179,7 +176,6 @@ children:
       - id: cat.figure.demo
         type: figure
         props:
-          src: top-bar.png
           caption: Epígrafe de la figura, escrito sin número.
           widthPercent: 80
 

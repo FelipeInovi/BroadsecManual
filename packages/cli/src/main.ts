@@ -1,14 +1,27 @@
 #!/usr/bin/env node
 import { readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
-import { catalog } from "@broadsec-manual/blocks";
+import { catalog, slotToPath } from "@broadsec-manual/blocks";
 import type { BuildTarget, ManualDocument, ManualNode } from "@broadsec-manual/blocks";
-import { assemble, loadSection, ContentError, type ContentWarning } from "@broadsec-manual/core";
+import {
+  assemble,
+  collectSlots,
+  loadSection,
+  ContentError,
+  type ContentWarning,
+  type ImageSlotUse,
+} from "@broadsec-manual/core";
 import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import { printToPdf } from "./chrome.ts";
+import {
+  COMMON_SET,
+  buildImageIndex,
+  type ImageIndex,
+  type ManifestImage,
+} from "./images.ts";
 
 const axisValueSchema = z
   .object({
@@ -96,6 +109,143 @@ function loadDocument(
   };
 }
 
+/** One deployment's resolved slots, as the export consumes them. */
+export interface TargetImages {
+  readonly tenant: string;
+  readonly entries: readonly ManifestSlot[];
+  readonly undeclared: readonly string[];
+}
+
+/** One image in the export, with every deployment that needs it. */
+interface RequestedImage {
+  readonly slot: string;
+  /** Deployment ids that need this image. */
+  readonly neededBy: string[];
+  /** What it shows and which block uses it, deduplicated across deployments. */
+  readonly uses: SlotUsePlace[];
+  /**
+   * Deployments still rendering the placeholder. Absent once every deployment
+   * that needs the image has one — that absence is what "delivered" means here.
+   */
+  readonly pendingFor?: string[];
+  /** Files it currently resolves from, across deployments. */
+  readonly files?: string[];
+  /**
+   * Present while pending: where the file has to be dropped.
+   *
+   * `override` is a template, not a list of six paths. Spelling out every
+   * deployment's path for an image that is the same everywhere reads as an
+   * instruction to deliver six copies, which is exactly what `shared` exists to
+   * avoid. `neededBy` already says who needs it.
+   */
+  readonly deliverTo?: { readonly shared: string; readonly override: string };
+}
+
+/**
+ * Build the image request document — the contract with the area that produces
+ * the screenshots.
+ *
+ * Grouped by SLOT rather than by deployment on purpose. A control that looks
+ * identical everywhere is one photograph, and a per-deployment dump would list
+ * it six times and invite six copies of the same file. `neededBy` says who
+ * needs it; `deliverTo.shared` says where one copy serves all of them.
+ *
+ * Deliberately without a timestamp: it is regenerated on demand and a clock
+ * would make it churn in git on an export that changed nothing.
+ */
+export function imageRequests(
+  config: ManualConfig,
+  perTarget: readonly TargetImages[],
+): Record<string, unknown> {
+  const bySlot = new Map<
+    string,
+    { neededBy: string[]; pendingFor: string[]; files: Set<string>; uses: SlotUsePlace[] }
+  >();
+  const orphans = new Set<string>();
+
+  for (const { tenant, entries, undeclared } of perTarget) {
+    for (const slot of undeclared) orphans.add(slot);
+    for (const entry of entries) {
+      let acc = bySlot.get(entry.slot);
+      if (!acc) {
+        acc = { neededBy: [], pendingFor: [], files: new Set(), uses: [] };
+        bySlot.set(entry.slot, acc);
+      }
+      acc.neededBy.push(tenant);
+      // Resolution is PER DEPLOYMENT, so one slot can be delivered for one and
+      // missing for another the moment anybody adds a tenant-specific image.
+      // Collapsing that to a single state would report the slot as done while a
+      // deployment still renders the placeholder.
+      if (entry.state === "pending") acc.pendingFor.push(tenant);
+      else if (entry.file) acc.files.add(entry.file);
+      for (const use of entry.uses) {
+        if (!acc.uses.some((u) => u.nodeId === use.nodeId)) acc.uses.push(use);
+      }
+    }
+  }
+
+  const all: RequestedImage[] = [...bySlot.entries()].map(([slot, acc]) => ({
+    slot,
+    neededBy: acc.neededBy,
+    uses: acc.uses,
+    ...(acc.pendingFor.length > 0
+      ? {
+          pendingFor: acc.pendingFor,
+          deliverTo: {
+            shared: `${COMMON_SET}/${slotToPath(slot)}.png`,
+            override: `<tenant>/${slotToPath(slot)}.png`,
+          },
+        }
+      : {}),
+    ...(acc.files.size > 0 ? { files: [...acc.files].sort() } : {}),
+  }));
+
+  const pending = all.filter((i) => i.pendingFor !== undefined);
+  return {
+    manual: config.manual.id,
+    contentVersion: config.manual.contentVersion,
+    // Spelled out in the file itself: whoever opens it may never have read the
+    // repository's documentation.
+    convention: {
+      resolution: [
+        "<tenant>/<slot path>.<ext> — an image made for that one deployment",
+        `${COMMON_SET}/<slot path>.<ext> — one image valid for every deployment (preferred)`,
+        "otherwise the pending placeholder renders in its place",
+      ],
+      slotPath: "a slot's dots are folders: `barra.filtro.fig` -> `barra/filtro/fig`",
+      extensions: "png, jpg, jpeg, svg, webp or gif — the slot never names one",
+      root: "manuals/<manual>/assets/figures/",
+      preferShared:
+        `deliver to ${COMMON_SET}/ unless the screen genuinely differs by ` +
+        `deployment — six copies of one icon are six things to update`,
+    },
+    deploymentsCovered: perTarget.map((t) => t.tenant),
+    deploymentsConfigured: config.targets.length,
+    counts: { total: all.length, delivered: all.length - pending.length, pending: pending.length },
+    pending,
+    delivered: all.filter((i) => i.pendingFor === undefined),
+    ...(orphans.size > 0 ? { undeclared: [...orphans].sort() } : {}),
+  };
+}
+
+/**
+ * Report images sitting on disk that no slot asked for.
+ *
+ * This is the one failure this whole scheme exists to catch: a delivery named
+ * `barra/buscar.png` when the slot is `barra.busqueda` leaves the page showing
+ * a placeholder while the build reports success. Silence there would mean
+ * finding out from the client.
+ */
+function printUndeclaredImages(undeclared: ReadonlySet<string>): void {
+  if (undeclared.size === 0) return;
+  const noun = undeclared.size === 1 ? "image" : "images";
+  console.log(
+    `\n${undeclared.size} delivered ${noun} that no content asked for — a slot ` +
+      `renamed, or a delivery misnamed:`,
+  );
+  for (const slot of [...undeclared].sort()) console.log(`    ${slot}`);
+}
+
 /**
  * Print collected literal-number/reference/anchor warnings, grouped by file
  * and counted. Non-blocking — see `ContentWarning` — the build has already
@@ -117,6 +267,55 @@ function printWarnings(warnings: readonly ContentWarning[]): void {
       console.log(`    [${warning.nodeId}] ${warning.message}`);
     }
   }
+}
+
+/** Where one slot is used: enough for the producer to know what to capture. */
+interface SlotUsePlace {
+  readonly nodeId: string;
+  readonly blockType: string;
+  readonly shows: string;
+}
+
+/** One slot in the image manifest, with every place that uses it. */
+interface ManifestSlot {
+  readonly slot: string;
+  readonly state: ManifestImage["state"];
+  readonly file?: string;
+  readonly uses: SlotUsePlace[];
+}
+
+/**
+ * Group a target's slot uses into manifest entries, in first-appearance order.
+ *
+ * Two places may share one slot on purpose — an icon used in a table and again
+ * in a procedure step — so the manifest lists the image once and every place it
+ * appears, rather than asking for it twice.
+ */
+function manifestSlots(
+  uses: readonly ImageSlotUse[],
+  resolve: (slot: string) => ManifestImage,
+): ManifestSlot[] {
+  const bySlot = new Map<string, ManifestSlot>();
+  for (const use of uses) {
+    const place: SlotUsePlace = {
+      nodeId: use.nodeId,
+      blockType: use.blockType,
+      shows: use.shows,
+    };
+    const entry = bySlot.get(use.slot);
+    if (entry) {
+      entry.uses.push(place);
+      continue;
+    }
+    const resolved = resolve(use.slot);
+    bySlot.set(use.slot, {
+      slot: use.slot,
+      state: resolved.state,
+      ...(resolved.file ? { file: resolved.file } : {}),
+      uses: [place],
+    });
+  }
+  return [...bySlot.values()];
 }
 
 /**
@@ -178,7 +377,23 @@ export function parseAxisFilters(args: readonly string[]): Map<string, string> {
   return filters;
 }
 
-async function build(manualDir: string, filters: ReadonlyMap<string, string>): Promise<void> {
+/** Everything both commands need before they diverge. */
+interface LoadedManual {
+  readonly config: ManualConfig;
+  readonly doc: ManualDocument;
+  readonly warnings: readonly ContentWarning[];
+  readonly targets: readonly BuildTarget[];
+  readonly figuresDir: string;
+}
+
+/**
+ * Read the config, parse the content and select the targets to work on.
+ *
+ * Shared so `build` and `images` can never disagree about which deployments
+ * exist or which content they are looking at — an export that described a
+ * different set of slots than the PDFs is worse than no export.
+ */
+function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): LoadedManual {
   const configFile = join(manualDir, "manual.config.yaml");
   const parsed = manualConfigSchema.safeParse(parseYaml(readFileSync(configFile, "utf8")));
   if (!parsed.success) {
@@ -188,13 +403,7 @@ async function build(manualDir: string, filters: ReadonlyMap<string, string>): P
     throw new ContentError(configFile, "manual.config", `invalid manual configuration — ${detail}`);
   }
   const config = parsed.data;
-
   const { doc, warnings } = loadDocument(manualDir, config);
-  const outDir = join(manualDir, config.output.dir);
-  mkdirSync(outDir, { recursive: true });
-
-  const polyfill = pagedRuntime();
-  const assetBase = pathToFileURL(join(manualDir, "assets", "figures")).href;
 
   const targets = config.targets.filter((t) =>
     [...filters.entries()].every(([axis, value]) => t[axis] === value),
@@ -204,15 +413,99 @@ async function build(manualDir: string, filters: ReadonlyMap<string, string>): P
     throw new Error(`No target matches ${desc || "(no filter)"}`);
   }
 
+  return { config, doc, warnings, targets, figuresDir: join(manualDir, "assets", "figures") };
+}
+
+/**
+ * Resolve one target's image slots.
+ *
+ * Slots are collected from the CONDITIONED manual, so a deployment is never
+ * asked for an image of a control it does not have. `undeclared` can only be
+ * read after every slot has been resolved, which is why the index is returned
+ * alongside rather than queried here.
+ */
+function resolveTargetImages(
+  manual: ReturnType<typeof assemble>,
+  figuresDir: string,
+  tenant: string,
+): {
+  entries: ManifestSlot[];
+  slots: Map<string, string>;
+  images: ImageIndex;
+} {
+  const uses = collectSlots(manual, catalog);
+  const images = buildImageIndex(figuresDir, tenant);
+  const entries = manifestSlots(uses, (slot) => images.resolve(slot));
+  return { entries, slots: new Map(uses.map((u) => [u.nodeId, u.slot])), images };
+}
+
+/** Export the image request document. Needs no renderer, so no browser. */
+function exportImages(
+  manualDir: string,
+  filters: ReadonlyMap<string, string>,
+  outPath: string,
+): void {
+  const { config, doc, targets, figuresDir } = loadManual(manualDir, filters);
+
+  const perTarget = targets.map((target) => {
+    const tenant = requireAxisValue(target, "tenant");
+    const manual = assemble(doc, target, catalog);
+    const { entries, images } = resolveTargetImages(manual, figuresDir, tenant);
+    return { tenant, entries, undeclared: images.undeclared() };
+  });
+
+  const report = imageRequests(config, perTarget);
+  mkdirSync(dirname(outPath), { recursive: true });
+  writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+
+  const counts = report["counts"] as { total: number; delivered: number; pending: number };
+  console.log(
+    `  ${counts.total} image slot(s): ${counts.delivered} delivered, ${counts.pending} pending`,
+  );
+  console.log(`  -> ${outPath}`);
+  printUndeclaredImages(new Set((report["undeclared"] as string[] | undefined) ?? []));
+}
+
+/**
+ * Where the image request document is written: `--out <path>`, or next to the
+ * manual by default.
+ *
+ * The default deliberately sits OUTSIDE `output/`, which `.gitignore` excludes.
+ * This file is a request handed to another team, not a build artefact — if it
+ * only existed for whoever last ran a build, the team producing the images
+ * could not read it at all.
+ */
+export function parseOutPath(args: readonly string[], manualId: string): string {
+  const flag = args.indexOf("--out");
+  if (flag === -1) return `manuals/${manualId}/image-requests.json`;
+  const value = args[flag + 1];
+  if (!value || value.startsWith("--")) {
+    throw new Error("--out requires a path, e.g. `--out requests/broadlineavida.json`");
+  }
+  return value;
+}
+
+async function build(manualDir: string, filters: ReadonlyMap<string, string>): Promise<void> {
+  const { config, doc, warnings, targets, figuresDir } = loadManual(manualDir, filters);
+  const outDir = join(manualDir, config.output.dir);
+  mkdirSync(outDir, { recursive: true });
+
+  const polyfill = pagedRuntime();
+  const orphans = new Set<string>();
+
   for (const target of targets) {
     const manual = assemble(doc, target, catalog);
+    const tenant = requireAxisValue(target, "tenant");
     const name = config.output.filename
-      .replace("{tenant}", requireAxisValue(target, "tenant"))
+      .replace("{tenant}", tenant)
       .replace("{contentVersion}", config.manual.contentVersion);
+
+    const { entries, slots, images } = resolveTargetImages(manual, figuresDir, tenant);
 
     const html = renderHtml(manual, {
       header: `BROADSEC  |  ${config.manual.title}  |  v${config.manual.contentVersion}`,
-      assetBase,
+      slots,
+      images: (slot) => images.resolve(slot),
       polyfill,
       cover: {
         brand: "BROADSEC",
@@ -228,13 +521,25 @@ async function build(manualDir: string, filters: ReadonlyMap<string, string>): P
     writeFileSync(htmlPath, html, "utf8");
     const { pages } = await printToPdf(htmlPath, pdfPath);
 
+    // Read after rendering: `undeclared` can only be answered once every slot
+    // this target uses has been resolved.
+    for (const slot of images.undeclared()) orphans.add(slot);
+    const delivered = entries.filter((e) => e.state !== "pending").length;
+
     const sections = manual.children.length;
     const label = Object.entries(target)
       .map(([axis, value]) => `${axis}=${value}`)
       .join(" ");
-    console.log(`  ${label.padEnd(16)} ${sections} section(s), ${manual.numbers.size} numbered node(s), ${pages} page(s) -> ${name}`);
+    console.log(
+      `  ${label.padEnd(16)} ${sections} section(s), ${manual.numbers.size} numbered node(s), ` +
+        `${pages} page(s), ${delivered}/${entries.length} image(s) -> ${name}`,
+    );
   }
 
+  // The build reports the image state but does not write the request document:
+  // that is an explicit export (`images`), because it leaves the repository for
+  // another team and should not be a side effect nobody asked for.
+  printUndeclaredImages(orphans);
   printWarnings(warnings);
 }
 
@@ -260,9 +565,11 @@ export function formatCliError(error: unknown): string {
  */
 export async function run(argv: readonly string[]): Promise<number> {
   const [command, manualId, ...rest] = argv;
-  if (command !== "build" || !manualId) {
+  const axisFlags = "[--tenant <id>] [--axis <name>=<value> ...]";
+  if ((command !== "build" && command !== "images") || !manualId) {
     console.error(
-      "usage: broadsec-manual build <manual> [--tenant <id>] [--axis <name>=<value> ...]",
+      `usage: broadsec-manual build <manual> ${axisFlags}\n` +
+        `       broadsec-manual images <manual> ${axisFlags} [--out <path>]`,
     );
     return 2;
   }
@@ -275,8 +582,14 @@ export async function run(argv: readonly string[]): Promise<number> {
     const manualDir = resolve(process.cwd(), "manuals", manualId);
 
     const label = [...filters.entries()].map(([axis, value]) => `${axis}=${value}`).join(" ");
-    console.log(`building ${manualId}${label ? ` (${label})` : ""}`);
 
+    if (command === "images") {
+      console.log(`exporting image requests for ${manualId}${label ? ` (${label})` : ""}`);
+      exportImages(manualDir, filters, resolve(process.cwd(), parseOutPath(rest, manualId)));
+      return 0;
+    }
+
+    console.log(`building ${manualId}${label ? ` (${label})` : ""}`);
     await build(manualDir, filters);
     return 0;
   } catch (error) {

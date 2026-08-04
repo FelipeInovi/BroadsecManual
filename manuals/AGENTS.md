@@ -9,9 +9,16 @@ One folder per manual. Everything here is **content and data**, never code.
   manual.config.yaml   Axes, targets, versioning, catalogue pin
   knowledge/           Extracted facts (GENERATED — never hand-edit)
   sections/            Authored content, a tree of fragments
-  assets/figures/      Figures, named by stable id
+  assets/figures/      Delivered images + the pending placeholder
+    _pending.svg       Stands in for every slot not delivered yet
+    _common/           One image valid for every deployment
+    <tenant>/          Images made for one deployment only
   output/              Build output (gitignored)
 ```
+
+Images are addressed by **slot**, never by path — content names which image a
+place needs, the build decides where the file lives. See the
+`module-completeness` skill for the rule and the naming convention.
 
 ## Content language
 

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img"
+     aria-label="Imagen pendiente de entrega">
+  <!--
+    The pending placeholder. ONE image for every undelivered slot in this
+    manual, so a declared image always occupies its place instead of leaving a
+    gap the reader would take for finished content.
+
+    It is an SVG on purpose: it stays sharp at any size, from a 24pt icon cell
+    to a full-width figure, and it is text in git rather than a binary.
+
+    Its frame and glyph are what read at icon size; the wording only reads at
+    figure size. It names no element on purpose — every slot sits directly under
+    the thing it depicts, so the page already says which image is missing.
+  -->
+  <rect x="1.5" y="1.5" width="317" height="197" rx="6"
+        fill="#F4F7FA" stroke="#8FA3B8" stroke-width="1.6" stroke-dasharray="7 5"/>
+  <g fill="none" stroke="#8FA3B8" stroke-width="2.4" stroke-linejoin="round">
+    <rect x="112" y="52" width="96" height="70" rx="4"/>
+    <path d="M112 104l24-22 18 16 14-12 40 30"/>
+  </g>
+  <circle cx="186" cy="71" r="7" fill="#2DD4BF"/>
+  <text x="160" y="158" text-anchor="middle" fill="#1A2332"
+        font-family="Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="15" font-weight="600" letter-spacing="0.8">IMAGEN PENDIENTE</text>
+</svg>

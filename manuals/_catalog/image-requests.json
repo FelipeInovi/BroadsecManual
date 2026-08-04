@@ -1,0 +1,168 @@
+{
+  "manual": "_catalog",
+  "contentVersion": "0.1.0",
+  "convention": {
+    "resolution": [
+      "<tenant>/<slot path>.<ext> — an image made for that one deployment",
+      "_common/<slot path>.<ext> — one image valid for every deployment (preferred)",
+      "otherwise the pending placeholder renders in its place"
+    ],
+    "slotPath": "a slot's dots are folders: `barra.filtro.fig` -> `barra/filtro/fig`",
+    "extensions": "png, jpg, jpeg, svg, webp or gif — the slot never names one",
+    "root": "manuals/<manual>/assets/figures/",
+    "preferShared": "deliver to _common/ unless the screen genuinely differs by deployment — six copies of one icon are six things to update"
+  },
+  "deploymentsCovered": [
+    "demo"
+  ],
+  "deploymentsConfigured": 1,
+  "counts": {
+    "total": 8,
+    "delivered": 5,
+    "pending": 3
+  },
+  "pending": [
+    {
+      "slot": "cat.fl.uno",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.fl.uno",
+          "blockType": "field-list",
+          "shows": "Elemento con imagen pendiente"
+        }
+      ],
+      "pendingFor": [
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/cat/fl/uno.png",
+        "override": "<tenant>/cat/fl/uno.png"
+      }
+    },
+    {
+      "slot": "cat.pr.uno",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.pr.uno",
+          "blockType": "procedure",
+          "shows": "Un paso con acciones"
+        }
+      ],
+      "pendingFor": [
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/cat/pr/uno.png",
+        "override": "<tenant>/cat/pr/uno.png"
+      }
+    },
+    {
+      "slot": "cat.it.dos",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.it.dos",
+          "blockType": "icon-table",
+          "shows": "Control sin ícono todavía"
+        }
+      ],
+      "pendingFor": [
+        "demo"
+      ],
+      "deliverTo": {
+        "shared": "_common/cat/it/dos.png",
+        "override": "<tenant>/cat/it/dos.png"
+      }
+    }
+  ],
+  "delivered": [
+    {
+      "slot": "cat.fl.dos",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.fl.dos",
+          "blockType": "field-list",
+          "shows": "Elemento con imagen"
+        }
+      ],
+      "files": [
+        "_common/cat/fl/dos.png"
+      ]
+    },
+    {
+      "slot": "cat.tl.dos",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.tl.dos",
+          "blockType": "term-list",
+          "shows": "Término con imagen"
+        }
+      ],
+      "files": [
+        "_common/cat/tl/dos.png"
+      ]
+    },
+    {
+      "slot": "cat.pr.dos",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.pr.dos",
+          "blockType": "procedure",
+          "shows": "Un paso con imagen"
+        }
+      ],
+      "files": [
+        "_common/cat/pr/dos.png"
+      ]
+    },
+    {
+      "slot": "cat.it.uno",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.it.uno",
+          "blockType": "icon-table",
+          "shows": "Buscar"
+        }
+      ],
+      "files": [
+        "_common/cat/it/uno.png"
+      ]
+    },
+    {
+      "slot": "cat.figure.demo",
+      "neededBy": [
+        "demo"
+      ],
+      "uses": [
+        {
+          "nodeId": "cat.figure.demo",
+          "blockType": "figure",
+          "shows": "Epígrafe de la figura, escrito sin número."
+        }
+      ],
+      "files": [
+        "_common/cat/figure/demo.png"
+      ]
+    }
+  ]
+}

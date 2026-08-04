@@ -25,7 +25,6 @@ children:
   - id: interfaz-general.fig-home
     type: figure
     props:
-      src: home-overview.png
       caption: Componentes del Home — Mapa, Barra Superior e Incidentes.
       widthPercent: 62
 
@@ -138,7 +137,6 @@ children:
       - id: mapa.fig-capas
         type: figure
         props:
-          src: map-layers.png
           caption: Visualización de capas sobre el mapa.
           widthPercent: 78
 
@@ -149,7 +147,6 @@ children:
       - id: barra-superior.fig
         type: figure
         props:
-          src: top-bar.png
           caption: Barra superior de la plataforma.
           widthPercent: 88
 
@@ -160,47 +157,38 @@ children:
           descriptionHeader: Descripción
           rows:
             - id: barra.busqueda
-              icon: icons/search.png
               label: Barra de búsqueda
               description: >-
                 Permite realizar búsquedas por teléfono o por ID de llamada.
             - id: barra.filtros
-              icon: icons/filters.png
               label: Filtros
               description: Permite filtrar y categorizar los casos reportados.
             - id: barra.eventos
-              icon: icons/events.png
               label: Eventos
               description: >-
                 Permite controlar el número de elementos mostrados en el mapa.
             - id: barra.anadir-caso
-              icon: icons/add-case.png
               label: Añadir caso
               description: >-
                 Permite crear un incidente o acceder al módulo de gestión de
                 operadores.
             - id: barra.dashboard
-              icon: icons/dashboard.png
               label: Dashboard
               description: >-
                 Muestra estadísticas en tiempo real de los casos gestionados.
             - id: barra.fuerzas
-              icon: icons/field-forces.png
               label: Fuerzas en campo
               description: >-
                 Permite ver los agentes disponibles y su ubicación.
             - id: barra.mapa
-              icon: icons/map.png
               label: Mapa
               description: Controla las capas disponibles sobre el mapa.
             - id: barra.back
-              icon: icons/back.png
               label: Back
               description: >-
                 Permite volver a la navegación anterior. Está disponible en
                 todos los módulos.
             - id: barra.admin
-              icon: icons/admin-menu.png
               label: Menú de Administración
               description: >-
                 Da acceso al panel de Gestión de Usuarios y al botón de Cerrar
@@ -228,7 +216,6 @@ children:
       - id: barra.filtro.fig
         type: figure
         props:
-          src: top-bar-filter.png
           caption: Panel de filtros de la barra superior.
           widthPercent: 40
 

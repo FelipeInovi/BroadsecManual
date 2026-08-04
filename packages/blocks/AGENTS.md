@@ -49,6 +49,11 @@ architecture exists to avoid.
 ## Invariants this package protects
 
 - Content never carries a number, anchor or slug. Only stable `id`s.
+- Content never carries a filename or a path. Images are **slots** — see
+  `src/image.ts`. A path cannot vary by deployment and gives the area that
+  delivers the images no key to synchronise against.
+- A block that carries images declares `images: ImageSlotPolicy`, so slots can
+  be enumerated for the manifest without any consumer switching on block type.
 - Cross-references are `{ kind: "ref", target: NodeId }` — never literal text.
 - UI labels quoted from the product use `{ kind: "uiLabel", i18nKey }`, so the
   manual always says what the screen says.

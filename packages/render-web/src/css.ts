@@ -269,13 +269,6 @@ td.tbl__icon {
   background: ${t.sectionHeader.background};
 }
 td.tbl__icon img { max-width: 20pt; max-height: 20pt; }
-/* Same cell, pending state: the item number stands in for the image that has
-   not been delivered yet, and names the reference it will arrive under. */
-td.tbl__icon--pending {
-  color: ${t.runningHeader.accent};
-  font-size: ${t.runningFooter.textSize};
-  font-style: italic;
-}
 td.tbl__label {
   width: 130pt;
   color: ${t.table.labelColor};
@@ -316,17 +309,6 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
 
 .field__shot { text-align: center; margin: ${t.space.sm} 0 0; }
 .field__shot img { max-width: 62%; border: 0.6pt solid ${t.table.rule}; }
-/* A pending screenshot is stated, never left blank — an empty gap reads as
-   finished content. Counted and reported by the build. */
-.field__pending {
-  text-align: center;
-  margin: ${t.space.sm} 0 0;
-  padding: 14pt;
-  border: 0.8pt dashed ${t.figure.captionColor};
-  color: ${t.figure.captionColor};
-  font-size: ${t.figure.captionSize};
-  font-style: italic;
-}
 
 /* ---- term-list ------------------------------------------------------- */
 
@@ -362,6 +344,27 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
 .step__actions li { margin-bottom: ${t.space.xs}; }
 .step__shot { text-align: center; margin: ${t.space.sm} 0 0; }
 .step__shot img { max-width: 70%; border: 0.6pt solid ${t.table.rule}; }
+
+/* ---- pending images -------------------------------------------------- */
+
+/* Every image slot renders something: the delivered image, or the single
+   placeholder holding its place. Never an empty gap — a gap reads as finished
+   content and the reader cannot tell it is not.
+
+   LAST in the stylesheet on purpose. Each block sizes its own images
+   (\`.step__shot img\` at 70%, \`.field__shot img\` at 62%, a figure inline at
+   whatever it declares) and those selectors are just as specific as this one,
+   so only source order makes the placeholder one consistent size everywhere.
+   Move this block up and the placeholders silently go back to being sized by
+   whichever block they happen to sit in. */
+img.shot--pending {
+  max-width: 40%;
+  /* The placeholder draws its own dashed frame; a second border would double it. */
+  border: 0;
+}
+/* A pending icon gets a little more room than a delivered one: at 20pt only
+   its frame is legible, and the row's label already names the control. */
+td.tbl__icon--pending img { max-width: 24pt; max-height: 24pt; opacity: 0.75; }
 
 .content { padding-right: ${gutter}; }
 `;
