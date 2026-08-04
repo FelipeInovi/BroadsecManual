@@ -1,0 +1,206 @@
+import { existsSync, readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
+import { join, posix, relative, sep } from "node:path";
+import { parse as parseYaml } from "yaml";
+import { z } from "zod";
+import {
+  capabilityMatrix,
+  findTenantReferences,
+  parseTenantConfig,
+  reconcileTenants,
+  type CapabilityRow,
+  type TenantConfig,
+  type TenantReference,
+} from "@broadsec-manual/extract";
+
+/**
+ * `extract` — read a source product and write the module map.
+ *
+ * The map is the only bridge between product code and manual content: content is
+ * written against the map, never against source read ad hoc. Everything here
+ * carries the file and line it came from, because a fact nobody can point at is
+ * a guess, and a guess about which deployment sees what is the one defect a
+ * reader cannot detect.
+ *
+ * The source repository is READ-ONLY. Nothing in this file writes outside
+ * `manuals/<manual>/knowledge/`.
+ */
+
+const registrySchema = z.object({
+  sources: z.record(
+    z.string().min(1),
+    z
+      .object({
+        name: z.string().min(1),
+        path: z.string().min(1),
+        extract: z
+          .object({
+            tenantConfigs: z.string().min(1),
+            components: z.string().min(1),
+            pages: z.string().min(1),
+          })
+          .passthrough(),
+      })
+      .passthrough(),
+  ),
+});
+
+/** Source files worth scanning for a deployment comparison. */
+const SCANNED = /\.(tsx?|jsx?)$/;
+
+function walkFiles(root: string, out: string[] = []): string[] {
+  if (!existsSync(root)) return out;
+  for (const entry of readdirSync(root, { withFileTypes: true })) {
+    const path = join(root, entry.name);
+    if (entry.isDirectory()) walkFiles(path, out);
+    else if (SCANNED.test(entry.name)) out.push(path);
+  }
+  return out;
+}
+
+/** Every fact one extraction produced. */
+export interface ModuleMap {
+  readonly source: string;
+  readonly tenants: ReadonlyArray<{ id: string; code: string; source: string }>;
+  readonly capabilities: readonly CapabilityRow[];
+  readonly tenantReferences: readonly TenantReference[];
+  /**
+   * Where the manual's declared deployments and the product's configs disagree.
+   * Absent when they match. Reported, never reconciled automatically.
+   */
+  readonly registryMismatch?: readonly string[];
+}
+
+/**
+ * Compare two maps and report what moved.
+ *
+ * This diff IS the drift report, and it is the reason to regenerate the map at
+ * all: a capability that changed hands means tenant tagging in the content may
+ * now be wrong, and nothing else in the pipeline can notice that.
+ */
+export function diffMaps(before: ModuleMap, after: ModuleMap): readonly string[] {
+  const out: string[] = [];
+
+  const ids = (m: ModuleMap) => new Set(m.tenants.map((t) => t.id));
+  for (const id of ids(after)) if (!ids(before).has(id)) out.push(`deployment added: ${id}`);
+  for (const id of ids(before)) if (!ids(after).has(id)) out.push(`deployment removed: ${id}`);
+
+  const byFlag = (m: ModuleMap) => new Map(m.capabilities.map((c) => [c.flag, c]));
+  const b = byFlag(before);
+  const a = byFlag(after);
+  for (const [flag, row] of a) {
+    const old = b.get(flag);
+    if (!old) {
+      out.push(`capability added: ${flag} (on for ${row.enabledFor.join(", ") || "nobody"})`);
+      continue;
+    }
+    const was = old.enabledFor.join(",");
+    const now = row.enabledFor.join(",");
+    if (was !== now) {
+      out.push(
+        `capability changed: ${flag} was on for [${was || "nobody"}], now [${now || "nobody"}] ` +
+          `— content tagged on this may be wrong`,
+      );
+    }
+  }
+  for (const flag of b.keys()) if (!a.has(flag)) out.push(`capability removed: ${flag}`);
+
+  return out;
+}
+
+export interface ExtractResult {
+  readonly map: ModuleMap;
+  readonly drift: readonly string[];
+  readonly outPath: string;
+}
+
+/**
+ * Run the extraction for one manual.
+ *
+ * Takes the MANUAL id rather than the source id, matching `build` and `images`,
+ * and reads which source it documents from its own config. One manual documents
+ * one product; the reverse is not guaranteed.
+ */
+export function extract(repoRoot: string, manualId: string): ExtractResult {
+  const manualDir = join(repoRoot, "manuals", manualId);
+  const manualConfig = parseYaml(readFileSync(join(manualDir, "manual.config.yaml"), "utf8")) as {
+    manual?: { source?: string };
+    axes?: { tenant?: { values?: Array<{ id?: string }> } };
+  };
+  const sourceId = manualConfig.manual?.source;
+  if (!sourceId) {
+    throw new Error(
+      `manuals/${manualId}/manual.config.yaml declares no \`manual.source\`, so there ` +
+        `is no way to know which product it documents.`,
+    );
+  }
+
+  const registryFile = join(repoRoot, "sources", "registry.yaml");
+  const registry = registrySchema.parse(parseYaml(readFileSync(registryFile, "utf8")));
+  const entry = registry.sources[sourceId];
+  if (!entry) {
+    throw new Error(
+      `sources/registry.yaml has no source "${sourceId}". Add it there before ` +
+        `extracting: the registry is what says where the product lives and which ` +
+        `files to read.`,
+    );
+  }
+
+  const sourceRoot = join(repoRoot, entry.path);
+  if (!existsSync(sourceRoot)) {
+    throw new Error(
+      `the source repository is not at "${entry.path}" (resolved to ${sourceRoot}). ` +
+        `\`path\` in sources/registry.yaml is relative to this repository's root.`,
+    );
+  }
+
+  // --- tenants ------------------------------------------------------------
+  const configGlob = entry.extract.tenantConfigs;
+  const configDir = join(sourceRoot, configGlob.slice(0, configGlob.lastIndexOf("/")));
+  const configs: TenantConfig[] = readdirSync(configDir)
+    .filter((f) => f.endsWith(".config.ts"))
+    .map((f) => parseTenantConfig(f, readFileSync(join(configDir, f), "utf8")))
+    .sort((x, y) => x.id.localeCompare(y.id));
+  if (configs.length === 0) {
+    throw new Error(`no \`*.config.ts\` found in ${configDir} — the tenant registry is empty.`);
+  }
+
+  // --- deployment references ----------------------------------------------
+  const codes = configs.map((c) => c.code);
+  const scanRoots = [entry.extract.components, entry.extract.pages].map((p) => join(sourceRoot, p));
+  const references: TenantReference[] = [];
+  for (const root of scanRoots) {
+    for (const file of walkFiles(root)) {
+      const rel = relative(sourceRoot, file).split(sep).join(posix.sep);
+      references.push(...findTenantReferences(rel, readFileSync(file, "utf8"), codes));
+    }
+  }
+
+  const declared = (manualConfig.axes?.tenant?.values ?? [])
+    .map((v) => v.id)
+    .filter((id): id is string => typeof id === "string");
+  const mismatch = reconcileTenants(configs.map((c) => c.id), declared);
+
+  const map: ModuleMap = {
+    source: sourceId,
+    tenants: configs.map((c) => ({
+      id: c.id,
+      code: c.code,
+      source: `${configGlob.slice(0, configGlob.lastIndexOf("/"))}/${c.source}`,
+    })),
+    capabilities: capabilityMatrix(configs),
+    tenantReferences: references,
+    ...(mismatch.length > 0 ? { registryMismatch: mismatch } : {}),
+  };
+
+  const outPath = join(manualDir, "knowledge", "module-map.json");
+  const drift = existsSync(outPath)
+    ? diffMaps(JSON.parse(readFileSync(outPath, "utf8")) as ModuleMap, map)
+    : [];
+
+  mkdirSync(join(manualDir, "knowledge"), { recursive: true });
+  // No timestamp: the map is regenerated constantly and a clock would make every
+  // regeneration a diff, drowning the drift this file exists to show.
+  writeFileSync(outPath, `${JSON.stringify(map, null, 2)}\n`, "utf8");
+
+  return { map, drift, outPath };
+}

@@ -13,7 +13,7 @@ filesystem, the network or the clock.**
 | `images <manual> [--out <path>]` | Export the image request document for the area that produces the screenshots |
 | `validate <manual>` | Run all validations, render nothing |
 | `drift <manual>` | Re-extract the source repo and diff against `knowledge/` |
-| `extract <source>` | Regenerate `module-map.json` from a source repo |
+| `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting drift |
 | `catalog` | Serve the block gallery |
 | `coverage <manual>` | Report dead content and per-target gaps |
 

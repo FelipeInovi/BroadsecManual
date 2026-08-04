@@ -1,0 +1,2234 @@
+{
+  "source": "broadlineavida",
+  "tenants": [
+    {
+      "id": "amva",
+      "code": "AMVA",
+      "source": "src/render/config/amva.config.ts:2"
+    },
+    {
+      "id": "ant",
+      "code": "ANT",
+      "source": "src/render/config/ant.config.ts:2"
+    },
+    {
+      "id": "demo",
+      "code": "DEMO",
+      "source": "src/render/config/demo.config.ts:2"
+    },
+    {
+      "id": "dev",
+      "code": "DEV",
+      "source": "src/render/config/dev.config.ts:2"
+    },
+    {
+      "id": "lv",
+      "code": "LV",
+      "source": "src/render/config/lv.config.ts:2"
+    },
+    {
+      "id": "med",
+      "code": "MED",
+      "source": "src/render/config/med.config.ts:550"
+    },
+    {
+      "id": "mv",
+      "code": "MV",
+      "source": "src/render/config/mv.config.ts:2"
+    }
+  ],
+  "capabilities": [
+    {
+      "flag": "Abandonado",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 629
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "BLIAS",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 686
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Deceso",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 682
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Explotado",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 648
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Extraviado",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 649
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Feminicidio",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 683
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Homicidio",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 684
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Intraurbano",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 653
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Maltratado",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 654
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Maltrato",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 655
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Suicidio",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 685
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "Volcamiento",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 584
+        },
+        "mv": {
+          "value": true,
+          "line": 29
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv"
+      ],
+      "enabledFor": [
+        "med",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canAddIncidentsOrTasks",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 47
+        },
+        "ant": {
+          "value": false,
+          "line": 80
+        },
+        "demo": {
+          "value": true,
+          "line": 82
+        },
+        "dev": {
+          "value": true,
+          "line": 82
+        },
+        "lv": {
+          "value": true,
+          "line": 82
+        },
+        "med": {
+          "value": false,
+          "line": 813
+        },
+        "mv": {
+          "value": true,
+          "line": 83
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canCreateAgentsModule",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 54
+        },
+        "ant": {
+          "value": false,
+          "line": 87
+        },
+        "demo": {
+          "value": true,
+          "line": 89
+        },
+        "dev": {
+          "value": true,
+          "line": 89
+        },
+        "lv": {
+          "value": false,
+          "line": 90
+        },
+        "med": {
+          "value": false,
+          "line": 821
+        },
+        "mv": {
+          "value": true,
+          "line": 90
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canSeeBoT",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 48
+        },
+        "ant": {
+          "value": false,
+          "line": 81
+        },
+        "demo": {
+          "value": true,
+          "line": 83
+        },
+        "dev": {
+          "value": true,
+          "line": 83
+        },
+        "lv": {
+          "value": false,
+          "line": 83
+        },
+        "med": {
+          "value": false,
+          "line": 814
+        },
+        "mv": {
+          "value": true,
+          "line": 84
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canSeeForcesInField",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 49
+        },
+        "ant": {
+          "value": false,
+          "line": 82
+        },
+        "demo": {
+          "value": true,
+          "line": 84
+        },
+        "dev": {
+          "value": true,
+          "line": 84
+        },
+        "lv": {
+          "value": false,
+          "line": 84
+        },
+        "med": {
+          "value": false,
+          "line": 815
+        },
+        "mv": {
+          "value": true,
+          "line": 85
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canViewFilterCallType",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 19
+        },
+        "ant": {
+          "value": false,
+          "line": 19
+        },
+        "demo": {
+          "value": false,
+          "line": 19
+        },
+        "dev": {
+          "value": false,
+          "line": 19
+        },
+        "lv": {
+          "value": true,
+          "line": 19
+        },
+        "med": {
+          "value": false,
+          "line": 567
+        },
+        "mv": {
+          "value": false,
+          "line": 19
+        }
+      },
+      "enabledFor": [
+        "lv"
+      ]
+    },
+    {
+      "flag": "canViewFilterCity",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 12
+        },
+        "ant": {
+          "value": true,
+          "line": 12
+        },
+        "demo": {
+          "value": true,
+          "line": 12
+        },
+        "dev": {
+          "value": true,
+          "line": 12
+        },
+        "lv": {
+          "value": true,
+          "line": 12
+        },
+        "med": {
+          "value": false,
+          "line": 560
+        },
+        "mv": {
+          "value": false,
+          "line": 12
+        }
+      },
+      "enabledFor": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv"
+      ]
+    },
+    {
+      "flag": "canViewFilterCommune",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 14
+        },
+        "ant": {
+          "value": false,
+          "line": 14
+        },
+        "demo": {
+          "value": true,
+          "line": 14
+        },
+        "dev": {
+          "value": true,
+          "line": 14
+        },
+        "lv": {
+          "value": false,
+          "line": 14
+        },
+        "med": {
+          "value": true,
+          "line": 562
+        },
+        "mv": {
+          "value": true,
+          "line": 14
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "med",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canViewFilterCompletionType",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 18
+        },
+        "ant": {
+          "value": false,
+          "line": 18
+        },
+        "demo": {
+          "value": false,
+          "line": 18
+        },
+        "dev": {
+          "value": false,
+          "line": 18
+        },
+        "lv": {
+          "value": false,
+          "line": 18
+        },
+        "med": {
+          "value": false,
+          "line": 566
+        },
+        "mv": {
+          "value": false,
+          "line": 18
+        }
+      },
+      "enabledFor": []
+    },
+    {
+      "flag": "canViewFilterDepartment",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 11
+        },
+        "ant": {
+          "value": true,
+          "line": 11
+        },
+        "demo": {
+          "value": true,
+          "line": 11
+        },
+        "dev": {
+          "value": true,
+          "line": 11
+        },
+        "lv": {
+          "value": true,
+          "line": 11
+        },
+        "med": {
+          "value": false,
+          "line": 559
+        },
+        "mv": {
+          "value": false,
+          "line": 11
+        }
+      },
+      "enabledFor": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv"
+      ]
+    },
+    {
+      "flag": "canViewFilterNeighborhood",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 15
+        },
+        "ant": {
+          "value": false,
+          "line": 15
+        },
+        "demo": {
+          "value": true,
+          "line": 15
+        },
+        "dev": {
+          "value": true,
+          "line": 15
+        },
+        "lv": {
+          "value": false,
+          "line": 15
+        },
+        "med": {
+          "value": true,
+          "line": 563
+        },
+        "mv": {
+          "value": true,
+          "line": 15
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "med",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canViewFilterRegion",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 10
+        },
+        "ant": {
+          "value": false,
+          "line": 10
+        },
+        "demo": {
+          "value": false,
+          "line": 10
+        },
+        "dev": {
+          "value": false,
+          "line": 10
+        },
+        "lv": {
+          "value": true,
+          "line": 10
+        },
+        "med": {
+          "value": false,
+          "line": 558
+        },
+        "mv": {
+          "value": false,
+          "line": 10
+        }
+      },
+      "enabledFor": [
+        "lv"
+      ]
+    },
+    {
+      "flag": "canViewFilterResponseForce",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 17
+        },
+        "ant": {
+          "value": true,
+          "line": 17
+        },
+        "demo": {
+          "value": true,
+          "line": 17
+        },
+        "dev": {
+          "value": true,
+          "line": 17
+        },
+        "lv": {
+          "value": true,
+          "line": 17
+        },
+        "med": {
+          "value": true,
+          "line": 565
+        },
+        "mv": {
+          "value": false,
+          "line": 17
+        }
+      },
+      "enabledFor": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "med"
+      ]
+    },
+    {
+      "flag": "canViewFilterStation",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 16
+        },
+        "ant": {
+          "value": false,
+          "line": 16
+        },
+        "demo": {
+          "value": false,
+          "line": 16
+        },
+        "dev": {
+          "value": false,
+          "line": 16
+        },
+        "lv": {
+          "value": false,
+          "line": 16
+        },
+        "med": {
+          "value": false,
+          "line": 564
+        },
+        "mv": {
+          "value": true,
+          "line": 16
+        }
+      },
+      "enabledFor": [
+        "mv"
+      ]
+    },
+    {
+      "flag": "canViewFilterUNP",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 9
+        },
+        "ant": {
+          "value": false,
+          "line": 9
+        },
+        "demo": {
+          "value": false,
+          "line": 9
+        },
+        "dev": {
+          "value": false,
+          "line": 9
+        },
+        "lv": {
+          "value": true,
+          "line": 9
+        },
+        "med": {
+          "value": false,
+          "line": 557
+        },
+        "mv": {
+          "value": false,
+          "line": 9
+        }
+      },
+      "enabledFor": [
+        "lv"
+      ]
+    },
+    {
+      "flag": "canViewFilterZone",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 13
+        },
+        "ant": {
+          "value": false,
+          "line": 13
+        },
+        "demo": {
+          "value": true,
+          "line": 13
+        },
+        "dev": {
+          "value": true,
+          "line": 13
+        },
+        "lv": {
+          "value": false,
+          "line": 13
+        },
+        "med": {
+          "value": true,
+          "line": 561
+        },
+        "mv": {
+          "value": true,
+          "line": 13
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "med",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canViewTimeMetrics",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 20
+        },
+        "ant": {
+          "value": false,
+          "line": 20
+        },
+        "demo": {
+          "value": false,
+          "line": 20
+        },
+        "dev": {
+          "value": false,
+          "line": 20
+        },
+        "lv": {
+          "value": true,
+          "line": 20
+        },
+        "med": {
+          "value": false,
+          "line": 568
+        },
+        "mv": {
+          "value": false,
+          "line": 20
+        }
+      },
+      "enabledFor": [
+        "lv"
+      ]
+    },
+    {
+      "flag": "enableVerifyFlow",
+      "tenants": {
+        "amva": {
+          "value": false,
+          "line": 21
+        },
+        "ant": {
+          "value": false,
+          "line": 22
+        },
+        "demo": {
+          "value": false,
+          "line": 21
+        },
+        "dev": {
+          "value": true,
+          "line": 21
+        },
+        "lv": {
+          "value": false,
+          "line": 22
+        },
+        "med": {
+          "value": false,
+          "line": 569
+        },
+        "mv": {
+          "value": true,
+          "line": 22
+        }
+      },
+      "enabledFor": [
+        "dev",
+        "mv"
+      ]
+    },
+    {
+      "flag": "noUbication",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 42
+        }
+      },
+      "absentFrom": [
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "med",
+        "mv"
+      ],
+      "enabledFor": [
+        "amva"
+      ]
+    },
+    {
+      "flag": "reportConfigForDemoLV",
+      "tenants": {
+        "demo": {
+          "value": false,
+          "line": 91
+        },
+        "dev": {
+          "value": false,
+          "line": 91
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "lv",
+        "med",
+        "mv"
+      ],
+      "enabledFor": []
+    },
+    {
+      "flag": "requireAtLeastOneCitySelected",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 23
+        },
+        "demo": {
+          "value": false,
+          "line": 23
+        },
+        "dev": {
+          "value": false,
+          "line": 23
+        },
+        "med": {
+          "value": true,
+          "line": 570
+        }
+      },
+      "absentFrom": [
+        "ant",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "amva",
+        "med"
+      ]
+    },
+    {
+      "flag": "typeIncidentsSiesm",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 26
+        },
+        "med": {
+          "value": true,
+          "line": 576
+        },
+        "mv": {
+          "value": true,
+          "line": 23
+        }
+      },
+      "absentFrom": [
+        "ant",
+        "demo",
+        "dev",
+        "lv"
+      ],
+      "enabledFor": [
+        "amva",
+        "med",
+        "mv"
+      ]
+    },
+    {
+      "flag": "ubication",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 41
+        }
+      },
+      "absentFrom": [
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "med",
+        "mv"
+      ],
+      "enabledFor": [
+        "amva"
+      ]
+    },
+    {
+      "flag": "useCreateUserFormWithAgency",
+      "tenants": {
+        "med": {
+          "value": true,
+          "line": 816
+        }
+      },
+      "absentFrom": [
+        "amva",
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ],
+      "enabledFor": [
+        "med"
+      ]
+    },
+    {
+      "flag": "useFilterForOnlyOneCity",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 22
+        },
+        "demo": {
+          "value": false,
+          "line": 22
+        },
+        "dev": {
+          "value": false,
+          "line": 22
+        }
+      },
+      "absentFrom": [
+        "ant",
+        "lv",
+        "med",
+        "mv"
+      ],
+      "enabledFor": [
+        "amva"
+      ]
+    },
+    {
+      "flag": "useFilterUbicationReport",
+      "tenants": {
+        "amva": {
+          "value": true,
+          "line": 25
+        }
+      },
+      "absentFrom": [
+        "ant",
+        "demo",
+        "dev",
+        "lv",
+        "med",
+        "mv"
+      ],
+      "enabledFor": [
+        "amva"
+      ]
+    }
+  ],
+  "tenantReferences": [
+    {
+      "file": "src/render/components/AddObservation.tsx",
+      "line": 133,
+      "codes": [
+        "ANT"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"ANT\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AddObservation.tsx",
+      "line": 145,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"AMVA\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AddObservation.tsx",
+      "line": 172,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AddObservation.tsx",
+      "line": 192,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "...(config.name !== \"MV\" ? baseOptions : []),",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AgensDetailsTabs/Agent/AgentAditionalInfo.tsx",
+      "line": 45,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"DEMO\" && agentSelected.id === 200 ? (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AgensDetailsTabs/Agent/AgentAditionalInfo.tsx",
+      "line": 65,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": ") : config.name === \"DEMO\" && agentSelected.id === 229 ? (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AgensDetailsTabs/Task/hooks/useTaskReports.ts",
+      "line": 15,
+      "codes": [
+        "ANT",
+        "AMVA"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "enabled: (isTask && !!id) || config.name !== \"ANT\" || config.name !== \"AMVA\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AgentDetails.tsx",
+      "line": 63,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "const withModal = config.name === \"MV\";",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 166,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "mixed",
+      "kind": "inline",
+      "text": "config.name === \"MED\" && agency !== \"\"",
+      "confidence": "low"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 213,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MED\" && isAdmin) {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 220,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MED\" && !isAdmin) {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 534,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "config.name !== \"MV\" &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 535,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "config.name !== \"AMVA\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 869,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"DEMO\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 1148,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "isReportFilter={config.name !== \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 1217,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "isReportFilter={config.name !== \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 1503,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"DEMO\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/ExternalIncidentModal.tsx",
+      "line": 45,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "...(config.name === \"DEMO\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/Filters/SearchInput.tsx",
+      "line": 102,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"MV\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/ForceIcon.tsx",
+      "line": 98,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{agentId === 200 && config.name === \"DEMO\" ? (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/ForceIcon.tsx",
+      "line": 104,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": ") : agentId === 229 && config.name === \"DEMO\" ? (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/AddressAutocomplete.tsx",
+      "line": 117,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "...(config.name !== \"DEMO\" && {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/AddressAutocomplete.tsx",
+      "line": 124,
+      "codes": [
+        "MV",
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MV\" || config.name === \"MED\") {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/InfoWindows/IncidentInfoWindow.tsx",
+      "line": 79,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(config.name === \"MV\" &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/InfoWindows/IncidentInfoWindow.tsx",
+      "line": 83,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(config.name === \"DEMO\" &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/InfoWindows/IncidentInfoWindow.tsx",
+      "line": 89,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(config.name === \"MV\" &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/InfoWindows/IncidentInfoWindow.tsx",
+      "line": 93,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "mixed",
+      "kind": "inline",
+      "text": "(config.name !== \"MV\" && location.case_state === \"case_open\");",
+      "confidence": "low"
+    },
+    {
+      "file": "src/render/components/Header.tsx",
+      "line": 85,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MED\" && isAdmin) {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/Header.tsx",
+      "line": 88,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MED\" && getAgency() === \"Recepcion\") {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/Header.tsx",
+      "line": 90,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "mixed",
+      "kind": "inline",
+      "text": "} else if (config.name === \"MED\" && getAgency() !== \"Recepcion\") {",
+      "confidence": "low"
+    },
+    {
+      "file": "src/render/components/HistoryDispatchAgents.tsx",
+      "line": 40,
+      "codes": [
+        "MV",
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "const IS_DEV_ENV = [\"MV\", \"DEMO\"].includes(config.name);",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 76,
+      "codes": [
+        "MV",
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(config.name === \"MV\" || config.name === \"DEMO\")",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 83,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"AMVA\" ? null : setAvlLayer(!avlLayer),",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 93,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"AMVA\" ? null : setMobileLayer(!mobileLayer),",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 98,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 105,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "config.name !== \"MV\" ? null : setCameraLayer(!cameraLayer),",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 112,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 138,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 225,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(layer.name === \"AVL\" && config.name === \"AMVA\") ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 226,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(layer.name === \"Mobile\" && config.name === \"AMVA\")",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 240,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(layer.name === \"AVL\" && config.name === \"AMVA\") ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 241,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(layer.name === \"Mobile\" && config.name === \"AMVA\")",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 266,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(layer.name === \"AVL\" && config.name === \"AMVA\") ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/LayersMap.tsx",
+      "line": 267,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(layer.name === \"Mobile\" && config.name === \"AMVA\")",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/ReportForm/AgentRequestModal.tsx",
+      "line": 163,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MV\" &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/ReportForm/AgentRequestModal.tsx",
+      "line": 783,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"MV\" &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/Timeline/TimeLineHistory.tsx",
+      "line": 20,
+      "codes": [
+        "MV",
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "const IS_DEV_ENV = [\"MV\", \"DEMO\"].includes(config.name);",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/AgentsReports/AgentReportFilters.tsx",
+      "line": 519,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "isReportFilter={config.name !== \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/AgentsReports/AgentReportFilters.tsx",
+      "line": 520,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "onlyOptions={config.name === \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/AgentsReports/AgentReportFilters.tsx",
+      "line": 575,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "isReportFilter={config.name !== \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/AgentsReports/AgentReportFilters.tsx",
+      "line": 576,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "onlyOptions={config.name === \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/AgentsReports/hooks/useActionsList.ts",
+      "line": 16,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/CCTV/hooks/useCamerasMap.ts",
+      "line": 43,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/CallAI.tsx",
+      "line": 234,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MV\") {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/CallAI.tsx",
+      "line": 459,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "...(config.name === \"DEMO\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/CallAI.tsx",
+      "line": 613,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MED\" && agency === \"Social\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/CallAI.tsx",
+      "line": 632,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MED\" && agency === \"Social\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/DashboardPage.tsx",
+      "line": 53,
+      "codes": [
+        "AMVA",
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{(config.name === \"AMVA\" || config.name === \"MV\") && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/hooks/useAgentRetrieve.ts",
+      "line": 19,
+      "codes": [
+        "AMVA"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "enabled: enabled && code !== null && config.name !== \"AMVA\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/hooks/useAgentsListDashboard.ts",
+      "line": 18,
+      "codes": [
+        "ANT",
+        "AMVA"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "enabled: (config.name !== \"ANT\" && config.name !== \"AMVA\") && !disableAllAgents",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/hooks/useAVLRetrieve.ts",
+      "line": 16,
+      "codes": [
+        "ANT",
+        "AMVA"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "enabled: config.name !== \"ANT\" || config.name !== \"AMVA\",",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/hooks/useLogout.ts",
+      "line": 11,
+      "codes": [
+        "MV",
+        "MED",
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "[\"MV\", \"MED\", \"AMVA\"].includes(config.name)",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/hooks/useMapData.ts",
+      "line": 117,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "const shouldFetchARS = config.name === \"MV\";",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/hooks/usePanelsRetrieve.ts",
+      "line": 18,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/IncidentDetailPage.tsx",
+      "line": 50,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "setPage(isLive ? (config.name === \"DEMO\" ? 1 : 1) : page);",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/IncidentDetailPage.tsx",
+      "line": 210,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/IncidentDetailPage.tsx",
+      "line": 215,
+      "codes": [
+        "AMVA",
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{(config.name === \"AMVA\" || config.name === \"MV\") && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/MobilityCasesDetailsTabs.tsx",
+      "line": 197,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"DEMO\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/MobilityCasesDetailsTabs.tsx",
+      "line": 239,
+      "codes": [
+        "MV",
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{(config.name === \"MV\" || config.name === \"DEMO\") && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/MobilityCasesDetailsTabs.tsx",
+      "line": 363,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{page === 4 && config.name === \"DEMO\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/MobilityCasesDetailsTabs.tsx",
+      "line": 371,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"MV\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/MobilityCasesDetailsTabs.tsx",
+      "line": 383,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"DEMO\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/MobilityListProvider.tsx",
+      "line": 89,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "if (config.name !== \"MV\") {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Login/hooks/useLogin.ts",
+      "line": 17,
+      "codes": [
+        "MV",
+        "MED",
+        "AMVA"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "[\"MV\", \"MED\", \"AMVA\"].includes(config.name)",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useCommunesList.ts",
+      "line": 19,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(config.name === \"MV\" ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useCommunesList.ts",
+      "line": 20,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"DEMO\" ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useCommunesList.ts",
+      "line": 21,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MED\") &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useForcesList.ts",
+      "line": 16,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "enabled: config.name !== \"LV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useForcesUNP.ts",
+      "line": 16,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"LV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useNeighborhoodList.ts",
+      "line": 19,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "(config.name === \"MV\" ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useNeighborhoodList.ts",
+      "line": 20,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"DEMO\" ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useNeighborhoodList.ts",
+      "line": 21,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MED\") &&",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/usePopulationGroup.ts",
+      "line": 16,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"LV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useProtect.ts",
+      "line": 16,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"LV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useSubDireccion.ts",
+      "line": 16,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "enabled: config.name === \"LV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/hooks/useZonesList.ts",
+      "line": 17,
+      "codes": [
+        "MV",
+        "DEMO",
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MV\" || config.name === \"DEMO\" || config.name === \"MED\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsCharts.tsx",
+      "line": 348,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MED\" && isAdmin) {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsCharts.tsx",
+      "line": 351,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"MED\" && getAgency() === \"Recepcion\") {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsCharts.tsx",
+      "line": 353,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "mixed",
+      "kind": "inline",
+      "text": "} else if (config.name === \"MED\" && getAgency() !== \"Recepcion\") {",
+      "confidence": "low"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsCharts.tsx",
+      "line": 728,
+      "codes": [
+        "DEMO"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{(config.name === \"DEMO\" ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsCharts.tsx",
+      "line": 729,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MV\" ||",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsCharts.tsx",
+      "line": 730,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"LV\") && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsFilters.tsx",
+      "line": 644,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "isReportFilter={config.name !== \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsFilters.tsx",
+      "line": 645,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "onlyOptions={config.name === \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsFilters.tsx",
+      "line": 725,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "isReportFilter={config.name !== \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsFilters.tsx",
+      "line": 726,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "onlyOptions={config.name === \"MV\"}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsFilters.tsx",
+      "line": 1241,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"LV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsFilters.tsx",
+      "line": 1386,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"MV\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsPage.tsx",
+      "line": 824,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (forces && forces.length > 0 && config.name === \"LV\") {",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Reports/ReportsPage.tsx",
+      "line": 847,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (forcesList && forcesList.length > 0 && config.name === \"MV\") {",
+      "confidence": "high"
+    }
+  ],
+  "registryMismatch": [
+    "\"dev\" has a config in the product but is not declared in the manual's `axes.tenant.values` — it will appear in every capability row of this map. Declare it, or know why it is excluded."
+  ]
+}

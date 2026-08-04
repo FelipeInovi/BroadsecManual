@@ -16,6 +16,7 @@ import {
 } from "@broadsec-manual/core";
 import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import { printToPdf } from "./chrome.ts";
+import { extract } from "./extract.ts";
 import {
   COMMON_SET,
   buildImageIndex,
@@ -606,12 +607,18 @@ export function formatCliError(error: unknown): string {
 export async function run(argv: readonly string[]): Promise<number> {
   const [command, manualId, ...rest] = argv;
   const axisFlags = "[--tenant <id>] [--axis <name>=<value> ...]";
-  if ((command !== "build" && command !== "images") || !manualId) {
+  if (
+    (command !== "build" && command !== "images" && command !== "extract") ||
+    !manualId
+  ) {
     console.error(
       `usage: broadsec-manual build <manual> ${axisFlags} [--draft]\n` +
-        `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n\n` +
+        `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
+        `       broadsec-manual extract <manual>\n\n` +
         `  --draft  internal build: prints the filename every pending image must\n` +
-        `           be delivered under. Never distribute a draft to a client.`,
+        `           be delivered under. Never distribute a draft to a client.\n` +
+        `  extract  read the source product and write knowledge/module-map.json,\n` +
+        `           reporting what changed since the last map.`,
     );
     return 2;
   }
@@ -624,6 +631,31 @@ export async function run(argv: readonly string[]): Promise<number> {
     const manualDir = resolve(process.cwd(), "manuals", manualId);
 
     const label = [...filters.entries()].map(([axis, value]) => `${axis}=${value}`).join(" ");
+
+    if (command === "extract") {
+      const { map, drift, outPath } = extract(process.cwd(), manualId);
+      const lowConfidence = map.tenantReferences.filter((r) => r.confidence === "low").length;
+      console.log(
+        `  ${map.tenants.length} deployment(s), ${map.capabilities.length} capability flag(s), ` +
+          `${map.tenantReferences.length} deployment reference(s) in code` +
+          (lowConfidence > 0 ? `, ${lowConfidence} needing review` : ""),
+      );
+      const contested = map.capabilities.filter((c) => c.absentFrom !== undefined).length;
+      if (contested > 0) {
+        console.log(
+          `  ${contested} flag(s) are declared by some deployments and not others — ` +
+            `absent is NOT false, see \`absentFrom\``,
+        );
+      }
+      for (const line of map.registryMismatch ?? []) console.log(`  ! ${line}`);
+      console.log(`  -> ${outPath}`);
+      if (drift.length > 0) {
+        console.log(`
+${drift.length} change(s) since the previous map:`);
+        for (const line of drift) console.log(`    ${line}`);
+      }
+      return 0;
+    }
 
     if (command === "images") {
       console.log(`exporting image requests for ${manualId}${label ? ` (${label})` : ""}`);

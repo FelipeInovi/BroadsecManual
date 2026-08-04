@@ -34,6 +34,9 @@ importers:
       '@broadsec-manual/core':
         specifier: workspace:*
         version: link:../core
+      '@broadsec-manual/extract':
+        specifier: workspace:*
+        version: link:../extract
       '@broadsec-manual/render-web':
         specifier: workspace:*
         version: link:../render-web
@@ -61,6 +64,8 @@ importers:
       zod:
         specifier: ^3.23.7
         version: 3.25.76
+
+  packages/extract: {}
 
   packages/render-pdf: {}
 

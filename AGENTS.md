@@ -79,6 +79,7 @@ manuals/            One folder per manual — knowledge, content, assets
 packages/
   blocks/           Block type definitions + AST types  ← THE CONTRACT
   core/             Parser, assembler, conditioning, numbering, validation
+  extract/          Source product -> facts (pure; the CLI does the file reading)
   tokens/           Design tokens from the design team
   render-pdf/       AST → PDF          (engine not yet chosen — see its AGENTS.md)
   render-web/       AST → HTML preview (engine not yet chosen)
