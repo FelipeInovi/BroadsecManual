@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { imageRefSchema, slotFor, slotToPath } from "./image.ts";
+import { declaredRef, imageRefSchema, slotFor, slotToPath } from "./image.ts";
 
 /** The message zod produced for `value`, or `undefined` if it was accepted. */
 const reject = (value: unknown): string | undefined => {
@@ -63,12 +63,45 @@ describe("imageRefSchema", () => {
     }
   });
 
-  it("rejects `false` — an image is declared or absent, never switched off", () => {
-    expect(reject(false)).toBeDefined();
+  // Not a third state alongside "declared" and "omitted": under the `always`
+  // policy, omitting the prop still declares a slot — that is what makes a
+  // module writable before a single capture exists. `false` is how an author
+  // says this particular place needs no image at all.
+  it("accepts `false`, the opt-out for a place no image explains", () => {
+    expect(imageRefSchema.parse(false)).toBe(false);
   });
 
   it("rejects a number", () => {
     expect(reject(3)).toBeDefined();
+  });
+});
+
+describe("declaredRef", () => {
+  const always = { prop: "image", policy: "always" } as const;
+  const optional = { prop: "image", policy: "optional" } as const;
+
+  it("takes what the author wrote", () => {
+    expect(declaredRef({ image: "barra.busqueda" }, always)).toBe("barra.busqueda");
+  });
+
+  it("assumes an image under `always`, so a module is writable before a capture exists", () => {
+    expect(declaredRef({}, always)).toBe(true);
+  });
+
+  it("assumes nothing under `optional`", () => {
+    expect(declaredRef({}, optional)).toBeUndefined();
+  });
+
+  // The escape hatch `always` otherwise lacks. Some steps are a button press
+  // that no screenshot explains, and without this the slot exists forever: the
+  // manual shows a placeholder, and the manifest asks a capture team for a file
+  // nobody will ever take.
+  it("reads `false` as no image, even where the policy is `always`", () => {
+    expect(declaredRef({ image: false }, always)).toBeUndefined();
+  });
+
+  it("reads `false` as no image under `optional` too", () => {
+    expect(declaredRef({ image: false }, optional)).toBeUndefined();
   });
 });
 

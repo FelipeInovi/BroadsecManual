@@ -674,7 +674,11 @@ children:
                         - id: func.desp.agregar-ubicacion
                           title: Agregue la ubicación
                           text: "Presione el botón **Agregar Ubicación**."
-                          layout: beside
+                          # No image. One button press is explained by the
+                          # sentence, and a slot standing open for it means a
+                          # placeholder in the manual and a line in the manifest
+                          # asking for a screenshot nobody will ever take.
+                          image: false
                         - id: func.desp.seleccionar-fuerzas
                           title: Seleccione las fuerzas
                           text: >-

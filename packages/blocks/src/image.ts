@@ -26,8 +26,21 @@ import { z } from "zod";
  * glance where an image belongs.
  */
 
-/** What an author may write in an image prop. */
+/** An image that exists: this node's own id, or a named slot. */
 export type ImageRef = true | string;
+
+/**
+ * What an author may write in an image prop.
+ *
+ * `false` is the opt-out. It is needed because under the `always` policy
+ * omitting the prop still declares a slot — that default is what lets a module
+ * be written before a single capture exists, but it leaves an author no way to
+ * say "not here". Some places genuinely need no image: a step that is one
+ * button press is explained by its own sentence, and a slot standing open for
+ * it means a placeholder in the manual and a line in the manifest asking a
+ * capture team for a screenshot nobody will ever take.
+ */
+export type ImageDeclaration = ImageRef | false;
 
 /** Recognised image extensions — the tell that someone wrote a filename. */
 const EXTENSION = /\.(?:png|jpe?g|svg|gif|webp|bmp|tiff?|pdf)$/i;
@@ -93,7 +106,7 @@ export function slotNameProblem(value: string): string | undefined {
 }
 
 /**
- * An image reference: `true`, or a slot name.
+ * An image declaration: `true`, a slot name, or `false` for none.
  *
  * Built on `unknown` rather than `z.union` on purpose. A union reports a
  * failure as `invalid_union` with the branch messages nested out of reach, and
@@ -101,18 +114,16 @@ export function slotNameProblem(value: string): string | undefined {
  * losing them would leave "Invalid input" against a line that looks perfectly
  * reasonable.
  */
-export const imageRefSchema: z.ZodType<ImageRef, z.ZodTypeDef, unknown> = z
+export const imageRefSchema: z.ZodType<ImageDeclaration, z.ZodTypeDef, unknown> = z
   .unknown()
   .superRefine((value, ctx) => {
-    if (value === true) return;
+    if (value === true || value === false) return;
     if (typeof value !== "string") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message:
-          `an image is declared by \`true\` or by a slot name, but this is ` +
-          `${value === false ? "`false`" : typeof value}. An image is either ` +
-          `declared or absent — omit the prop instead of switching it off. ` +
-          `${WRITE_INSTEAD}`,
+          `an image is declared by \`true\` or by a slot name and declined by ` +
+          `\`false\`, but this is ${typeof value}. ${WRITE_INSTEAD}`,
       });
       return;
     }
@@ -121,7 +132,7 @@ export const imageRefSchema: z.ZodType<ImageRef, z.ZodTypeDef, unknown> = z
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: problem });
     }
   })
-  .transform((value) => value as ImageRef);
+  .transform((value) => value as ImageDeclaration);
 
 /**
  * The slot a reference points at, given the node that carries it.
@@ -152,7 +163,9 @@ export function slotToPath(slot: string): string {
  * The image reference a node or item declares, applying its block type's policy.
  *
  * `always` means the slot exists whether or not anyone wrote it down — that is
- * what makes a module writable before a single capture is delivered.
+ * what makes a module writable before a single capture is delivered. `false`
+ * overrides that: it is the only way out of `always`, and it reads the same
+ * under either policy.
  *
  * Lives here, beside the policy it applies, because BOTH numbering and slot
  * collection have to agree on which nodes carry an image. Two walks answering
@@ -164,6 +177,7 @@ export function declaredRef(
   policy: { readonly prop: string; readonly policy: "always" | "optional" },
 ): ImageRef | undefined {
   const written = source[policy.prop];
+  if (written === false) return undefined;
   if (written !== undefined) return written as ImageRef;
   return policy.policy === "always" ? true : undefined;
 }
