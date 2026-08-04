@@ -1,0 +1,574 @@
+{
+ "1": {
+  "page": 4,
+  "caption": "Interfaz principal de Broadsec integrada con Carbyne Apex",
+  "count": 3,
+  "bbox": [
+   162.4,
+   297.6,
+   391.7,
+   439.4
+  ]
+ },
+ "2": {
+  "page": 5,
+  "caption": "Ícono de acceso al módulo Broadsec desde Apex",
+  "count": 2,
+  "bbox": [
+   123.9,
+   198.6,
+   478.1,
+   375.8
+  ]
+ },
+ "3": {
+  "page": 7,
+  "caption": "Vista del mapa principal con incidentes activos",
+  "count": 1,
+  "bbox": [
+   78.5,
+   99.6,
+   527.8,
+   318.6
+  ]
+ },
+ "4": {
+  "page": 8,
+  "caption": "Barra superior de la plataforma",
+  "count": 1,
+  "bbox": [
+   -95.7,
+   102.8,
+   505.4,
+   146.4
+  ]
+ },
+ "5": {
+  "page": 9,
+  "caption": "Opciones al añadir caso: Incidente y Tarea",
+  "count": 1,
+  "bbox": [
+   237.4,
+   68.6,
+   405.3,
+   332.5
+  ]
+ },
+ "6": {
+  "page": 9,
+  "caption": "Vista rápida del Dashboard desde barra superior",
+  "count": 1,
+  "bbox": [
+   137.0,
+   399.8,
+   505.6,
+   570.3
+  ]
+ },
+ "8": {
+  "page": 10,
+  "caption": "Lista de incidentes activos",
+  "count": 1,
+  "bbox": [
+   195.7,
+   581.9,
+   381.5,
+   786.3
+  ]
+ },
+ "7": {
+  "page": 10,
+  "caption": "Vista de Fuerzas en Campo desde barra superior",
+  "count": 1,
+  "bbox": [
+   343.7,
+   118.9,
+   535.0,
+   329.1
+  ]
+ },
+ "9": {
+  "page": 11,
+  "caption": "Selector de capas del mapa",
+  "count": 1,
+  "bbox": [
+   215.9,
+   127.0,
+   379.4,
+   306.7
+  ]
+ },
+ "10": {
+  "page": 11,
+  "caption": "Selector de capas del mapa activo",
+  "count": 1,
+  "bbox": [
+   116.3,
+   635.4,
+   484.4,
+   711.6
+  ]
+ },
+ "11": {
+  "page": 12,
+  "caption": "Visualización de capas del mapa",
+  "count": 2,
+  "bbox": [
+   59.8,
+   100.7,
+   315.3,
+   167.6
+  ]
+ },
+ "12": {
+  "page": 12,
+  "caption": "Capa Satelital y Capa de Tráfico",
+  "count": 2,
+  "bbox": [
+   142.2,
+   308.9,
+   525.5,
+   430.9
+  ]
+ },
+ "13": {
+  "page": 13,
+  "caption": "Capa Mobile — ubicación de agentes móviles",
+  "count": 1,
+  "bbox": [
+   194.2,
+   324.8,
+   388.4,
+   511.5
+  ]
+ },
+ "17": {
+  "page": 17,
+  "caption": "Botones de Aplicar y Cancelar filtros",
+  "count": 1,
+  "bbox": [
+   137.3,
+   687.0,
+   453.8,
+   744.7
+  ]
+ },
+ "18": {
+  "page": 18,
+  "caption": "Incidente EN VIVO — grabación y monitoreo activo",
+  "count": 1,
+  "bbox": [
+   134.0,
+   383.7,
+   461.3,
+   553.8
+  ]
+ },
+ "19": {
+  "page": 18,
+  "caption": "Estado EN VIVO del incidente",
+  "count": 1,
+  "bbox": [
+   225.5,
+   617.8,
+   369.8,
+   787.9
+  ]
+ },
+ "20": {
+  "page": 19,
+  "caption": "Incidente finalizado listo para gestión",
+  "count": 1,
+  "bbox": [
+   79.7,
+   197.5,
+   551.5,
+   235.4
+  ]
+ },
+ "21": {
+  "page": 19,
+  "caption": "Tarjetas de incidentes con labels y estados de color",
+  "count": 1,
+  "bbox": [
+   123.6,
+   456.1,
+   492.1,
+   526.5
+  ]
+ },
+ "22": {
+  "page": 20,
+  "caption": "Vista detallada de un incidente — tres pestañas",
+  "count": 1,
+  "bbox": [
+   193.8,
+   138.3,
+   379.8,
+   342.6
+  ]
+ },
+ "23": {
+  "page": 21,
+  "caption": "Historial de ubicaciones y casos asociados",
+  "count": 1,
+  "bbox": [
+   293.4,
+   292.4,
+   483.4,
+   405.3
+  ]
+ },
+ "24": {
+  "page": 22,
+  "caption": "Resumen de Call AI para el incidente",
+  "count": 1,
+  "bbox": [
+   73.7,
+   408.9,
+   548.3,
+   484.8
+  ]
+ },
+ "25": {
+  "page": 30,
+  "caption": "Vista general del Security Dashboard",
+  "count": 2,
+  "bbox": [
+   67.7,
+   197.7,
+   536.8,
+   345.1
+  ]
+ },
+ "26": {
+  "page": 30,
+  "caption": "Filtros, Ventanas de Datos y Mapa Dashboard",
+  "count": 4,
+  "bbox": [
+   53.4,
+   394.5,
+   729.9,
+   755.3
+  ]
+ },
+ "27": {
+  "page": 34,
+  "caption": "Cerrar ventana/widget del Dashboard",
+  "count": 1,
+  "bbox": [
+   123.8,
+   147.6,
+   467.3,
+   258.6
+  ]
+ },
+ "28": {
+  "page": 34,
+  "caption": "Menú de Widgets para restaurar ventanas",
+  "count": 1,
+  "bbox": [
+   111.3,
+   324.6,
+   479.8,
+   434.9
+  ]
+ },
+ "29": {
+  "page": 34,
+  "caption": "Widget restaurado en el Dashboard",
+  "count": 1,
+  "bbox": [
+   168.2,
+   462.9,
+   423.0,
+   604.6
+  ]
+ },
+ "30": {
+  "page": 34,
+  "caption": "Botón de exportación del Dashboard",
+  "count": 1,
+  "bbox": [
+   113.7,
+   693.6,
+   477.5,
+   738.6
+  ]
+ },
+ "31": {
+  "page": 37,
+  "caption": "Filtro de Variables de Gestión para tipos de casos frecuentes",
+  "count": 1,
+  "bbox": [
+   166.4,
+   343.3,
+   428.9,
+   513.3
+  ]
+ },
+ "32": {
+  "page": 38,
+  "caption": "Mapa de calor de casos en el Dashboard",
+  "count": 1,
+  "bbox": [
+   99.5,
+   129.0,
+   495.8,
+   188.5
+  ]
+ },
+ "33": {
+  "page": 38,
+  "caption": "Control de opacidad del mapa de casos",
+  "count": 1,
+  "bbox": [
+   99.5,
+   129.0,
+   495.8,
+   188.5
+  ]
+ },
+ "34": {
+  "page": 38,
+  "caption": "Mapa de casos maximizado",
+  "count": 1,
+  "bbox": [
+   79.0,
+   364.3,
+   211.8,
+   464.0
+  ]
+ },
+ "35": {
+  "page": 38,
+  "caption": "Vista de casos individuales en el mapa",
+  "count": 1,
+  "bbox": [
+   78.1,
+   496.4,
+   251.4,
+   611.9
+  ]
+ },
+ "43": {
+  "page": 43,
+  "caption": "Módulo de Operaciones — historial de turnos",
+  "count": 2,
+  "bbox": [
+   95.2,
+   547.3,
+   349.6,
+   764.3
+  ]
+ },
+ "36": {
+  "page": 39,
+  "caption": "Detalle de caso seleccionado en lista",
+  "count": 1,
+  "bbox": [
+   99.4,
+   362.9,
+   495.9,
+   486.9
+  ]
+ },
+ "38": {
+  "page": 40,
+  "caption": "Barra superior del módulo Fuerzas en Campo",
+  "count": 1,
+  "bbox": [
+   132.0,
+   391.3,
+   487.0,
+   418.3
+  ]
+ },
+ "39": {
+  "page": 40,
+  "caption": "Módulo de Agentes",
+  "count": 1,
+  "bbox": [
+   110.8,
+   696.5,
+   135.6,
+   719.8
+  ]
+ },
+ "40": {
+  "page": 41,
+  "caption": "Lista de agentes con estados de disponibilidad",
+  "count": 1,
+  "bbox": [
+   202.9,
+   561.8,
+   389.5,
+   788.6
+  ]
+ },
+ "41": {
+  "page": 42,
+  "caption": "Pestaña turnos del agente",
+  "count": 1,
+  "bbox": [
+   337.3,
+   546.9,
+   497.4,
+   783.0
+  ]
+ },
+ "50": {
+  "page": 45,
+  "caption": "Call AI desde historial de tareas",
+  "count": 2,
+  "bbox": [
+   123.7,
+   433.8,
+   470.8,
+   514.0
+  ]
+ },
+ "42": {
+  "page": 43,
+  "caption": "Perfil completo del agente — pestaña Turnos",
+  "count": 2,
+  "bbox": [
+   56.7,
+   74.5,
+   460.5,
+   268.4
+  ]
+ },
+ "44": {
+  "page": 44,
+  "caption": "Filtro de rango de tiempo en Operaciones",
+  "count": 1,
+  "bbox": [
+   92.4,
+   131.9,
+   272.0,
+   302.0
+  ]
+ },
+ "45": {
+  "page": 44,
+  "caption": "Selección de rango de fechas en el filtro",
+  "count": 2,
+  "bbox": [
+   92.4,
+   131.9,
+   515.5,
+   350.9
+  ]
+ },
+ "46": {
+  "page": 44,
+  "caption": "Resumen de actividad del turno seleccionado",
+  "count": 1,
+  "bbox": [
+   90.7,
+   476.3,
+   303.4,
+   628.4
+  ]
+ },
+ "47": {
+  "page": 45,
+  "caption": "Polígono del incidente en el mapa",
+  "count": 2,
+  "bbox": [
+   97.3,
+   79.9,
+   512.3,
+   275.7
+  ]
+ },
+ "48": {
+  "page": 45,
+  "caption": "Polígono de tarea en el mapa",
+  "count": 1,
+  "bbox": [
+   333.4,
+   80.5,
+   512.3,
+   255.9
+  ]
+ },
+ "49": {
+  "page": 45,
+  "caption": "Call AI desde historial de incidentes",
+  "count": 2,
+  "bbox": [
+   123.7,
+   433.8,
+   470.8,
+   514.0
+  ]
+ },
+ "52": {
+  "page": 46,
+  "caption": "Formulario para crear un nuevo incidente",
+  "count": 2,
+  "bbox": [
+   96.4,
+   310.1,
+   522.9,
+   612.8
+  ]
+ },
+ "51": {
+  "page": 46,
+  "caption": "Opciones del módulo Añadir",
+  "count": 2,
+  "bbox": [
+   58.4,
+   114.6,
+   546.8,
+   201.3
+  ]
+ },
+ "53": {
+  "page": 46,
+  "caption": "Formulario para crear una nueva tarea",
+  "count": 2,
+  "bbox": [
+   96.4,
+   310.1,
+   522.9,
+   612.8
+  ]
+ },
+ "54": {
+  "page": 46,
+  "caption": "Confirmación de incidente creado exitosamente",
+  "count": 1,
+  "bbox": [
+   359.3,
+   657.7,
+   516.8,
+   783.4
+  ]
+ },
+ "55": {
+  "page": 48,
+  "caption": "Interfaz de Call AI durante una llamada activa",
+  "count": 3,
+  "bbox": [
+   91.1,
+   456.3,
+   523.6,
+   658.9
+  ]
+ },
+ "56": {
+  "page": 49,
+  "caption": "Campo de Observaciones post-llamada",
+  "count": 1,
+  "bbox": [
+   99.2,
+   311.2,
+   496.1,
+   383.2
+  ]
+ }
+}

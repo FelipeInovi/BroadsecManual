@@ -19,32 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 252,
-    "delivered": 30,
-    "pending": 222
+    "delivered": 58,
+    "pending": 194
   },
   "pending": [
-    {
-      "slot": "funcionamiento.acceso.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionamiento.acceso.fig",
-          "blockType": "figure",
-          "shows": "Ícono de acceso al módulo Broadsec desde Apex."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionamiento.acceso.fig.png",
-        "override": "<tenant>/funcionamiento.acceso.fig.png"
-      }
-    },
     {
       "slot": "funcionamiento.inicio.fig",
       "neededBy": [
@@ -65,28 +43,6 @@
       "deliverTo": {
         "shared": "_common/funcionamiento.inicio.fig.png",
         "override": "<tenant>/funcionamiento.inicio.fig.png"
-      }
-    },
-    {
-      "slot": "mapa.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.fig",
-          "blockType": "figure",
-          "shows": "Vista general del mapa con sus controles de visualización."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.fig.png",
-        "override": "<tenant>/mapa.fig.png"
       }
     },
     {
@@ -222,50 +178,6 @@
       }
     },
     {
-      "slot": "incidentes.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "incidentes.fig",
-          "blockType": "figure",
-          "shows": "Lista de casos, con la información de cada incidente reportado."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/incidentes.fig.png",
-        "override": "<tenant>/incidentes.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.mapa.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.mapa.fig",
-          "blockType": "figure",
-          "shows": "Selector de capas del mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.mapa.fig.png",
-        "override": "<tenant>/funcionalidades.mapa.fig.png"
-      }
-    },
-    {
       "slot": "func.capa.trafico",
       "neededBy": [
         "mv",
@@ -398,72 +310,6 @@
       }
     },
     {
-      "slot": "funcionalidades.mapa.fig-activo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.mapa.fig-activo",
-          "blockType": "figure",
-          "shows": "Selector de capas del mapa activo."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.mapa.fig-activo.png",
-        "override": "<tenant>/funcionalidades.mapa.fig-activo.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.mapa.fig-visualizacion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.mapa.fig-visualizacion",
-          "blockType": "figure",
-          "shows": "Visualización de capas del mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.mapa.fig-visualizacion.png",
-        "override": "<tenant>/funcionalidades.mapa.fig-visualizacion.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.mapa.fig-satelital",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.mapa.fig-satelital",
-          "blockType": "figure",
-          "shows": "Capa Satelital y capa de Tráfico."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.mapa.fig-satelital.png",
-        "override": "<tenant>/funcionalidades.mapa.fig-satelital.png"
-      }
-    },
-    {
       "slot": "funcionalidades.incidentes.fig",
       "neededBy": [
         "mv",
@@ -574,94 +420,6 @@
       }
     },
     {
-      "slot": "funcionalidades.capa-mobile.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.capa-mobile.fig",
-          "blockType": "figure",
-          "shows": "Capa Mobile: ubicación de agentes móviles."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.capa-mobile.fig.png",
-        "override": "<tenant>/funcionalidades.capa-mobile.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.capa-avl.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.capa-avl.fig",
-          "blockType": "figure",
-          "shows": "Capa AVL: ubicación de fuerzas integradas."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.capa-avl.fig.png",
-        "override": "<tenant>/funcionalidades.capa-avl.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.capa-paneles.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.capa-paneles.fig",
-          "blockType": "figure",
-          "shows": "Capa de Paneles en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.capa-paneles.fig.png",
-        "override": "<tenant>/funcionalidades.capa-paneles.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.capa-paneles.fig-complementaria",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.capa-paneles.fig-complementaria",
-          "blockType": "figure",
-          "shows": "Capa de Paneles, vista complementaria."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.capa-paneles.fig-complementaria.png",
-        "override": "<tenant>/funcionalidades.capa-paneles.fig-complementaria.png"
-      }
-    },
-    {
       "slot": "funcionalidades.filtros.fig",
       "neededBy": [
         "mv",
@@ -681,380 +439,6 @@
       "deliverTo": {
         "shared": "_common/funcionalidades.filtros.fig.png",
         "override": "<tenant>/funcionalidades.filtros.fig.png"
-      }
-    },
-    {
-      "slot": "func.filtro.rango",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.filtro.rango",
-          "blockType": "field-list",
-          "shows": "Rango de tiempo"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.filtro.rango.png",
-        "override": "<tenant>/func.filtro.rango.png"
-      }
-    },
-    {
-      "slot": "func.filtro.restaurar",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.filtro.restaurar",
-          "blockType": "field-list",
-          "shows": "Restaurar filtros"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.filtro.restaurar.png",
-        "override": "<tenant>/func.filtro.restaurar.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
-          "blockType": "figure",
-          "shows": "Interruptor Solo mis casos, apagado."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.solo-mis-casos.fig-apagado.png",
-        "override": "<tenant>/funcionalidades.filtros.solo-mis-casos.fig-apagado.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
-          "blockType": "figure",
-          "shows": "Interruptor Solo mis casos, encendido."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.solo-mis-casos.fig-encendido.png",
-        "override": "<tenant>/funcionalidades.filtros.solo-mis-casos.fig-encendido.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.tipo-emergencia.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.tipo-emergencia.fig",
-          "blockType": "figure",
-          "shows": "Filtro por tipo de emergencia."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.tipo-emergencia.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.tipo-emergencia.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.tipo-emergencia.fig-lista",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.tipo-emergencia.fig-lista",
-          "blockType": "figure",
-          "shows": "Lista de tipos de emergencia."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.tipo-emergencia.fig-lista.png",
-        "override": "<tenant>/funcionalidades.filtros.tipo-emergencia.fig-lista.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.origen.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.origen.fig",
-          "blockType": "figure",
-          "shows": "Filtro por origen del reporte."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.origen.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.origen.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.estado.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.estado.fig",
-          "blockType": "figure",
-          "shows": "Filtro por estado del incidente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.estado.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.estado.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.tipo-llamada.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.tipo-llamada.fig",
-          "blockType": "figure",
-          "shows": "Filtro por tipo de llamada."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.tipo-llamada.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.tipo-llamada.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.asociados.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.asociados.fig",
-          "blockType": "figure",
-          "shows": "Filtro por casos asociados."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.asociados.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.asociados.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.enriquecidos.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.enriquecidos.fig",
-          "blockType": "figure",
-          "shows": "Filtro por datos enriquecidos."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.enriquecidos.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.enriquecidos.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.ubicacion.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.ubicacion.fig",
-          "blockType": "figure",
-          "shows": "Filtro por ubicación."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.ubicacion.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.ubicacion.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.duracion.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.duracion.fig",
-          "blockType": "figure",
-          "shows": "Filtro por duración de la llamada."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.duracion.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.duracion.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.fig-aplicar",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.fig-aplicar",
-          "blockType": "figure",
-          "shows": "Botones Aplicar y Cancelar de los filtros."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.fig-aplicar.png",
-        "override": "<tenant>/funcionalidades.filtros.fig-aplicar.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.seccion-incidentes.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.seccion-incidentes.fig",
-          "blockType": "figure",
-          "shows": "Lista de casos con etiquetas de tipo de emergencia."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.seccion-incidentes.fig.png",
-        "override": "<tenant>/funcionalidades.seccion-incidentes.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.llamada-entrante.fig-vivo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.llamada-entrante.fig-vivo",
-          "blockType": "figure",
-          "shows": "Incidente EN VIVO: grabación y monitoreo activo."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.llamada-entrante.fig-vivo.png",
-        "override": "<tenant>/funcionalidades.llamada-entrante.fig-vivo.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.llamada-entrante.fig-estado",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.llamada-entrante.fig-estado",
-          "blockType": "figure",
-          "shows": "Estado EN VIVO del incidente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.llamada-entrante.fig-estado.png",
-        "override": "<tenant>/funcionalidades.llamada-entrante.fig-estado.png"
       }
     },
     {
@@ -4850,6 +4234,23 @@
       ]
     },
     {
+      "slot": "funcionamiento.acceso.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionamiento.acceso.fig",
+          "blockType": "figure",
+          "shows": "Ícono de acceso al módulo Broadsec desde Apex."
+        }
+      ],
+      "files": [
+        "_common/funcionamiento.acceso.fig.png"
+      ]
+    },
+    {
       "slot": "interfaz-general.fig-home",
       "neededBy": [
         "mv",
@@ -4864,6 +4265,23 @@
       ],
       "files": [
         "_common/interfaz-general/fig-home.png"
+      ]
+    },
+    {
+      "slot": "mapa.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.fig",
+          "blockType": "figure",
+          "shows": "Vista general del mapa con sus controles de visualización."
+        }
+      ],
+      "files": [
+        "_common/mapa.fig.png"
       ]
     },
     {
@@ -5167,6 +4585,448 @@
       ],
       "files": [
         "_common/barra/filtro/fig.png"
+      ]
+    },
+    {
+      "slot": "incidentes.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "incidentes.fig",
+          "blockType": "figure",
+          "shows": "Lista de casos, con la información de cada incidente reportado."
+        }
+      ],
+      "files": [
+        "_common/incidentes.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig",
+          "blockType": "figure",
+          "shows": "Selector de capas del mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig-activo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig-activo",
+          "blockType": "figure",
+          "shows": "Selector de capas del mapa activo."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig-activo.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig-visualizacion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig-visualizacion",
+          "blockType": "figure",
+          "shows": "Visualización de capas del mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig-visualizacion.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig-satelital",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig-satelital",
+          "blockType": "figure",
+          "shows": "Capa Satelital y capa de Tráfico."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig-satelital.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-mobile.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-mobile.fig",
+          "blockType": "figure",
+          "shows": "Capa Mobile: ubicación de agentes móviles."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-mobile.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-avl.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-avl.fig",
+          "blockType": "figure",
+          "shows": "Capa AVL: ubicación de fuerzas integradas."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-avl.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-paneles.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-paneles.fig",
+          "blockType": "figure",
+          "shows": "Capa de Paneles en el mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-paneles.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-paneles.fig-complementaria",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-paneles.fig-complementaria",
+          "blockType": "figure",
+          "shows": "Capa de Paneles, vista complementaria."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-paneles.fig-complementaria.png"
+      ]
+    },
+    {
+      "slot": "func.filtro.rango",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.filtro.rango",
+          "blockType": "field-list",
+          "shows": "Rango de tiempo"
+        }
+      ],
+      "files": [
+        "_common/func.filtro.rango.png"
+      ]
+    },
+    {
+      "slot": "func.filtro.restaurar",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.filtro.restaurar",
+          "blockType": "field-list",
+          "shows": "Restaurar filtros"
+        }
+      ],
+      "files": [
+        "_common/func.filtro.restaurar.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
+          "blockType": "figure",
+          "shows": "Interruptor Solo mis casos, apagado."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.solo-mis-casos.fig-apagado.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
+          "blockType": "figure",
+          "shows": "Interruptor Solo mis casos, encendido."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.solo-mis-casos.fig-encendido.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.tipo-emergencia.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.tipo-emergencia.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de emergencia."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.tipo-emergencia.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.tipo-emergencia.fig-lista",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.tipo-emergencia.fig-lista",
+          "blockType": "figure",
+          "shows": "Lista de tipos de emergencia."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.tipo-emergencia.fig-lista.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.origen.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.origen.fig",
+          "blockType": "figure",
+          "shows": "Filtro por origen del reporte."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.origen.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.estado.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.estado.fig",
+          "blockType": "figure",
+          "shows": "Filtro por estado del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.estado.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.tipo-llamada.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.tipo-llamada.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de llamada."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.tipo-llamada.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.asociados.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.asociados.fig",
+          "blockType": "figure",
+          "shows": "Filtro por casos asociados."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.asociados.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.enriquecidos.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.enriquecidos.fig",
+          "blockType": "figure",
+          "shows": "Filtro por datos enriquecidos."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.enriquecidos.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.ubicacion.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.ubicacion.fig",
+          "blockType": "figure",
+          "shows": "Filtro por ubicación."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.ubicacion.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.duracion.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.duracion.fig",
+          "blockType": "figure",
+          "shows": "Filtro por duración de la llamada."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.duracion.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.fig-aplicar",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.fig-aplicar",
+          "blockType": "figure",
+          "shows": "Botones Aplicar y Cancelar de los filtros."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.fig-aplicar.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.seccion-incidentes.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.seccion-incidentes.fig",
+          "blockType": "figure",
+          "shows": "Lista de casos con etiquetas de tipo de emergencia."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.seccion-incidentes.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.llamada-entrante.fig-vivo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.llamada-entrante.fig-vivo",
+          "blockType": "figure",
+          "shows": "Incidente EN VIVO: grabación y monitoreo activo."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.llamada-entrante.fig-vivo.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.llamada-entrante.fig-estado",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.llamada-entrante.fig-estado",
+          "blockType": "figure",
+          "shows": "Estado EN VIVO del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.llamada-entrante.fig-estado.png"
       ]
     },
     {
