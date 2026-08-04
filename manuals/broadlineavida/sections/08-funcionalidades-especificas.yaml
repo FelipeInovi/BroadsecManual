@@ -716,6 +716,45 @@ children:
                             haga clic en **Despachar** para que el caso quede en
                             gestión.
                           layout: beside
+
+                  # The four aspects of the agent card, right after the step that
+                  # dispatches it. The sequence resumes below, continuing this
+                  # procedure's count, because a table can only be a sibling node
+                  # and a sibling ends the block.
+                  - id: funcionalidades.despacho-pasos.aspectos
+                    type: icon-table
+                    props:
+                      labelHeader: Aspecto
+                      descriptionHeader: Descripción
+                      rows:
+                        - id: func.agente.tipo
+                          label: Tipo de agente
+                          description: >-
+                            Muestra el tipo de agente (por ejemplo, policía) e
+                            información relevante como "Más rápido" o "Más
+                            cercano", lo que ayuda a determinar qué agentes
+                            pueden atender más rápido la emergencia.
+                        - id: func.agente.perfil
+                          label: Perfil del agente
+                          description: Logo o imagen del perfil del agente.
+                        - id: func.agente.dotacion
+                          label: Dotación y vehículo
+                          description: Dotación y vehículo con el que cuenta el agente.
+                        - id: func.agente.placa
+                          label: Placa, distancia y tiempo
+                          description: >-
+                            Placa del agente, distancia al punto del incidente y
+                            tiempo estimado de llegada (tiene en cuenta el
+                            vehículo que usa).
+
+                  # Steps 10 to 14 of the same sequence, resumed after the table.
+                  # `continues` keeps the count going: the reader sees Paso 9,
+                  # the table, then Paso 10 — not Paso 1 again.
+                  - id: funcionalidades.despacho-pasos.proc-gestion
+                    type: procedure
+                    props:
+                      continues: funcionalidades.despacho-pasos.proc
+                      steps:
                         - id: func.desp.chat
                           title: Converse con los agentes
                           text: >-
@@ -754,32 +793,6 @@ children:
                             **finalización** del caso mediante el mismo ícono.
                           widthPercent: 35
                           layout: beside
-
-                  - id: funcionalidades.despacho-pasos.aspectos
-                    type: icon-table
-                    props:
-                      labelHeader: Aspecto
-                      descriptionHeader: Descripción
-                      rows:
-                        - id: func.agente.tipo
-                          label: Tipo de agente
-                          description: >-
-                            Muestra el tipo de agente (por ejemplo, policía) e
-                            información relevante como "Más rápido" o "Más
-                            cercano", lo que ayuda a determinar qué agentes
-                            pueden atender más rápido la emergencia.
-                        - id: func.agente.perfil
-                          label: Perfil del agente
-                          description: Logo o imagen del perfil del agente.
-                        - id: func.agente.dotacion
-                          label: Dotación y vehículo
-                          description: Dotación y vehículo con el que cuenta el agente.
-                        - id: func.agente.placa
-                          label: Placa, distancia y tiempo
-                          description: >-
-                            Placa del agente, distancia al punto del incidente y
-                            tiempo estimado de llegada (tiene en cuenta el
-                            vehículo que usa).
 
                   - id: funcionalidades.despacho-pasos.tipos
                     type: icon-table
