@@ -87,7 +87,7 @@ children:
             type: figure
             props:
               caption: "Filtro de ubicación por Departamento y Ciudad."
-              widthPercent: 70
+              widthPercent: 91
           - id: dashboard.filtros.ubicacion.zona
             type: prose
             props:
@@ -382,7 +382,7 @@ children:
         type: figure
         props:
           caption: "Control de opacidad del mapa de casos."
-          widthPercent: 70
+          widthPercent: 10
 
       - id: dashboard.mapa-calor.maximizar
         type: prose
@@ -395,7 +395,7 @@ children:
         type: figure
         props:
           caption: "Mapa de casos maximizado."
-          widthPercent: 90
+          widthPercent: 36
 
       - id: dashboard.mapa-calor.modo
         type: prose

@@ -120,7 +120,7 @@ children:
         type: figure
         props:
           caption: "Acciones disponibles al seleccionar un incidente en el mapa."
-          widthPercent: 90
+          widthPercent: 41
 
       - id: funcionalidades.incidentes.acciones
         type: icon-table
@@ -418,7 +418,7 @@ children:
         type: figure
         props:
           caption: "Lista de casos con etiquetas de tipo de emergencia."
-          widthPercent: 90
+          widthPercent: 59
 
       - id: funcionalidades.seccion-incidentes.origen
         type: prose
@@ -945,7 +945,7 @@ children:
                     type: figure
                     props:
                       caption: "Formulario del reporte: Comentarios Generales."
-                      widthPercent: 90
+                      widthPercent: 36
 
               - id: funcionalidades.reporte-actualizacion
                 title: Actualización de Reporte de Agente

@@ -92,7 +92,7 @@ children:
         type: figure
         props:
           caption: "Módulo de Agentes."
-          widthPercent: 90
+          widthPercent: 45
 
       - id: fuerzas.agentes.estados
         title: Visualización de estados de Agentes
@@ -127,7 +127,7 @@ children:
             type: figure
             props:
               caption: "Filtro de estados y turno de los agentes."
-              widthPercent: 70
+              widthPercent: 49
 
       - id: fuerzas.perfil
         title: Perfil de Agente
@@ -162,7 +162,7 @@ children:
             type: figure
             props:
               caption: "Ubicación del agente en el mapa."
-              widthPercent: 90
+              widthPercent: 45
           - id: fuerzas.perfil.turnos
             type: prose
             props:
@@ -174,7 +174,7 @@ children:
             type: figure
             props:
               caption: "Pestaña Turnos del agente."
-              widthPercent: 90
+              widthPercent: 36
           - id: fuerzas.perfil.asignar
             type: prose
             props:
@@ -186,12 +186,12 @@ children:
             type: figure
             props:
               caption: "Pestaña Asignar del perfil del agente."
-              widthPercent: 90
+              widthPercent: 32
           - id: fuerzas.perfil.fig-confirmacion
             type: figure
             props:
               caption: "Confirmación de despacho del caso al agente."
-              widthPercent: 70
+              widthPercent: 49
           - id: fuerzas.perfil.tarea
             type: prose
             props:
@@ -203,7 +203,7 @@ children:
             type: figure
             props:
               caption: "Creación de una tarea desde el perfil del agente."
-              widthPercent: 90
+              widthPercent: 54
 
   - id: fuerzas.operaciones
     title: Módulo de Operaciones
@@ -220,7 +220,7 @@ children:
         type: figure
         props:
           caption: "Módulo de Operaciones: historial de turnos."
-          widthPercent: 90
+          widthPercent: 45
 
       - id: fuerzas.operaciones.intro-estados
         type: prose
@@ -272,7 +272,7 @@ children:
             type: figure
             props:
               caption: "Resumen de actividad del turno seleccionado."
-              widthPercent: 90
+              widthPercent: 59
           - id: fuerzas.operaciones.resumen.recorrido
             type: prose
             props:
@@ -283,7 +283,7 @@ children:
             type: figure
             props:
               caption: "Recorrido del turno en el mapa."
-              widthPercent: 90
+              widthPercent: 54
           - id: fuerzas.operaciones.resumen.opciones
             type: prose
             props:
@@ -302,12 +302,12 @@ children:
                 type: figure
                 props:
                   caption: "Polígono del incidente en el mapa."
-                  widthPercent: 90
+                  widthPercent: 54
               - id: fuerzas.poligono.fig-tarea
                 type: figure
                 props:
                   caption: "Polígono de la tarea en el mapa."
-                  widthPercent: 90
+                  widthPercent: 54
 
           - id: fuerzas.callai
             title: Call AI
