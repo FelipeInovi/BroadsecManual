@@ -69,7 +69,32 @@ const recipeSchema = z
      * read-only, which leaves the visible label as the only stable handle — the
      * same i18n catalogue the manual already takes its labels from.
      */
-    steps: z.array(z.object({ click: selector("click") }).strict()).optional(),
+    steps: z
+      .array(
+        z.union([
+          z.object({ click: selector("click") }).strict(),
+          // Dragging is not a convenience. The CCTV mosaic fills ONLY by
+          // dragging a camera onto a tile, so without this its grid can only
+          // ever be photographed empty — four black rectangles.
+          z
+            .object({
+              drag: z
+                .object({ from: selector("drag.from"), to: selector("drag.to") })
+                .strict(),
+            })
+            .strict(),
+        ]),
+      )
+      .optional(),
+    /**
+     * Extra wait after the gates, before the shot.
+     *
+     * For content no selector can assert. A video element satisfies `video` the
+     * instant it is created, long before it has decoded a frame — the CCTV
+     * mosaic came back as a black tile with a spinner that way. Capped, because
+     * a long settle is indistinguishable from a hang.
+     */
+    settleMs: z.number().int().min(0).max(30000).optional(),
     /** What to photograph. Omitted means the whole viewport. */
     clip: z.string().optional(),
     viewport: z.object({ width: z.number().int(), height: z.number().int() }).optional(),

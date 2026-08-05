@@ -113,6 +113,23 @@ export async function runCaptures(
         for (const step of shot.steps ?? []) {
           for (let attempt = 0; ; attempt++) {
             try {
+              if ("drag" in step) {
+                // Real pointer events, not element.dispatchEvent: HTML5 and
+                // pointer-based drag libraries both ignore synthetic events that
+                // carry no coordinates, and would silently do nothing.
+                const src = await page.waitForSelector(step.drag.from, { timeout: WAIT_MS });
+                const dst = await page.waitForSelector(step.drag.to, { timeout: WAIT_MS });
+                const a = await src!.boundingBox();
+                const b = await dst!.boundingBox();
+                if (!a || !b) throw new Error("drag endpoint has no box — it is not visible");
+                await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+                await page.mouse.down();
+                // Move in steps: a single jump can land before the drag source
+                // has registered the press, and nothing picks up.
+                await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 20 });
+                await page.mouse.up();
+                break;
+              }
               await page.waitForSelector(step.click, { timeout: WAIT_MS });
               await page.click(step.click);
               break;
@@ -130,6 +147,8 @@ export async function runCaptures(
         // expands, and it would satisfy dataReady before we ever arrived.
         await page.waitForSelector(shot.screenIs, { timeout: WAIT_MS });
         await page.waitForSelector(shot.dataReady, { timeout: WAIT_MS });
+
+        if (shot.settleMs) await new Promise((r) => setTimeout(r, shot.settleMs));
 
         const target = shot.clip ? await page.$(shot.clip) : page;
         if (!target) throw new Error(`clip selector "${shot.clip}" matched nothing`);

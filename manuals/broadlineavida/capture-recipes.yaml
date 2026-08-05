@@ -254,9 +254,17 @@ recipes:
     clip: "aside.shrink-0.border-r:not(.justify-between)"
     viewport: { width: 1600, height: 900 }
 
-  # bot.cctv.fn.grilla was tried and DELETED. The clip is right — it is the 2x2
-  # mosaic — but with no camera dragged in it is four black rectangles, which
-  # teaches a reader nothing and reads as a broken image. The selector below
-  # works; what it needs is a camera playing in at least one tile, so it belongs
-  # with the interaction batch:
+  # bot.cctv.fn.grilla CANNOT be captured headless, and it is not a selector
+  # problem. The drag works — CCTV-Sena lands in tile 1 and the PTZ overlay
+  # renders — but the stream never decodes: the tile shows
+  # "mediaError: bufferAddCodecError". No wait fixes a codec the browser will
+  # not play, so `settleMs` only bought a longer look at the same black tile.
+  #
+  # Everything below is CORRECT and worth keeping for a headful run or a hand
+  # capture. The drag is the part that was hard:
+  #   steps:
+  #     - click: "button::-p-text(Mosaico)"
+  #     - drag:
+  #         from: '[aria-roledescription="draggable"]'   # dnd-kit marks handles
+  #         to:   "div.grid.h-full.w-full.gap-1 > div:nth-child(1)"
   #   clip: "div.grid.h-full.w-full.gap-1"

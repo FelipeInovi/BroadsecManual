@@ -104,6 +104,51 @@ describe("parseRecipes", () => {
     expect(parsed.recipes[0]?.steps).toHaveLength(1);
   });
 
+  // The CCTV mosaic fills by dragging a camera onto a tile. Without a drag step
+  // that grid can only ever be photographed empty — four black rectangles.
+  it("accepts a drag step", () => {
+    const parsed = parseRecipes(
+      doc([recipe("bot.alarmas.fig", { steps: [{ drag: { from: ".cam", to: ".tile" } }] })]),
+    );
+    expect(parsed.recipes[0]?.steps?.[0]).toEqual({ drag: { from: ".cam", to: ".tile" } });
+  });
+
+  it("keeps click and drag mixable in one sequence, in order", () => {
+    const parsed = parseRecipes(
+      doc([
+        recipe("bot.alarmas.fig", {
+          steps: [{ click: "button" }, { drag: { from: ".cam", to: ".tile" } }],
+        }),
+      ]),
+    );
+    expect(parsed.recipes[0]?.steps).toHaveLength(2);
+  });
+
+  // A drag with only one end is a typo that would otherwise throw deep inside
+  // the browser, long after the run has logged in.
+  // A video stream satisfies a `video` selector the moment the element exists,
+  // long before it has decoded a frame. There is no selector for "has pixels".
+  it("accepts an explicit settle before the shot", () => {
+    const parsed = parseRecipes(doc([recipe("bot.alarmas.fig", { settleMs: 8000 })]));
+    expect(parsed.recipes[0]?.settleMs).toBe(8000);
+  });
+
+  it("refuses a settle long enough to look like a hang", () => {
+    expect(() => parseRecipes(doc([recipe("bot.alarmas.fig", { settleMs: 120000 })]))).toThrow();
+  });
+
+  it("refuses a drag missing an end", () => {
+    expect(() =>
+      parseRecipes(doc([recipe("bot.alarmas.fig", { steps: [{ drag: { from: ".cam" } }] })])),
+    ).toThrow(/to/);
+  });
+
+  it("refuses a step that is neither a click nor a drag", () => {
+    expect(() =>
+      parseRecipes(doc([recipe("bot.alarmas.fig", { steps: [{ hover: ".x" }] })])),
+    ).toThrow();
+  });
+
   it("refuses an empty click selector, which would silently click nothing", () => {
     expect(() =>
       parseRecipes(doc([recipe("bot.alarmas.fig", { steps: [{ click: " " }] })])),
