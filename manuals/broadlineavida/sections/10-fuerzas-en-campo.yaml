@@ -324,34 +324,34 @@ children:
                 type: figure
                 props:
                   caption: "Acceso a Call AI desde el historial de incidentes."
-                  widthPercent: 90
+                  widthPercent: 45
               - id: fuerzas.callai.fig-mapa-incidente
                 type: figure
                 props:
                   caption: >-
                     Acceso a Call AI del incidente desde la ubicación en el mapa.
-                  widthPercent: 90
+                  widthPercent: 32
               - id: fuerzas.callai.fig-resumen-incidente
                 type: figure
                 props:
                   caption: "Resumen de Call AI del incidente."
-                  widthPercent: 90
+                  widthPercent: 50
               - id: fuerzas.callai.fig-hist-tareas
                 type: figure
                 props:
                   caption: "Acceso a Call AI desde el historial de tareas."
-                  widthPercent: 90
+                  widthPercent: 45
               - id: fuerzas.callai.fig-mapa-tarea
                 type: figure
                 props:
                   caption: >-
                     Acceso a Call AI de la tarea desde la ubicación en el mapa.
-                  widthPercent: 90
+                  widthPercent: 32
               - id: fuerzas.callai.fig-resumen-tarea
                 type: figure
                 props:
                   caption: "Resumen de Call AI de la tarea."
-                  widthPercent: 90
+                  widthPercent: 45
 
   - id: fuerzas.anadir
     title: Módulo de Añadir
@@ -368,7 +368,7 @@ children:
         type: figure
         props:
           caption: "Opciones del módulo Añadir: Nuevo Incidente y Nueva Tarea."
-          widthPercent: 70
+          widthPercent: 35
 
       - id: fuerzas.anadir.incidente
         title: Nuevo Incidente
@@ -377,7 +377,7 @@ children:
             type: figure
             props:
               caption: "Formulario para crear un nuevo incidente."
-              widthPercent: 90
+              widthPercent: 45
           - id: fuerzas.anadir.incidente.texto
             type: prose
             props:
