@@ -28,24 +28,40 @@ function escapeCssString(value: string): string {
 }
 
 export function bridgeStylesheet(t: Tokens, header: string): string {
-  const safeHeader = escapeCssString(header);
+  // The brand is set apart so it can carry the accent colour and the display
+  // weight the proposal gives it. The CLI composes the header as
+  // "BRAND  |  Title  |  vX", so the first separator is the split point; a
+  // header without one simply has no brand segment and renders whole.
+  const cut = header.indexOf("|");
+  const safeBrand = escapeCssString(cut === -1 ? "" : header.slice(0, cut).trim());
+  const safeRest = escapeCssString(cut === -1 ? header : header.slice(cut + 1).trim());
   return `
 @page {
   size: ${t.page.size};
   margin: ${t.page.marginTop} ${t.page.marginX} ${t.page.marginBottom};
 
+  /* Widened so the brand sits at the page edge rather than drifting inward:
+     the corner box is the only thing left of @top-left. */
   @top-left-corner { content: ""; background: ${t.runningHeader.background}; }
   @top-left {
-    content: "${safeHeader}";
+    content: "${safeBrand}";
+    color: ${t.runningHeader.brandColor};
+    font: bold ${t.runningHeader.textSize} ${t.font.display};
+    letter-spacing: 1.6pt;
+    vertical-align: middle;
+    text-align: left;
+    white-space: pre;
+    padding-left: 4pt;
+  }
+  @top-center {
+    content: "${safeRest}";
     color: ${t.runningHeader.textColor};
     font: ${t.runningHeader.textSize} ${t.font.sans};
     letter-spacing: 0.2pt;
     vertical-align: middle;
-    padding-left: 14pt;
+    text-align: left;
     white-space: pre;
-    border-bottom: 1.5pt solid ${t.runningHeader.deck};
   }
-  @top-center { content: ""; border-bottom: 1.5pt solid ${t.runningHeader.deck}; }
   @top-right {
     content: "INOVISEC";
     color: ${t.runningHeader.textColor};
@@ -55,7 +71,6 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
     text-align: right;
     white-space: pre;
     padding-right: 14pt;
-    border-bottom: 1.5pt solid ${t.runningHeader.deck};
   }
   @top-right-corner { content: ""; background: ${t.runningHeader.background}; }
 
@@ -92,6 +107,8 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
 .pagedjs_margin-top,
 .pagedjs_margin-top-left-corner-holder,
 .pagedjs_margin-top-right-corner-holder { background: ${t.runningHeader.background}; }
+.pagedjs_margin-top { border-bottom: 1.5pt solid ${t.runningHeader.deck}; }
+.pagedjs_cover_page .pagedjs_margin-top { border-bottom: none; }
 .pagedjs_cover_page .pagedjs_margin-top,
 .pagedjs_cover_page .pagedjs_margin-top-left-corner-holder,
 .pagedjs_cover_page .pagedjs_margin-top-right-corner-holder { background: none; }
@@ -147,6 +164,7 @@ body {
   margin: 0;
   color: ${t.cover.titleColor};
 }
+.cover__title--light b { display: block; font-weight: bold; }
 .cover__rule { width: 52pt; height: 2.4pt; background: ${t.cover.accent}; margin: 15pt 0 13pt; }
 .cover__lede {
   margin: 0;
@@ -240,7 +258,7 @@ body {
   content: attr(data-number);
   position: absolute;
   right: 12pt;
-  top: -20pt;
+  top: -6pt;
   font-family: ${t.font.display};
   font-size: ${t.sectionHeader.ghostSize};
   font-weight: bold;

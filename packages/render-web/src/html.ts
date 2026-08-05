@@ -416,6 +416,19 @@ const bridgeMark = (accent: string): string =>
 const sheetFor = (t: Tokens, header: string): string =>
   t.cover.sheet === "bridge" ? bridgeStylesheet(t, header) : stylesheet(t, header);
 
+/**
+ * The cover title, with its last word dropped onto its own line in bold.
+ *
+ * "Manual de / operador" — the weight change is what makes the pair read as a
+ * lockup rather than a sentence. A single-word title keeps its one line.
+ */
+function coverTitle(title: string): string {
+  const cut = title.trimEnd().lastIndexOf(" ");
+  const head = cut === -1 ? "" : `${esc(title.slice(0, cut))}<br>`;
+  const tail = esc(cut === -1 ? title : title.slice(cut + 1));
+  return `<p class="cover__title cover__title--light">${head}<b>${tail}</b></p>`;
+}
+
 function renderCover(c: CoverData, t: Tokens): string {
   // Two compositions, both in the markup, chosen by the brand. See
   // `coverStyle` in the tokens: a cover is arrangement, not just palette.
@@ -427,7 +440,7 @@ function renderCover(c: CoverData, t: Tokens): string {
           `<span class="cover__wordmark">${esc(c.brand)}</span>`,
           `</div>`,
           `<div class="cover__stack">`,
-          `<p class="cover__title cover__title--light">${esc(c.title)}</p>`,
+          coverTitle(c.title),
           `<div class="cover__rule"></div>`,
           `<p class="cover__lede">${esc(c.lede)}</p>`,
           `</div>`,
