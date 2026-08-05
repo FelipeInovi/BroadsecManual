@@ -727,9 +727,9 @@ children:
                             tiempo estimado de llegada (tiene en cuenta el
                             vehículo que usa).
 
-                  # Steps 7 to 14 of the same sequence, resumed after the table.
-                  # `continues` keeps the count going: the reader sees Paso 6,
-                  # the table, then Paso 7 — not Paso 1 again.
+                  # Step 7 alone, resumed after the table. `continues` keeps the
+                  # count going: the reader sees Paso 6, the table, then Paso 7 —
+                  # not Paso 1 again.
                   - id: funcionalidades.despacho-pasos.proc-cont
                     type: procedure
                     props:
@@ -741,6 +741,35 @@ children:
                             Se puede filtrar según el tipo de agente para el
                             despacho del caso.
                           layout: beside
+
+                  # The agent types the step above filters by, right after it,
+                  # for the same reason the `aspectos` table sits under Paso 6.
+                  - id: funcionalidades.despacho-pasos.tipos
+                    type: icon-table
+                    props:
+                      labelHeader: Tipo de agente
+                      descriptionHeader: Descripción
+                      rows:
+                        - id: func.tipo.salud
+                          label: Salud
+                        - id: func.tipo.bomberos
+                          label: Bomberos
+                        - id: func.tipo.policia
+                          label: Policía
+                        - id: func.tipo.transito
+                          label: Tránsito
+                        - id: func.tipo.defensa-civil
+                          label: Defensa Civil
+                        - id: func.tipo.gaula
+                          label: Gaula
+
+                  # Steps 8 to 14, resumed after the second table. Chained: this
+                  # one continues the continuation, not the original block.
+                  - id: funcionalidades.despacho-pasos.proc-cont-2
+                    type: procedure
+                    props:
+                      continues: funcionalidades.despacho-pasos.proc-cont
+                      steps:
                         - id: func.desp.en-camino
                           title: Indique el estado del despacho
                           text: >-
@@ -793,25 +822,6 @@ children:
                             **finalización** del caso mediante el mismo ícono.
                           widthPercent: 35
                           layout: beside
-
-                  - id: funcionalidades.despacho-pasos.tipos
-                    type: icon-table
-                    props:
-                      labelHeader: Tipo de agente
-                      descriptionHeader: Descripción
-                      rows:
-                        - id: func.tipo.salud
-                          label: Salud
-                        - id: func.tipo.bomberos
-                          label: Bomberos
-                        - id: func.tipo.policia
-                          label: Policía
-                        - id: func.tipo.transito
-                          label: Tránsito
-                        - id: func.tipo.defensa-civil
-                          label: Defensa Civil
-                        - id: func.tipo.gaula
-                          label: Gaula
 
           - id: funcionalidades.pestana-reportes
             title: Pestaña Reportes
