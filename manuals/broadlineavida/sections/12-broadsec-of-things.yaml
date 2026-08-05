@@ -826,17 +826,11 @@ children:
                 Si no hay alarmas en el rango consultado, la plataforma lo
                 indica.
 
-  # =========================================================== Pendientes ===
-  - id: bot.pendientes
-    title: Aspectos pendientes de confirmación
-    children:
-      - id: bot.pendientes.texto
-        type: callout
-        props:
-          variant: info
-          text: >-
-            Dos puntos de este módulo están pendientes de confirmación con el
-            equipo de producto: la ruta exacta desde la interfaz principal para
-            ingresar a Broadsec of Things, y la forma de acceder a las vistas de
-            **Monitoreo** y **Auditoría**, que existen en la plataforma pero no
-            figuran en el panel lateral de navegación.
+  # The "Aspectos pendientes de confirmación" callout was REMOVED on the
+  # reviewer's call ("elimina este por ahora").
+  #
+  # One of its two open questions has since been answered and acted on: Monitoreo
+  # and Auditoria are not merely missing from the sidebar, they are UNREACHABLE —
+  # nothing in the product ever sets activeTab to either — and their subsections
+  # were removed for that reason. The other, the exact route into BroadSec of
+  # Things from the main interface, is still open and now recorded only here.

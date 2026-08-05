@@ -7,19 +7,19 @@ Los números de página valen para la última construcción del manual. Regenere
 
 | Imagen | Pág. | Instrucción de extracción |
 | --- | --- | --- |
-| `bot.mapa.fig` — La operación sobre el mapa: paneles, vehículos, puntos semaforizados y cámaras. | 66 |  |
-| `bot.prt.paso.limpiar` — Restablezca el listado | 67 |  |
-| `bot.recursos.paso.caso` — Elija el incidente | 69 |  |
-| `bot.recursos.paso.resultado` — Verifique el resultado | 69 |  |
-| `bot.recursos.paso.pj-confirmar` — Confirme | 69 |  |
-| `bot.cctv.fn.grilla` — Grilla del mosaico | 73 |  |
-| `bot.cctv.fn.estado` — Estado de la transmisión | 73 |  |
-| `bot.cctv.paso.encuadrar` — Encuadre la vista | 74 |  |
-| `bot.cctv.paso.nombrar` — Nombre la posición | 74 |  |
-| `bot.cctv.paso.reutilizar` — Reutilice la posición | 74 |  |
-| `bot.pmv-gestion.paso.desactivar` — Accione Desactivar sobre el mensaje | 77 |  |
-| `bot.pmv-gestion.paso.elegir` — Elija cómo retirarlo si está corriendo | 78 |  |
-| `bot.pmv-gestion.paso.reactivar` — Reactive si corresponde | 78 |  |
-| `bot.pmv-variables.paso.nombrar` — Nombre el grupo | 80 |  |
-| `bot.pmv-variables.paso.seleccionar` — Seleccione los paneles | 80 |  |
-| `bot.alarmas.paso.resultado` — Verifique el resultado | 82 |  |
+| `bot.mapa.fig` — La operación sobre el mapa: paneles, vehículos, puntos semaforizados y cámaras. | 63 |  |
+| `bot.prt.paso.limpiar` — Restablezca el listado | 65 |  |
+| `bot.recursos.paso.caso` — Elija el incidente | 66 |  |
+| `bot.recursos.paso.resultado` — Verifique el resultado | 66 |  |
+| `bot.recursos.paso.pj-confirmar` — Confirme | 67 |  |
+| `bot.cctv.fn.grilla` — Grilla del mosaico | 69 |  |
+| `bot.cctv.fn.estado` — Estado de la transmisión | 69 |  |
+| `bot.cctv.paso.encuadrar` — Encuadre la vista | 70 |  |
+| `bot.cctv.paso.nombrar` — Nombre la posición | 70 |  |
+| `bot.cctv.paso.reutilizar` — Reutilice la posición | 70 |  |
+| `bot.pmv-gestion.paso.desactivar` — Accione Desactivar sobre el mensaje | 73 |  |
+| `bot.pmv-gestion.paso.elegir` — Elija cómo retirarlo si está corriendo | 74 |  |
+| `bot.pmv-gestion.paso.reactivar` — Reactive si corresponde | 74 |  |
+| `bot.pmv-variables.paso.nombrar` — Nombre el grupo | 76 |  |
+| `bot.pmv-variables.paso.seleccionar` — Seleccione los paneles | 76 |  |
+| `bot.alarmas.paso.resultado` — Verifique el resultado | 78 |  |
