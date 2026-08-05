@@ -19,7 +19,8 @@
 # from an assumption into a check.
 #
 # BoT is enabled for demo, dev and mv only (canSeeBoT). med and lv do not have
-# the module at all, so there is nothing there to photograph.
+# the module at all. Of the three that do, only MV runs the current BoT — demo
+# is behind. Capture BoT from mv, always.
 #
 # ROUTES ARE HASH ROUTES. AppRoutes.tsx uses `createHashRouter`, so the path
 # lives after a `#`. A plain "/broadsec-of-things" silently serves the app shell
@@ -33,7 +34,11 @@ target:
     mv:
       baseUrl: https://medellin.inovisec.com/mv
       verify: 'img[src*="movilidad_logo"]'
-    # Kept for a dry run against non-production data. It has BoT too.
+    # NOT for BoT. demo runs an OUT OF DATE BroadSec of Things, so a capture
+    # taken here delivers screens the operator will never see — and nothing in
+    # the pipeline can tell an old screen from a current one. `canSeeBoT` being
+    # true here is exactly what makes that trap quiet. Kept only for figures
+    # outside BoT, or for exercising the login path.
     demo:
       baseUrl: https://web.inovisec.com/lv
       verify: 'img[src*="bridge_logo"]'
