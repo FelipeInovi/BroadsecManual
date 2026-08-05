@@ -149,9 +149,19 @@ function figureFor(
  * Draft builds only. Printed as the path itself rather than prose around it: it
  * is text to be transcribed exactly, and every extra word is a chance to
  * transcribe the wrong part of the line.
+ *
+ * The FILENAME is wrapped on its own so it can never break across lines. The
+ * longest slot used to wrap between "…seleccionar." and "png", which reads as a
+ * name ending in a dot — the single way this text can be copied wrong. The
+ * directory is left outside: that is the one place a long path may break, and
+ * breaking there costs nothing.
  */
-const pendingName = (deliverTo: string): string =>
-  `<span class="shot__name">${esc(deliverTo)}</span>`;
+const pendingName = (deliverTo: string): string => {
+  const cut = deliverTo.lastIndexOf("/");
+  const dir = cut === -1 ? "" : deliverTo.slice(0, cut + 1);
+  const file = deliverTo.slice(cut + 1);
+  return `<span class="shot__name">${esc(dir)}<span class="shot__file">${esc(file)}</span></span>`;
+};
 
 /**
  * Text and its figure, arranged as the item asked for.

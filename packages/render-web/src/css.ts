@@ -453,8 +453,16 @@ figure img.shot--pending {
   background: ${t.draft.background};
   border-left: 2pt solid ${t.draft.accent};
   padding: 2pt 4pt;
-  /* A path must break where it is safe to break, never mid-segment. */
+  /* The DIRECTORY may break anywhere; it is context, not text to transcribe. */
   word-break: break-all;
+}
+/* The filename may not break at all. It broke between "...seleccionar." and
+   "png", which reads as a name ending in a dot — and this text exists to be
+   copied character for character. Every slot name is far shorter than the
+   column, so forbidding the break cannot overflow it. */
+.shot__file {
+  white-space: nowrap;
+  word-break: normal;
 }
 /* Inside a table cell, its own line: someone works down a table row by row, and
    a name trailing the end of a description sentence is one they can skip. */

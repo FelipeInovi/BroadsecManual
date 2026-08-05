@@ -55,6 +55,15 @@ const render = (
  */
 const body = (html: string): string => html.slice(html.indexOf("</style>"));
 
+/**
+ * The body with its tags removed — what a reader actually sees.
+ *
+ * The delivery path is deliberately split across two elements so the filename
+ * cannot wrap, so asserting on raw markup would test the split rather than the
+ * thing that matters: that the whole path is readable and transcribable.
+ */
+const visible = (html: string): string => body(html).replace(/<[^>]*>/g, "");
+
 const figure = [block("s.fig", "figure", { caption: "Barra de búsqueda", widthPercent: 80 })];
 const figureSlots: Array<[string, string]> = [["s.fig", "barra.busqueda"]];
 
@@ -62,9 +71,9 @@ describe("pending image names", () => {
   // The whole reason the draft build exists: whoever captures the screenshots
   // works from this PDF and has no other way to know what to call the file.
   it("prints the delivery path beside a pending image in a draft", () => {
-    const html = body(render(figure, figureSlots, PENDING, true));
-    expect(html).toContain("_common/barra/busqueda.png");
-    expect(html).toContain('class="shot__name"');
+    const html = render(figure, figureSlots, PENDING, true);
+    expect(visible(html)).toContain("_common/barra/busqueda.png");
+    expect(body(html)).toContain('class="shot__name"');
   });
 
   // Invariant 4: a tenant's PDF carries no trace of the pipeline's internals.
@@ -82,6 +91,17 @@ describe("pending image names", () => {
       const html = body(render(figure, figureSlots, DELIVERED, draft));
       expect(html, `draft=${draft}`).not.toContain("shot__name");
     }
+  });
+
+  // The whole draft exists so a filename can be transcribed exactly. The
+  // longest one wrapped between "…seleccionar." and "png", which reads as a
+  // name ending in a dot — the one way this text can be copied wrong.
+  it("keeps the filename unbreakable, so it can never wrap mid-extension", () => {
+    const html = body(render(figure, figureSlots, PENDING, true));
+    expect(html).toContain('<span class="shot__file">busqueda.png</span>');
+    // The directory stays outside it: that is the one place a long path MAY
+    // break, and breaking there costs nothing.
+    expect(html).toContain('>_common/barra/<span class="shot__file">');
   });
 
   it("escapes the path, so it cannot inject markup", () => {
