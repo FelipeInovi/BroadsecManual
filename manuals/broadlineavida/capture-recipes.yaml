@@ -26,6 +26,35 @@
 # lives after a `#`. A plain "/broadsec-of-things" silently serves the app shell
 # and the capture would shoot whatever screen happened to be up.
 
+# ============================================================================
+# NEVER PERFORM A REAL OPERATIONAL ACTION. THIS IS PRODUCTION.
+#
+# These recipes run against mv, the live system Medellin dispatches from. A
+# capture may LOOK and NAVIGATE. It must never do anything an operator, a panel
+# on a road, or a camera in the street would feel.
+#
+# FORBIDDEN — never script these, however good the figure would be:
+#   - PMV: saving, sending, scheduling, deactivating or reactivating a message.
+#     Anything here reaches physical signs on live roads. The reviewer named
+#     this module specifically.
+#   - PTZ: moving a camera, saving or recalling a preset. That is a motor
+#     turning on a real street.
+#   - Dispatch: assigning a resource to an incident, marking PJ, confirming.
+#   - Alarms: acknowledging. That is an operational record with a name on it.
+#   - Creating or deleting anything: families, groups, predefined messages.
+#
+# ALLOWED — read-only, leaves no trace:
+#   - Navigating, expanding a menu, opening a pane.
+#   - Searching, filtering, clearing a filter, paginating.
+#   - Dragging a camera into a mosaic tile to watch it (viewing a stream
+#     changes nothing).
+#   - Filling a form WITHOUT saving, to show what it asks for.
+#
+# A procedure step whose figure would need a forbidden action stays PENDING and
+# is captured by hand, in a controlled environment, by someone authorised. An
+# unshot slot costs nothing. A message pushed to a road costs a great deal.
+# ============================================================================
+
 version: 1
 
 target:
