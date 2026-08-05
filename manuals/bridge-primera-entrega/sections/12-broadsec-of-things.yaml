@@ -165,13 +165,6 @@ children:
             Diríjase a **Mapa** en el panel lateral. Es la sección que se
             muestra al ingresar al módulo.
 
-      # Overview figure: the module/submodule at a glance, before any detail.
-      - id: bot.mapa.fig
-        type: figure
-        props:
-          caption: "La operación sobre el mapa: paneles, vehículos, puntos semaforizados y cámaras."
-          widthPercent: 90
-
       - id: bot.mapa.funciones
         type: term-list
         props:
@@ -267,13 +260,12 @@ children:
                 El selector de vehículo permite restringir el listado a un tipo
                 en particular. La opción **Todos los vehículos** lo restablece.
             - id: bot.prt.paso.limpiar
-              layout: beside
               title: Restablezca el listado
               text: >-
                 El botón **Limpiar** descarta todos los filtros aplicados. Si
                 ninguna fila coincide, la plataforma indica que no hay
                 resultados para los filtros aplicados.
-
+              image: false
   # ============================================================== Recursos ===
   - id: bot.recursos
     title: Recursos
@@ -354,21 +346,20 @@ children:
                 abre la ventana *Asignar recurso a un incidente*, con el recurso
                 y su placa a la vista.
             - id: bot.recursos.paso.caso
-              layout: beside
               title: Elija el incidente
               text: >-
                 Seleccione el caso de la lista y confirme con **Confirmar
                 asignación**. Si no hay casos disponibles, la plataforma lo
                 indica y permite volver a la lista.
+              image: false
             - id: bot.recursos.paso.resultado
-              layout: beside
               title: Verifique el resultado
               text: >-
                 La columna **Despacho** pasa a mostrar **ASIGNADO**. Al
                 accionarla nuevamente se abre el detalle del incidente, desde
                 donde puede registrar **Recurso en sitio**, **Finalizar
                 atención** o **Desasignar**.
-
+              image: false
       - id: bot.recursos.pj
         type: procedure
         props:
@@ -381,13 +372,12 @@ children:
                 La plataforma solicita confirmación antes de aplicar el cambio,
                 indicando el recurso y la acción a realizar.
             - id: bot.recursos.paso.pj-confirmar
-              layout: beside
               title: Confirme
               text: >-
                 Al confirmar, la plataforma informa que el recurso quedó marcado
                 como Policía Judicial. La misma acción, sobre un recurso ya
                 marcado, lo desmarca.
-
+              image: false
       - id: bot.recursos.observacion.header
         type: detail-header
         props:
@@ -446,12 +436,14 @@ children:
               text: >-
                 Define cuántas cámaras se visualizan de forma simultánea. La
                 vista individual corresponde a una sola cámara en pantalla.
+              image: false
             - id: bot.cctv.fn.estado
               label: Estado de la transmisión
               text: >-
                 Una cámara sin video muestra **SIN SEÑAL**, y una que perdió
                 conexión muestra **FUERA DE COMUNICACIONES**. La opción de
                 reintentar conexión vuelve a solicitar la transmisión.
+              image: false
             - id: bot.cctv.fn.ptz
               label: Control PTZ
               text: >-
@@ -464,25 +456,24 @@ children:
           lead: Para guardar y reutilizar una posición de cámara, siga estos pasos.
           steps:
             - id: bot.cctv.paso.encuadrar
-              layout: beside
               title: Encuadre la vista
               text: >-
                 Con el control PTZ, desplace la cámara y ajuste el zoom hasta
                 obtener el encuadre deseado.
+              image: false
             - id: bot.cctv.paso.nombrar
-              layout: beside
               title: Nombre la posición
               text: >-
                 En **Presets de posición**, escriba un nombre y accione
                 **Guardar posición actual**.
+              image: false
             - id: bot.cctv.paso.reutilizar
-              layout: beside
               title: Reutilice la posición
               text: >-
                 El preset queda listado y puede invocarse en cualquier momento
                 para devolver la cámara a ese encuadre. También puede
                 eliminarse. Si no hay ninguno guardado, la plataforma lo indica.
-
+              image: false
   # ======================================================= PMV Programación ===
   - id: bot.pmv-programacion
     title: PMV — Programación
@@ -643,24 +634,23 @@ children:
           lead: Para desactivar un mensaje, siga estos pasos.
           steps:
             - id: bot.pmv-gestion.paso.desactivar
-              layout: beside
               title: Accione Desactivar sobre el mensaje
               text: >-
                 Si el mensaje no se está ejecutando, se desactiva de inmediato.
+              image: false
             - id: bot.pmv-gestion.paso.elegir
-              layout: beside
               title: Elija cómo retirarlo si está corriendo
               text: >-
                 Cuando el mensaje se está ejecutando, la plataforma pregunta
                 cómo desea desactivarlo y ofrece **Esperar a que termine** o
                 **Quitar ya**.
+              image: false
             - id: bot.pmv-gestion.paso.reactivar
-              layout: beside
               title: Reactive si corresponde
               text: >-
                 Un mensaje desactivado puede volver a ponerse en circulación con
                 **Activar**, siempre que su vigencia siga siendo válida.
-
+              image: false
   # ========================================================== PMV Variables ===
   - id: bot.pmv-variables
     title: PMV — Variables
@@ -718,18 +708,17 @@ children:
               title: Inicie la creación
               text: Accione **Añadir Grupo** en la sección de grupos.
             - id: bot.pmv-variables.paso.nombrar
-              layout: beside
               title: Nombre el grupo
               text: >-
                 Indique el nombre con el que aparecerá al programar un mensaje.
+              image: false
             - id: bot.pmv-variables.paso.seleccionar
-              layout: beside
               title: Seleccione los paneles
               text: >-
                 Elija los paneles que formarán parte del grupo y guarde. La
                 plataforma confirma la creación y el grupo queda disponible en
                 **Programación**.
-
+              image: false
   # PMV Monitoreo and PMV Auditoria were REMOVED, not left undocumented.
   #
   # Both panes exist in the product — PMVPage renders them and BOTSidebar
@@ -819,13 +808,12 @@ children:
                 La plataforma abre una ventana de confirmación, que indica si se
                 reconoce una alarma o varias, y permite escribir un comentario.
             - id: bot.alarmas.paso.resultado
-              layout: beside
               title: Verifique el resultado
               text: >-
                 Al confirmar, la columna **Gestión** refleja el reconocimiento.
                 Si no hay alarmas en el rango consultado, la plataforma lo
                 indica.
-
+              image: false
   # The "Aspectos pendientes de confirmación" callout was REMOVED on the
   # reviewer's call ("elimina este por ahora").
   #

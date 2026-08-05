@@ -1,0 +1,3611 @@
+{
+  "manual": "bridge-primera-entrega",
+  "contentVersion": "0.0.1",
+  "convention": {
+    "resolution": [
+      "<tenant>/<slot path>.<ext> — an image made for that one deployment",
+      "_common/<slot path>.<ext> — one image valid for every deployment (preferred)",
+      "otherwise the pending placeholder renders in its place"
+    ],
+    "slotPath": "a slot's dots are folders: `barra.filtro.fig` -> `barra/filtro/fig`",
+    "extensions": "png, jpg, jpeg, svg, webp or gif — the slot never names one",
+    "root": "manuals/<manual>/assets/figures/",
+    "preferShared": "deliver to _common/ unless the screen genuinely differs by deployment — six copies of one icon are six things to update"
+  },
+  "deploymentsCovered": [
+    "mv"
+  ],
+  "deploymentsConfigured": 1,
+  "counts": {
+    "total": 224,
+    "delivered": 224,
+    "pending": 0
+  },
+  "pending": [],
+  "delivered": [
+    {
+      "slot": "introduccion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "introduccion.fig",
+          "blockType": "figure",
+          "shows": "Vista principal de la plataforma."
+        }
+      ],
+      "files": [
+        "_common/introduccion.fig.png"
+      ]
+    },
+    {
+      "slot": "broadsec.descripcion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "broadsec.descripcion.fig",
+          "blockType": "figure",
+          "shows": "Interfaz principal integrada con Carbyne Apex."
+        }
+      ],
+      "files": [
+        "_common/broadsec.descripcion.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionamiento.acceso.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionamiento.acceso.fig",
+          "blockType": "figure",
+          "shows": "Ícono de acceso al módulo Bridge desde Apex."
+        }
+      ],
+      "files": [
+        "_common/funcionamiento.acceso.fig.png"
+      ]
+    },
+    {
+      "slot": "interfaz-general.fig-home",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "interfaz-general.fig-home",
+          "blockType": "figure",
+          "shows": "Componentes del Home — Mapa, Barra Superior e Incidentes."
+        }
+      ],
+      "files": [
+        "_common/interfaz-general/fig-home.png"
+      ]
+    },
+    {
+      "slot": "mapa.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.fig",
+          "blockType": "figure",
+          "shows": "Vista general del mapa con sus controles de visualización."
+        }
+      ],
+      "files": [
+        "_common/mapa.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.visualizacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.visualizacion",
+          "blockType": "icon-table",
+          "shows": "Módulo de Visualización"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.visualizacion.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.agrupar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.agrupar",
+          "blockType": "icon-table",
+          "shows": "Agrupar / Desagrupar"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.agrupar.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.street-view",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.street-view",
+          "blockType": "icon-table",
+          "shows": "Modo Street View"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.street-view.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.salir-street-view",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.salir-street-view",
+          "blockType": "icon-table",
+          "shows": "Salir del modo Street View"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.salir-street-view.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.navegacion-3d",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.navegacion-3d",
+          "blockType": "icon-table",
+          "shows": "Navegación 3D"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.navegacion-3d.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.controles",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.controles",
+          "blockType": "icon-table",
+          "shows": "Controles de Mapa"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.controles.png"
+      ]
+    },
+    {
+      "slot": "mapa.capa.trafico",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.trafico",
+          "blockType": "icon-table",
+          "shows": "Tráfico"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/trafico.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.incidentes",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.incidentes",
+          "blockType": "icon-table",
+          "shows": "Incidentes"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/incidentes.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.avl",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.avl",
+          "blockType": "icon-table",
+          "shows": "AVL"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/avl.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.mobile",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.mobile",
+          "blockType": "icon-table",
+          "shows": "Mobile"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/mobile.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.camaras",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.camaras",
+          "blockType": "icon-table",
+          "shows": "Cámaras"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/camaras.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.paneles",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.paneles",
+          "blockType": "icon-table",
+          "shows": "Paneles"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/paneles.png"
+      ]
+    },
+    {
+      "slot": "mapa.fig-capas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.fig-capas",
+          "blockType": "figure",
+          "shows": "Visualización de capas sobre el mapa."
+        }
+      ],
+      "files": [
+        "_common/mapa/fig-capas.png"
+      ]
+    },
+    {
+      "slot": "barra-superior.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra-superior.fig",
+          "blockType": "figure",
+          "shows": "Barra superior de la plataforma."
+        }
+      ],
+      "files": [
+        "_common/barra-superior/fig.png"
+      ]
+    },
+    {
+      "slot": "barra.busqueda",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.busqueda",
+          "blockType": "icon-table",
+          "shows": "Barra de búsqueda"
+        }
+      ],
+      "files": [
+        "_common/barra/busqueda.png"
+      ]
+    },
+    {
+      "slot": "barra.filtros",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.filtros",
+          "blockType": "icon-table",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/barra/filtros.png"
+      ]
+    },
+    {
+      "slot": "barra.eventos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.eventos",
+          "blockType": "icon-table",
+          "shows": "Eventos"
+        }
+      ],
+      "files": [
+        "_common/barra/eventos.png"
+      ]
+    },
+    {
+      "slot": "barra.anadir-caso",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.anadir-caso",
+          "blockType": "icon-table",
+          "shows": "Añadir caso"
+        }
+      ],
+      "files": [
+        "_common/barra/anadir-caso.png"
+      ]
+    },
+    {
+      "slot": "barra.dashboard",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.dashboard",
+          "blockType": "icon-table",
+          "shows": "Dashboard"
+        }
+      ],
+      "files": [
+        "_common/barra/dashboard.png"
+      ]
+    },
+    {
+      "slot": "barra.fuerzas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.fuerzas",
+          "blockType": "icon-table",
+          "shows": "Fuerzas en campo"
+        }
+      ],
+      "files": [
+        "_common/barra/fuerzas.png"
+      ]
+    },
+    {
+      "slot": "barra.mapa",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.mapa",
+          "blockType": "icon-table",
+          "shows": "Mapa"
+        }
+      ],
+      "files": [
+        "_common/barra/mapa.png"
+      ]
+    },
+    {
+      "slot": "barra.back",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.back",
+          "blockType": "icon-table",
+          "shows": "Back"
+        }
+      ],
+      "files": [
+        "_common/barra/back.png"
+      ]
+    },
+    {
+      "slot": "barra.admin",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.admin",
+          "blockType": "icon-table",
+          "shows": "Menú de Administración"
+        }
+      ],
+      "files": [
+        "_common/barra/admin.png"
+      ]
+    },
+    {
+      "slot": "barra.filtro.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "barra.filtro.fig",
+          "blockType": "figure",
+          "shows": "Panel de filtros de la barra superior."
+        }
+      ],
+      "files": [
+        "_common/barra/filtro/fig.png"
+      ]
+    },
+    {
+      "slot": "incidentes.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "incidentes.fig",
+          "blockType": "figure",
+          "shows": "Lista de casos, con la información de cada incidente reportado."
+        }
+      ],
+      "files": [
+        "_common/incidentes.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig",
+          "blockType": "figure",
+          "shows": "Selector de capas del mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "func.capa.trafico",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.trafico",
+          "blockType": "icon-table",
+          "shows": "Tráfico"
+        }
+      ],
+      "files": [
+        "_common/func.capa.trafico.png"
+      ]
+    },
+    {
+      "slot": "func.capa.avl",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.avl",
+          "blockType": "icon-table",
+          "shows": "AVL"
+        }
+      ],
+      "files": [
+        "_common/func.capa.avl.png"
+      ]
+    },
+    {
+      "slot": "func.capa.mobile",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.mobile",
+          "blockType": "icon-table",
+          "shows": "Mobile"
+        }
+      ],
+      "files": [
+        "_common/func.capa.mobile.png"
+      ]
+    },
+    {
+      "slot": "func.capa.paneles",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.paneles",
+          "blockType": "icon-table",
+          "shows": "Paneles"
+        }
+      ],
+      "files": [
+        "_common/func.capa.paneles.png"
+      ]
+    },
+    {
+      "slot": "func.capa.satelital",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.satelital",
+          "blockType": "icon-table",
+          "shows": "Satelital"
+        }
+      ],
+      "files": [
+        "_common/func.capa.satelital.png"
+      ]
+    },
+    {
+      "slot": "func.capa.360",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.360",
+          "blockType": "icon-table",
+          "shows": "360°"
+        }
+      ],
+      "files": [
+        "_common/func.capa.360.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig-activo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig-activo",
+          "blockType": "figure",
+          "shows": "Selector de capas del mapa activo."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig-activo.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig-visualizacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig-visualizacion",
+          "blockType": "figure",
+          "shows": "Visualización de capas del mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig-visualizacion.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.fig-satelital",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.fig-satelital",
+          "blockType": "figure",
+          "shows": "Capa Satelital y capa de Tráfico."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.fig-satelital.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.incidentes.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.incidentes.fig",
+          "blockType": "figure",
+          "shows": "Acciones disponibles al seleccionar un incidente en el mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.incidentes.fig.png"
+      ]
+    },
+    {
+      "slot": "func.inc.resumen",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.resumen",
+          "blockType": "icon-table",
+          "shows": "Resumen"
+        }
+      ],
+      "files": [
+        "_common/func.inc.resumen.png"
+      ]
+    },
+    {
+      "slot": "func.inc.detalle",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.detalle",
+          "blockType": "icon-table",
+          "shows": "Detalle"
+        }
+      ],
+      "files": [
+        "_common/func.inc.detalle.png"
+      ]
+    },
+    {
+      "slot": "func.inc.despacho",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.despacho",
+          "blockType": "icon-table",
+          "shows": "Despacho"
+        }
+      ],
+      "files": [
+        "_common/func.inc.despacho.png"
+      ]
+    },
+    {
+      "slot": "func.inc.gestion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.gestion",
+          "blockType": "icon-table",
+          "shows": "Gestión"
+        }
+      ],
+      "files": [
+        "_common/func.inc.gestion.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-mobile.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-mobile.fig",
+          "blockType": "figure",
+          "shows": "Capa Mobile: ubicación de agentes móviles."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-mobile.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-avl.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-avl.fig",
+          "blockType": "figure",
+          "shows": "Capa AVL: ubicación de fuerzas integradas."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-avl.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-paneles.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-paneles.fig",
+          "blockType": "figure",
+          "shows": "Capa de Paneles en el mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-paneles.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.capa-paneles.fig-complementaria",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.capa-paneles.fig-complementaria",
+          "blockType": "figure",
+          "shows": "Capa de Paneles, vista complementaria."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.capa-paneles.fig-complementaria.jpeg"
+      ]
+    },
+    {
+      "slot": "func.filtro.rango",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.filtro.rango",
+          "blockType": "field-list",
+          "shows": "Rango de tiempo"
+        }
+      ],
+      "files": [
+        "_common/func.filtro.rango.png"
+      ]
+    },
+    {
+      "slot": "func.filtro.restaurar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.filtro.restaurar",
+          "blockType": "field-list",
+          "shows": "Restaurar filtros"
+        }
+      ],
+      "files": [
+        "_common/func.filtro.restaurar.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.solo-mis-casos.fig-apagado",
+          "blockType": "figure",
+          "shows": "Interruptor Solo mis casos, apagado."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.solo-mis-casos.fig-apagado.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.solo-mis-casos.fig-encendido",
+          "blockType": "figure",
+          "shows": "Interruptor Solo mis casos, encendido."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.solo-mis-casos.fig-encendido.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.tipo-emergencia.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.tipo-emergencia.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de emergencia."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.tipo-emergencia.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.tipo-emergencia.fig-lista",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.tipo-emergencia.fig-lista",
+          "blockType": "figure",
+          "shows": "Lista de tipos de emergencia."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.tipo-emergencia.fig-lista.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.origen.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.origen.fig",
+          "blockType": "figure",
+          "shows": "Filtro por origen del reporte."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.origen.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.estado.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.estado.fig",
+          "blockType": "figure",
+          "shows": "Filtro por estado del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.estado.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.tipo-llamada.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.tipo-llamada.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de llamada."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.tipo-llamada.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.asociados.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.asociados.fig",
+          "blockType": "figure",
+          "shows": "Filtro por casos asociados."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.asociados.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.enriquecidos.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.enriquecidos.fig",
+          "blockType": "figure",
+          "shows": "Filtro por datos enriquecidos."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.enriquecidos.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.ubicacion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.ubicacion.fig",
+          "blockType": "figure",
+          "shows": "Filtro por ubicación."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.ubicacion.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.duracion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.duracion.fig",
+          "blockType": "figure",
+          "shows": "Filtro por duración de la llamada."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.duracion.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.filtros.fig-aplicar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.filtros.fig-aplicar",
+          "blockType": "figure",
+          "shows": "Botones Aplicar y Cancelar de los filtros."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.filtros.fig-aplicar.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.seccion-incidentes.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.seccion-incidentes.fig",
+          "blockType": "figure",
+          "shows": "Lista de casos con etiquetas de tipo de emergencia."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.seccion-incidentes.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.llamada-entrante.fig-vivo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.llamada-entrante.fig-vivo",
+          "blockType": "figure",
+          "shows": "Incidente EN VIVO: grabación y monitoreo activo."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.llamada-entrante.fig-vivo.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.llamada-entrante.fig-estado",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.llamada-entrante.fig-estado",
+          "blockType": "figure",
+          "shows": "Estado EN VIVO del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.llamada-entrante.fig-estado.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.llamada-entrante.fig-final",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.llamada-entrante.fig-final",
+          "blockType": "figure",
+          "shows": "Incidente finalizado, listo para gestión."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.llamada-entrante.fig-final.jpeg"
+      ]
+    },
+    {
+      "slot": "func.crear.boton",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.crear.boton",
+          "blockType": "procedure",
+          "shows": "Abra el formulario"
+        }
+      ],
+      "files": [
+        "_common/func.crear.boton.jpeg"
+      ]
+    },
+    {
+      "slot": "func.crear.formulario",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.crear.formulario",
+          "blockType": "procedure",
+          "shows": "Diligencie el formulario"
+        }
+      ],
+      "files": [
+        "_common/func.crear.formulario.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.general.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.general.fig",
+          "blockType": "figure",
+          "shows": "Tarjeta de incidente con label y estado de color."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.general.fig.png"
+      ]
+    },
+    {
+      "slot": "func.estado.naranja",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.naranja",
+          "blockType": "icon-table",
+          "shows": "Punto naranja"
+        }
+      ],
+      "files": [
+        "_common/func.estado.naranja.png"
+      ]
+    },
+    {
+      "slot": "func.estado.verde",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.verde",
+          "blockType": "icon-table",
+          "shows": "Punto verde"
+        }
+      ],
+      "files": [
+        "_common/func.estado.verde.png"
+      ]
+    },
+    {
+      "slot": "func.estado.azul",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.azul",
+          "blockType": "icon-table",
+          "shows": "Punto azul"
+        }
+      ],
+      "files": [
+        "_common/func.estado.azul.png"
+      ]
+    },
+    {
+      "slot": "func.estado.ojo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.ojo",
+          "blockType": "icon-table",
+          "shows": "Ícono de ojo"
+        }
+      ],
+      "files": [
+        "_common/func.estado.ojo.png"
+      ]
+    },
+    {
+      "slot": "func.estado.padre",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.padre",
+          "blockType": "icon-table",
+          "shows": "Ícono de asociado (padre)"
+        }
+      ],
+      "files": [
+        "_common/func.estado.padre.png"
+      ]
+    },
+    {
+      "slot": "func.estado.hijo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.estado.hijo",
+          "blockType": "icon-table",
+          "shows": "Ícono de asociado (hijo)"
+        }
+      ],
+      "files": [
+        "_common/func.estado.hijo.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.componentes.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.componentes.fig",
+          "blockType": "figure",
+          "shows": "Vista detallada de un incidente, con sus cuatro pestañas."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.componentes.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "func.pest1.duracion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.duracion",
+          "blockType": "field-list",
+          "shows": "Duración"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.duracion.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.transcripcion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.transcripcion",
+          "blockType": "field-list",
+          "shows": "Transcripción"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.transcripcion.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.audio",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.audio",
+          "blockType": "field-list",
+          "shows": "Audio"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.audio.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.historial",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.historial",
+          "blockType": "field-list",
+          "shows": "Historial de ubicaciones"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.historial.png"
+      ]
+    },
+    {
+      "slot": "func.pest1.asociados",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.pest1.asociados",
+          "blockType": "field-list",
+          "shows": "Casos asociados"
+        }
+      ],
+      "files": [
+        "_common/func.pest1.asociados.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.pestana-callai.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.pestana-callai.fig",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.pestana-callai.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.pestana-callai.fig-detalle",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.pestana-callai.fig-detalle",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI, detalle."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.pestana-callai.fig-detalle.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.pestana-despacho.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.pestana-despacho.fig",
+          "blockType": "figure",
+          "shows": "Panel de despacho del incidente."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.pestana-despacho.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "func.desp.ubicacion-existente",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.ubicacion-existente",
+          "blockType": "procedure",
+          "shows": "Verifique la ubicación"
+        }
+      ],
+      "files": [
+        "_common/func.desp.ubicacion-existente.jpeg"
+      ]
+    },
+    {
+      "slot": "func.desp.buscar-ubicacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.buscar-ubicacion",
+          "blockType": "procedure",
+          "shows": "Busque la ubicación"
+        }
+      ],
+      "files": [
+        "_common/func.desp.buscar-ubicacion.jpeg"
+      ]
+    },
+    {
+      "slot": "func.desp.seleccionar-fuerzas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.seleccionar-fuerzas",
+          "blockType": "procedure",
+          "shows": "Seleccione las fuerzas"
+        }
+      ],
+      "files": [
+        "_common/func.desp.seleccionar-fuerzas.png"
+      ]
+    },
+    {
+      "slot": "func.desp.unidad-disponible",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.unidad-disponible",
+          "blockType": "procedure",
+          "shows": "Elija una unidad disponible"
+        }
+      ],
+      "files": [
+        "_common/func.desp.unidad-disponible.png"
+      ]
+    },
+    {
+      "slot": "func.desp.info-agente",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.info-agente",
+          "blockType": "procedure",
+          "shows": "Revise la información del agente"
+        }
+      ],
+      "files": [
+        "_common/func.desp.info-agente.jpeg"
+      ]
+    },
+    {
+      "slot": "func.agente.tipo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.tipo",
+          "blockType": "icon-table",
+          "shows": "Tipo de agente"
+        }
+      ],
+      "files": [
+        "_common/func.agente.tipo.png"
+      ]
+    },
+    {
+      "slot": "func.agente.perfil",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.perfil",
+          "blockType": "icon-table",
+          "shows": "Perfil del agente"
+        }
+      ],
+      "files": [
+        "_common/func.agente.perfil.png"
+      ]
+    },
+    {
+      "slot": "func.agente.dotacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.dotacion",
+          "blockType": "icon-table",
+          "shows": "Dotación y vehículo"
+        }
+      ],
+      "files": [
+        "_common/func.agente.dotacion.png"
+      ]
+    },
+    {
+      "slot": "func.agente.placa",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.placa",
+          "blockType": "icon-table",
+          "shows": "Placa, distancia y tiempo"
+        }
+      ],
+      "files": [
+        "_common/func.agente.placa.png"
+      ]
+    },
+    {
+      "slot": "func.desp.filtrar-tipo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.filtrar-tipo",
+          "blockType": "procedure",
+          "shows": "Filtre por tipo de agente"
+        }
+      ],
+      "files": [
+        "_common/func.desp.filtrar-tipo.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.salud",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.salud",
+          "blockType": "icon-table",
+          "shows": "Salud"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.salud.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.bomberos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.bomberos",
+          "blockType": "icon-table",
+          "shows": "Bomberos"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.bomberos.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.policia",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.policia",
+          "blockType": "icon-table",
+          "shows": "Policía"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.policia.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.transito",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.transito",
+          "blockType": "icon-table",
+          "shows": "Tránsito"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.transito.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.defensa-civil",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.defensa-civil",
+          "blockType": "icon-table",
+          "shows": "Defensa Civil"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.defensa-civil.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.gaula",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.gaula",
+          "blockType": "icon-table",
+          "shows": "Gaula"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.gaula.png"
+      ]
+    },
+    {
+      "slot": "func.desp.en-camino",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.en-camino",
+          "blockType": "procedure",
+          "shows": "Indique el estado del despacho"
+        }
+      ],
+      "files": [
+        "_common/func.desp.en-camino.png"
+      ]
+    },
+    {
+      "slot": "func.desp.despachar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.despachar",
+          "blockType": "procedure",
+          "shows": "Despache"
+        }
+      ],
+      "files": [
+        "_common/func.desp.despachar.png"
+      ]
+    },
+    {
+      "slot": "func.desp.chat",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.chat",
+          "blockType": "procedure",
+          "shows": "Converse con los agentes"
+        }
+      ],
+      "files": [
+        "_common/func.desp.chat.jpeg"
+      ]
+    },
+    {
+      "slot": "func.desp.notas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.notas",
+          "blockType": "procedure",
+          "shows": "Agregue notas adicionales"
+        }
+      ],
+      "files": [
+        "_common/func.desp.notas.png"
+      ]
+    },
+    {
+      "slot": "func.desp.en-sitio",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.en-sitio",
+          "blockType": "procedure",
+          "shows": "Ponga al agente En Sitio"
+        }
+      ],
+      "files": [
+        "_common/func.desp.en-sitio.jpeg"
+      ]
+    },
+    {
+      "slot": "func.desp.prescindir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.prescindir",
+          "blockType": "procedure",
+          "shows": "Prescinda de un agente"
+        }
+      ],
+      "files": [
+        "_common/func.desp.prescindir.png"
+      ]
+    },
+    {
+      "slot": "func.desp.finalizar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.finalizar",
+          "blockType": "procedure",
+          "shows": "Finalice el caso"
+        }
+      ],
+      "files": [
+        "_common/func.desp.finalizar.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-via.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-via.fig",
+          "blockType": "figure",
+          "shows": "Formulario del reporte: Detalles en Vía."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-via.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-lesionados.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-lesionados.fig",
+          "blockType": "figure",
+          "shows": "Formulario del reporte: Detalles de Lesionados."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-lesionados.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-comentarios.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-comentarios.fig",
+          "blockType": "figure",
+          "shows": "Formulario del reporte: Comentarios Generales."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-comentarios.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-actualizacion.fig-luz",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-actualizacion.fig-luz",
+          "blockType": "figure",
+          "shows": "Luz roja titilante en el ítem de Reporte."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-actualizacion.fig-luz.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-actualizacion.fig-acceso",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-actualizacion.fig-acceso",
+          "blockType": "figure",
+          "shows": "Acceso a la actualización desde el ítem de Reporte."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-actualizacion.fig-acceso.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-actualizacion.fig-modal",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-actualizacion.fig-modal",
+          "blockType": "figure",
+          "shows": "Modal Información recibida del agente, para aceptar o rechazar cambios."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-actualizacion.fig-modal.png"
+      ]
+    },
+    {
+      "slot": "dashboard.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.fig",
+          "blockType": "figure",
+          "shows": "Vista general del Security Dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.area.filtros",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.area.filtros",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/dashboard.area.filtros.png"
+      ]
+    },
+    {
+      "slot": "dashboard.area.ventanas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.area.ventanas",
+          "blockType": "field-list",
+          "shows": "Ventanas de Datos"
+        }
+      ],
+      "files": [
+        "_common/dashboard.area.ventanas.png"
+      ]
+    },
+    {
+      "slot": "dashboard.area.mapa",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.area.mapa",
+          "blockType": "field-list",
+          "shows": "Mapa de Calor"
+        }
+      ],
+      "files": [
+        "_common/dashboard.area.mapa.png"
+      ]
+    },
+    {
+      "slot": "dashboard.filtros.rango.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.rango.fig",
+          "blockType": "figure",
+          "shows": "Filtro de rango de tiempo del dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.rango.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.filtros.ubicacion.fig-depto",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.ubicacion.fig-depto",
+          "blockType": "figure",
+          "shows": "Filtro de ubicación por Departamento y Ciudad."
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.ubicacion.fig-depto.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.emergencia.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.emergencia.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de emergencia."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.emergencia.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.fuerzas.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.fuerzas.fig",
+          "blockType": "figure",
+          "shows": "Filtro por fuerza de respuesta."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.fuerzas.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.finalizacion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.finalizacion.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de finalización."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.finalizacion.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.movilidad.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.movilidad.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de movilidad."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.movilidad.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.filtros.tiempos.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.tiempos.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tiempos de gestión."
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.tiempos.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.quitar.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.quitar.fig",
+          "blockType": "figure",
+          "shows": "Cerrar una ventana o widget del dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.quitar.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.fig-widgets",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.fig-widgets",
+          "blockType": "figure",
+          "shows": "Menú de Widgets para restaurar ventanas."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.fig-widgets.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.fig-restaurado",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.fig-restaurado",
+          "blockType": "figure",
+          "shows": "Widget restaurado en el dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.fig-restaurado.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.exportar.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.exportar.fig",
+          "blockType": "figure",
+          "shows": "Botón de exportación del dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.exportar.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.total",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.total",
+          "blockType": "field-list",
+          "shows": "Total de Emergencias"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.total.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.promedio-respuesta",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.promedio-respuesta",
+          "blockType": "field-list",
+          "shows": "Tiempo Promedio de Respuesta"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.promedio-respuesta.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.sin-despacho",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.sin-despacho",
+          "blockType": "field-list",
+          "shows": "Casos sin despacho"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.sin-despacho.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.promedio-llegada",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.promedio-llegada",
+          "blockType": "field-list",
+          "shows": "Tiempo Promedio de Llegada"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.promedio-llegada.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.tiempo-respuesta",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.tiempo-respuesta",
+          "blockType": "field-list",
+          "shows": "Tiempo de respuesta"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.tiempo-respuesta.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.cantidad",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.cantidad",
+          "blockType": "field-list",
+          "shows": "Cantidad de Emergencias"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.cantidad.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.categoria",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.categoria",
+          "blockType": "field-list",
+          "shows": "Emergencia por categoría"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.categoria.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widget.frecuentes",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widget.frecuentes",
+          "blockType": "field-list",
+          "shows": "Tipos de Casos Frecuentes"
+        }
+      ],
+      "files": [
+        "_common/dashboard.widget.frecuentes.png"
+      ]
+    },
+    {
+      "slot": "dashboard.widgets.fig-modificar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.widgets.fig-modificar",
+          "blockType": "figure",
+          "shows": "Filtro de Variables de Gestión para los tipos de casos frecuentes."
+        }
+      ],
+      "files": [
+        "_common/dashboard.widgets.fig-modificar.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig",
+          "blockType": "figure",
+          "shows": "Mapa de calor de casos en el dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-opacidad",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-opacidad",
+          "blockType": "figure",
+          "shows": "Control de opacidad del mapa de casos."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-opacidad.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-maximizado",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-maximizado",
+          "blockType": "figure",
+          "shows": "Mapa de casos maximizado."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-maximizado.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-modo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-modo",
+          "blockType": "figure",
+          "shows": "Alternar entre Mapa de calor y Marcadores."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-modo.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-marcadores",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-marcadores",
+          "blockType": "figure",
+          "shows": "Vista de casos individuales, con marcadores, en el mapa."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-marcadores.png"
+      ]
+    },
+    {
+      "slot": "dashboard.lista.fig-boton",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.lista.fig-boton",
+          "blockType": "figure",
+          "shows": "Botón Los Casos para el modo lista."
+        }
+      ],
+      "files": [
+        "_common/dashboard.lista.fig-boton.png"
+      ]
+    },
+    {
+      "slot": "dashboard.lista.fig-lista",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.lista.fig-lista",
+          "blockType": "figure",
+          "shows": "Visualización de casos en modo lista."
+        }
+      ],
+      "files": [
+        "_common/dashboard.lista.fig-lista.png"
+      ]
+    },
+    {
+      "slot": "dashboard.lista.fig-detalle",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.lista.fig-detalle",
+          "blockType": "figure",
+          "shows": "Detalle de un caso seleccionado en la lista."
+        }
+      ],
+      "files": [
+        "_common/dashboard.lista.fig-detalle.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.fig",
+          "blockType": "figure",
+          "shows": "Interfaz principal: zonas Mapa, Barra Superior y Agentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.fig",
+          "blockType": "figure",
+          "shows": "Barra superior del módulo."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.buscar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.buscar",
+          "blockType": "icon-table",
+          "shows": "Buscar"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.buscar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.filtro",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.filtro",
+          "blockType": "icon-table",
+          "shows": "Filtro"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.filtro.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.agentes",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.agentes",
+          "blockType": "icon-table",
+          "shows": "Módulo de Agentes"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.agentes.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.operaciones",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.operaciones",
+          "blockType": "icon-table",
+          "shows": "Módulo de Operaciones"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.operaciones.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.anadir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.anadir",
+          "blockType": "icon-table",
+          "shows": "Añadir"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.anadir.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.mapa",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.mapa",
+          "blockType": "icon-table",
+          "shows": "Mapa"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.mapa.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.home",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.home",
+          "blockType": "icon-table",
+          "shows": "Home"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.home.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.agentes.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.agentes.fig",
+          "blockType": "figure",
+          "shows": "Módulo de Agentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.agentes.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "fuerzas.estado.no-disponible",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.no-disponible",
+          "blockType": "icon-table",
+          "shows": "No disponible"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.estado.no-disponible.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.estado.disponible",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.disponible",
+          "blockType": "icon-table",
+          "shows": "Disponible"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.estado.disponible.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.estado.con-caso",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.con-caso",
+          "blockType": "icon-table",
+          "shows": "Con caso asignado"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.estado.con-caso.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.agentes.filtro.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.agentes.filtro.fig",
+          "blockType": "figure",
+          "shows": "Filtro de estados y turno de los agentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.agentes.filtro.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-acceso",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-acceso",
+          "blockType": "figure",
+          "shows": "Acceso al perfil desde la lista de agentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-acceso.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-ubicacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-ubicacion",
+          "blockType": "figure",
+          "shows": "Ubicación del agente en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-ubicacion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-turnos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-turnos",
+          "blockType": "figure",
+          "shows": "Pestaña Turnos del agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-turnos.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-asignar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-asignar",
+          "blockType": "figure",
+          "shows": "Pestaña Asignar del perfil del agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-asignar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-confirmacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-confirmacion",
+          "blockType": "figure",
+          "shows": "Confirmación de despacho del caso al agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-confirmacion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-tarea",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-tarea",
+          "blockType": "figure",
+          "shows": "Creación de una tarea desde el perfil del agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.fig",
+          "blockType": "figure",
+          "shows": "Módulo de Operaciones: historial de turnos."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.turno.activo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.turno.activo",
+          "blockType": "icon-table",
+          "shows": "Indica que el agente está con un turno activo."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.turno.activo.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.turno.finalizado",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.turno.finalizado",
+          "blockType": "icon-table",
+          "shows": "Indica que el turno ya se ha finalizado."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.turno.finalizado.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.filtro.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.filtro.fig",
+          "blockType": "figure",
+          "shows": "Filtro de rango de tiempo en Operaciones."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.filtro.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.filtro.fig-rango",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.filtro.fig-rango",
+          "blockType": "figure",
+          "shows": "Selección de rango de fechas en el filtro."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.filtro.fig-rango.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.resumen.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.resumen.fig",
+          "blockType": "figure",
+          "shows": "Resumen de actividad del turno seleccionado."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.resumen.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.resumen.fig-recorrido",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.resumen.fig-recorrido",
+          "blockType": "figure",
+          "shows": "Recorrido del turno en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.resumen.fig-recorrido.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.poligono.fig-incidente",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.poligono.fig-incidente",
+          "blockType": "figure",
+          "shows": "Polígono del incidente en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.poligono.fig-incidente.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.poligono.fig-tarea",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.poligono.fig-tarea",
+          "blockType": "figure",
+          "shows": "Polígono de la tarea en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.poligono.fig-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-hist-incidentes",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-hist-incidentes",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI desde el historial de incidentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-hist-incidentes.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-mapa-incidente",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-mapa-incidente",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI del incidente desde la ubicación en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-mapa-incidente.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-resumen-incidente",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-resumen-incidente",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI del incidente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-resumen-incidente.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-hist-tareas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-hist-tareas",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI desde el historial de tareas."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-hist-tareas.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-mapa-tarea",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-mapa-tarea",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI de la tarea desde la ubicación en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-mapa-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-resumen-tarea",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-resumen-tarea",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI de la tarea."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-resumen-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.fig",
+          "blockType": "figure",
+          "shows": "Opciones del módulo Añadir: Nuevo Incidente y Nueva Tarea."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.incidente.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.incidente.fig",
+          "blockType": "figure",
+          "shows": "Formulario para crear un nuevo incidente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.incidente.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.incidente.fig-confirmacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.incidente.fig-confirmacion",
+          "blockType": "figure",
+          "shows": "Confirmación de incidente creado exitosamente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.incidente.fig-confirmacion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.tarea.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.tarea.fig",
+          "blockType": "figure",
+          "shows": "Formulario para crear una nueva tarea."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.tarea.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.home.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.home.fig",
+          "blockType": "figure",
+          "shows": "Ícono para retornar al Home de Bridge."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.home.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "callai.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "callai.fig",
+          "blockType": "figure",
+          "shows": "Interfaz de Call AI durante una llamada activa."
+        }
+      ],
+      "files": [
+        "_common/callai/fig.jpeg"
+      ]
+    },
+    {
+      "slot": "callai.escucha.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "callai.escucha.fig",
+          "blockType": "figure",
+          "shows": "Escucha activa y resumen narrativo durante la llamada."
+        }
+      ],
+      "files": [
+        "_common/callai/escucha/fig.jpeg"
+      ]
+    },
+    {
+      "slot": "callai.observaciones.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "callai.observaciones.fig",
+          "blockType": "figure",
+          "shows": "Campo de Observaciones posterior a la llamada."
+        }
+      ],
+      "files": [
+        "_common/callai/observaciones/fig.png"
+      ]
+    },
+    {
+      "slot": "bot.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.fig",
+          "blockType": "figure",
+          "shows": "Pantalla general del módulo: el panel lateral de navegación y el área de trabajo."
+        }
+      ],
+      "files": [
+        "_common/bot.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.navegacion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.navegacion.fig",
+          "blockType": "figure",
+          "shows": "El panel lateral con las secciones del módulo y el estado de las integraciones."
+        }
+      ],
+      "files": [
+        "_common/bot.navegacion.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.seccion.mapa",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.mapa",
+          "blockType": "icon-table",
+          "shows": "Mapa"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/mapa.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.prt",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.prt",
+          "blockType": "icon-table",
+          "shows": "PRT"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/prt.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.recursos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.recursos",
+          "blockType": "icon-table",
+          "shows": "Recursos"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/recursos.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.cctv",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.cctv",
+          "blockType": "icon-table",
+          "shows": "CCTV"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/cctv.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.pmv",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.pmv",
+          "blockType": "icon-table",
+          "shows": "PMV"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/pmv.svg"
+      ]
+    },
+    {
+      "slot": "bot.seccion.alarmas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.alarmas",
+          "blockType": "icon-table",
+          "shows": "Alarmas"
+        }
+      ],
+      "files": [
+        "_common/bot/seccion/alarmas.svg"
+      ]
+    },
+    {
+      "slot": "bot.prt.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.fig",
+          "blockType": "figure",
+          "shows": "El personal y los vehículos desplegados en vía, con su asignación."
+        }
+      ],
+      "files": [
+        "_common/bot.prt.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.prt.paso.buscar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.paso.buscar",
+          "blockType": "procedure",
+          "shows": "Escriba el criterio de búsqueda"
+        }
+      ],
+      "files": [
+        "_common/bot.prt.paso.buscar.png"
+      ]
+    },
+    {
+      "slot": "bot.prt.paso.filtrar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.paso.filtrar",
+          "blockType": "procedure",
+          "shows": "Acote por tipo de vehículo"
+        }
+      ],
+      "files": [
+        "_common/bot.prt.paso.filtrar.png"
+      ]
+    },
+    {
+      "slot": "bot.recursos.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.fig",
+          "blockType": "figure",
+          "shows": "El listado de recursos desde donde se monitorea y despacha."
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.recursos.paso.ubicar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.ubicar",
+          "blockType": "procedure",
+          "shows": "Ubique el recurso"
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.paso.ubicar.png"
+      ]
+    },
+    {
+      "slot": "bot.recursos.paso.asignar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.asignar",
+          "blockType": "procedure",
+          "shows": "Abra la asignación"
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.paso.asignar.png"
+      ]
+    },
+    {
+      "slot": "bot.recursos.paso.pj-accionar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.pj-accionar",
+          "blockType": "procedure",
+          "shows": "Accione la marca en la columna PJ"
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.paso.pj-accionar.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fig",
+          "blockType": "figure",
+          "shows": "El mosaico de cámaras con la lista de cámaras disponibles."
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.fn.lista",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.lista",
+          "blockType": "field-list",
+          "shows": "Lista de cámaras"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.fn.lista.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.fn.ptz",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.ptz",
+          "blockType": "field-list",
+          "shows": "Control PTZ"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.fn.ptz.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.fig",
+          "blockType": "figure",
+          "shows": "El formulario de programación de un mensaje y su vigencia."
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.identificar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.identificar",
+          "blockType": "procedure",
+          "shows": "Identifique el mensaje"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.identificar.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.clasificar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.clasificar",
+          "blockType": "procedure",
+          "shows": "Clasifique el mensaje"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.clasificar.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.destino",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.destino",
+          "blockType": "procedure",
+          "shows": "Seleccione los paneles de destino"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.destino.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.contenido",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.contenido",
+          "blockType": "procedure",
+          "shows": "Componga el contenido"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.contenido.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.vigencia",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.vigencia",
+          "blockType": "procedure",
+          "shows": "Defina la vigencia"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.vigencia.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.guardar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.guardar",
+          "blockType": "procedure",
+          "shows": "Guarde el mensaje"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.guardar.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-gestion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-gestion.fig",
+          "blockType": "figure",
+          "shows": "El listado de mensajes existentes con su estado y su vigencia."
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-gestion.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.fig",
+          "blockType": "figure",
+          "shows": "La administración de clasificaciones, agrupaciones y textos predefinidos."
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.s.familias",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.familias",
+          "blockType": "field-list",
+          "shows": "Familias"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.s.familias.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.s.grupos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.grupos",
+          "blockType": "field-list",
+          "shows": "Grupos"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.s.grupos.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.s.predefinidos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.predefinidos",
+          "blockType": "field-list",
+          "shows": "Mensajes Predefinidos"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.s.predefinidos.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.paso.anadir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.paso.anadir",
+          "blockType": "procedure",
+          "shows": "Inicie la creación"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.paso.anadir.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.fig",
+          "blockType": "figure",
+          "shows": "El listado de alarmas desde donde se supervisan y se reconocen."
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.paso.filtrar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.filtrar",
+          "blockType": "procedure",
+          "shows": "Acote el listado"
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.paso.filtrar.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.paso.seleccionar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.seleccionar",
+          "blockType": "procedure",
+          "shows": "Seleccione las alarmas"
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.paso.seleccionar.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.paso.reconocer",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.reconocer",
+          "blockType": "procedure",
+          "shows": "Accione Reconocer"
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.paso.reconocer.png"
+      ]
+    }
+  ]
+}
