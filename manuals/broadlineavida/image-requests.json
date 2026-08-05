@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 242,
-    "delivered": 198,
-    "pending": 44
+    "delivered": 199,
+    "pending": 43
   },
   "pending": [
     {
@@ -561,26 +561,6 @@
       "deliverTo": {
         "shared": "_common/bot.pmv.paso.guardar.png",
         "override": "<tenant>/bot.pmv.paso.guardar.png"
-      }
-    },
-    {
-      "slot": "bot.pmv-gestion.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-gestion.fig",
-          "blockType": "figure",
-          "shows": "El listado de mensajes existentes con su estado y su vigencia."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-gestion.fig.png",
-        "override": "<tenant>/bot.pmv-gestion.fig.png"
       }
     },
     {
@@ -4241,6 +4221,22 @@
       ],
       "files": [
         "_common/bot.recursos.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-gestion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-gestion.fig",
+          "blockType": "figure",
+          "shows": "El listado de mensajes existentes con su estado y su vigencia."
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-gestion.fig.png"
       ]
     },
     {

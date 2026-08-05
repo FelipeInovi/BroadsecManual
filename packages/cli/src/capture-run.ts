@@ -107,9 +107,23 @@ export async function runCaptures(
           timeout: WAIT_MS,
         });
         // Reach panes that have no route of their own — see `steps` in capture.ts.
+        // Each click is retried once: expanding a sidebar parent re-renders the
+        // menu, so the node found a moment ago is detached by the time the click
+        // lands. Retrying re-queries against the menu that now exists.
         for (const step of shot.steps ?? []) {
-          await page.waitForSelector(step.click, { timeout: WAIT_MS });
-          await page.click(step.click);
+          for (let attempt = 0; ; attempt++) {
+            try {
+              await page.waitForSelector(step.click, { timeout: WAIT_MS });
+              await page.click(step.click);
+              break;
+            } catch (error) {
+              const detached = /detached|not clickable|No node found/i.test(String(error));
+              if (!detached || attempt >= 1) throw error;
+              await new Promise((r) => setTimeout(r, 1200));
+            }
+          }
+          // Let the pane it opened settle before the next click or the gates.
+          await new Promise((r) => setTimeout(r, 1500));
         }
         // WHICH screen, then WHETHER it has data. In that order: the previous
         // section's table is still on the page while a parent menu merely

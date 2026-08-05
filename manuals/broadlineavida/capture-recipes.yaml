@@ -84,8 +84,10 @@ target:
 # was got wrong in one sitting:
 #   - "Buscar por nombre" is a `placeholder` ATTRIBUTE, not text. ::-p-text()
 #     cannot see it, and the failure reads like a slow page.
-#   - "GESTION" never matches "GESTIÓN". Where a heading carries an accent, take
-#     a substring that skips it — "n de agentes" for "Programacion de agentes".
+#   - "GESTION" never matches "GESTIÓN" — the match is literal. Accents DO work
+#     when written correctly (the file is UTF-8); dropping one to "play safe" is
+#     what actually breaks it. Write the real text, or take a substring that
+#     skips the accented letter — "n de agentes" for "Programación de agentes".
 #
 # And `dataReady` asks for the THIRD row: a loading state is ONE row holding
 # "Cargando ...", which is how bot.alarmas.fig was first shot mid-load.
@@ -115,5 +117,16 @@ recipes:
     steps:
       - click: "button::-p-text(Alarmas)"
     screenIs: "::-p-text(reconoce las alarmas del sistema)"
+    dataReady: "table tbody tr:nth-child(3) td"
+    viewport: { width: 1600, height: 900 }
+
+  # CCTV and PMV are already EXPANDED when the module loads, so their children
+  # are clickable straight away. Do NOT click the parent first: that collapses
+  # it and the child disappears. Verified by recon: 50 rows, heading "Mensajes".
+  - slot: bot.pmv-gestion.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Gestión)"
+    screenIs: "::-p-text(Mensajes)"
     dataReady: "table tbody tr:nth-child(3) td"
     viewport: { width: 1600, height: 900 }
