@@ -80,17 +80,24 @@ recipes:
     dataReady: "table tbody tr td"
     viewport: { width: 1600, height: 900 }
 
-  # bot.mapa.fig and bot.alarmas.fig are DELIBERATELY not here. Both were tried
-  # and both produced a plausible, wrong image that only looking caught:
+  # bot.mapa.fig and bot.alarmas.fig are not here YET. Both were tried and both
+  # produced a plausible, wrong image that only looking at the PNG caught:
   #
   #   bot.mapa.fig    `.gm-style` proves the Google canvas exists, not that the
   #                   operational layers loaded. The shot was a bare map of
   #                   Medellin with no panel, vehicle, traffic light or camera —
   #                   the four things its caption promises.
   #   bot.alarmas.fig `table tbody tr` matched the row holding "Cargando
-  #                   alarmas...", and the list was empty anyway: the default
-  #                   date window held 0 alarms. No selector fixes that — the
-  #                   filter has to be widened first, which is a `steps` problem.
+  #                   alarmas...". CORRECTION: the earlier note here said the
+  #                   list was empty. It is not — a reconnaissance pass found 50
+  #                   rows and 400 cells. The capture simply shot the loading
+  #                   state. Wait longer and match a CELL, never a row.
   #
-  # Both stay pending until their recipe can prove the screen shows what the
-  # caption claims. A pending slot announces itself; a wrong one does not.
+  # RECONNAISSANCE, mv, 2026-08-05 — rows/cells per section:
+  #   PRT 50/550 · Alarmas 50/400 · CCTV 25/250 · PMV 25/250 · Mapa 10/20
+  #   Recursos 0/0 — yet its capture came back fully populated, so its listing is
+  #   probably not a real <table>. Check before writing its dataReady.
+  #
+  # Mosaico, Programacion, Gestion and Variables are NOT reachable with one
+  # click: they are sub-items that exist in the DOM only while their parent
+  # (CCTV, PMV) is expanded. Their recipes need two steps, parent then child.
