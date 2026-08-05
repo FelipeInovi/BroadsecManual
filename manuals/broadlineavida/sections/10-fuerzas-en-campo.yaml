@@ -397,7 +397,7 @@ children:
             type: figure
             props:
               caption: "Formulario para crear una nueva tarea."
-              widthPercent: 90
+              widthPercent: 23
 
   - id: fuerzas.home
     title: Módulo de Retornar a Home
