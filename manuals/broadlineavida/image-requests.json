@@ -19,230 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 242,
-    "delivered": 185,
-    "pending": 57
+    "delivered": 195,
+    "pending": 47
   },
   "pending": [
-    {
-      "slot": "fuerzas.callai.fig-hist-incidentes",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-hist-incidentes",
-          "blockType": "figure",
-          "shows": "Acceso a Call AI desde el historial de incidentes."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.callai.fig-hist-incidentes.png",
-        "override": "<tenant>/fuerzas.callai.fig-hist-incidentes.png"
-      }
-    },
-    {
-      "slot": "fuerzas.callai.fig-mapa-incidente",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-mapa-incidente",
-          "blockType": "figure",
-          "shows": "Acceso a Call AI del incidente desde la ubicación en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.callai.fig-mapa-incidente.png",
-        "override": "<tenant>/fuerzas.callai.fig-mapa-incidente.png"
-      }
-    },
-    {
-      "slot": "fuerzas.callai.fig-resumen-incidente",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-resumen-incidente",
-          "blockType": "figure",
-          "shows": "Resumen de Call AI del incidente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.callai.fig-resumen-incidente.png",
-        "override": "<tenant>/fuerzas.callai.fig-resumen-incidente.png"
-      }
-    },
-    {
-      "slot": "fuerzas.callai.fig-hist-tareas",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-hist-tareas",
-          "blockType": "figure",
-          "shows": "Acceso a Call AI desde el historial de tareas."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.callai.fig-hist-tareas.png",
-        "override": "<tenant>/fuerzas.callai.fig-hist-tareas.png"
-      }
-    },
-    {
-      "slot": "fuerzas.callai.fig-mapa-tarea",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-mapa-tarea",
-          "blockType": "figure",
-          "shows": "Acceso a Call AI de la tarea desde la ubicación en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.callai.fig-mapa-tarea.png",
-        "override": "<tenant>/fuerzas.callai.fig-mapa-tarea.png"
-      }
-    },
-    {
-      "slot": "fuerzas.callai.fig-resumen-tarea",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-resumen-tarea",
-          "blockType": "figure",
-          "shows": "Resumen de Call AI de la tarea."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.callai.fig-resumen-tarea.png",
-        "override": "<tenant>/fuerzas.callai.fig-resumen-tarea.png"
-      }
-    },
-    {
-      "slot": "fuerzas.anadir.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.anadir.fig",
-          "blockType": "figure",
-          "shows": "Opciones del módulo Añadir: Nuevo Incidente y Nueva Tarea."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.anadir.fig.png",
-        "override": "<tenant>/fuerzas.anadir.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.anadir.incidente.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.anadir.incidente.fig",
-          "blockType": "figure",
-          "shows": "Formulario para crear un nuevo incidente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.anadir.incidente.fig.png",
-        "override": "<tenant>/fuerzas.anadir.incidente.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.anadir.incidente.fig-confirmacion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.anadir.incidente.fig-confirmacion",
-          "blockType": "figure",
-          "shows": "Confirmación de incidente creado exitosamente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.anadir.incidente.fig-confirmacion.png",
-        "override": "<tenant>/fuerzas.anadir.incidente.fig-confirmacion.png"
-      }
-    },
-    {
-      "slot": "fuerzas.anadir.tarea.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.anadir.tarea.fig",
-          "blockType": "figure",
-          "shows": "Formulario para crear una nueva tarea."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.anadir.tarea.fig.png",
-        "override": "<tenant>/fuerzas.anadir.tarea.fig.png"
-      }
-    },
     {
       "slot": "bot.fig",
       "neededBy": [
@@ -4155,6 +3935,176 @@
       ],
       "files": [
         "_common/fuerzas.poligono.fig-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-hist-incidentes",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-hist-incidentes",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI desde el historial de incidentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-hist-incidentes.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-mapa-incidente",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-mapa-incidente",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI del incidente desde la ubicación en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-mapa-incidente.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-resumen-incidente",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-resumen-incidente",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI del incidente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-resumen-incidente.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-hist-tareas",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-hist-tareas",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI desde el historial de tareas."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-hist-tareas.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-mapa-tarea",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-mapa-tarea",
+          "blockType": "figure",
+          "shows": "Acceso a Call AI de la tarea desde la ubicación en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-mapa-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-resumen-tarea",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-resumen-tarea",
+          "blockType": "figure",
+          "shows": "Resumen de Call AI de la tarea."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-resumen-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.fig",
+          "blockType": "figure",
+          "shows": "Opciones del módulo Añadir: Nuevo Incidente y Nueva Tarea."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.incidente.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.incidente.fig",
+          "blockType": "figure",
+          "shows": "Formulario para crear un nuevo incidente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.incidente.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.incidente.fig-confirmacion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.incidente.fig-confirmacion",
+          "blockType": "figure",
+          "shows": "Confirmación de incidente creado exitosamente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.incidente.fig-confirmacion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.anadir.tarea.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.anadir.tarea.fig",
+          "blockType": "figure",
+          "shows": "Formulario para crear una nueva tarea."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.anadir.tarea.fig.png"
       ]
     },
     {
