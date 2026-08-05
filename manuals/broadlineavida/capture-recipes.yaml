@@ -384,3 +384,54 @@ recipes:
     dataReady: "table tbody tr:nth-child(3) td"
     clip: "table thead"
     viewport: { width: 1600, height: 900 }
+
+  # SHOWING an action is not performing it. Each of these clips the control the
+  # step names — the Asignar button, the PJ box, the Anadir button — with nothing
+  # clicked. That is the whole reason they are capturable at all; see the
+  # boundary at the top of this file.
+
+  - slot: bot.prt.paso.filtrar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(PRT)"
+    screenIs: "::-p-text(n de agentes)"
+    dataReady: "table tbody tr:nth-child(3) td"
+    clip: '::-p-xpath(//*[contains(text(),"Todos los vehículos")]/ancestor::div[1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.alarmas.paso.filtrar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Alarmas)"
+    screenIs: "::-p-text(reconoce las alarmas del sistema)"
+    dataReady: "table tbody tr:nth-child(3) td"
+    clip: '::-p-xpath(//*[contains(text(),"04/08/2026")]/ancestor::div[1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.recursos.paso.asignar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
+    dataReady: "table tbody tr td"
+    clip: '::-p-xpath((//button[contains(translate(.,"ASIGNR","asignr"),"asignar")])[1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.recursos.paso.pj-accionar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
+    dataReady: "table tbody tr td"
+    clip: '::-p-xpath((//table//tbody//tr)[1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv-variables.paso.anadir
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Variables)"
+    screenIs: "::-p-text(PMV - Variables)"
+    dataReady: "section.grid-cols-3 > div"
+    clip: '::-p-xpath(//*[normalize-space(text())="Añadir Familia"]/ancestor::div[1])'
+    viewport: { width: 1600, height: 900 }
+

@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 240,
-    "delivered": 218,
-    "pending": 22
+    "delivered": 223,
+    "pending": 17
   },
   "pending": [
     {
@@ -44,26 +44,6 @@
       }
     },
     {
-      "slot": "bot.prt.paso.filtrar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.prt.paso.filtrar",
-          "blockType": "procedure",
-          "shows": "Acote por tipo de vehículo"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.prt.paso.filtrar.png",
-        "override": "<tenant>/bot.prt.paso.filtrar.png"
-      }
-    },
-    {
       "slot": "bot.prt.paso.limpiar",
       "neededBy": [
         "mv"
@@ -81,26 +61,6 @@
       "deliverTo": {
         "shared": "_common/bot.prt.paso.limpiar.png",
         "override": "<tenant>/bot.prt.paso.limpiar.png"
-      }
-    },
-    {
-      "slot": "bot.recursos.paso.asignar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.recursos.paso.asignar",
-          "blockType": "procedure",
-          "shows": "Abra la asignación"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.recursos.paso.asignar.png",
-        "override": "<tenant>/bot.recursos.paso.asignar.png"
       }
     },
     {
@@ -141,26 +101,6 @@
       "deliverTo": {
         "shared": "_common/bot.recursos.paso.resultado.png",
         "override": "<tenant>/bot.recursos.paso.resultado.png"
-      }
-    },
-    {
-      "slot": "bot.recursos.paso.pj-accionar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.recursos.paso.pj-accionar",
-          "blockType": "procedure",
-          "shows": "Accione la marca en la columna PJ"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.recursos.paso.pj-accionar.png",
-        "override": "<tenant>/bot.recursos.paso.pj-accionar.png"
       }
     },
     {
@@ -344,26 +284,6 @@
       }
     },
     {
-      "slot": "bot.pmv-variables.paso.anadir",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-variables.paso.anadir",
-          "blockType": "procedure",
-          "shows": "Inicie la creación"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-variables.paso.anadir.png",
-        "override": "<tenant>/bot.pmv-variables.paso.anadir.png"
-      }
-    },
-    {
       "slot": "bot.pmv-variables.paso.nombrar",
       "neededBy": [
         "mv"
@@ -401,26 +321,6 @@
       "deliverTo": {
         "shared": "_common/bot.pmv-variables.paso.seleccionar.png",
         "override": "<tenant>/bot.pmv-variables.paso.seleccionar.png"
-      }
-    },
-    {
-      "slot": "bot.alarmas.paso.filtrar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.alarmas.paso.filtrar",
-          "blockType": "procedure",
-          "shows": "Acote el listado"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.alarmas.paso.filtrar.png",
-        "override": "<tenant>/bot.alarmas.paso.filtrar.png"
       }
     },
     {
@@ -3836,6 +3736,22 @@
       ]
     },
     {
+      "slot": "bot.prt.paso.filtrar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.paso.filtrar",
+          "blockType": "procedure",
+          "shows": "Acote por tipo de vehículo"
+        }
+      ],
+      "files": [
+        "_common/bot.prt.paso.filtrar.png"
+      ]
+    },
+    {
       "slot": "bot.recursos.fig",
       "neededBy": [
         "mv"
@@ -3865,6 +3781,38 @@
       ],
       "files": [
         "_common/bot.recursos.paso.ubicar.png"
+      ]
+    },
+    {
+      "slot": "bot.recursos.paso.asignar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.asignar",
+          "blockType": "procedure",
+          "shows": "Abra la asignación"
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.paso.asignar.png"
+      ]
+    },
+    {
+      "slot": "bot.recursos.paso.pj-accionar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.pj-accionar",
+          "blockType": "procedure",
+          "shows": "Accione la marca en la columna PJ"
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.paso.pj-accionar.png"
       ]
     },
     {
@@ -4108,6 +4056,22 @@
       ]
     },
     {
+      "slot": "bot.pmv-variables.paso.anadir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.paso.anadir",
+          "blockType": "procedure",
+          "shows": "Inicie la creación"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.paso.anadir.png"
+      ]
+    },
+    {
       "slot": "bot.alarmas.fig",
       "neededBy": [
         "mv"
@@ -4121,6 +4085,22 @@
       ],
       "files": [
         "_common/bot.alarmas.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.paso.filtrar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.filtrar",
+          "blockType": "procedure",
+          "shows": "Acote el listado"
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.paso.filtrar.png"
       ]
     },
     {
