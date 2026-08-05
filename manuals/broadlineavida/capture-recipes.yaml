@@ -287,3 +287,26 @@ recipes:
     settleMs: 4000
     clip: "div.flex.flex-col.gap-4"
     viewport: { width: 1600, height: 900 }
+
+  # Static clips of the controls each step names. The reviewer accepted these:
+  # they show WHERE the control is, not the typing. A `type` step would show the
+  # action, and is the natural next addition.
+  # Placeholders are the most stable handle on this toolbar — they come from the
+  # i18n catalogue and are plain CSS attribute selectors.
+  - slot: bot.prt.paso.buscar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(PRT)"
+    screenIs: "::-p-text(n de agentes)"
+    dataReady: 'input[placeholder*="Buscar por nombre"]'
+    clip: 'input[placeholder*="Buscar por nombre"]'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.recursos.paso.ubicar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
+    dataReady: 'input[placeholder*="Buscar agentes"]'
+    clip: 'input[placeholder*="Buscar agentes"]'
+    viewport: { width: 1600, height: 900 }

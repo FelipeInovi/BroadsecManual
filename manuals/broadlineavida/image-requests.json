@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 240,
-    "delivered": 208,
-    "pending": 32
+    "delivered": 211,
+    "pending": 29
   },
   "pending": [
     {
@@ -41,26 +41,6 @@
       "deliverTo": {
         "shared": "_common/bot.mapa.fig.png",
         "override": "<tenant>/bot.mapa.fig.png"
-      }
-    },
-    {
-      "slot": "bot.prt.paso.buscar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.prt.paso.buscar",
-          "blockType": "procedure",
-          "shows": "Escriba el criterio de búsqueda"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.prt.paso.buscar.png",
-        "override": "<tenant>/bot.prt.paso.buscar.png"
       }
     },
     {
@@ -101,26 +81,6 @@
       "deliverTo": {
         "shared": "_common/bot.prt.paso.limpiar.png",
         "override": "<tenant>/bot.prt.paso.limpiar.png"
-      }
-    },
-    {
-      "slot": "bot.recursos.paso.ubicar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.recursos.paso.ubicar",
-          "blockType": "procedure",
-          "shows": "Ubique el recurso"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.recursos.paso.ubicar.png",
-        "override": "<tenant>/bot.recursos.paso.ubicar.png"
       }
     },
     {
@@ -261,26 +221,6 @@
       "deliverTo": {
         "shared": "_common/bot.cctv.fn.estado.png",
         "override": "<tenant>/bot.cctv.fn.estado.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.fn.ptz",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.fn.ptz",
-          "blockType": "field-list",
-          "shows": "Control PTZ"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.fn.ptz.png",
-        "override": "<tenant>/bot.cctv.fn.ptz.png"
       }
     },
     {
@@ -4020,6 +3960,22 @@
       ]
     },
     {
+      "slot": "bot.prt.paso.buscar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.paso.buscar",
+          "blockType": "procedure",
+          "shows": "Escriba el criterio de búsqueda"
+        }
+      ],
+      "files": [
+        "_common/bot.prt.paso.buscar.png"
+      ]
+    },
+    {
       "slot": "bot.recursos.fig",
       "neededBy": [
         "mv"
@@ -4033,6 +3989,22 @@
       ],
       "files": [
         "_common/bot.recursos.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.recursos.paso.ubicar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.ubicar",
+          "blockType": "procedure",
+          "shows": "Ubique el recurso"
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.paso.ubicar.png"
       ]
     },
     {
@@ -4065,6 +4037,22 @@
       ],
       "files": [
         "_common/bot.cctv.fn.lista.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.fn.ptz",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.ptz",
+          "blockType": "field-list",
+          "shows": "Control PTZ"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.fn.ptz.png"
       ]
     },
     {
