@@ -117,6 +117,37 @@ describe("pending image names", () => {
   });
 });
 
+// A page number exists nowhere but the paginated DOM, and the DOM can only say
+// WHICH image it is if the markup carries the slot. Without this the page
+// numbers would have to be matched to slots by caption text — which breaks the
+// moment two figures show the same thing.
+describe("slot identity in the markup", () => {
+  it("tags every image with the slot it belongs to", () => {
+    const html = body(render(figure, figureSlots, PENDING));
+    expect(html).toContain('data-slot="barra.busqueda"');
+  });
+
+  it("tags a table icon too, so an icon slot is locatable as well", () => {
+    const table = [
+      block("s.tabla", "icon-table", {
+        labelHeader: "Control",
+        descriptionHeader: "Función",
+        rows: [{ id: "r1", label: "Buscar", description: "Busca casos." }],
+      }),
+    ];
+    const html = body(render(table, [["r1", "barra.busqueda"]], PENDING));
+    expect(html).toContain('data-slot="barra.busqueda"');
+  });
+
+  // It identifies a slot, it does not leak one: the attribute names the slot,
+  // never the delivery path that invariant 4 keeps out of a client build.
+  it("carries the slot in a client build without leaking the delivery path", () => {
+    const html = body(render(figure, figureSlots, PENDING));
+    expect(html).toContain('data-slot="barra.busqueda"');
+    expect(html).not.toContain("_common/barra/busqueda.png");
+  });
+});
+
 describe("image slots the renderer was not given", () => {
   // The renderer holds no image policy: a node absent from the slots map has no
   // image, full stop. If it invented one, prose would sprout placeholders.

@@ -95,8 +95,13 @@ function shot(id: NodeId, o: RenderOptions, attrs = ""): Shot | undefined {
   const resolved = o.images(slot);
   const pending = resolved.state === "pending";
   const cls = pending ? "shot shot--pending" : "shot";
+  // The slot rides along in the markup because it is the only way anything
+  // downstream can say WHICH image a rendered box is. The page a pending image
+  // landed on exists nowhere but the paginated DOM, and matching that back to a
+  // slot by caption text breaks the moment two figures show the same thing.
+  // Safe in a client build: this names the slot, never the delivery path.
   return {
-    img: `<img class="${cls}" src="${esc(resolved.url)}"${attrs}>`,
+    img: `<img class="${cls}" data-slot="${esc(slot)}" src="${esc(resolved.url)}"${attrs}>`,
     pending,
     name: o.draft && pending && resolved.deliverTo ? pendingName(resolved.deliverTo) : "",
   };

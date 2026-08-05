@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
+import { basename, dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
@@ -17,6 +17,7 @@ import {
 import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import { printToPdf } from "./chrome.ts";
 import { extract } from "./extract.ts";
+import { pendingTable } from "./pending-table.ts";
 import {
   COMMON_SET,
   buildImageIndex,
@@ -467,11 +468,12 @@ function resolveTargetImages(
   entries: ManifestSlot[];
   slots: Map<string, string>;
   images: ImageIndex;
+  uses: readonly ImageSlotUse[];
 } {
   const uses = collectSlots(manual, catalog);
   const images = buildImageIndex(figuresDir, tenant);
   const entries = manifestSlots(uses, (slot) => images.resolve(slot));
-  return { entries, slots: new Map(uses.map((u) => [u.nodeId, u.slot])), images };
+  return { entries, slots: new Map(uses.map((u) => [u.nodeId, u.slot])), images, uses };
 }
 
 /** Export the image request document. Needs no renderer, so no browser. */
@@ -537,6 +539,7 @@ async function build(
   manualDir: string,
   filters: ReadonlyMap<string, string>,
   draft: boolean,
+  wantPendingTable: boolean,
 ): Promise<void> {
   const { config, doc, warnings, targets, figuresDir } = loadManual(manualDir, filters);
   const outDir = join(manualDir, config.output.dir);
@@ -556,7 +559,7 @@ async function build(
       .replace("{contentVersion}", config.manual.contentVersion);
     const name = draft ? draftFilename(rendered) : rendered;
 
-    const { entries, slots, images } = resolveTargetImages(manual, figuresDir, tenant);
+    const { entries, slots, images, uses } = resolveTargetImages(manual, figuresDir, tenant);
 
     const html = renderHtml(manual, {
       header: draft
@@ -583,11 +586,31 @@ async function build(
     const htmlPath = join(outDir, name.replace(/\.pdf$/, ".html"));
     const pdfPath = join(outDir, name);
     writeFileSync(htmlPath, html, "utf8");
-    const { pages } = await printToPdf(htmlPath, pdfPath);
+    const { pages, placements } = await printToPdf(htmlPath, pdfPath);
 
     for (const slot of images.indexed()) seenOnDisk.add(slot);
     for (const entry of entries) askedFor.add(entry.slot);
     const delivered = entries.filter((e) => e.state !== "pending").length;
+
+    // Written only when asked for — the same rule the image manifest follows.
+    // It does NOT go in `output/`: that directory is generated and ignored, and
+    // this is a document someone spends hours writing into. It sits with the
+    // manual's own sources so the answers are tracked, diffable, and safe from
+    // the next build.
+    if (wantPendingTable) {
+      const tablePath = join(manualDir, `imagenes-pendientes-${tenant}.md`);
+      const table = pendingTable(
+        uses,
+        new Set(entries.filter((e) => e.state === "pending").map((e) => e.slot)),
+        placements,
+        existsSync(tablePath) ? readFileSync(tablePath, "utf8") : "",
+      );
+      writeFileSync(tablePath, table.markdown, "utf8");
+      const kept = table.carriedOver > 0 ? `, ${table.carriedOver} instruction(s) kept` : "";
+      console.log(
+        `  ${" ".repeat(16)} ${table.rows.length} pending image(s)${kept} -> ${basename(tablePath)}`,
+      );
+    }
 
     const sections = manual.children.length;
     const label = Object.entries(target)
@@ -646,11 +669,15 @@ export async function run(argv: readonly string[]): Promise<number> {
     !manualId
   ) {
     console.error(
-      `usage: broadsec-manual build <manual> ${axisFlags} [--draft]\n` +
+      `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table]\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
         `  --draft  internal build: prints the filename every pending image must\n` +
         `           be delivered under. Never distribute a draft to a client.\n` +
+        `  --pending-table\n` +
+        `           also write imagenes-pendientes-<tenant>.md: every pending image\n` +
+        `           in reading order with the page it landed on, and a blank column\n` +
+        `           to fill in. Page numbers are only true of that render.\n` +
         `  extract  read the source product and write knowledge/module-map.json,\n` +
         `           reporting what changed since the last map.`,
     );
@@ -702,7 +729,7 @@ ${drift.length} change(s) since the previous map:`);
       `building ${draft ? "DRAFT " : ""}${manualId}${label ? ` (${label})` : ""}` +
         `${draft ? " — internal, shows pending image names" : ""}`,
     );
-    await build(manualDir, filters, draft);
+    await build(manualDir, filters, draft, rest.includes("--pending-table"));
     return 0;
   } catch (error) {
     console.error(`\n${formatCliError(error)}`);

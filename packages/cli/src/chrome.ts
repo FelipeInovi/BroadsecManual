@@ -27,6 +27,15 @@ export function findChrome(): string {
 export interface PrintResult {
   /** Pages the paginator produced. Reported so a caller can sanity-check it. */
   readonly pages: number;
+  /**
+   * Which page each image landed on, in layout order.
+   *
+   * Only knowable here. Pagination is what decides it, it happens in the
+   * browser, and by the time the PDF exists the answer has been flattened into
+   * ink. Reported for every image, pending or not; deciding which ones matter is
+   * the caller's job, not the printer's.
+   */
+  readonly placements: ReadonlyArray<{ readonly slot: string; readonly page: number }>;
 }
 
 /**
@@ -76,6 +85,24 @@ export async function printToPdf(
     );
     if (!pages) throw new Error("pagination produced no pages");
 
+    // Read the laid-out DOM, not the source flow: the query is rooted at
+    // `.pagedjs_page` so it can only see content the paginator actually placed.
+    // `data-page-number` is the sheet paged.js assigned, which is the same
+    // number the footer prints — nothing in the stylesheet resets `counter(page)`.
+    const placements = await page.evaluate(() => {
+      const out: Array<{ slot: string; page: number }> = [];
+      const doc = (globalThis as unknown as { document: any }).document;
+      for (const sheet of doc.querySelectorAll(".pagedjs_page")) {
+        const n = Number(sheet.getAttribute("data-page-number"));
+        if (!Number.isFinite(n) || n < 1) continue;
+        for (const img of sheet.querySelectorAll("img[data-slot]")) {
+          const slot = img.getAttribute("data-slot");
+          if (slot) out.push({ slot, page: n });
+        }
+      }
+      return out;
+    });
+
     await page.pdf({
       path: pdfPath,
       printBackground: true,
@@ -86,7 +113,7 @@ export async function printToPdf(
     // The paginator reports what it laid out; the PDF must contain exactly
     // that. A mismatch means the print stage dropped content — the very
     // failure this rewrite exists to make impossible to ship unnoticed.
-    return { pages };
+    return { pages, placements };
   } finally {
     await browser.close();
   }
