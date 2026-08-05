@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 242,
-    "delivered": 199,
-    "pending": 43
+    "delivered": 202,
+    "pending": 40
   },
   "pending": [
     {
@@ -264,26 +264,6 @@
       }
     },
     {
-      "slot": "bot.cctv.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.fig",
-          "blockType": "figure",
-          "shows": "El mosaico de cámaras con la lista de cámaras disponibles."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.fig.png",
-        "override": "<tenant>/bot.cctv.fig.png"
-      }
-    },
-    {
       "slot": "bot.cctv.fn.lista",
       "neededBy": [
         "mv"
@@ -421,26 +401,6 @@
       "deliverTo": {
         "shared": "_common/bot.cctv.paso.reutilizar.png",
         "override": "<tenant>/bot.cctv.paso.reutilizar.png"
-      }
-    },
-    {
-      "slot": "bot.pmv.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv.fig",
-          "blockType": "figure",
-          "shows": "El formulario de programación de un mensaje y su vigencia."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv.fig.png",
-        "override": "<tenant>/bot.pmv.fig.png"
       }
     },
     {
@@ -621,26 +581,6 @@
       "deliverTo": {
         "shared": "_common/bot.pmv-gestion.paso.reactivar.png",
         "override": "<tenant>/bot.pmv-gestion.paso.reactivar.png"
-      }
-    },
-    {
-      "slot": "bot.pmv-variables.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-variables.fig",
-          "blockType": "figure",
-          "shows": "La administración de clasificaciones, agrupaciones y textos predefinidos."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-variables.fig.png",
-        "override": "<tenant>/bot.pmv-variables.fig.png"
       }
     },
     {
@@ -4224,6 +4164,38 @@
       ]
     },
     {
+      "slot": "bot.cctv.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fig",
+          "blockType": "figure",
+          "shows": "El mosaico de cámaras con la lista de cámaras disponibles."
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.fig",
+          "blockType": "figure",
+          "shows": "El formulario de programación de un mensaje y su vigencia."
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.fig.png"
+      ]
+    },
+    {
       "slot": "bot.pmv-gestion.fig",
       "neededBy": [
         "mv"
@@ -4237,6 +4209,22 @@
       ],
       "files": [
         "_common/bot.pmv-gestion.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.fig",
+          "blockType": "figure",
+          "shows": "La administración de clasificaciones, agrupaciones y textos predefinidos."
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.fig.png"
       ]
     },
     {

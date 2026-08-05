@@ -130,3 +130,31 @@ recipes:
     screenIs: "::-p-text(Mensajes)"
     dataReady: "table tbody tr:nth-child(3) td"
     viewport: { width: 1600, height: 900 }
+
+  # The top bar carries the screen's own name — "PRT", "Alarmas", "PMV - Gestión".
+  # That breadcrumb is the most reliable `screenIs` in this module, and the
+  # parent-child form ("PMV - Programación") cannot collide with the sidebar
+  # button of the same child name.
+  - slot: bot.cctv.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Mosaico)"
+    screenIs: "::-p-text(CCTV - Mosaico)"
+    dataReady: "::-p-text(CCTV - Mosaico)"
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(PMV - Programación)"
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv-variables.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Variables)"
+    screenIs: "::-p-text(PMV - Variables)"
+    dataReady: "::-p-text(PMV - Variables)"
+    viewport: { width: 1600, height: 900 }

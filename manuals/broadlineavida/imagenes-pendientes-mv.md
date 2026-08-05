@@ -1,6 +1,6 @@
 # Imágenes pendientes
 
-43 imágenes pendientes, en el orden en que aparecen en el manual.
+40 imágenes pendientes, en el orden en que aparecen en el manual.
 Complete la tercera columna con la instrucción de extracción desde `Manual_Broadsec_v5.pdf`.
 
 Los números de página valen para la última construcción del manual. Regenere la tabla (`build --pending-table`) después de cambiar contenido: las instrucciones ya escritas se conservan.
@@ -19,7 +19,6 @@ Los números de página valen para la última construcción del manual. Regenere
 | `bot.recursos.paso.resultado` — Verifique el resultado | 67 |  |
 | `bot.recursos.paso.pj-accionar` — Accione la marca en la columna PJ | 67 |  |
 | `bot.recursos.paso.pj-confirmar` — Confirme | 67 |  |
-| `bot.cctv.fig` — El mosaico de cámaras con la lista de cámaras disponibles. | 68 |  |
 | `bot.cctv.fn.lista` — Lista de cámaras | 68 |  |
 | `bot.cctv.fn.grilla` — Grilla del mosaico | 68 |  |
 | `bot.cctv.fn.estado` — Estado de la transmisión | 69 |  |
@@ -27,7 +26,6 @@ Los números de página valen para la última construcción del manual. Regenere
 | `bot.cctv.paso.encuadrar` — Encuadre la vista | 69 |  |
 | `bot.cctv.paso.nombrar` — Nombre la posición | 70 |  |
 | `bot.cctv.paso.reutilizar` — Reutilice la posición | 70 |  |
-| `bot.pmv.fig` — El formulario de programación de un mensaje y su vigencia. | 70 |  |
 | `bot.pmv.paso.identificar` — Identifique el mensaje | 71 |  |
 | `bot.pmv.paso.clasificar` — Clasifique el mensaje | 71 |  |
 | `bot.pmv.paso.destino` — Seleccione los paneles de destino | 71 |  |
@@ -37,7 +35,6 @@ Los números de página valen para la última construcción del manual. Regenere
 | `bot.pmv-gestion.paso.desactivar` — Accione Desactivar sobre el mensaje | 73 |  |
 | `bot.pmv-gestion.paso.elegir` — Elija cómo retirarlo si está corriendo | 74 |  |
 | `bot.pmv-gestion.paso.reactivar` — Reactive si corresponde | 74 |  |
-| `bot.pmv-variables.fig` — La administración de clasificaciones, agrupaciones y textos predefinidos. | 74 |  |
 | `bot.pmv-variables.s.familias` — Familias | 75 |  |
 | `bot.pmv-variables.s.grupos` — Grupos | 75 |  |
 | `bot.pmv-variables.s.predefinidos` — Mensajes Predefinidos | 75 |  |
