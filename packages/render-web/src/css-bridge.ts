@@ -42,7 +42,7 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
 
   /* Widened so the brand sits at the page edge rather than drifting inward:
      the corner box is the only thing left of @top-left. */
-  @top-left-corner { content: ""; background: ${t.runningHeader.background}; }
+  @top-left-corner { content: ""; background: ${t.cover.background}; }
   @top-left {
     content: "${safeBrand}";
     color: ${t.runningHeader.brandColor};
@@ -72,7 +72,7 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
     white-space: pre;
     padding-right: 14pt;
   }
-  @top-right-corner { content: ""; background: ${t.runningHeader.background}; }
+  @top-right-corner { content: ""; background: ${t.cover.background}; }
 
   @bottom-left {
     content: "© 2026 Inovisec — Confidencial — Uso Interno";
@@ -106,7 +106,7 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
 
 .pagedjs_margin-top,
 .pagedjs_margin-top-left-corner-holder,
-.pagedjs_margin-top-right-corner-holder { background: ${t.runningHeader.background}; }
+.pagedjs_margin-top-right-corner-holder { background: ${t.cover.background}; }
 .pagedjs_margin-top { border-bottom: 1.5pt solid ${t.runningHeader.deck}; }
 .pagedjs_cover_page .pagedjs_margin-top { border-bottom: none; }
 .pagedjs_cover_page .pagedjs_margin-top,
@@ -193,7 +193,7 @@ body {
   font-size: 26pt;
   font-weight: normal;
   letter-spacing: -0.5pt;
-  color: ${t.sectionHeader.background};
+  color: ${t.cover.background};
   margin: 0 0 ${t.space.sm};
   padding-bottom: ${t.space.sm};
   border-bottom: 1.5pt solid ${t.sectionHeader.accent};
@@ -209,7 +209,7 @@ body {
 }
 .toc__entry--l1 {
   font-family: ${t.font.display};
-  color: ${t.sectionHeader.background};
+  color: ${t.cover.background};
   font-size: ${t.prose.size};
   font-weight: bold;
   margin-top: ${t.space.xs};
@@ -230,7 +230,7 @@ body {
 /* ---- section opener: the pier ------------------------------------------ */
 
 .section-header {
-  background: ${t.sectionHeader.background};
+  background: ${t.cover.background};
   padding: ${t.sectionHeader.pad};
   margin: 0 0 ${t.space.lg};
   position: relative;
@@ -301,7 +301,7 @@ body {
   text-align: ${t.prose.align};
   margin: 0 0 ${t.space.md};
 }
-strong { color: ${t.sectionHeader.background}; }
+strong { color: ${t.cover.background}; }
 
 table.tbl {
   border-collapse: collapse;
@@ -312,7 +312,7 @@ table.tbl {
 }
 table.tbl th {
   font-family: ${t.font.display};
-  background: ${t.table.headBackground};
+  background: ${t.cover.background};
   color: ${t.table.headColor};
   font-size: ${t.table.headSize};
   letter-spacing: 0.5pt;
