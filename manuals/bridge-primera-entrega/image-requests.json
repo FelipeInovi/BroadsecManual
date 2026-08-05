@@ -17,8 +17,8 @@
   ],
   "deploymentsConfigured": 1,
   "counts": {
-    "total": 224,
-    "delivered": 224,
+    "total": 223,
+    "delivered": 223,
     "pending": 0
   },
   "pending": [],
@@ -53,22 +53,6 @@
       ],
       "files": [
         "_common/broadsec.descripcion.fig.png"
-      ]
-    },
-    {
-      "slot": "funcionamiento.acceso.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionamiento.acceso.fig",
-          "blockType": "figure",
-          "shows": "Ícono de acceso al módulo Bridge desde Apex."
-        }
-      ],
-      "files": [
-        "_common/funcionamiento.acceso.fig.png"
       ]
     },
     {
