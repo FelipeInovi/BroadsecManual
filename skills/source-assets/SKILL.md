@@ -98,8 +98,43 @@ per section. Measured on this manual:
 | six map layers (`mapa.capa.*`) | **6 of 6** | Product's own `.webp`/`.png`, joined through `LayersMap.tsx` |
 | six BoT sections (`bot.seccion.*`) | **6 of 6** | Tabler outline SVGs, joined through `BOTSidebar.tsx`, recoloured |
 | six map controls (`mapa.ctrl.*`) | **0 of 6** | One MUI icon, one Tailwind-white product SVG, four Google Maps native controls |
+| everything else in BoT (`bot.*`, 47 slots) | **0 of 47** | All figure-convention — screens, panels and procedure steps. See below |
 
 The first and third sit on the same page.
+
+### Sort by CONVENTION first — it answers most of the question in one query
+
+The `icon` convention means a glyph in a table cell, which is the shape an asset
+file comes in. The `figure` convention means a captioned picture of a screen,
+which is the shape it does not.
+
+So before opening a single component, ask what conventions are actually pending.
+On BoT that took one query and settled all 47 slots: 12 `figure`, 28 `procedure`
+steps, 7 `field-list` items — every one of them figure-convention, and not one
+`icon-table` row left. Nothing an asset file can answer.
+
+Confirmed the slow way too, and it agreed: across every page under
+`BroadsecOfThings/`, `CCTV/` and `PMV/` the product imports exactly TWO asset
+files, both `assets/icons/*.tsx` product-drawn SVGs, and neither answers a
+pending slot. `CCTVPTZControl` is a grid of buttons; `CCTVStatusBadge` is a
+coloured pill driven by a status map. Composed at runtime, not shipped as files.
+
+The trap here is a `field-list` row like `bot.cctv.fn.ptz` — "Control PTZ" reads
+like an icon and is not. Its convention is `figure`, so the caption promises the
+whole control. Delivering the arrow glyph the component happens to use would
+fill the slot, pass every count, and show the operator something that is not the
+control being described.
+
+### BoT map assets exist and nothing asks for them
+
+The product ships `layer_panels.png`, `layer_trafficlight.webp`, `layer_camera.webp`,
+`vehiculo.png`, `alarm.svg` and their `pin_`/`cluster_` variants — exactly the
+element types `bot.mapa` describes in prose. But `bot.mapa` holds a `term-list`,
+which carries no images, and one screen figure. No slot, no delivery.
+
+This is the CONTENT gap the section above describes, and the second instance of
+it in this manual. Someone should decide whether BoT's map subsection deserves
+an icon-table of map element types. If it gets one, those assets are ready.
 
 ### Where the join lives, in order of strength
 
