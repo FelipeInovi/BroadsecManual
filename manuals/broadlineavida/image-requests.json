@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 242,
-    "delivered": 196,
-    "pending": 46
+    "delivered": 198,
+    "pending": 44
   },
   "pending": [
     {
@@ -81,26 +81,6 @@
       "deliverTo": {
         "shared": "_common/bot.mapa.fig.png",
         "override": "<tenant>/bot.mapa.fig.png"
-      }
-    },
-    {
-      "slot": "bot.prt.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.prt.fig",
-          "blockType": "figure",
-          "shows": "El personal y los vehículos desplegados en vía, con su asignación."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.prt.fig.png",
-        "override": "<tenant>/bot.prt.fig.png"
       }
     },
     {
@@ -841,26 +821,6 @@
       "deliverTo": {
         "shared": "_common/bot.pmv-auditoria.fig.png",
         "override": "<tenant>/bot.pmv-auditoria.fig.png"
-      }
-    },
-    {
-      "slot": "bot.alarmas.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.alarmas.fig",
-          "blockType": "figure",
-          "shows": "El listado de alarmas desde donde se supervisan y se reconocen."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.alarmas.fig.png",
-        "override": "<tenant>/bot.alarmas.fig.png"
       }
     },
     {
@@ -4252,6 +4212,22 @@
       ]
     },
     {
+      "slot": "bot.prt.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.fig",
+          "blockType": "figure",
+          "shows": "El personal y los vehículos desplegados en vía, con su asignación."
+        }
+      ],
+      "files": [
+        "_common/bot.prt.fig.png"
+      ]
+    },
+    {
       "slot": "bot.recursos.fig",
       "neededBy": [
         "mv"
@@ -4265,6 +4241,22 @@
       ],
       "files": [
         "_common/bot.recursos.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.fig",
+          "blockType": "figure",
+          "shows": "El listado de alarmas desde donde se supervisan y se reconocen."
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.fig.png"
       ]
     }
   ]

@@ -50,6 +50,17 @@ const recipeSchema = z
      */
     dataReady: selector("dataReady"),
     /**
+     * Something only THIS screen shows — its own heading, normally.
+     *
+     * Required, and separate from `dataReady` on purpose. `dataReady` proves
+     * data is on screen; it cannot prove WHOSE data. A sidebar parent like CCTV
+     * or PMV only expands its submenu, leaving the previous section's table up,
+     * and that table satisfies `dataReady` the instant it is checked. Both
+     * bot.cctv.fig and bot.pmv.fig were captured as PRT exactly that way, and
+     * the run reported 4 of 4.
+     */
+    screenIs: selector("screenIs"),
+    /**
      * Clicks needed to reach the pane, in order.
      *
      * Not every screen has a route. The whole BroadSec of Things module is one

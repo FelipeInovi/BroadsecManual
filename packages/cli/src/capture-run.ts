@@ -111,7 +111,10 @@ export async function runCaptures(
           await page.waitForSelector(step.click, { timeout: WAIT_MS });
           await page.click(step.click);
         }
-        // The gate that makes the shot meaningful — see `dataReady` in capture.ts.
+        // WHICH screen, then WHETHER it has data. In that order: the previous
+        // section's table is still on the page while a parent menu merely
+        // expands, and it would satisfy dataReady before we ever arrived.
+        await page.waitForSelector(shot.screenIs, { timeout: WAIT_MS });
         await page.waitForSelector(shot.dataReady, { timeout: WAIT_MS });
 
         const target = shot.clip ? await page.$(shot.clip) : page;

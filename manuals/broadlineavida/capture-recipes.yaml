@@ -69,35 +69,51 @@ target:
 # test id on those buttons and its repository is read-only, so the only stable
 # handle is the visible label — taken from botSidebar.navItems in
 # src/render/locales/translations/es.json, the same catalogue the manual quotes.
+# THE RULE THAT REPLACED A BAD ONE. `table tbody tr` is NOT enough: the loading
+# state renders a single <tr> holding "Cargando ..." and matches instantly, which
+# is how bot.alarmas.fig was first shot mid-load. A loading state is ONE row, so
+# asking for the THIRD proves real data arrived. Never relax this to a bare row.
+
+# TWO GATES, NOT ONE. `dataReady` proves data is on screen; `screenIs` proves it
+# is THIS screen's data. CCTV and PMV are sidebar PARENTS — clicking them only
+# expands the submenu and leaves the previous section's table up, which satisfied
+# `dataReady` instantly. bot.cctv.fig and bot.pmv.fig were both captured as PRT
+# that way, and the run reported "4 of 4 captured".
+#
+# `screenIs` MUST BE VISIBLE TEXT, and accents must match exactly. Two ways this
+# was got wrong in one sitting:
+#   - "Buscar por nombre" is a `placeholder` ATTRIBUTE, not text. ::-p-text()
+#     cannot see it, and the failure reads like a slow page.
+#   - "GESTION" never matches "GESTIÓN". Where a heading carries an accent, take
+#     a substring that skips it — "n de agentes" for "Programacion de agentes".
+#
+# And `dataReady` asks for the THIRD row: a loading state is ONE row holding
+# "Cargando ...", which is how bot.alarmas.fig was first shot mid-load.
+
 recipes:
-  # VERIFIED against mv on 2026-08-05: delivered a fully populated resources
-  # table. This is the shape a good recipe has — a selector that cannot match
-  # anything but a real row.
+  # VERIFIED: fully populated resources listing.
   - slot: bot.recursos.fig
     route: /#/broadsec-of-things
     steps:
       - click: "button::-p-text(Recursos)"
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
     dataReady: "table tbody tr td"
     viewport: { width: 1600, height: 900 }
 
-  # bot.mapa.fig and bot.alarmas.fig are not here YET. Both were tried and both
-  # produced a plausible, wrong image that only looking at the PNG caught:
-  #
-  #   bot.mapa.fig    `.gm-style` proves the Google canvas exists, not that the
-  #                   operational layers loaded. The shot was a bare map of
-  #                   Medellin with no panel, vehicle, traffic light or camera —
-  #                   the four things its caption promises.
-  #   bot.alarmas.fig `table tbody tr` matched the row holding "Cargando
-  #                   alarmas...". CORRECTION: the earlier note here said the
-  #                   list was empty. It is not — a reconnaissance pass found 50
-  #                   rows and 400 cells. The capture simply shot the loading
-  #                   state. Wait longer and match a CELL, never a row.
-  #
-  # RECONNAISSANCE, mv, 2026-08-05 — rows/cells per section:
-  #   PRT 50/550 · Alarmas 50/400 · CCTV 25/250 · PMV 25/250 · Mapa 10/20
-  #   Recursos 0/0 — yet its capture came back fully populated, so its listing is
-  #   probably not a real <table>. Check before writing its dataReady.
-  #
-  # Mosaico, Programacion, Gestion and Variables are NOT reachable with one
-  # click: they are sub-items that exist in the DOM only while their parent
-  # (CCTV, PMV) is expanded. Their recipes need two steps, parent then child.
+  # VERIFIED: agent scheduling, 50 rows with vehicle, zone and control point.
+  - slot: bot.prt.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(PRT)"
+    screenIs: "::-p-text(n de agentes)"
+    dataReady: "table tbody tr:nth-child(3) td"
+    viewport: { width: 1600, height: 900 }
+
+  # VERIFIED: 17179 alarms across 344 pages, with the Reconocer buttons.
+  - slot: bot.alarmas.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Alarmas)"
+    screenIs: "::-p-text(reconoce las alarmas del sistema)"
+    dataReady: "table tbody tr:nth-child(3) td"
+    viewport: { width: 1600, height: 900 }

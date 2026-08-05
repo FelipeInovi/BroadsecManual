@@ -29,6 +29,7 @@ const recipe = (slot: string, over: Record<string, unknown> = {}) => ({
   slot,
   route: "/bot/alarms",
   dataReady: "table tbody tr",
+  screenIs: "::-p-text(GESTION DE ALARMAS)",
   clip: ".panel",
   ...over,
 });
@@ -58,6 +59,22 @@ describe("parseRecipes", () => {
   it("refuses a recipe with no proof that DATA arrived", () => {
     expect(() => parseRecipes(doc([recipe("bot.alarmas.fig", { dataReady: undefined })]))).toThrow(
       /dataReady/,
+    );
+  });
+
+  // dataReady proves DATA is on screen. It does not prove WHICH screen: a
+  // sidebar parent that only expands leaves the previous section's table up,
+  // and it satisfies dataReady instantly. Both bot.cctv.fig and bot.pmv.fig
+  // came back as PRT that way.
+  it("refuses a recipe with no proof of WHICH screen it is on", () => {
+    expect(() => parseRecipes(doc([recipe("bot.alarmas.fig", { screenIs: undefined })]))).toThrow(
+      /screenIs/,
+    );
+  });
+
+  it("refuses an empty screenIs", () => {
+    expect(() => parseRecipes(doc([recipe("bot.alarmas.fig", { screenIs: " " })]))).toThrow(
+      /screenIs/,
     );
   });
 
