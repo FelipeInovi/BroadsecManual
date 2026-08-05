@@ -1,6 +1,6 @@
 # Imágenes pendientes
 
-32 imágenes pendientes, en el orden en que aparecen en el manual.
+31 imágenes pendientes, en el orden en que aparecen en el manual.
 Complete la tercera columna con la instrucción de extracción desde `Manual_Broadsec_v5.pdf`.
 
 Los números de página valen para la última construcción del manual. Regenere la tabla (`build --pending-table`) después de cambiar contenido: las instrucciones ya escritas se conservan.
@@ -19,7 +19,6 @@ Los números de página valen para la última construcción del manual. Regenere
 | `bot.recursos.paso.pj-confirmar` — Confirme | 70 |  |
 | `bot.cctv.fn.grilla` — Grilla del mosaico | 73 |  |
 | `bot.cctv.fn.estado` — Estado de la transmisión | 73 |  |
-| `bot.cctv.fn.ptz` — Control PTZ | 73 |  |
 | `bot.cctv.paso.encuadrar` — Encuadre la vista | 74 |  |
 | `bot.cctv.paso.nombrar` — Nombre la posición | 74 |  |
 | `bot.cctv.paso.reutilizar` — Reutilice la posición | 74 |  |

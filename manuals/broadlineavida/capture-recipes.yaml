@@ -268,3 +268,22 @@ recipes:
   #         from: '[aria-roledescription="draggable"]'   # dnd-kit marks handles
   #         to:   "div.grid.h-full.w-full.gap-1 > div:nth-child(1)"
   #   clip: "div.grid.h-full.w-full.gap-1"
+
+  # The PTZ control renders over a tile once a camera is dropped in. SHOWING it
+  # is inside the read-only boundary; PRESSING any of these arrows would turn a
+  # motor on a real street, so no step here ever touches them.
+  # Root class from CCTVPTZControl.tsx.
+  - slot: bot.cctv.fn.ptz
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Mosaico)"
+      - drag:
+          from: '[aria-roledescription="draggable"]'
+          to: "div.grid.h-full.w-full.gap-1 > div:nth-child(1)"
+    # NOT "CONTROL PTZ": that heading is CSS `uppercase`, so the DOM text differs
+    # from what the screen shows and ::-p-text() matches the DOM.
+    screenIs: "::-p-text(PTZ)"
+    dataReady: "::-p-text(PTZ)"
+    settleMs: 4000
+    clip: "div.flex.flex-col.gap-4"
+    viewport: { width: 1600, height: 900 }
