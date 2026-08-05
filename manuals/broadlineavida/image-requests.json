@@ -19,50 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 242,
-    "delivered": 202,
-    "pending": 40
+    "delivered": 204,
+    "pending": 38
   },
   "pending": [
-    {
-      "slot": "bot.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.fig",
-          "blockType": "figure",
-          "shows": "Pantalla general del módulo: el panel lateral de navegación y el área de trabajo."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.fig.png",
-        "override": "<tenant>/bot.fig.png"
-      }
-    },
-    {
-      "slot": "bot.navegacion.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.navegacion.fig",
-          "blockType": "figure",
-          "shows": "El panel lateral con las secciones del módulo y el estado de las integraciones."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.navegacion.fig.png",
-        "override": "<tenant>/bot.navegacion.fig.png"
-      }
-    },
     {
       "slot": "bot.mapa.fig",
       "neededBy": [
@@ -4033,6 +3993,38 @@
       ],
       "files": [
         "_common/callai/observaciones/fig.png"
+      ]
+    },
+    {
+      "slot": "bot.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.fig",
+          "blockType": "figure",
+          "shows": "Pantalla general del módulo: el panel lateral de navegación y el área de trabajo."
+        }
+      ],
+      "files": [
+        "_common/bot.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.navegacion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.navegacion.fig",
+          "blockType": "figure",
+          "shows": "El panel lateral con las secciones del módulo y el estado de las integraciones."
+        }
+      ],
+      "files": [
+        "_common/bot.navegacion.fig.png"
       ]
     },
     {

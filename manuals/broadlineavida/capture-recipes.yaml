@@ -158,3 +158,26 @@ recipes:
     screenIs: "::-p-text(PMV - Variables)"
     dataReady: "::-p-text(PMV - Variables)"
     viewport: { width: 1600, height: 900 }
+
+  # The module as the operator meets it, with NO click: landing on it is the
+  # whole point of "pantalla general". Shooting it on Recursos was the first
+  # attempt and produced a near-duplicate of bot.recursos.fig — two captions,
+  # one picture, and nothing in the pipeline would have said so.
+  - slot: bot.fig
+    route: /#/broadsec-of-things
+    screenIs: ".gm-style"
+    dataReady: "aside.border-r"
+    viewport: { width: 1600, height: 900 }
+
+  # The lateral panel alone. Clipped to the sidebar's own root — the class list
+  # comes from BOTSidebar.tsx, and the integration status dots the caption
+  # mentions live inside it.
+  - slot: bot.navegacion.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
+    dataReady: "table tbody tr td"
+    # It is an <aside>, not a div — BOTSidebar.tsx renders motion.aside.
+    clip: "aside.border-r"
+    viewport: { width: 1600, height: 900 }
