@@ -8,6 +8,7 @@ import type {
   SectionNode,
 } from "@broadsec-manual/blocks";
 import { tokens } from "@broadsec-manual/tokens";
+import type { Tokens } from "@broadsec-manual/tokens";
 import { stylesheet } from "./css.ts";
 
 export interface CoverData {
@@ -54,6 +55,11 @@ export interface RenderOptions {
   readonly draft?: boolean;
   /** Inlined at the end of <body>; used to load the pagination polyfill. */
   readonly polyfill?: string;
+  /**
+   * The brand palette and type to render in. Omitted keeps the default, so a
+   * caller that has no opinion renders exactly as before.
+   */
+  readonly theme?: Tokens;
 }
 
 const esc = (s: string): string =>
@@ -355,7 +361,10 @@ function renderSection(
       : "";
     return [
       `<header class="section-header" id="${esc(node.id)}">`,
-      `<h1 class="section-header__title">${esc(title)}</h1>`,
+      // The number rides along as an attribute so a theme can set it large and
+      // ghosted behind the title. Taken from `numbers`, never re-derived: the
+      // ghost and the heading must never disagree.
+      `<h1 class="section-header__title" data-number="${esc(n)}">${esc(title)}</h1>`,
       subtitle,
       `</header>`,
       children,
@@ -445,7 +454,7 @@ export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
   return `<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <title>${esc(o.cover.brand)} — ${esc(o.cover.title)}</title>
-<style>${stylesheet(tokens, o.header)}</style>
+<style>${stylesheet(o.theme ?? tokens, o.header)}</style>
 </head><body>
 ${renderCover(o.cover)}
 ${renderToc(manual)}

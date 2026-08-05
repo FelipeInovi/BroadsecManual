@@ -1,0 +1,67 @@
+# Bridge — PRIMERA ENTREGA.
+#
+# NOT the official Bridge manual. This is a contractual stop-gap: the Broadsec
+# `mv` content, rebranded and dressed in Bridge's visual identity, delivered
+# while the real Bridge manual is written from the Bridge source.
+#
+# What that means in practice, and why it is written here rather than remembered:
+#
+#  - The CONTENT describes Broadsec SIMM, not Bridge360. Screens, module names
+#    and procedures were copied. Anything a reader takes from this about Bridge
+#    is inherited, not verified.
+#  - There is no `source`, so `extract` cannot run against it. Wiring it to the
+#    bridge repository is the first step of the real manual, not of this one.
+#  - Only `mv` is built. The tenant axis exists because the content is tagged
+#    against it and stripping the tags would destroy work; it does not mean
+#    Bridge has those deployments.
+#
+# When the real manual starts, this directory is replaced, not evolved.
+
+version: 1
+
+manual:
+  id: bridge-primera-entrega
+  title: Manual de operador
+  product: Bridge360
+  # Cover and running header. The company stays Inovisec; only the product changes.
+  brand: BRIDGE
+  contentVersion: 0.1.0
+  language: es
+  register: neutral-formal
+  # Palette and type from Bridge360's own @theme. See packages/tokens.
+  theme: bridge
+
+catalog:
+  version: null
+
+# Inherited from the Broadsec content, which is tagged against these ids. Kept
+# so the tagging keeps working; NOT a claim about Bridge's deployments.
+axes:
+  tenant:
+    label: Deployment
+    values:
+      - id: lv
+        code: LV
+        name: Línea Vida
+      - id: amva
+        code: AMVA
+        name: Área Metropolitana Valle de Aburrá
+      - id: ant
+        code: ANT
+        name: Antioquia
+      - id: mv
+        code: MV
+        name: Movilidad Medellín
+      - id: med
+        code: MED
+        name: Medellín
+      - id: demo
+        code: DEMO
+        name: Demostración
+
+targets:
+  - { tenant: mv }
+
+output:
+  dir: output
+  filename: "manual-operador-bridge-v{contentVersion}.pdf"

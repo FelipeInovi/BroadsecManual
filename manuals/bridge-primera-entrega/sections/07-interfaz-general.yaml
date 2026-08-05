@@ -1,0 +1,306 @@
+# Interfaz General — pipeline spike.
+#
+# Content adapted from the legacy manual (broadlineavida/docs/manual-usuario.md,
+# section 7). Tenant conditioning is NOT taken from that document — its tenant
+# metadata is "por definir". Every `when` below is grounded in source code, and
+# the file and line are recorded next to it.
+#
+# No number, anchor or figure ordinal appears anywhere in this file. They are
+# assigned per build target.
+
+id: interfaz-general
+title: Interfaz General
+subtitle: Componentes del Home
+
+children:
+  - id: interfaz-general.intro
+    type: prose
+    props:
+      text: >-
+        La pantalla de inicio (Home) concentra la operación diaria y se compone
+        de tres áreas principales: el **Mapa**, la **Barra Superior** y la lista
+        de **Incidentes**. Desde ellas se accede al resto de los módulos de la
+        plataforma.
+
+  - id: interfaz-general.fig-home
+    type: figure
+    props:
+      caption: Componentes del Home — Mapa, Barra Superior e Incidentes.
+      widthPercent: 62
+
+  # ---------------------------------------------------------------- Mapa ---
+  - id: mapa
+    title: Mapa
+    children:
+      - id: mapa.intro
+        type: prose
+        props:
+          text: >-
+            El mapa concentra los controles de visualización de la operación.
+            Permite ubicar cada incidente, agrupar elementos cercanos y cambiar
+            entre los distintos modos de vista disponibles.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: mapa.fig
+        type: figure
+        props:
+          caption: "Vista general del mapa con sus controles de visualización."
+          widthPercent: 90
+
+      - id: mapa.controles
+        type: icon-table
+        props:
+          labelHeader: Función
+          descriptionHeader: Descripción
+          rows:
+            - id: mapa.ctrl.visualizacion
+              label: Módulo de Visualización
+              description: >-
+                Permite escoger los distintos elementos que forman parte de la
+                gestión de incidentes.
+            - id: mapa.ctrl.agrupar
+              label: Agrupar / Desagrupar
+              description: >-
+                Agrupa elementos cercanos del mismo tipo para obtener una vista
+                más ágil y ordenada.
+            - id: mapa.ctrl.street-view
+              label: Modo Street View
+              description: Cambia la vista del mapa a modo calle.
+            - id: mapa.ctrl.salir-street-view
+              label: Salir del modo Street View
+              description: Vuelve a la vista estándar del mapa.
+            - id: mapa.ctrl.navegacion-3d
+              label: Navegación 3D
+              description: >-
+                Ejecuta la navegación tridimensional para obtener una visión más
+                realista del entorno.
+            - id: mapa.ctrl.controles
+              label: Controles de Mapa
+              description: >-
+                Despliega los controles para desplazarse por el mapa con mayor
+                precisión.
+
+      - id: mapa.capas.header
+        type: detail-header
+        props:
+          text: Capas disponibles
+
+      - id: mapa.capas.intro
+        type: prose
+        props:
+          text: >-
+            El Módulo de Visualización permite activar y desactivar las capas
+            del mapa de forma independiente. Cada capa se superpone a la vista
+            base y puede combinarse con las demás.
+
+      - id: mapa.capas
+        type: icon-table
+        props:
+          labelHeader: Capa
+          descriptionHeader: Descripción
+          rows:
+            - id: mapa.capa.trafico
+              label: Tráfico
+              description: >-
+                Muestra el estado del tráfico en tiempo real sobre la vía.
+            - id: mapa.capa.incidentes
+              label: Incidentes
+              description: >-
+                Muestra los incidentes activos, agrupados por cercanía y
+                tipificados por su categoría.
+            # LayersMap.tsx:76 — the entry only exists when
+            # `config.name === "MV" || config.name === "DEMO"`.
+            - id: mapa.capa.avl
+              label: AVL
+              description: >-
+                Muestra la ubicación en tiempo real de los vehículos con
+                seguimiento automático.
+              when:
+                tenant: [mv, demo]
+            # LayersMap.tsx:89 unconditional entry, 225-226/240-241/266-267
+            # hide it for AMVA — so every deployment except AMVA.
+            - id: mapa.capa.mobile
+              label: Mobile
+              description: >-
+                Muestra la ubicación de los agentes que operan desde la
+                aplicación móvil.
+              when:
+                tenant: [lv, ant, mv, med, demo]
+            # LayersMap.tsx:98 — the entry only exists when
+            # `config.name === "MV"`.
+            - id: mapa.capa.camaras
+              label: Cámaras
+              description: >-
+                Muestra la ubicación de las cámaras disponibles y permite
+                acceder a su transmisión.
+              when:
+                tenant: [mv]
+            # LayersMap.tsx:138 — the entry only exists when
+            # `config.name === "MV"`.
+            - id: mapa.capa.paneles
+              label: Paneles
+              description: >-
+                Muestra los paneles de mensajería variable y su contenido
+                actual.
+              when:
+                tenant: [mv]
+
+      - id: mapa.fig-capas
+        type: figure
+        props:
+          caption: Visualización de capas sobre el mapa.
+          widthPercent: 78
+
+  # -------------------------------------------------------- Barra Superior ---
+  - id: barra-superior
+    title: Barra Superior
+    children:
+      - id: barra-superior.fig
+        type: figure
+        props:
+          caption: Barra superior de la plataforma.
+          widthPercent: 88
+
+      - id: barra-superior.tabla
+        type: icon-table
+        props:
+          labelHeader: Elemento
+          descriptionHeader: Descripción
+          rows:
+            - id: barra.busqueda
+              label: Barra de búsqueda
+              description: >-
+                Permite realizar búsquedas por teléfono o por ID de llamada.
+            - id: barra.filtros
+              label: Filtros
+              description: Permite filtrar y categorizar los casos reportados.
+            - id: barra.eventos
+              label: Eventos
+              description: >-
+                Permite controlar el número de elementos mostrados en el mapa.
+            - id: barra.anadir-caso
+              label: Añadir caso
+              description: >-
+                Permite crear un incidente o acceder al módulo de gestión de
+                operadores.
+            - id: barra.dashboard
+              label: Dashboard
+              description: >-
+                Muestra estadísticas en tiempo real de los casos gestionados.
+            - id: barra.fuerzas
+              label: Fuerzas en campo
+              description: >-
+                Permite ver los agentes disponibles y su ubicación.
+            - id: barra.mapa
+              label: Mapa
+              description: Controla las capas disponibles sobre el mapa.
+            - id: barra.back
+              label: Back
+              description: >-
+                Permite volver a la navegación anterior. Está disponible en
+                todos los módulos.
+            - id: barra.admin
+              label: Menú de Administración
+              description: >-
+                Da acceso al panel de Gestión de Usuarios y al botón de Cerrar
+                Sesión.
+
+      - id: barra-superior.detalle-intro
+        type: prose
+        props:
+          text: "Algunos de estos elementos se detallan a continuación:"
+
+      - id: barra.filtro.header
+        type: detail-header
+        props:
+          text: Filtro
+
+      - id: barra.filtro.texto
+        type: prose
+        props:
+          text: >-
+            Permite realizar búsquedas personalizadas para encontrar un dato
+            específico, hacer seguimiento, verificar capacidades y filtrar por
+            zonas y por fechas determinadas. Brinda control total al momento de
+            realizar seguimientos y facilita el rastreo de los incidentes.
+
+      - id: barra.filtro.fig
+        type: figure
+        props:
+          caption: Panel de filtros de la barra superior.
+          widthPercent: 40
+
+      - id: barra.dashboard.header
+        type: detail-header
+        props:
+          text: Dashboard
+
+      - id: barra.dashboard.texto
+        type: prose
+        props:
+          text: >-
+            Centro de datos unificado que permite cuantificar, clasificar y
+            exportar información en tiempo real.
+
+      - id: barra.fuerzas.header
+        type: detail-header
+        props:
+          text: Fuerzas en Campo
+
+      - id: barra.fuerzas.texto
+        type: prose
+        props:
+          text: >-
+            Permite verificar la cantidad de agentes disponibles y su ubicación,
+            asegurando una asignación de recursos más eficaz.
+
+      - id: barra.back.header
+        type: detail-header
+        props:
+          text: Botón de Back
+
+      - id: barra.back.texto
+        type: prose
+        props:
+          text: >-
+            Permite volver a la navegación anterior conservando todas sus
+            características. Está integrado en todos los módulos y asegura que
+            la información siempre esté disponible al retornar.
+
+      - id: barra.admin.header
+        type: detail-header
+        props:
+          text: Menú de Administración
+
+      - id: barra.admin.texto
+        type: prose
+        props:
+          text: >-
+            Muestra el nombre del operador y su rol. Desde aquí se puede cerrar
+            la sesión y acceder al panel de Gestión de Usuarios.
+
+  # -------------------------------------------------------------- Incidentes ---
+  - id: incidentes
+    title: Incidentes — Lista de Casos
+    children:
+      - id: incidentes.intro
+        type: prose
+        props:
+          text: >-
+            La lista de casos muestra todas las llamadas, entrantes y salientes,
+            de la plataforma Carbyne, así como los incidentes creados
+            directamente desde Bridge.
+
+      - id: incidentes.nota
+        type: callout
+        props:
+          text: >-
+            La lista se actualiza en tiempo real. Un caso recién creado aparece
+            en el primer lugar sin necesidad de recargar la pantalla.
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: incidentes.fig
+        type: figure
+        props:
+          caption: "Lista de casos, con la información de cada incidente reportado."
+          widthPercent: 63
+

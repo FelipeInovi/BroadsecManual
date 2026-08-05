@@ -1,0 +1,76 @@
+# Ported from docs/manual-usuario.md § 4 (lines 120-142) as it stands.
+#
+# Faithful port: wording is the legacy document's own. Nothing was re-verified
+# against the product and nothing was corrected — that is the job of a later
+# update pass, not of this import.
+#
+# What DID change, because the format demands it:
+#   - the section's ordinal is not written; numbering is assigned per build
+#   - the figure's number is not written; the caption keeps only its description
+#   - `Tenants: (por definir)` carried no tag, so this section is untagged and
+#     every deployment sees it — the legacy document's own state
+
+id: introduccion
+title: Introducción
+subtitle: Propósito y alcance del manual
+
+children:
+  - id: introduccion.intro
+    type: prose
+    props:
+      text: >-
+        Este manual describe el funcionamiento de la herramienta Bridge,
+        desarrollada por Inovisec. Está diseñado para proporcionar al usuario y
+        al administrador una comprensión completa del sistema, sus módulos y las
+        funcionalidades disponibles en la plataforma.
+
+  # Overview figure: the module at a glance, before any detail.
+  - id: introduccion.fig
+    type: figure
+    props:
+      caption: "Vista principal de la plataforma."
+      widthPercent: 90
+
+  - id: introduccion.objetivo
+    title: Objetivo
+    children:
+      - id: introduccion.objetivo.texto
+        type: prose
+        props:
+          text: >-
+            Proporcionar a los usuarios y administradores una guía detallada y
+            práctica para el uso correcto del software Bridge, desde el acceso
+            a la plataforma hasta el manejo avanzado de sus módulos de gestión de
+            emergencias, despacho de recursos y análisis estadístico en tiempo
+            real.
+
+  - id: introduccion.alcance
+    title: Alcance
+    children:
+      - id: introduccion.alcance.texto
+        type: prose
+        props:
+          text: >-
+            Este manual está dirigido a personal técnico, supervisores y
+            operadores encargados del manejo de emergencias que utilizan la
+            plataforma Bridge. Comprende:
+
+      - id: introduccion.alcance.comprende
+        type: term-list
+        props:
+          entries:
+            - id: introduccion.alcance.funcionamiento
+              term: Funcionamiento e interfaz
+              definition: Explicación del funcionamiento básico y de la interfaz del sistema.
+            - id: introduccion.alcance.modulos
+              term: Módulos clave
+              definition: >-
+                Descripción de los módulos clave: Gestión de Incidentes,
+                Security Dashboard y Fuerzas en Campo.
+            - id: introduccion.alcance.callai
+              term: Call AI
+              definition: Guía completa del módulo de inteligencia artificial Call AI.
+            - id: introduccion.alcance.procedimientos
+              term: Procedimientos
+              definition: >-
+                Procedimientos paso a paso para las operaciones más frecuentes.

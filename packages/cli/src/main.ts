@@ -15,6 +15,7 @@ import {
   type ImageSlotUse,
 } from "@broadsec-manual/core";
 import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
+import { themes, isThemeName } from "@broadsec-manual/tokens";
 import { printToPdf } from "./chrome.ts";
 import { extract } from "./extract.ts";
 import { pendingTable } from "./pending-table.ts";
@@ -60,6 +61,17 @@ export const manualConfigSchema = z
         title: z.string().min(1),
         product: z.string().min(1),
         contentVersion: z.string().min(1),
+        /**
+         * What the cover and the running header say. Defaults to the product
+         * name upper-cased, which is what every manual wanted before a second
+         * brand existed — the string used to be hardcoded as "BROADSEC".
+         */
+        brand: z.string().min(1).optional(),
+        /**
+         * Which brand palette and type to render in. Omitted keeps the default,
+         * so every existing manual is unaffected.
+         */
+        theme: z.string().min(1).optional(),
       })
       .passthrough(),
     axes: z.record(z.string().min(1), axisSchema),
@@ -626,17 +638,26 @@ async function build(
 
     const { entries, slots, images, uses } = resolveTargetImages(manual, figuresDir, tenant);
 
+    const brand = config.manual.brand ?? config.manual.product.toUpperCase();
+    const declared = config.manual.theme;
+    if (declared !== undefined && !isThemeName(declared)) {
+      throw new Error(
+        `manual.theme is "${declared}", which is not a theme. Known: ` +
+          `${Object.keys(themes).join(", ")}.`,
+      );
+    }
     const html = renderHtml(manual, {
+      ...(declared === undefined ? {} : { theme: themes[declared] }),
       header: draft
         ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${config.manual.contentVersion}  |  NO DISTRIBUIR`
-        : `BROADSEC  |  ${config.manual.title}  |  v${config.manual.contentVersion}`,
+        : `${brand}  |  ${config.manual.title}  |  v${config.manual.contentVersion}`,
       slots,
       images: (slot) => images.resolve(slot),
       figures: manual.figures,
       draft,
       polyfill,
       cover: {
-        brand: draft ? "BORRADOR INTERNO" : "BROADSEC",
+        brand: draft ? "BORRADOR INTERNO" : brand,
         title: config.manual.title,
         version: config.manual.contentVersion,
         lede: draft

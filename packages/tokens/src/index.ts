@@ -1,41 +1,101 @@
 /**
- * Design tokens.
+ * Design tokens, one palette per brand.
  *
- * PROVISIONAL. Extracted from the vector content stream of
- * `Manual_Broadsec_v5.pdf` (exact source values, not sampled pixels) so the
- * pipeline spike renders in the real Broadsec visual language.
+ * PROVISIONAL. The Broadsec values were extracted from the vector content
+ * stream of `Manual_Broadsec_v5.pdf` (exact source values, not sampled pixels);
+ * the Bridge values come from Bridge360's own `@theme` block in
+ * `src/app/App.css`. Neither was sampled from a screenshot.
  *
  * These are replaced wholesale by the design team's delivery. Nothing outside
  * this file may hardcode a colour or a size.
+ *
+ * The two brands share the SEMANTIC layer below and differ only in the palette
+ * and type fed into it. That is deliberate: a second manual must not become a
+ * second renderer, or every fix has to be made twice.
  */
 
-/** Raw values. Only the semantic layer below may reference these. */
-const base = {
+/** What one brand supplies. Only the semantic layer may read these. */
+interface Brand {
+  readonly color: {
+    /** Section bands, table heads, running header. */
+    readonly deep: string;
+    /** The cover ground. Usually a shade darker than `deep`. */
+    readonly deepest: string;
+    /** The accent, on dark grounds. */
+    readonly accentLight: string;
+    /** The accent, on paper — must hold contrast against white. */
+    readonly accentDark: string;
+    readonly bodyInk: string;
+    readonly mutedInk: string;
+    readonly headerInk: string;
+    readonly surfaceAccent: string;
+    readonly surfaceCool: string;
+    readonly ruleLight: string;
+  };
+  readonly font: {
+    readonly sans: string;
+    /**
+     * Headings, numbers and labels. Broadsec sets this to its body face — one
+     * neutral doing everything, which is what makes it read operational.
+     * Bridge gives it a geometric display face, which is most of what
+     * distinguishes the two manuals once the palettes are this close.
+     */
+    readonly display: string;
+    readonly mono: string;
+  };
+  /** A 1.5pt rule under the running header. `none` on brands without one. */
+  readonly deckRule: string;
+  /** The ghosted section number behind a section opener. */
+  readonly ghostNumber: string;
+}
+
+const broadsec: Brand = {
   color: {
-    navy900: "#1A2332",
-    navy950: "#192231",
-    teal400: "#2DD4BF",
-    teal600: "#0D9488",
-    slate700: "#2D3748",
-    slate400: "#8FA3B8",
-    amber500: "#F59E0B",
-    amberSurface: "#FFF8E8",
-    ink: "#000000",
-    white: "#FFFFFF",
+    deep: "#1A2332",
+    deepest: "#192231",
+    accentLight: "#2DD4BF",
+    accentDark: "#0D9488",
+    bodyInk: "#2D3748",
+    mutedInk: "#8FA3B8",
     headerInk: "#E8EDF2",
-    surfaceTeal: "#F0F7F6",
+    surfaceAccent: "#F0F7F6",
     surfaceCool: "#F0F4F8",
     ruleLight: "#D0E0EC",
   },
   font: {
     sans: "Helvetica, Arial, sans-serif",
-    /**
-     * For text that is transcribed rather than read — a filename someone has to
-     * reproduce exactly. In a proportional face `l`, `1` and `I` are the same
-     * shape, and a mistyped image name is a delivery nobody can match to a slot.
-     */
+    display: "Helvetica, Arial, sans-serif",
     mono: "Consolas, 'DejaVu Sans Mono', Menlo, monospace",
   },
+  deckRule: "transparent",
+  ghostNumber: "transparent",
+};
+
+/** Bridge360. Palette and type from its own `@theme`; see the header above. */
+const bridge: Brand = {
+  color: {
+    deep: "#0D1525",
+    deepest: "#040A14",
+    accentLight: "#5EEAD4",
+    accentDark: "#0F766E",
+    bodyInk: "#44566A",
+    mutedInk: "#7C8FA3",
+    headerInk: "#E8EDF2",
+    surfaceAccent: "#F1F5F8",
+    surfaceCool: "#F1F5F8",
+    ruleLight: "#D7E3EA",
+  },
+  font: {
+    sans: "'Geist', 'Inter', Helvetica, Arial, sans-serif",
+    display: "'Outfit', 'Avenir Next', 'Century Gothic', Helvetica, sans-serif",
+    mono: "'Geist Mono', Consolas, 'DejaVu Sans Mono', Menlo, monospace",
+  },
+  deckRule: "#14B8A6",
+  ghostNumber: "rgba(94,234,212,0.13)",
+};
+
+/** Sizes and rhythm are shared: they are page geometry, not brand. */
+const scale = {
   size: {
     xs: "7pt",
     sm: "8pt",
@@ -56,13 +116,14 @@ const base = {
 } as const;
 
 /** Named roles. Blocks and renderers reference only these. */
-export const tokens = {
+function build(brand: Brand) {
+  return {
   page: {
     size: "A4",
     marginTop: "62pt",
     marginBottom: "52pt",
     marginX: "62pt",
-    background: base.color.white,
+    background: "#FFFFFF",
     /**
      * Breathing room between the running header bar and the first thing on the
      * page.
@@ -75,100 +136,110 @@ export const tokens = {
     contentTop: "16pt",
   },
   runningHeader: {
-    background: base.color.navy900,
-    accent: base.color.teal400,
-    brandColor: base.color.teal400,
-    brandSize: base.size.sm,
-    textColor: base.color.headerInk,
-    textSize: base.size.sm,
+    background: brand.color.deep,
+    accent: brand.color.accentLight,
+    brandColor: brand.color.accentLight,
+    brandSize: scale.size.sm,
+    textColor: brand.color.headerInk,
+    textSize: scale.size.sm,
     height: "37pt",
+    /**
+     * The deck line. A 1.5pt rule under the running header that runs the whole
+     * document — Bridge's one ornament, and a structural echo of its own logo.
+     * `transparent` on a brand without one, so the rule is always in the
+     * stylesheet and only its colour changes.
+     */
+    deck: brand.deckRule,
   },
   runningFooter: {
-    rule: base.color.teal400,
-    textColor: base.color.slate400,
-    textSize: base.size.xs,
-    pageNumberColor: base.color.navy900,
-    pageNumberSize: base.size.sm,
+    rule: brand.color.accentLight,
+    textColor: brand.color.mutedInk,
+    textSize: scale.size.xs,
+    pageNumberColor: brand.color.deep,
+    pageNumberSize: scale.size.sm,
   },
   sectionHeader: {
-    background: base.color.navy900,
-    accent: base.color.teal400,
-    titleColor: base.color.white,
-    titleSize: base.size.xxl,
-    subtitleColor: base.color.teal400,
-    subtitleSize: base.size.md,
+    background: brand.color.deep,
+    accent: brand.color.accentLight,
+    titleColor: "#FFFFFF",
+    titleSize: scale.size.xxl,
+    subtitleColor: brand.color.accentLight,
+    subtitleSize: scale.size.md,
+    /** The section number, set large and ghosted behind the title. */
+    ghost: brand.ghostNumber,
+    ghostSize: "46pt",
   },
   subsectionHeader: {
-    background: base.color.surfaceTeal,
-    accent: base.color.teal400,
-    titleColor: base.color.navy900,
-    titleSize: base.size.xl,
+    background: brand.color.surfaceAccent,
+    accent: brand.color.accentLight,
+    titleColor: brand.color.deep,
+    titleSize: scale.size.xl,
   },
   detailHeader: {
-    color: base.color.teal600,
-    size: base.size.lg,
+    color: brand.color.accentDark,
+    size: scale.size.lg,
   },
   prose: {
-    color: base.color.slate700,
-    size: base.size.body,
+    color: brand.color.bodyInk,
+    size: scale.size.body,
     lineHeight: "1.55",
     align: "justify",
   },
   table: {
-    headBackground: base.color.navy900,
-    headColor: base.color.white,
-    headSize: base.size.base,
-    rowBackground: base.color.white,
-    rowAltBackground: base.color.surfaceCool,
-    labelColor: base.color.teal600,
-    cellColor: base.color.ink,
-    cellSize: base.size.base,
-    rule: base.color.ruleLight,
+    headBackground: brand.color.deep,
+    headColor: "#FFFFFF",
+    headSize: scale.size.base,
+    rowBackground: "#FFFFFF",
+    rowAltBackground: brand.color.surfaceCool,
+    labelColor: brand.color.accentDark,
+    cellColor: "#000000",
+    cellSize: scale.size.base,
+    rule: brand.color.ruleLight,
   },
   figure: {
-    captionColor: base.color.slate400,
-    captionSize: base.size.sm,
+    captionColor: brand.color.mutedInk,
+    captionSize: scale.size.sm,
     captionStyle: "italic",
   },
   callout: {
     info: {
-      background: base.color.surfaceTeal,
-      accent: base.color.teal600,
+      background: brand.color.surfaceAccent,
+      accent: brand.color.accentDark,
     },
     important: {
-      background: base.color.amberSurface,
-      accent: base.color.amber500,
+      background: "#FFF8E8",
+      accent: "#F59E0B",
     },
-    color: base.color.navy900,
-    size: base.size.base,
-    labelSize: base.size.base,
+    color: brand.color.deep,
+    size: scale.size.base,
+    labelSize: scale.size.base,
   },
   fieldList: {
-    labelColor: base.color.teal600,
-    labelSize: base.size.lg,
+    labelColor: brand.color.accentDark,
+    labelSize: scale.size.lg,
   },
   procedure: {
-    stepTitleColor: base.color.navy900,
-    stepTitleSize: base.size.xl,
-    markerColor: base.color.teal600,
+    stepTitleColor: brand.color.deep,
+    stepTitleSize: scale.size.xl,
+    markerColor: brand.color.accentDark,
   },
   termList: {
-    termColor: base.color.slate700,
-    size: base.size.body,
+    termColor: brand.color.bodyInk,
+    size: scale.size.body,
   },
   dataTable: {
-    headBackground: base.color.teal600,
-    headColor: base.color.white,
-    labelColor: base.color.teal600,
-    cellColor: base.color.ink,
-    rowAltBackground: base.color.surfaceTeal,
+    headBackground: brand.color.accentDark,
+    headColor: "#FFFFFF",
+    labelColor: brand.color.accentDark,
+    cellColor: "#000000",
+    rowAltBackground: brand.color.surfaceAccent,
   },
   cover: {
-    background: base.color.navy950,
-    accent: base.color.teal400,
-    titleColor: base.color.white,
-    subtitleColor: base.color.teal400,
-    metaColor: base.color.slate400,
+    background: brand.color.deepest,
+    accent: brand.color.accentLight,
+    titleColor: "#FFFFFF",
+    subtitleColor: brand.color.accentLight,
+    metaColor: brand.color.mutedInk,
   },
   /**
    * The draft build only. Amber rather than the brand palette, and deliberately
@@ -176,13 +247,26 @@ export const tokens = {
    * must be impossible to mistake for the document a client receives.
    */
   draft: {
-    accent: base.color.amber500,
-    background: base.color.amberSurface,
-    slotColor: base.color.slate700,
-    slotSize: base.size.xs,
+    accent: "#F59E0B",
+    background: "#FFF8E8",
+    slotColor: brand.color.bodyInk,
+    slotSize: scale.size.xs,
   },
-  space: base.space,
-  font: base.font,
+  space: scale.space,
+  font: brand.font,
+  } as const;
+}
+
+export const themes = {
+  broadsec: build(broadsec),
+  bridge: build(bridge),
 } as const;
 
-export type Tokens = typeof tokens;
+/** A theme name a manual may ask for in its config. */
+export type ThemeName = keyof typeof themes;
+export const isThemeName = (v: unknown): v is ThemeName =>
+  typeof v === "string" && Object.hasOwn(themes, v);
+
+/** The default, so existing callers and tests keep working unchanged. */
+export const tokens = themes.broadsec;
+export type Tokens = ReturnType<typeof build>;

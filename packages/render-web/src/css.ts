@@ -33,6 +33,9 @@ export function stylesheet(t: Tokens, header: string): string {
   margin: ${t.page.marginTop} ${t.page.marginX} ${t.page.marginBottom};
 
   @top-left-corner { content: ""; background: ${t.runningHeader.accent}; }
+  /* The deck line: one rule under the running header, the whole document long.
+     Always present so only its colour is brand-dependent. */
+  @top-center { border-bottom: 1.5pt solid ${t.runningHeader.deck}; }
   @top-left {
     content: "${safeHeader}";
     color: ${t.runningHeader.textColor};
@@ -154,6 +157,7 @@ body {
   margin: 10pt 0 14pt;
 }
 .cover__title {
+  font-family: ${t.font.display};
   font-size: 17pt;
   color: ${t.cover.subtitleColor};
   margin: 0 0 16pt;
@@ -237,11 +241,28 @@ body {
   background: ${t.sectionHeader.background};
   border-left: 5pt solid ${t.sectionHeader.accent};
   padding: 10pt 14pt;
+  position: relative;
+  overflow: hidden;
   margin: 0 0 ${t.space.lg};
   break-after: avoid;
   break-inside: avoid;
 }
+/* The section number, ghosted behind its own title — a pier. Transparent on a
+   brand that declares none, so the rule never has to be conditional. */
+.section-header__title::after {
+  content: attr(data-number);
+  position: absolute;
+  right: 8pt;
+  top: -10pt;
+  font-family: ${t.font.display};
+  font-size: ${t.sectionHeader.ghostSize};
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: ${t.sectionHeader.ghost};
+  pointer-events: none;
+}
 .section-header__title {
+  font-family: ${t.font.display};
   color: ${t.sectionHeader.titleColor};
   font-size: ${t.sectionHeader.titleSize};
   font-weight: bold;
@@ -267,6 +288,7 @@ body {
 }
 
 .detail-header {
+  font-family: ${t.font.display};
   color: ${t.detailHeader.color};
   font-size: ${t.detailHeader.size};
   font-weight: bold;
@@ -374,6 +396,7 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
 
 .field { break-inside: avoid; margin-bottom: ${t.space.md}; }
 .field__label {
+  font-family: ${t.font.display};
   color: ${t.fieldList.labelColor};
   font-size: ${t.fieldList.labelSize};
   font-weight: bold;
@@ -401,6 +424,7 @@ table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
 
 .step { break-inside: avoid; margin-bottom: ${t.space.md}; }
 .step__title {
+  font-family: ${t.font.display};
   color: ${t.procedure.stepTitleColor};
   font-size: ${t.procedure.stepTitleSize};
   font-weight: bold;
