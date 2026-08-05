@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseRecipes, planCaptures } from "./capture.ts";
+import { parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
 
 const target = {
   baseUrl: "https://web.inovisec.com/lv",
@@ -77,6 +77,51 @@ describe("parseRecipes", () => {
     expect(() =>
       parseRecipes(doc([recipe("bot.alarmas.fig"), recipe("bot.alarmas.fig", { route: "/x" })])),
     ).toThrow(/bot\.alarmas\.fig/);
+  });
+});
+
+describe("parseEnvFile", () => {
+  it("reads a plain KEY=VALUE", () => {
+    expect(parseEnvFile("BROADSEC_CAPTURE_USER=operador@inovisec.com")).toEqual({
+      BROADSEC_CAPTURE_USER: "operador@inovisec.com",
+    });
+  });
+
+  it("ignores blank lines and comments", () => {
+    const got = parseEnvFile("# el usuario\n\nA=1\n   \n# otro\nB=2\n");
+    expect(got).toEqual({ A: "1", B: "2" });
+  });
+
+  // A password is not prose. Treating a "#" as the start of a comment would
+  // silently truncate it and the login would fail with no clue why.
+  it("keeps a # inside a value — it is a password character, not a comment", () => {
+    expect(parseEnvFile("P=abc#123")).toEqual({ P: "abc#123" });
+  });
+
+  it("keeps an = inside a value, splitting on the first one only", () => {
+    expect(parseEnvFile("P=a=b=c")).toEqual({ P: "a=b=c" });
+  });
+
+  it("strips surrounding quotes, so a value with spaces survives", () => {
+    expect(parseEnvFile('P="con espacio"\nQ=\'otro\'')).toEqual({ P: "con espacio", Q: "otro" });
+  });
+
+  // Trailing whitespace is invisible in an editor and would be typed into the
+  // password field verbatim.
+  it("trims the key and unquoted value", () => {
+    expect(parseEnvFile("  A  =  hola  ")).toEqual({ A: "hola" });
+  });
+
+  it("keeps deliberate whitespace when the value is quoted", () => {
+    expect(parseEnvFile('A="  hola  "')).toEqual({ A: "  hola  " });
+  });
+
+  it("survives CRLF, which is what an editor writes on this machine", () => {
+    expect(parseEnvFile("A=1\r\nB=2\r\n")).toEqual({ A: "1", B: "2" });
+  });
+
+  it("skips a line with no = rather than throwing on a half-typed file", () => {
+    expect(parseEnvFile("A=1\nbasura\nB=2")).toEqual({ A: "1", B: "2" });
   });
 });
 

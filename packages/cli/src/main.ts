@@ -18,7 +18,10 @@ import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import { printToPdf } from "./chrome.ts";
 import { extract } from "./extract.ts";
 import { pendingTable } from "./pending-table.ts";
-import { parseRecipes, planCaptures } from "./capture.ts";
+import { parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
+
+/** Where the product login lives. Gitignored; see .env.capture.example. */
+const CREDENTIALS_FILE = ".env.capture";
 import { runCaptures } from "./capture-run.ts";
 import {
   COMMON_SET,
@@ -496,6 +499,17 @@ async function capture(
   const manual = assemble(doc, target, catalog);
   const { entries } = resolveTargetImages(manual, figuresDir, tenant);
   const pending = new Set(entries.filter((e) => e.state === "pending").map((e) => e.slot));
+
+  // The login lives in a gitignored file at the repository root, next to the
+  // committed template. A value already in the environment WINS: a one-off run
+  // against another deployment should not need the file edited and put back.
+  const envPath = resolve(process.cwd(), CREDENTIALS_FILE);
+  if (existsSync(envPath)) {
+    for (const [k, v] of Object.entries(parseEnvFile(readFileSync(envPath, "utf8")))) {
+      if (process.env[k] === undefined) process.env[k] = v;
+    }
+    console.log(`  login read from ${CREDENTIALS_FILE}`);
+  }
 
   const recipePath = join(manualDir, "capture-recipes.yaml");
   if (!existsSync(recipePath)) {

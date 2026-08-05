@@ -33,9 +33,10 @@ function credentials(auth: RecipeDoc["target"]["auth"]): { user: string; passwor
   ].filter((v): v is string => v !== null);
   if (missing.length > 0) {
     throw new Error(
-      `capture needs the product login. Set ${missing.join(" and ")} in the ` +
-        `environment. They are deliberately NOT in the recipe file: that file is ` +
-        `committed.`,
+      `capture needs the product login: ${missing.join(" and ")} ${missing.length > 1 ? "are" : "is"} empty.\n` +
+        `  Fill them in .env.capture at the repository root (copy .env.capture.example\n` +
+        `  if it is not there yet). That file is gitignored; the recipe file is not,\n` +
+        `  which is why the login is never written into it.`,
     );
   }
   return { user: user as string, password: password as string };

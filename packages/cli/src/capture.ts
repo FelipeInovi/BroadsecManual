@@ -93,6 +93,35 @@ export function parseRecipes(raw: unknown): RecipeDoc {
   return doc;
 }
 
+/**
+ * Read a KEY=VALUE credentials file.
+ *
+ * Node does not load `.env` on its own, and asking someone to export two
+ * variables before every run is a step they will forget once and then debug for
+ * an hour. Deliberately small: no interpolation, no multi-line values, no
+ * `export` prefix — a credentials file is two lines and every extra feature is
+ * another way for a password to arrive subtly altered.
+ *
+ * Malformed lines are skipped rather than thrown on: a half-typed file should
+ * still let the run reach the error that names the missing variable.
+ */
+export function parseEnvFile(text: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (line === "" || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq <= 0) continue;
+    const key = line.slice(0, eq).trim();
+    // Split on the FIRST `=` only, and never treat `#` as a comment here: both
+    // are ordinary password characters.
+    const value = line.slice(eq + 1);
+    const quoted = /^(["'])([\s\S]*)\1$/.exec(value.trim());
+    out[key] = quoted ? (quoted[2] as string) : value.trim();
+  }
+  return out;
+}
+
 export interface PlannedCapture extends CaptureRecipe {
   /** Where the shot must land for the manual to pick it up. */
   readonly deliverTo: string;
