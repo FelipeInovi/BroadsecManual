@@ -30,7 +30,7 @@ manual:
   lede: >-
     Plataforma de gestión de incidentes y coordinación de recursos para
     operaciones críticas.
-  contentVersion: 0.1.0
+  contentVersion: 0.0.1
   language: es
   register: neutral-formal
   # Palette and type from Bridge360's own @theme. See packages/tokens.
