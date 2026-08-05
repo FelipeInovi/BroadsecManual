@@ -28,7 +28,7 @@ children:
     type: figure
     props:
       caption: "Interfaz de Call AI durante una llamada activa."
-      widthPercent: 90
+      widthPercent: 63
 
   - id: callai.anatomia
     title: Anatomía de una Respuesta Inteligente

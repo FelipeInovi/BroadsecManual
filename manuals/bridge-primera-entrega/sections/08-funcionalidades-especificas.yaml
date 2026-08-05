@@ -437,11 +437,6 @@ children:
                 Justo en el momento en que se empieza a atender un incidente en
                 vivo, comienza a operar la tecnología de transcripción, análisis
                 de IA y grabación automática.
-          - id: funcionalidades.llamada-entrante.fig-vivo
-            type: figure
-            props:
-              caption: "Incidente EN VIVO: grabación y monitoreo activo."
-              widthPercent: 90
           - id: funcionalidades.llamada-entrante.estado
             type: prose
             props:
@@ -622,7 +617,7 @@ children:
                 type: figure
                 props:
                   caption: "Resumen de Call AI del incidente."
-                  widthPercent: 90
+                  widthPercent: 54
               - id: funcionalidades.pestana-callai.fig-detalle
                 type: figure
                 props:
@@ -642,7 +637,7 @@ children:
                 type: figure
                 props:
                   caption: "Panel de despacho del incidente."
-                  widthPercent: 90
+                  widthPercent: 59
 
               - id: funcionalidades.despacho-pasos
                 title: Despacho paso a paso

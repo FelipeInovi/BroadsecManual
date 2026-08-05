@@ -408,7 +408,7 @@ children:
         type: figure
         props:
           caption: "Alternar entre Mapa de calor y Marcadores."
-          widthPercent: 70
+          widthPercent: 39
 
       - id: dashboard.mapa-calor.marcadores
         type: prose
@@ -421,7 +421,7 @@ children:
         type: figure
         props:
           caption: "Vista de casos individuales, con marcadores, en el mapa."
-          widthPercent: 90
+          widthPercent: 59
 
       - id: dashboard.lista
         title: Visualización de Casos en Lista

@@ -17,8 +17,8 @@
   ],
   "deploymentsConfigured": 1,
   "counts": {
-    "total": 223,
-    "delivered": 223,
+    "total": 222,
+    "delivered": 222,
     "pending": 0
   },
   "pending": [],
@@ -1029,22 +1029,6 @@
       ],
       "files": [
         "_common/funcionalidades.seccion-incidentes.fig.jpeg"
-      ]
-    },
-    {
-      "slot": "funcionalidades.llamada-entrante.fig-vivo",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.llamada-entrante.fig-vivo",
-          "blockType": "figure",
-          "shows": "Incidente EN VIVO: grabación y monitoreo activo."
-        }
-      ],
-      "files": [
-        "_common/funcionalidades.llamada-entrante.fig-vivo.png"
       ]
     },
     {
@@ -3591,5 +3575,8 @@
         "_common/bot.alarmas.paso.reconocer.png"
       ]
     }
+  ],
+  "undeclared": [
+    "funcionalidades.llamada-entrante.fig-vivo"
   ]
 }

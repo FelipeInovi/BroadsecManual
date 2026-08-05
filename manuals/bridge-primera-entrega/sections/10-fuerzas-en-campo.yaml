@@ -251,12 +251,12 @@ children:
             type: figure
             props:
               caption: "Filtro de rango de tiempo en Operaciones."
-              widthPercent: 70
+              widthPercent: 49
           - id: fuerzas.operaciones.filtro.fig-rango
             type: figure
             props:
               caption: "Selección de rango de fechas en el filtro."
-              widthPercent: 70
+              widthPercent: 53
 
       - id: fuerzas.operaciones.resumen
         title: Resumen de Actividad en Módulo de Operaciones
@@ -377,7 +377,7 @@ children:
             type: figure
             props:
               caption: "Formulario para crear un nuevo incidente."
-              widthPercent: 45
+              widthPercent: 34
           - id: fuerzas.anadir.incidente.texto
             type: prose
             props:
