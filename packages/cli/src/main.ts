@@ -18,6 +18,8 @@ import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import { printToPdf } from "./chrome.ts";
 import { extract } from "./extract.ts";
 import { pendingTable } from "./pending-table.ts";
+import { parseRecipes, planCaptures } from "./capture.ts";
+import { runCaptures } from "./capture-run.ts";
 import {
   COMMON_SET,
   buildImageIndex,
@@ -476,6 +478,49 @@ function resolveTargetImages(
   return { entries, slots: new Map(uses.map((u) => [u.nodeId, u.slot])), images, uses };
 }
 
+/**
+ * Shoot the pending figures off the running product.
+ *
+ * Deliberately its own command rather than a flag on `build`: it needs the
+ * product up, a login, and a network, none of which a build may ever depend on.
+ */
+async function capture(
+  manualDir: string,
+  filters: ReadonlyMap<string, string>,
+  only: readonly string[],
+): Promise<void> {
+  const { doc, targets, figuresDir } = loadManual(manualDir, filters);
+  const target = targets[0];
+  if (!target) throw new Error("no deployment selected — pass --tenant");
+  const tenant = requireAxisValue(target, "tenant");
+  const manual = assemble(doc, target, catalog);
+  const { entries } = resolveTargetImages(manual, figuresDir, tenant);
+  const pending = new Set(entries.filter((e) => e.state === "pending").map((e) => e.slot));
+
+  const recipePath = join(manualDir, "capture-recipes.yaml");
+  if (!existsSync(recipePath)) {
+    throw new Error(`no capture recipes at ${recipePath}. Nothing to shoot.`);
+  }
+  const recipes = parseRecipes(parseYaml(readFileSync(recipePath, "utf8")));
+  const chosen =
+    only.length === 0 ? recipes.recipes : recipes.recipes.filter((r) => only.includes(r.slot));
+  if (only.length > 0 && chosen.length !== only.length) {
+    const missing = only.filter((s) => !chosen.some((r) => r.slot === s));
+    throw new Error(`--only names slots with no recipe: ${missing.join(", ")}`);
+  }
+
+  const plan = planCaptures(chosen, pending);
+  console.log(`  ${plan.ready.length} recipe(s) to shoot, ${plan.uncovered.length} pending slot(s) with no recipe yet`);
+  if (plan.ready.length === 0) return;
+
+  const results = await runCaptures(recipes, plan.ready, figuresDir, (line) => console.log(line));
+  const ok = results.filter((r) => r.ok).length;
+  console.log(`\n  ${ok} of ${results.length} captured`);
+  // Same discipline the manifest check enforces: a capture is only real once the
+  // slot it was aimed at stops being pending. Re-export and look.
+  if (ok > 0) console.log(`  now re-run \`images ${basename(manualDir)}\` — pending must drop by exactly ${ok}`);
+}
+
 /** Export the image request document. Needs no renderer, so no browser. */
 function exportImages(
   manualDir: string,
@@ -665,13 +710,20 @@ export async function run(argv: readonly string[]): Promise<number> {
   const [command, manualId, ...rest] = argv;
   const axisFlags = "[--tenant <id>] [--axis <name>=<value> ...]";
   if (
-    (command !== "build" && command !== "images" && command !== "extract") ||
+    (command !== "build" &&
+      command !== "images" &&
+      command !== "extract" &&
+      command !== "capture") ||
     !manualId
   ) {
     console.error(
       `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table]\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
+        `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
+        `  capture  shoot pending figures off the running product, per\n` +
+        `           manuals/<manual>/capture-recipes.yaml. Needs the login in the\n` +
+        `           environment variables that file NAMES — never in the file.\n` +
         `  --draft  internal build: prints the filename every pending image must\n` +
         `           be delivered under. Never distribute a draft to a client.\n` +
         `  --pending-table\n` +
@@ -715,6 +767,14 @@ export async function run(argv: readonly string[]): Promise<number> {
 ${drift.length} change(s) since the previous map:`);
         for (const line of drift) console.log(`    ${line}`);
       }
+      return 0;
+    }
+
+    if (command === "capture") {
+      const at = rest.indexOf("--only");
+      const only = at === -1 ? [] : (rest[at + 1] ?? "").split(",").filter(Boolean);
+      console.log(`capturing ${manualId}${label ? ` (${label})` : ""}`);
+      await capture(manualDir, filters, only);
       return 0;
     }
 

@@ -1,0 +1,72 @@
+# How to photograph a pending figure off the running product.
+#
+# Run with: broadsec-manual capture broadlineavida --tenant mv
+#
+# WHY THIS FILE IS THE POINT. The screenshot is the easy half. Today a change to
+# the product silently rots every figure that shows it and nobody finds out. A
+# recipe per slot turns that drift into one command.
+#
+# CREDENTIALS ARE NEVER WRITTEN HERE. This file is committed. `auth` names the
+# environment variables to read; the schema rejects a literal password outright.
+#
+# WHICH ENVIRONMENT. Point `baseUrl` at whichever deployment shows the data the
+# manual should depict. The hosts, from src/render/config/*.config.ts:
+#
+#   demo  https://web.inovisec.com/lv       (basePath "lv")
+#   mv    https://medellin.inovisec.com/... (basePath from mv.config.ts)
+#   med   https://medellin.inovisec.com/... (basePath from med.config.ts)
+#   dev   http://3.20.16.27/...
+#
+# ROUTES ARE HASH ROUTES. AppRoutes.tsx uses `createHashRouter`, so the path
+# lives after a `#`. A plain "/broadsec-of-things" silently serves the app shell
+# and the capture would shoot whatever screen happened to be up — verified: the
+# login URL resolves to /lv/login#/login.
+
+version: 1
+
+target:
+  baseUrl: https://web.inovisec.com/lv
+  auth:
+    route: /#/login
+    userEnv: BROADSEC_CAPTURE_USER
+    passwordEnv: BROADSEC_CAPTURE_PASSWORD
+    # From src/render/pages/Login/LoginPage.tsx. All three confirmed present on
+    # the live demo login page.
+    userSelector: 'input[name="email"]'
+    passwordSelector: 'input[name="password"]'
+    submitSelector: "#submit-button"
+    # Proof the session exists. Without it a wrong password leaves us on the
+    # login form and every capture below quietly shoots that same form.
+    doneWhen: "nav, header"
+
+# `dataReady` is REQUIRED on every recipe and must only match once real data has
+# rendered. A route paints its header and its empty table long before the first
+# row arrives, and a screenshot of an empty alarms list tells the operator the
+# screen is empty — worse than the placeholder it replaced.
+#
+# `steps` exists because the whole BroadSec of Things module is ONE route
+# (`broadsec-of-things`); its sections are sidebar state. The product puts no
+# test id on those buttons and its repository is read-only, so the only stable
+# handle is the visible label — taken from botSidebar.navItems in
+# src/render/locales/translations/es.json, the same catalogue the manual quotes.
+recipes:
+  - slot: bot.mapa.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Mapa)"
+    dataReady: ".gm-style"
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.recursos.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+    dataReady: "table tbody tr"
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.alarmas.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Alarmas)"
+    dataReady: "table tbody tr"
+    viewport: { width: 1600, height: 900 }
