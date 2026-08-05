@@ -156,16 +156,23 @@ body {
   position: relative;
   height: 100%;
   padding: 62pt 54pt 44pt;
-  background:
-    repeating-linear-gradient(90deg, ${t.cover.hairline} 0 0.6pt, transparent 0.6pt 26pt),
-    radial-gradient(120% 80% at 50% 4%, ${t.cover.glow}, transparent 62%),
-    ${t.cover.background};
+  background: ${t.cover.background};
   color: ${t.cover.titleColor};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-.cover__lockup { display: flex; align-items: center; gap: 13pt; }
+/* Vector rules, one per cable. See the comment where these are emitted: a
+   repeating gradient becomes a full-page tiling pattern in the exported PDF. */
+.cover__cables {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.cover__cables i { width: 0.5pt; background: ${t.cover.hairline}; }
+.cover__lockup { position: relative; display: flex; align-items: center; gap: 13pt; }
 .cover__mark { width: 40pt; height: 40pt; flex: none; }
 .cover__wordmark {
   font-family: ${t.font.display};
@@ -174,7 +181,7 @@ body {
   letter-spacing: 4pt;
   color: ${t.cover.titleColor};
 }
-.cover__stack { margin-bottom: 96pt; }
+.cover__stack { position: relative; margin-bottom: 96pt; }
 .cover__title--light {
   font-family: ${t.font.display};
   font-size: 33pt;
@@ -194,6 +201,7 @@ body {
   color: ${t.cover.ledeColor};
 }
 .cover__meta {
+  position: relative;
   margin: 0;
   padding-top: 11pt;
   border-top: 0.6pt solid ${t.cover.accentSoft};

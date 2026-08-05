@@ -480,6 +480,14 @@ function renderCover(c: CoverData, t: Tokens, headerLine: string): string {
   return [
     `<section class="cover cover--${t.cover.style}">`,
     t.cover.sheet === "bridge" ? runningHeader(headerLine) : "",
+    // The hairlines as real elements, not a repeating gradient. Chrome exports
+    // a repeating-linear-gradient as a TILING PATTERN whose cell is the whole
+    // A4 page, nested inside another pattern; a viewer re-renders that on every
+    // paint, which made scrolling onto the cover visibly slow while every other
+    // page was fine. Plain filled rectangles cost nothing.
+    t.cover.sheet === "bridge"
+      ? `<div class="cover__cables" aria-hidden="true">${"<i></i>".repeat(22)}</div>`
+      : "",
     ...body,
     `</section>`,
   ].join("\n");
