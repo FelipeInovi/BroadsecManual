@@ -25,6 +25,11 @@ manual:
   product: Bridge360
   # Cover and running header. The company stays Inovisec; only the product changes.
   brand: BRIDGE
+  # Its own standfirst. The default appends the deployment name, which would put
+  # "Movilidad Medellin" on a Bridge cover — a deployment Bridge does not have.
+  lede: >-
+    Plataforma de gestión de incidentes y coordinación de recursos para
+    operaciones críticas.
   contentVersion: 0.1.0
   language: es
   register: neutral-formal

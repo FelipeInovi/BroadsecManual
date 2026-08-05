@@ -10,6 +10,7 @@ import type {
 import { tokens } from "@broadsec-manual/tokens";
 import type { Tokens } from "@broadsec-manual/tokens";
 import { stylesheet } from "./css.ts";
+import { bridgeStylesheet } from "./css-bridge.ts";
 
 export interface CoverData {
   readonly brand: string;
@@ -406,6 +407,15 @@ const bridgeMark = (accent: string): string =>
   `<path d="M14 46c10-16 26-16 36-16s26 0 36 16" stroke-width="2.6"/>` +
   `<path d="M30 30l20 16 20-16" stroke-width="2.2"/></svg>`;
 
+/**
+ * The stylesheet a brand renders with.
+ *
+ * Two files, not one configurable file. Broadsec's document is already
+ * delivered; sharing a sheet would mean a Bridge change could alter it.
+ */
+const sheetFor = (t: Tokens, header: string): string =>
+  t.cover.sheet === "bridge" ? bridgeStylesheet(t, header) : stylesheet(t, header);
+
 function renderCover(c: CoverData, t: Tokens): string {
   // Two compositions, both in the markup, chosen by the brand. See
   // `coverStyle` in the tokens: a cover is arrangement, not just palette.
@@ -492,7 +502,7 @@ export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
   return `<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <title>${esc(o.cover.brand)} — ${esc(o.cover.title)}</title>
-<style>${stylesheet(o.theme ?? tokens, o.header)}</style>
+<style>${sheetFor(o.theme ?? tokens, o.header)}</style>
 </head><body>
 ${renderCover(o.cover, o.theme ?? tokens)}
 ${renderToc(manual)}

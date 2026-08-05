@@ -61,6 +61,11 @@ interface Brand {
   /** How tall the section opener sits, and how big its ghost number runs. */
   readonly openerPad: string;
   readonly ghostSize: string;
+  /** Cover ornament: hairline verticals and a soft glow. Transparent for none. */
+  readonly coverHairline: string;
+  readonly coverGlow: string;
+  /** Which stylesheet to render with. Two brands, two files, no shared risk. */
+  readonly sheet: "broadsec" | "bridge";
 }
 
 const broadsec: Brand = {
@@ -87,6 +92,9 @@ const broadsec: Brand = {
   sectionKicker: "",
   openerPad: "10pt 14pt",
   ghostSize: "46pt",
+  coverHairline: "transparent",
+  coverGlow: "transparent",
+  sheet: "broadsec",
 };
 
 /** Bridge360. Palette and type from its own `@theme`; see the header above. */
@@ -114,8 +122,11 @@ const bridge: Brand = {
   sectionKicker: "Módulo",
   // Taller than Broadsec's, and the ghost runs big enough to bleed off the top
   // edge — the pier the opener is meant to read as.
-  openerPad: "20pt 16pt 18pt",
-  ghostSize: "72pt",
+  openerPad: "22pt 18pt 20pt",
+  ghostSize: "76pt",
+  coverHairline: "rgba(20,184,166,0.13)",
+  coverGlow: "rgba(20,184,166,0.16)",
+  sheet: "bridge",
 };
 
 /** Sizes and rhythm are shared: they are page geometry, not brand. */
@@ -262,6 +273,11 @@ function build(brand: Brand) {
   },
   cover: {
     style: brand.coverStyle,
+    sheet: brand.sheet,
+    hairline: brand.coverHairline,
+    glow: brand.coverGlow,
+    accentSoft: "rgba(94,234,212,0.22)",
+    ledeColor: "#B6C7D6",
     background: brand.color.deepest,
     accent: brand.color.accentLight,
     titleColor: "#FFFFFF",

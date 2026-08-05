@@ -67,6 +67,8 @@ export const manualConfigSchema = z
          * brand existed — the string used to be hardcoded as "BROADSEC".
          */
         brand: z.string().min(1).optional(),
+        /** The cover's standfirst. Defaults to the Broadsec sentence. */
+        lede: z.string().min(1).optional(),
         /**
          * Which brand palette and type to render in. Omitted keeps the default,
          * so every existing manual is unaffected.
@@ -662,7 +664,8 @@ async function build(
         version: config.manual.contentVersion,
         lede: draft
           ? "Borrador para la toma de capturas. Cada imagen pendiente lleva debajo la ruta y el nombre exactos con los que debe entregarse el archivo. Guárdela tal cual, sin cambiar mayúsculas ni extensión. No distribuir."
-          : `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, "tenant", requireAxisValue(target, "tenant"))}.`,
+          : (config.manual.lede ??
+             `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, "tenant", requireAxisValue(target, "tenant"))}.`),
         meta: draft
           ? "© 2026 Inovisec  |  Documento de trabajo interno  |  No es la versión para el cliente"
           : "© 2026 Inovisec  |  Todos los Derechos Reservados  |  Documento Confidencial",
