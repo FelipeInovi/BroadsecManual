@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 240,
-    "delivered": 204,
-    "pending": 36
+    "delivered": 208,
+    "pending": 32
   },
   "pending": [
     {
@@ -221,26 +221,6 @@
       "deliverTo": {
         "shared": "_common/bot.recursos.paso.pj-confirmar.png",
         "override": "<tenant>/bot.recursos.paso.pj-confirmar.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.fn.lista",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.fn.lista",
-          "blockType": "field-list",
-          "shows": "Lista de cámaras"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.fn.lista.png",
-        "override": "<tenant>/bot.cctv.fn.lista.png"
       }
     },
     {
@@ -541,66 +521,6 @@
       "deliverTo": {
         "shared": "_common/bot.pmv-gestion.paso.reactivar.png",
         "override": "<tenant>/bot.pmv-gestion.paso.reactivar.png"
-      }
-    },
-    {
-      "slot": "bot.pmv-variables.s.familias",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-variables.s.familias",
-          "blockType": "field-list",
-          "shows": "Familias"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-variables.s.familias.png",
-        "override": "<tenant>/bot.pmv-variables.s.familias.png"
-      }
-    },
-    {
-      "slot": "bot.pmv-variables.s.grupos",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-variables.s.grupos",
-          "blockType": "field-list",
-          "shows": "Grupos"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-variables.s.grupos.png",
-        "override": "<tenant>/bot.pmv-variables.s.grupos.png"
-      }
-    },
-    {
-      "slot": "bot.pmv-variables.s.predefinidos",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-variables.s.predefinidos",
-          "blockType": "field-list",
-          "shows": "Mensajes Predefinidos"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-variables.s.predefinidos.png",
-        "override": "<tenant>/bot.pmv-variables.s.predefinidos.png"
       }
     },
     {
@@ -4132,6 +4052,22 @@
       ]
     },
     {
+      "slot": "bot.cctv.fn.lista",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fn.lista",
+          "blockType": "field-list",
+          "shows": "Lista de cámaras"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.fn.lista.png"
+      ]
+    },
+    {
       "slot": "bot.pmv.fig",
       "neededBy": [
         "mv"
@@ -4177,6 +4113,54 @@
       ],
       "files": [
         "_common/bot.pmv-variables.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.s.familias",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.familias",
+          "blockType": "field-list",
+          "shows": "Familias"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.s.familias.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.s.grupos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.grupos",
+          "blockType": "field-list",
+          "shows": "Grupos"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.s.grupos.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-variables.s.predefinidos",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-variables.s.predefinidos",
+          "blockType": "field-list",
+          "shows": "Mensajes Predefinidos"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-variables.s.predefinidos.png"
       ]
     },
     {

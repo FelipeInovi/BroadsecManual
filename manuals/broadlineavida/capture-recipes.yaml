@@ -181,3 +181,53 @@ recipes:
     # It is an <aside>, not a div — BOTSidebar.tsx renders motion.aside.
     clip: "aside.border-r"
     viewport: { width: 1600, height: 900 }
+
+  # The three Variables columns are direct children of one CSS grid, so they clip
+  # by position. A grid renders in DOM order, and the pane reads left to right:
+  # Familias, Grupos, Mensajes Predefinidos.
+  - slot: bot.pmv-variables.s.familias
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Variables)"
+    screenIs: "::-p-text(PMV - Variables)"
+    dataReady: "section.grid-cols-3 > div"
+    clip: "section.grid-cols-3 > div:nth-child(1)"
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv-variables.s.grupos
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Variables)"
+    screenIs: "::-p-text(PMV - Variables)"
+    dataReady: "section.grid-cols-3 > div"
+    clip: "section.grid-cols-3 > div:nth-child(2)"
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv-variables.s.predefinidos
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Variables)"
+    screenIs: "::-p-text(PMV - Variables)"
+    dataReady: "section.grid-cols-3 > div"
+    clip: "section.grid-cols-3 > div:nth-child(3)"
+    viewport: { width: 1600, height: 900 }
+
+  # CAREFUL: the module sidebar and the camera list are BOTH
+  # `aside.shrink-0.border-r`. Only the module sidebar carries `justify-between`,
+  # so the camera list is the one WITHOUT it. Clipping on the shared part alone
+  # would silently deliver the navigation menu as "the camera list".
+  - slot: bot.cctv.fn.lista
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Mosaico)"
+    screenIs: "::-p-text(CCTV - Mosaico)"
+    dataReady: "aside.shrink-0.border-r:not(.justify-between) img, aside.shrink-0.border-r:not(.justify-between) svg"
+    clip: "aside.shrink-0.border-r:not(.justify-between)"
+    viewport: { width: 1600, height: 900 }
+
+  # bot.cctv.fn.grilla was tried and DELETED. The clip is right — it is the 2x2
+  # mosaic — but with no camera dragged in it is four black rectangles, which
+  # teaches a reader nothing and reads as a broken image. The selector below
+  # works; what it needs is a camera playing in at least one tile, so it belongs
+  # with the interaction batch:
+  #   clip: "div.grid.h-full.w-full.gap-1"
