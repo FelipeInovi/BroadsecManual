@@ -4,11 +4,11 @@ import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./captu
 const deployments = {
   mv: {
     baseUrl: "https://medellin.inovisec.com/mv",
-    verify: 'img[src*="movilidad_logo"]',
+    verify: { route: "/#/broadsec-of-things", selector: "button::-p-text(Alarmas)" },
   },
   demo: {
     baseUrl: "https://web.inovisec.com/lv",
-    verify: 'img[src*="bridge_logo"]',
+    verify: { route: "/#/broadsec-of-things", selector: "button::-p-text(Alarmas)" },
   },
 };
 
@@ -42,11 +42,9 @@ describe("parseRecipes", () => {
     expect(parsed.target.deployments["mv"]?.baseUrl).toBe("https://medellin.inovisec.com/mv");
   });
 
-  // The tenant is compiled INTO the bundle by VITE_NAME_PROJECT, so one URL is
-  // one tenant and there is no way to ask a running app to be another. A
-  // deployment that cannot prove which tenant it is could be captured under the
-  // wrong name for months.
-  it("refuses a deployment with no way to prove which tenant it is", () => {
+  // A run that cannot check it reached the right place before shooting would
+  // deliver a whole batch of wrong images in one go.
+  it("refuses a deployment with no reachability check", () => {
     const bad = { mv: { baseUrl: "https://x/mv" } };
     expect(() => parseRecipes({ version: 1, target: { deployments: bad, auth: target.auth }, recipes: [] })).toThrow(
       /verify/,

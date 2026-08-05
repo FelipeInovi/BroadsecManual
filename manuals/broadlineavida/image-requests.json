@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 242,
-    "delivered": 195,
-    "pending": 47
+    "delivered": 196,
+    "pending": 46
   },
   "pending": [
     {
@@ -161,26 +161,6 @@
       "deliverTo": {
         "shared": "_common/bot.prt.paso.limpiar.png",
         "override": "<tenant>/bot.prt.paso.limpiar.png"
-      }
-    },
-    {
-      "slot": "bot.recursos.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.recursos.fig",
-          "blockType": "figure",
-          "shows": "El listado de recursos desde donde se monitorea y despacha."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.recursos.fig.png",
-        "override": "<tenant>/bot.recursos.fig.png"
       }
     },
     {
@@ -4269,6 +4249,22 @@
       ],
       "files": [
         "_common/bot/seccion/alarmas.svg"
+      ]
+    },
+    {
+      "slot": "bot.recursos.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.fig",
+          "blockType": "figure",
+          "shows": "El listado de recursos desde donde se monitorea y despacha."
+        }
+      ],
+      "files": [
+        "_common/bot.recursos.fig.png"
       ]
     }
   ]

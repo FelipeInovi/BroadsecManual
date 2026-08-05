@@ -78,13 +78,16 @@ const deploymentSchema = z
   .object({
     baseUrl: z.string(),
     /**
-     * A selector that only matches on THIS tenant's build.
+     * A page to open right after login, and something that must be on it.
      *
-     * Required, because "I pointed it at the mv URL" is an assumption and this
-     * makes it a check. Every tenant config names a different logo file, which
-     * is the cheapest reliable signal.
+     * What this proves: the session is real, the deployment is up, and the
+     * module being captured exists in this build. What it does NOT prove is
+     * WHICH TENANT the build is. That would need a tenant-specific artifact in
+     * the DOM — the configured logo would be ideal, but `logoImages` is used
+     * only on two report pages and does not render there. Adding one is a
+     * product change, and the product repository is read-only.
      */
-    verify: selector("verify"),
+    verify: z.object({ route: z.string(), selector: selector("verify.selector") }).strict(),
   })
   .strict();
 

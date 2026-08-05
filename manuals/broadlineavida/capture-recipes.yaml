@@ -33,7 +33,9 @@ target:
     # The manual's own deployment, and where BoT actually runs in production.
     mv:
       baseUrl: https://medellin.inovisec.com/mv
-      verify: 'img[src*="movilidad_logo"]'
+      verify:
+        route: /#/broadsec-of-things
+        selector: 'button::-p-text(Alarmas)'
     # NOT for BoT. demo runs an OUT OF DATE BroadSec of Things, so a capture
     # taken here delivers screens the operator will never see — and nothing in
     # the pipeline can tell an old screen from a current one. `canSeeBoT` being
@@ -41,7 +43,9 @@ target:
     # outside BoT, or for exercising the login path.
     demo:
       baseUrl: https://web.inovisec.com/lv
-      verify: 'img[src*="bridge_logo"]'
+      verify:
+        route: /#/broadsec-of-things
+        selector: 'button::-p-text(Alarmas)'
   auth:
     route: /#/login
     userEnv: BROADSEC_CAPTURE_USER
@@ -53,7 +57,7 @@ target:
     submitSelector: "#submit-button"
     # Proof the session exists. Without it a wrong password leaves us on the
     # login form and every capture below quietly shoots that same form.
-    doneWhen: "nav, header"
+    doneWhen: ".h-screen"
 
 # `dataReady` is REQUIRED on every recipe and must only match once real data has
 # rendered. A route paints its header and its empty table long before the first
@@ -66,23 +70,27 @@ target:
 # handle is the visible label — taken from botSidebar.navItems in
 # src/render/locales/translations/es.json, the same catalogue the manual quotes.
 recipes:
-  - slot: bot.mapa.fig
-    route: /#/broadsec-of-things
-    steps:
-      - click: "button::-p-text(Mapa)"
-    dataReady: ".gm-style"
-    viewport: { width: 1600, height: 900 }
-
+  # VERIFIED against mv on 2026-08-05: delivered a fully populated resources
+  # table. This is the shape a good recipe has — a selector that cannot match
+  # anything but a real row.
   - slot: bot.recursos.fig
     route: /#/broadsec-of-things
     steps:
       - click: "button::-p-text(Recursos)"
-    dataReady: "table tbody tr"
+    dataReady: "table tbody tr td"
     viewport: { width: 1600, height: 900 }
 
-  - slot: bot.alarmas.fig
-    route: /#/broadsec-of-things
-    steps:
-      - click: "button::-p-text(Alarmas)"
-    dataReady: "table tbody tr"
-    viewport: { width: 1600, height: 900 }
+  # bot.mapa.fig and bot.alarmas.fig are DELIBERATELY not here. Both were tried
+  # and both produced a plausible, wrong image that only looking caught:
+  #
+  #   bot.mapa.fig    `.gm-style` proves the Google canvas exists, not that the
+  #                   operational layers loaded. The shot was a bare map of
+  #                   Medellin with no panel, vehicle, traffic light or camera —
+  #                   the four things its caption promises.
+  #   bot.alarmas.fig `table tbody tr` matched the row holding "Cargando
+  #                   alarmas...", and the list was empty anyway: the default
+  #                   date window held 0 alarms. No selector fixes that — the
+  #                   filter has to be widened first, which is a `steps` problem.
+  #
+  # Both stay pending until their recipe can prove the screen shows what the
+  # caption claims. A pending slot announces itself; a wrong one does not.

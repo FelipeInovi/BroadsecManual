@@ -82,20 +82,22 @@ export async function runCaptures(
     await page.waitForSelector(auth.doneWhen, { timeout: WAIT_MS });
     onProgress("  signed in");
 
-    // Proof this deployment IS the tenant asked for. The tenant is compiled
-    // into the bundle, so pointing at the wrong URL does not fail — it succeeds
-    // and quietly files another tenant's screens under this one's name. Whole
-    // run, not per shot: if the deployment is wrong, every capture is wrong.
+    // Once for the whole run, before any shot: if the deployment is wrong or the
+    // module is missing, every capture below is wrong and none should be taken.
     try {
-      await page.waitForSelector(deployment.verify, { timeout: WAIT_MS });
+      await page.goto(`${baseUrl}${deployment.verify.route}`, {
+        waitUntil: "networkidle0",
+        timeout: WAIT_MS,
+      });
+      await page.waitForSelector(deployment.verify.selector, { timeout: WAIT_MS });
     } catch {
       throw new Error(
-        `this deployment does not look like "${tenant}": ${baseUrl} never showed ` +
-          `\`${deployment.verify}\`. The tenant is baked in at build time, so the ` +
-          `URL is the only thing that selects it. Nothing was captured.`,
+        `${baseUrl}${deployment.verify.route} never showed ` +
+          `\`${deployment.verify.selector}\`, so the module this run captures is ` +
+          `not in this build. Nothing was captured.`,
       );
     }
-    onProgress(`  confirmed this build is ${tenant}`);
+    onProgress(`  reachable, and the module is present`);
 
     for (const shot of plan) {
       try {
