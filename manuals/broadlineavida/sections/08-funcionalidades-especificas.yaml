@@ -791,7 +791,10 @@ children:
                             en la Gestión del Caso. Para ello, use el botón verde
                             ubicado en la esquina inferior izquierda de la
                             Gestión del Caso.
-                          layout: beside
+                          # No `layout: beside`: this step's figure is a composite
+                          # of three shots laid out horizontally, and squeezed
+                          # into the narrow right column it would be unreadable.
+                          # It goes below the text, at full width.
                         - id: func.desp.en-sitio
                           title: Ponga al agente En Sitio
                           text: >-

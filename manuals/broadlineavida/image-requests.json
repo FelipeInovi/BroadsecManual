@@ -18,2013 +18,11 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 250,
-    "delivered": 102,
-    "pending": 148
+    "total": 242,
+    "delivered": 185,
+    "pending": 57
   },
   "pending": [
-    {
-      "slot": "introduccion.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "introduccion.fig",
-          "blockType": "figure",
-          "shows": "Vista principal de la plataforma."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/introduccion.fig.png",
-        "override": "<tenant>/introduccion.fig.png"
-      }
-    },
-    {
-      "slot": "broadsec.descripcion.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "broadsec.descripcion.fig",
-          "blockType": "figure",
-          "shows": "Interfaz principal integrada con Carbyne Apex."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/broadsec.descripcion.fig.png",
-        "override": "<tenant>/broadsec.descripcion.fig.png"
-      }
-    },
-    {
-      "slot": "funcionamiento.inicio.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionamiento.inicio.fig",
-          "blockType": "figure",
-          "shows": "Interfaz de inicio del módulo."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionamiento.inicio.fig.png",
-        "override": "<tenant>/funcionamiento.inicio.fig.png"
-      }
-    },
-    {
-      "slot": "mapa.ctrl.visualizacion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.ctrl.visualizacion",
-          "blockType": "icon-table",
-          "shows": "Módulo de Visualización"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.ctrl.visualizacion.png",
-        "override": "<tenant>/mapa.ctrl.visualizacion.png"
-      }
-    },
-    {
-      "slot": "mapa.ctrl.agrupar",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.ctrl.agrupar",
-          "blockType": "icon-table",
-          "shows": "Agrupar / Desagrupar"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.ctrl.agrupar.png",
-        "override": "<tenant>/mapa.ctrl.agrupar.png"
-      }
-    },
-    {
-      "slot": "mapa.ctrl.street-view",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.ctrl.street-view",
-          "blockType": "icon-table",
-          "shows": "Modo Street View"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.ctrl.street-view.png",
-        "override": "<tenant>/mapa.ctrl.street-view.png"
-      }
-    },
-    {
-      "slot": "mapa.ctrl.salir-street-view",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.ctrl.salir-street-view",
-          "blockType": "icon-table",
-          "shows": "Salir del modo Street View"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.ctrl.salir-street-view.png",
-        "override": "<tenant>/mapa.ctrl.salir-street-view.png"
-      }
-    },
-    {
-      "slot": "mapa.ctrl.navegacion-3d",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.ctrl.navegacion-3d",
-          "blockType": "icon-table",
-          "shows": "Navegación 3D"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.ctrl.navegacion-3d.png",
-        "override": "<tenant>/mapa.ctrl.navegacion-3d.png"
-      }
-    },
-    {
-      "slot": "mapa.ctrl.controles",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.ctrl.controles",
-          "blockType": "icon-table",
-          "shows": "Controles de Mapa"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.ctrl.controles.png",
-        "override": "<tenant>/mapa.ctrl.controles.png"
-      }
-    },
-    {
-      "slot": "func.capa.trafico",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.trafico",
-          "blockType": "icon-table",
-          "shows": "Tráfico"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.capa.trafico.png",
-        "override": "<tenant>/func.capa.trafico.png"
-      }
-    },
-    {
-      "slot": "func.capa.avl",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.avl",
-          "blockType": "icon-table",
-          "shows": "AVL"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.capa.avl.png",
-        "override": "<tenant>/func.capa.avl.png"
-      }
-    },
-    {
-      "slot": "func.capa.mobile",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.mobile",
-          "blockType": "icon-table",
-          "shows": "Mobile"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.capa.mobile.png",
-        "override": "<tenant>/func.capa.mobile.png"
-      }
-    },
-    {
-      "slot": "func.capa.paneles",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.paneles",
-          "blockType": "icon-table",
-          "shows": "Paneles"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.capa.paneles.png",
-        "override": "<tenant>/func.capa.paneles.png"
-      }
-    },
-    {
-      "slot": "func.capa.satelital",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.satelital",
-          "blockType": "icon-table",
-          "shows": "Satelital"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.capa.satelital.png",
-        "override": "<tenant>/func.capa.satelital.png"
-      }
-    },
-    {
-      "slot": "func.capa.360",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.360",
-          "blockType": "icon-table",
-          "shows": "360°"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.capa.360.png",
-        "override": "<tenant>/func.capa.360.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.incidentes.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.incidentes.fig",
-          "blockType": "figure",
-          "shows": "Acciones disponibles al seleccionar un incidente en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.incidentes.fig.png",
-        "override": "<tenant>/funcionalidades.incidentes.fig.png"
-      }
-    },
-    {
-      "slot": "func.inc.resumen",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.inc.resumen",
-          "blockType": "icon-table",
-          "shows": "Resumen"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.inc.resumen.png",
-        "override": "<tenant>/func.inc.resumen.png"
-      }
-    },
-    {
-      "slot": "func.inc.detalle",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.inc.detalle",
-          "blockType": "icon-table",
-          "shows": "Detalle"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.inc.detalle.png",
-        "override": "<tenant>/func.inc.detalle.png"
-      }
-    },
-    {
-      "slot": "func.inc.despacho",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.inc.despacho",
-          "blockType": "icon-table",
-          "shows": "Despacho"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.inc.despacho.png",
-        "override": "<tenant>/func.inc.despacho.png"
-      }
-    },
-    {
-      "slot": "func.inc.gestion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.inc.gestion",
-          "blockType": "icon-table",
-          "shows": "Gestión"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.inc.gestion.png",
-        "override": "<tenant>/func.inc.gestion.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.filtros.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.filtros.fig",
-          "blockType": "figure",
-          "shows": "Panel de filtros de la lista de casos."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.filtros.fig.png",
-        "override": "<tenant>/funcionalidades.filtros.fig.png"
-      }
-    },
-    {
-      "slot": "func.desp.filtrar-tipo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.desp.filtrar-tipo",
-          "blockType": "procedure",
-          "shows": "Filtre por tipo de agente"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.desp.filtrar-tipo.png",
-        "override": "<tenant>/func.desp.filtrar-tipo.png"
-      }
-    },
-    {
-      "slot": "func.desp.notas",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.desp.notas",
-          "blockType": "procedure",
-          "shows": "Agregue notas adicionales"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.desp.notas.png",
-        "override": "<tenant>/func.desp.notas.png"
-      }
-    },
-    {
-      "slot": "func.agente.tipo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.agente.tipo",
-          "blockType": "icon-table",
-          "shows": "Tipo de agente"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.agente.tipo.png",
-        "override": "<tenant>/func.agente.tipo.png"
-      }
-    },
-    {
-      "slot": "func.agente.perfil",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.agente.perfil",
-          "blockType": "icon-table",
-          "shows": "Perfil del agente"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.agente.perfil.png",
-        "override": "<tenant>/func.agente.perfil.png"
-      }
-    },
-    {
-      "slot": "func.agente.dotacion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.agente.dotacion",
-          "blockType": "icon-table",
-          "shows": "Dotación y vehículo"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.agente.dotacion.png",
-        "override": "<tenant>/func.agente.dotacion.png"
-      }
-    },
-    {
-      "slot": "func.agente.placa",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.agente.placa",
-          "blockType": "icon-table",
-          "shows": "Placa, distancia y tiempo"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.agente.placa.png",
-        "override": "<tenant>/func.agente.placa.png"
-      }
-    },
-    {
-      "slot": "func.tipo.salud",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.tipo.salud",
-          "blockType": "icon-table",
-          "shows": "Salud"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.tipo.salud.png",
-        "override": "<tenant>/func.tipo.salud.png"
-      }
-    },
-    {
-      "slot": "func.tipo.bomberos",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.tipo.bomberos",
-          "blockType": "icon-table",
-          "shows": "Bomberos"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.tipo.bomberos.png",
-        "override": "<tenant>/func.tipo.bomberos.png"
-      }
-    },
-    {
-      "slot": "func.tipo.policia",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.tipo.policia",
-          "blockType": "icon-table",
-          "shows": "Policía"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.tipo.policia.png",
-        "override": "<tenant>/func.tipo.policia.png"
-      }
-    },
-    {
-      "slot": "func.tipo.transito",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.tipo.transito",
-          "blockType": "icon-table",
-          "shows": "Tránsito"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.tipo.transito.png",
-        "override": "<tenant>/func.tipo.transito.png"
-      }
-    },
-    {
-      "slot": "func.tipo.defensa-civil",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.tipo.defensa-civil",
-          "blockType": "icon-table",
-          "shows": "Defensa Civil"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.tipo.defensa-civil.png",
-        "override": "<tenant>/func.tipo.defensa-civil.png"
-      }
-    },
-    {
-      "slot": "func.tipo.gaula",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.tipo.gaula",
-          "blockType": "icon-table",
-          "shows": "Gaula"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.tipo.gaula.png",
-        "override": "<tenant>/func.tipo.gaula.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.reporte-comentarios.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.reporte-comentarios.fig",
-          "blockType": "figure",
-          "shows": "Formulario del reporte: Comentarios Generales."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.reporte-comentarios.fig.png",
-        "override": "<tenant>/funcionalidades.reporte-comentarios.fig.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.reporte-actualizacion.fig-luz",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.reporte-actualizacion.fig-luz",
-          "blockType": "figure",
-          "shows": "Luz roja titilante en el ítem de Reporte."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.reporte-actualizacion.fig-luz.png",
-        "override": "<tenant>/funcionalidades.reporte-actualizacion.fig-luz.png"
-      }
-    },
-    {
-      "slot": "func.act.flecha",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.act.flecha",
-          "blockType": "procedure",
-          "shows": "Despliegue el ítem de Reporte"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.act.flecha.png",
-        "override": "<tenant>/func.act.flecha.png"
-      }
-    },
-    {
-      "slot": "func.act.placa",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.act.placa",
-          "blockType": "procedure",
-          "shows": "Despliegue la placa del agente"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.act.placa.png",
-        "override": "<tenant>/func.act.placa.png"
-      }
-    },
-    {
-      "slot": "func.act.gestionar",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.act.gestionar",
-          "blockType": "procedure",
-          "shows": "Entre a gestionar la actualización"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/func.act.gestionar.png",
-        "override": "<tenant>/func.act.gestionar.png"
-      }
-    },
-    {
-      "slot": "funcionalidades.reporte-actualizacion.fig-modal",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "funcionalidades.reporte-actualizacion.fig-modal",
-          "blockType": "figure",
-          "shows": "Modal Información recibida del agente, para aceptar o rechazar cambios."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/funcionalidades.reporte-actualizacion.fig-modal.png",
-        "override": "<tenant>/funcionalidades.reporte-actualizacion.fig-modal.png"
-      }
-    },
-    {
-      "slot": "dashboard.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.fig",
-          "blockType": "figure",
-          "shows": "Vista general del Security Dashboard."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.fig.png",
-        "override": "<tenant>/dashboard.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.area.filtros",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.area.filtros",
-          "blockType": "field-list",
-          "shows": "Filtros"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.area.filtros.png",
-        "override": "<tenant>/dashboard.area.filtros.png"
-      }
-    },
-    {
-      "slot": "dashboard.area.ventanas",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.area.ventanas",
-          "blockType": "field-list",
-          "shows": "Ventanas de Datos"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.area.ventanas.png",
-        "override": "<tenant>/dashboard.area.ventanas.png"
-      }
-    },
-    {
-      "slot": "dashboard.area.mapa",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.area.mapa",
-          "blockType": "field-list",
-          "shows": "Mapa de Calor"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.area.mapa.png",
-        "override": "<tenant>/dashboard.area.mapa.png"
-      }
-    },
-    {
-      "slot": "dashboard.filtros.ubicacion.fig-depto",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.filtros.ubicacion.fig-depto",
-          "blockType": "figure",
-          "shows": "Filtro de ubicación por Departamento y Ciudad."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.filtros.ubicacion.fig-depto.png",
-        "override": "<tenant>/dashboard.filtros.ubicacion.fig-depto.png"
-      }
-    },
-    {
-      "slot": "dashboard.filtros.ubicacion.fig-zona",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.filtros.ubicacion.fig-zona",
-          "blockType": "figure",
-          "shows": "Filtro de ubicación por Zona, Comuna y Barrio."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.filtros.ubicacion.fig-zona.png",
-        "override": "<tenant>/dashboard.filtros.ubicacion.fig-zona.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.finalizacion.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.finalizacion.fig",
-          "blockType": "figure",
-          "shows": "Filtro por tipo de finalización."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.finalizacion.fig.png",
-        "override": "<tenant>/dashboard.variables.finalizacion.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.movilidad.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.movilidad.fig",
-          "blockType": "figure",
-          "shows": "Filtro por tipo de movilidad."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.movilidad.fig.png",
-        "override": "<tenant>/dashboard.variables.movilidad.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.filtros.tiempos.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.filtros.tiempos.fig",
-          "blockType": "figure",
-          "shows": "Filtro por tiempos de gestión."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.filtros.tiempos.fig.png",
-        "override": "<tenant>/dashboard.filtros.tiempos.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.ventanas.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.ventanas.fig",
-          "blockType": "figure",
-          "shows": "Ventanas de datos del dashboard."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.ventanas.fig.png",
-        "override": "<tenant>/dashboard.ventanas.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.ventanas.quitar.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.ventanas.quitar.fig",
-          "blockType": "figure",
-          "shows": "Cerrar una ventana o widget del dashboard."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.ventanas.quitar.fig.png",
-        "override": "<tenant>/dashboard.ventanas.quitar.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.ventanas.fig-widgets",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.ventanas.fig-widgets",
-          "blockType": "figure",
-          "shows": "Menú de Widgets para restaurar ventanas."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.ventanas.fig-widgets.png",
-        "override": "<tenant>/dashboard.ventanas.fig-widgets.png"
-      }
-    },
-    {
-      "slot": "dashboard.ventanas.fig-restaurado",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.ventanas.fig-restaurado",
-          "blockType": "figure",
-          "shows": "Widget restaurado en el dashboard."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.ventanas.fig-restaurado.png",
-        "override": "<tenant>/dashboard.ventanas.fig-restaurado.png"
-      }
-    },
-    {
-      "slot": "dashboard.ventanas.exportar.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.ventanas.exportar.fig",
-          "blockType": "figure",
-          "shows": "Botón de exportación del dashboard."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.ventanas.exportar.fig.png",
-        "override": "<tenant>/dashboard.ventanas.exportar.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.mapa-calor.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.mapa-calor.fig",
-          "blockType": "figure",
-          "shows": "Mapa de calor de casos en el dashboard."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.mapa-calor.fig.png",
-        "override": "<tenant>/dashboard.mapa-calor.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.mapa-calor.fig-opacidad",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.mapa-calor.fig-opacidad",
-          "blockType": "figure",
-          "shows": "Control de opacidad del mapa de casos."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.mapa-calor.fig-opacidad.png",
-        "override": "<tenant>/dashboard.mapa-calor.fig-opacidad.png"
-      }
-    },
-    {
-      "slot": "dashboard.mapa-calor.fig-maximizado",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.mapa-calor.fig-maximizado",
-          "blockType": "figure",
-          "shows": "Mapa de casos maximizado."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.mapa-calor.fig-maximizado.png",
-        "override": "<tenant>/dashboard.mapa-calor.fig-maximizado.png"
-      }
-    },
-    {
-      "slot": "dashboard.mapa-calor.fig-modo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.mapa-calor.fig-modo",
-          "blockType": "figure",
-          "shows": "Alternar entre Mapa de calor y Marcadores."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.mapa-calor.fig-modo.png",
-        "override": "<tenant>/dashboard.mapa-calor.fig-modo.png"
-      }
-    },
-    {
-      "slot": "dashboard.mapa-calor.fig-marcadores",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.mapa-calor.fig-marcadores",
-          "blockType": "figure",
-          "shows": "Vista de casos individuales, con marcadores, en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.mapa-calor.fig-marcadores.png",
-        "override": "<tenant>/dashboard.mapa-calor.fig-marcadores.png"
-      }
-    },
-    {
-      "slot": "dashboard.lista.fig-boton",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.lista.fig-boton",
-          "blockType": "figure",
-          "shows": "Botón Los Casos para el modo lista."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.lista.fig-boton.png",
-        "override": "<tenant>/dashboard.lista.fig-boton.png"
-      }
-    },
-    {
-      "slot": "dashboard.lista.fig-lista",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.lista.fig-lista",
-          "blockType": "figure",
-          "shows": "Visualización de casos en modo lista."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.lista.fig-lista.png",
-        "override": "<tenant>/dashboard.lista.fig-lista.png"
-      }
-    },
-    {
-      "slot": "dashboard.lista.fig-detalle",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.lista.fig-detalle",
-          "blockType": "figure",
-          "shows": "Detalle de un caso seleccionado en la lista."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.lista.fig-detalle.png",
-        "override": "<tenant>/dashboard.lista.fig-detalle.png"
-      }
-    },
-    {
-      "slot": "fuerzas.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.fig",
-          "blockType": "figure",
-          "shows": "Interfaz principal: zonas Mapa, Barra Superior y Agentes."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.fig.png",
-        "override": "<tenant>/fuerzas.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.fig",
-          "blockType": "figure",
-          "shows": "Barra superior del módulo."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.fig.png",
-        "override": "<tenant>/fuerzas.barra.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.buscar",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.buscar",
-          "blockType": "icon-table",
-          "shows": "Buscar"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.buscar.png",
-        "override": "<tenant>/fuerzas.barra.buscar.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.filtro",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.filtro",
-          "blockType": "icon-table",
-          "shows": "Filtro"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.filtro.png",
-        "override": "<tenant>/fuerzas.barra.filtro.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.agentes",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.agentes",
-          "blockType": "icon-table",
-          "shows": "Módulo de Agentes"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.agentes.png",
-        "override": "<tenant>/fuerzas.barra.agentes.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.operaciones",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.operaciones",
-          "blockType": "icon-table",
-          "shows": "Módulo de Operaciones"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.operaciones.png",
-        "override": "<tenant>/fuerzas.barra.operaciones.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.anadir",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.anadir",
-          "blockType": "icon-table",
-          "shows": "Añadir"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.anadir.png",
-        "override": "<tenant>/fuerzas.barra.anadir.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.mapa",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.mapa",
-          "blockType": "icon-table",
-          "shows": "Mapa"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.mapa.png",
-        "override": "<tenant>/fuerzas.barra.mapa.png"
-      }
-    },
-    {
-      "slot": "fuerzas.barra.home",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.home",
-          "blockType": "icon-table",
-          "shows": "Home"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.home.png",
-        "override": "<tenant>/fuerzas.barra.home.png"
-      }
-    },
-    {
-      "slot": "fuerzas.estado.no-disponible",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.estado.no-disponible",
-          "blockType": "icon-table",
-          "shows": "No disponible"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.estado.no-disponible.png",
-        "override": "<tenant>/fuerzas.estado.no-disponible.png"
-      }
-    },
-    {
-      "slot": "fuerzas.estado.disponible",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.estado.disponible",
-          "blockType": "icon-table",
-          "shows": "Disponible"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.estado.disponible.png",
-        "override": "<tenant>/fuerzas.estado.disponible.png"
-      }
-    },
-    {
-      "slot": "fuerzas.estado.con-caso",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.estado.con-caso",
-          "blockType": "icon-table",
-          "shows": "Con caso asignado"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.estado.con-caso.png",
-        "override": "<tenant>/fuerzas.estado.con-caso.png"
-      }
-    },
-    {
-      "slot": "fuerzas.agentes.filtro.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.agentes.filtro.fig",
-          "blockType": "figure",
-          "shows": "Filtro de estados y turno de los agentes."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.agentes.filtro.fig.png",
-        "override": "<tenant>/fuerzas.agentes.filtro.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-acceso",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-acceso",
-          "blockType": "figure",
-          "shows": "Acceso al perfil desde la lista de agentes."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-acceso.png",
-        "override": "<tenant>/fuerzas.perfil.fig-acceso.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-tarjeta",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-tarjeta",
-          "blockType": "figure",
-          "shows": "Tarjeta rápida del agente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-tarjeta.png",
-        "override": "<tenant>/fuerzas.perfil.fig-tarjeta.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-perfil",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-perfil",
-          "blockType": "figure",
-          "shows": "Perfil del agente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-perfil.png",
-        "override": "<tenant>/fuerzas.perfil.fig-perfil.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-ubicacion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-ubicacion",
-          "blockType": "figure",
-          "shows": "Ubicación del agente en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-ubicacion.png",
-        "override": "<tenant>/fuerzas.perfil.fig-ubicacion.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-turnos",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-turnos",
-          "blockType": "figure",
-          "shows": "Pestaña Turnos del agente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-turnos.png",
-        "override": "<tenant>/fuerzas.perfil.fig-turnos.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-asignar",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-asignar",
-          "blockType": "figure",
-          "shows": "Pestaña Asignar del perfil del agente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-asignar.png",
-        "override": "<tenant>/fuerzas.perfil.fig-asignar.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-confirmacion",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-confirmacion",
-          "blockType": "figure",
-          "shows": "Confirmación de despacho del caso al agente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-confirmacion.png",
-        "override": "<tenant>/fuerzas.perfil.fig-confirmacion.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.fig-tarea",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.fig-tarea",
-          "blockType": "figure",
-          "shows": "Creación de una tarea desde el perfil del agente."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.fig-tarea.png",
-        "override": "<tenant>/fuerzas.perfil.fig-tarea.png"
-      }
-    },
-    {
-      "slot": "fuerzas.operaciones.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.operaciones.fig",
-          "blockType": "figure",
-          "shows": "Módulo de Operaciones: historial de turnos."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.operaciones.fig.png",
-        "override": "<tenant>/fuerzas.operaciones.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.turno.activo",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.turno.activo",
-          "blockType": "icon-table",
-          "shows": "Indica que el agente está con un turno activo."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.turno.activo.png",
-        "override": "<tenant>/fuerzas.turno.activo.png"
-      }
-    },
-    {
-      "slot": "fuerzas.turno.finalizado",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.turno.finalizado",
-          "blockType": "icon-table",
-          "shows": "Indica que el turno ya se ha finalizado."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.turno.finalizado.png",
-        "override": "<tenant>/fuerzas.turno.finalizado.png"
-      }
-    },
-    {
-      "slot": "fuerzas.operaciones.filtro.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.operaciones.filtro.fig",
-          "blockType": "figure",
-          "shows": "Filtro de rango de tiempo en Operaciones."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.operaciones.filtro.fig.png",
-        "override": "<tenant>/fuerzas.operaciones.filtro.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.operaciones.filtro.fig-rango",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.operaciones.filtro.fig-rango",
-          "blockType": "figure",
-          "shows": "Selección de rango de fechas en el filtro."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.operaciones.filtro.fig-rango.png",
-        "override": "<tenant>/fuerzas.operaciones.filtro.fig-rango.png"
-      }
-    },
-    {
-      "slot": "fuerzas.operaciones.resumen.fig",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.operaciones.resumen.fig",
-          "blockType": "figure",
-          "shows": "Resumen de actividad del turno seleccionado."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.operaciones.resumen.fig.png",
-        "override": "<tenant>/fuerzas.operaciones.resumen.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas.operaciones.resumen.fig-recorrido",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.operaciones.resumen.fig-recorrido",
-          "blockType": "figure",
-          "shows": "Recorrido del turno en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.operaciones.resumen.fig-recorrido.png",
-        "override": "<tenant>/fuerzas.operaciones.resumen.fig-recorrido.png"
-      }
-    },
-    {
-      "slot": "fuerzas.poligono.fig-incidente",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.poligono.fig-incidente",
-          "blockType": "figure",
-          "shows": "Polígono del incidente en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.poligono.fig-incidente.png",
-        "override": "<tenant>/fuerzas.poligono.fig-incidente.png"
-      }
-    },
-    {
-      "slot": "fuerzas.poligono.fig-tarea",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.poligono.fig-tarea",
-          "blockType": "figure",
-          "shows": "Polígono de la tarea en el mapa."
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.poligono.fig-tarea.png",
-        "override": "<tenant>/fuerzas.poligono.fig-tarea.png"
-      }
-    },
     {
       "slot": "fuerzas.callai.fig-hist-incidentes",
       "neededBy": [
@@ -3188,6 +1186,40 @@
   ],
   "delivered": [
     {
+      "slot": "introduccion.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "introduccion.fig",
+          "blockType": "figure",
+          "shows": "Vista principal de la plataforma."
+        }
+      ],
+      "files": [
+        "_common/introduccion.fig.png"
+      ]
+    },
+    {
+      "slot": "broadsec.descripcion.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "broadsec.descripcion.fig",
+          "blockType": "figure",
+          "shows": "Interfaz principal integrada con Carbyne Apex."
+        }
+      ],
+      "files": [
+        "_common/broadsec.descripcion.fig.png"
+      ]
+    },
+    {
       "slot": "funcionamiento.acceso.fig",
       "neededBy": [
         "mv",
@@ -3236,6 +1268,108 @@
       ],
       "files": [
         "_common/mapa.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.visualizacion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.visualizacion",
+          "blockType": "icon-table",
+          "shows": "Módulo de Visualización"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.visualizacion.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.agrupar",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.agrupar",
+          "blockType": "icon-table",
+          "shows": "Agrupar / Desagrupar"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.agrupar.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.street-view",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.street-view",
+          "blockType": "icon-table",
+          "shows": "Modo Street View"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.street-view.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.salir-street-view",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.salir-street-view",
+          "blockType": "icon-table",
+          "shows": "Salir del modo Street View"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.salir-street-view.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.navegacion-3d",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.navegacion-3d",
+          "blockType": "icon-table",
+          "shows": "Navegación 3D"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.navegacion-3d.png"
+      ]
+    },
+    {
+      "slot": "mapa.ctrl.controles",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.ctrl.controles",
+          "blockType": "icon-table",
+          "shows": "Controles de Mapa"
+        }
+      ],
+      "files": [
+        "_common/mapa.ctrl.controles.png"
       ]
     },
     {
@@ -3576,6 +1710,108 @@
       ]
     },
     {
+      "slot": "func.capa.trafico",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.trafico",
+          "blockType": "icon-table",
+          "shows": "Tráfico"
+        }
+      ],
+      "files": [
+        "_common/func.capa.trafico.png"
+      ]
+    },
+    {
+      "slot": "func.capa.avl",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.avl",
+          "blockType": "icon-table",
+          "shows": "AVL"
+        }
+      ],
+      "files": [
+        "_common/func.capa.avl.png"
+      ]
+    },
+    {
+      "slot": "func.capa.mobile",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.mobile",
+          "blockType": "icon-table",
+          "shows": "Mobile"
+        }
+      ],
+      "files": [
+        "_common/func.capa.mobile.png"
+      ]
+    },
+    {
+      "slot": "func.capa.paneles",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.paneles",
+          "blockType": "icon-table",
+          "shows": "Paneles"
+        }
+      ],
+      "files": [
+        "_common/func.capa.paneles.png"
+      ]
+    },
+    {
+      "slot": "func.capa.satelital",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.satelital",
+          "blockType": "icon-table",
+          "shows": "Satelital"
+        }
+      ],
+      "files": [
+        "_common/func.capa.satelital.png"
+      ]
+    },
+    {
+      "slot": "func.capa.360",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.capa.360",
+          "blockType": "icon-table",
+          "shows": "360°"
+        }
+      ],
+      "files": [
+        "_common/func.capa.360.png"
+      ]
+    },
+    {
       "slot": "funcionalidades.mapa.fig-activo",
       "neededBy": [
         "mv",
@@ -3624,6 +1860,91 @@
       ],
       "files": [
         "_common/funcionalidades.mapa.fig-satelital.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.incidentes.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.incidentes.fig",
+          "blockType": "figure",
+          "shows": "Acciones disponibles al seleccionar un incidente en el mapa."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.incidentes.fig.png"
+      ]
+    },
+    {
+      "slot": "func.inc.resumen",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.resumen",
+          "blockType": "icon-table",
+          "shows": "Resumen"
+        }
+      ],
+      "files": [
+        "_common/func.inc.resumen.png"
+      ]
+    },
+    {
+      "slot": "func.inc.detalle",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.detalle",
+          "blockType": "icon-table",
+          "shows": "Detalle"
+        }
+      ],
+      "files": [
+        "_common/func.inc.detalle.png"
+      ]
+    },
+    {
+      "slot": "func.inc.despacho",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.despacho",
+          "blockType": "icon-table",
+          "shows": "Despacho"
+        }
+      ],
+      "files": [
+        "_common/func.inc.despacho.png"
+      ]
+    },
+    {
+      "slot": "func.inc.gestion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.inc.gestion",
+          "blockType": "icon-table",
+          "shows": "Gestión"
+        }
+      ],
+      "files": [
+        "_common/func.inc.gestion.png"
       ]
     },
     {
@@ -4392,6 +2713,193 @@
       ]
     },
     {
+      "slot": "func.agente.tipo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.tipo",
+          "blockType": "icon-table",
+          "shows": "Tipo de agente"
+        }
+      ],
+      "files": [
+        "_common/func.agente.tipo.png"
+      ]
+    },
+    {
+      "slot": "func.agente.perfil",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.perfil",
+          "blockType": "icon-table",
+          "shows": "Perfil del agente"
+        }
+      ],
+      "files": [
+        "_common/func.agente.perfil.png"
+      ]
+    },
+    {
+      "slot": "func.agente.dotacion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.dotacion",
+          "blockType": "icon-table",
+          "shows": "Dotación y vehículo"
+        }
+      ],
+      "files": [
+        "_common/func.agente.dotacion.png"
+      ]
+    },
+    {
+      "slot": "func.agente.placa",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.agente.placa",
+          "blockType": "icon-table",
+          "shows": "Placa, distancia y tiempo"
+        }
+      ],
+      "files": [
+        "_common/func.agente.placa.png"
+      ]
+    },
+    {
+      "slot": "func.desp.filtrar-tipo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.filtrar-tipo",
+          "blockType": "procedure",
+          "shows": "Filtre por tipo de agente"
+        }
+      ],
+      "files": [
+        "_common/func.desp.filtrar-tipo.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.salud",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.salud",
+          "blockType": "icon-table",
+          "shows": "Salud"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.salud.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.bomberos",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.bomberos",
+          "blockType": "icon-table",
+          "shows": "Bomberos"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.bomberos.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.policia",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.policia",
+          "blockType": "icon-table",
+          "shows": "Policía"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.policia.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.transito",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.transito",
+          "blockType": "icon-table",
+          "shows": "Tránsito"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.transito.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.defensa-civil",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.defensa-civil",
+          "blockType": "icon-table",
+          "shows": "Defensa Civil"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.defensa-civil.png"
+      ]
+    },
+    {
+      "slot": "func.tipo.gaula",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.tipo.gaula",
+          "blockType": "icon-table",
+          "shows": "Gaula"
+        }
+      ],
+      "files": [
+        "_common/func.tipo.gaula.png"
+      ]
+    },
+    {
       "slot": "func.desp.en-camino",
       "neededBy": [
         "mv",
@@ -4440,6 +2948,23 @@
       ],
       "files": [
         "_common/func.desp.chat.jpeg"
+      ]
+    },
+    {
+      "slot": "func.desp.notas",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "func.desp.notas",
+          "blockType": "procedure",
+          "shows": "Agregue notas adicionales"
+        }
+      ],
+      "files": [
+        "_common/func.desp.notas.png"
       ]
     },
     {
@@ -4528,6 +3053,142 @@
       ]
     },
     {
+      "slot": "funcionalidades.reporte-comentarios.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-comentarios.fig",
+          "blockType": "figure",
+          "shows": "Formulario del reporte: Comentarios Generales."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-comentarios.fig.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-actualizacion.fig-luz",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-actualizacion.fig-luz",
+          "blockType": "figure",
+          "shows": "Luz roja titilante en el ítem de Reporte."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-actualizacion.fig-luz.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-actualizacion.fig-acceso",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-actualizacion.fig-acceso",
+          "blockType": "figure",
+          "shows": "Acceso a la actualización desde el ítem de Reporte."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-actualizacion.fig-acceso.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.reporte-actualizacion.fig-modal",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.reporte-actualizacion.fig-modal",
+          "blockType": "figure",
+          "shows": "Modal Información recibida del agente, para aceptar o rechazar cambios."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.reporte-actualizacion.fig-modal.png"
+      ]
+    },
+    {
+      "slot": "dashboard.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.fig",
+          "blockType": "figure",
+          "shows": "Vista general del Security Dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.area.filtros",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.area.filtros",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/dashboard.area.filtros.png"
+      ]
+    },
+    {
+      "slot": "dashboard.area.ventanas",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.area.ventanas",
+          "blockType": "field-list",
+          "shows": "Ventanas de Datos"
+        }
+      ],
+      "files": [
+        "_common/dashboard.area.ventanas.png"
+      ]
+    },
+    {
+      "slot": "dashboard.area.mapa",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.area.mapa",
+          "blockType": "field-list",
+          "shows": "Mapa de Calor"
+        }
+      ],
+      "files": [
+        "_common/dashboard.area.mapa.png"
+      ]
+    },
+    {
       "slot": "dashboard.filtros.rango.fig",
       "neededBy": [
         "mv",
@@ -4542,6 +3203,23 @@
       ],
       "files": [
         "_common/dashboard.filtros.rango.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.filtros.ubicacion.fig-depto",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.ubicacion.fig-depto",
+          "blockType": "figure",
+          "shows": "Filtro de ubicación por Departamento y Ciudad."
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.ubicacion.fig-depto.png"
       ]
     },
     {
@@ -4576,6 +3254,125 @@
       ],
       "files": [
         "_common/dashboard.variables.fuerzas.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.finalizacion.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.finalizacion.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de finalización."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.finalizacion.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.movilidad.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.movilidad.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de movilidad."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.movilidad.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.filtros.tiempos.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.tiempos.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tiempos de gestión."
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.tiempos.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.quitar.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.quitar.fig",
+          "blockType": "figure",
+          "shows": "Cerrar una ventana o widget del dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.quitar.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.fig-widgets",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.fig-widgets",
+          "blockType": "figure",
+          "shows": "Menú de Widgets para restaurar ventanas."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.fig-widgets.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.fig-restaurado",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.fig-restaurado",
+          "blockType": "figure",
+          "shows": "Widget restaurado en el dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.fig-restaurado.png"
+      ]
+    },
+    {
+      "slot": "dashboard.ventanas.exportar.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.ventanas.exportar.fig",
+          "blockType": "figure",
+          "shows": "Botón de exportación del dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.ventanas.exportar.fig.png"
       ]
     },
     {
@@ -4732,6 +3529,295 @@
       ]
     },
     {
+      "slot": "dashboard.mapa-calor.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig",
+          "blockType": "figure",
+          "shows": "Mapa de calor de casos en el dashboard."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-opacidad",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-opacidad",
+          "blockType": "figure",
+          "shows": "Control de opacidad del mapa de casos."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-opacidad.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-maximizado",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-maximizado",
+          "blockType": "figure",
+          "shows": "Mapa de casos maximizado."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-maximizado.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-modo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-modo",
+          "blockType": "figure",
+          "shows": "Alternar entre Mapa de calor y Marcadores."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-modo.png"
+      ]
+    },
+    {
+      "slot": "dashboard.mapa-calor.fig-marcadores",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.mapa-calor.fig-marcadores",
+          "blockType": "figure",
+          "shows": "Vista de casos individuales, con marcadores, en el mapa."
+        }
+      ],
+      "files": [
+        "_common/dashboard.mapa-calor.fig-marcadores.png"
+      ]
+    },
+    {
+      "slot": "dashboard.lista.fig-boton",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.lista.fig-boton",
+          "blockType": "figure",
+          "shows": "Botón Los Casos para el modo lista."
+        }
+      ],
+      "files": [
+        "_common/dashboard.lista.fig-boton.png"
+      ]
+    },
+    {
+      "slot": "dashboard.lista.fig-lista",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.lista.fig-lista",
+          "blockType": "figure",
+          "shows": "Visualización de casos en modo lista."
+        }
+      ],
+      "files": [
+        "_common/dashboard.lista.fig-lista.png"
+      ]
+    },
+    {
+      "slot": "dashboard.lista.fig-detalle",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.lista.fig-detalle",
+          "blockType": "figure",
+          "shows": "Detalle de un caso seleccionado en la lista."
+        }
+      ],
+      "files": [
+        "_common/dashboard.lista.fig-detalle.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.fig",
+          "blockType": "figure",
+          "shows": "Interfaz principal: zonas Mapa, Barra Superior y Agentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.fig",
+          "blockType": "figure",
+          "shows": "Barra superior del módulo."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.buscar",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.buscar",
+          "blockType": "icon-table",
+          "shows": "Buscar"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.buscar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.filtro",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.filtro",
+          "blockType": "icon-table",
+          "shows": "Filtro"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.filtro.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.agentes",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.agentes",
+          "blockType": "icon-table",
+          "shows": "Módulo de Agentes"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.agentes.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.operaciones",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.operaciones",
+          "blockType": "icon-table",
+          "shows": "Módulo de Operaciones"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.operaciones.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.anadir",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.anadir",
+          "blockType": "icon-table",
+          "shows": "Añadir"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.anadir.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.mapa",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.mapa",
+          "blockType": "icon-table",
+          "shows": "Mapa"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.mapa.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.barra.home",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.home",
+          "blockType": "icon-table",
+          "shows": "Home"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.home.png"
+      ]
+    },
+    {
       "slot": "fuerzas.agentes.fig",
       "neededBy": [
         "mv",
@@ -4746,6 +3832,329 @@
       ],
       "files": [
         "_common/fuerzas.agentes.fig.jpeg"
+      ]
+    },
+    {
+      "slot": "fuerzas.estado.no-disponible",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.no-disponible",
+          "blockType": "icon-table",
+          "shows": "No disponible"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.estado.no-disponible.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.estado.disponible",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.disponible",
+          "blockType": "icon-table",
+          "shows": "Disponible"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.estado.disponible.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.estado.con-caso",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.con-caso",
+          "blockType": "icon-table",
+          "shows": "Con caso asignado"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.estado.con-caso.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.agentes.filtro.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.agentes.filtro.fig",
+          "blockType": "figure",
+          "shows": "Filtro de estados y turno de los agentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.agentes.filtro.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-acceso",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-acceso",
+          "blockType": "figure",
+          "shows": "Acceso al perfil desde la lista de agentes."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-acceso.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-ubicacion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-ubicacion",
+          "blockType": "figure",
+          "shows": "Ubicación del agente en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-ubicacion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-turnos",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-turnos",
+          "blockType": "figure",
+          "shows": "Pestaña Turnos del agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-turnos.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-asignar",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-asignar",
+          "blockType": "figure",
+          "shows": "Pestaña Asignar del perfil del agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-asignar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-confirmacion",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-confirmacion",
+          "blockType": "figure",
+          "shows": "Confirmación de despacho del caso al agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-confirmacion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.fig-tarea",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.fig-tarea",
+          "blockType": "figure",
+          "shows": "Creación de una tarea desde el perfil del agente."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.fig-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.fig",
+          "blockType": "figure",
+          "shows": "Módulo de Operaciones: historial de turnos."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.turno.activo",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.turno.activo",
+          "blockType": "icon-table",
+          "shows": "Indica que el agente está con un turno activo."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.turno.activo.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.turno.finalizado",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.turno.finalizado",
+          "blockType": "icon-table",
+          "shows": "Indica que el turno ya se ha finalizado."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.turno.finalizado.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.filtro.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.filtro.fig",
+          "blockType": "figure",
+          "shows": "Filtro de rango de tiempo en Operaciones."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.filtro.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.filtro.fig-rango",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.filtro.fig-rango",
+          "blockType": "figure",
+          "shows": "Selección de rango de fechas en el filtro."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.filtro.fig-rango.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.resumen.fig",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.resumen.fig",
+          "blockType": "figure",
+          "shows": "Resumen de actividad del turno seleccionado."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.resumen.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.operaciones.resumen.fig-recorrido",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.operaciones.resumen.fig-recorrido",
+          "blockType": "figure",
+          "shows": "Recorrido del turno en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.operaciones.resumen.fig-recorrido.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.poligono.fig-incidente",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.poligono.fig-incidente",
+          "blockType": "figure",
+          "shows": "Polígono del incidente en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.poligono.fig-incidente.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.poligono.fig-tarea",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.poligono.fig-tarea",
+          "blockType": "figure",
+          "shows": "Polígono de la tarea en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.poligono.fig-tarea.png"
       ]
     },
     {
