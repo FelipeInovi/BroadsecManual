@@ -93,12 +93,27 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
 .pagedjs_margin-top,
 .pagedjs_margin-top-left-corner-holder,
 .pagedjs_margin-top-right-corner-holder { background: ${t.cover.background}; }
-.pagedjs_margin-top,
-.pagedjs_margin-top-left-corner-holder,
-.pagedjs_margin-top-right-corner-holder { border-bottom: 1.5pt solid ${t.runningHeader.deck}; }
-.pagedjs_cover_page .pagedjs_margin-top,
-.pagedjs_cover_page .pagedjs_margin-top-left-corner-holder,
-.pagedjs_cover_page .pagedjs_margin-top-right-corner-holder { border-bottom: none; }
+/* ONE rectangle, not three.
+   The header band is three sibling boxes — a centre row between two corner
+   holders — so a border-bottom on each drew three abutting rules. They measure
+   identical and share exact coordinates, but at each seam two edges land on the
+   same x, and a viewer resolving that against its pixel grid leaves a visible
+   join: the rule looked doubled at two points, about a tenth in from each edge.
+   Drawn once on the page box instead, positioned where the band ends, it has no
+   seams to show. The band's height IS the page's top margin, which is what makes
+   the offset exact rather than a guess. */
+.pagedjs_pagebox { position: relative; }
+.pagedjs_pagebox::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(${t.page.marginTop} - 1.5pt);
+  height: 1.5pt;
+  background: ${t.runningHeader.deck};
+  pointer-events: none;
+}
+.pagedjs_cover_page .pagedjs_pagebox::after { content: none; }
 .pagedjs_cover_page .pagedjs_margin-top,
 .pagedjs_cover_page .pagedjs_margin-top-left-corner-holder,
 .pagedjs_cover_page .pagedjs_margin-top-right-corner-holder { background: none; }
