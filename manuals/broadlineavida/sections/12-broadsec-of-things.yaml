@@ -76,7 +76,7 @@ children:
         type: figure
         props:
           caption: "El panel lateral con las secciones del módulo y el estado de las integraciones."
-          widthPercent: 90
+          widthPercent: 18
 
       - id: bot.secciones
         type: icon-table
@@ -438,6 +438,9 @@ children:
               text: >-
                 Permite buscar por alias, identificador o nombre. Indica cuántas
                 cámaras coinciden y advierte cuando no se encuentra ninguna.
+              # -35% of the 70% that `figure.figure--item img` caps item figures
+              # at — this item declared no width, so 70 is the real base.
+              widthPercent: 46
             - id: bot.cctv.fn.grilla
               label: Grilla del mosaico
               text: >-
