@@ -1,6 +1,6 @@
 # Imágenes pendientes
 
-38 imágenes pendientes, en el orden en que aparecen en el manual.
+36 imágenes pendientes, en el orden en que aparecen en el manual.
 Complete la tercera columna con la instrucción de extracción desde `Manual_Broadsec_v5.pdf`.
 
 Los números de página valen para la última construcción del manual. Regenere la tabla (`build --pending-table`) después de cambiar contenido: las instrucciones ya escritas se conservan.
@@ -39,9 +39,7 @@ Los números de página valen para la última construcción del manual. Regenere
 | `bot.pmv-variables.paso.anadir` — Inicie la creación | 78 |  |
 | `bot.pmv-variables.paso.nombrar` — Nombre el grupo | 78 |  |
 | `bot.pmv-variables.paso.seleccionar` — Seleccione los paneles | 78 |  |
-| `bot.pmv-monitoreo.fig` — El estado de comunicación de cada panel y el mensaje que tiene activo. | 79 |  |
-| `bot.pmv-auditoria.fig` — El registro de auditoría, con un asiento por acción realizada. | 79 |  |
-| `bot.alarmas.paso.filtrar` — Acote el listado | 81 |  |
-| `bot.alarmas.paso.seleccionar` — Seleccione las alarmas | 81 |  |
-| `bot.alarmas.paso.reconocer` — Accione Reconocer | 81 |  |
-| `bot.alarmas.paso.resultado` — Verifique el resultado | 81 |  |
+| `bot.alarmas.paso.filtrar` — Acote el listado | 80 |  |
+| `bot.alarmas.paso.seleccionar` — Seleccione las alarmas | 80 |  |
+| `bot.alarmas.paso.reconocer` — Accione Reconocer | 80 |  |
+| `bot.alarmas.paso.resultado` — Verifique el resultado | 80 |  |

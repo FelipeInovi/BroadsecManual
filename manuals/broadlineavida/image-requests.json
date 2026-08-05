@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 242,
+    "total": 240,
     "delivered": 204,
-    "pending": 38
+    "pending": 36
   },
   "pending": [
     {
@@ -661,46 +661,6 @@
       "deliverTo": {
         "shared": "_common/bot.pmv-variables.paso.seleccionar.png",
         "override": "<tenant>/bot.pmv-variables.paso.seleccionar.png"
-      }
-    },
-    {
-      "slot": "bot.pmv-monitoreo.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-monitoreo.fig",
-          "blockType": "figure",
-          "shows": "El estado de comunicación de cada panel y el mensaje que tiene activo."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-monitoreo.fig.png",
-        "override": "<tenant>/bot.pmv-monitoreo.fig.png"
-      }
-    },
-    {
-      "slot": "bot.pmv-auditoria.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-auditoria.fig",
-          "blockType": "figure",
-          "shows": "El registro de auditoría, con un asiento por acción realizada."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-auditoria.fig.png",
-        "override": "<tenant>/bot.pmv-auditoria.fig.png"
       }
     },
     {

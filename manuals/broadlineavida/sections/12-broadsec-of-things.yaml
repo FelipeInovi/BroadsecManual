@@ -727,110 +727,17 @@ children:
                 plataforma confirma la creación y el grupo queda disponible en
                 **Programación**.
 
-  # ========================================================== PMV Monitoreo ===
-  - id: bot.pmv-monitoreo
-    title: PMV — Monitoreo de Paneles
-    children:
-      - id: bot.pmv-monitoreo.que-hace
-        type: prose
-        props:
-          text: >-
-            Muestra el estado de comunicación de cada panel y el mensaje que
-            tiene activo, para verificar que la programación se esté aplicando
-            en vía.
-
-      - id: bot.pmv-monitoreo.filtros
-        type: prose
-        props:
-          text: >-
-            El listado puede filtrarse por **Todos**, **Comunica** o **No
-            comunica**. Si ningún panel coincide, la plataforma lo indica.
-
-      # Overview figure: the module/submodule at a glance, before any detail.
-      - id: bot.pmv-monitoreo.fig
-        type: figure
-        props:
-          caption: "El estado de comunicación de cada panel y el mensaje que tiene activo."
-          widthPercent: 90
-
-      - id: bot.pmv-monitoreo.columnas
-        type: data-table
-        props:
-          labelHeader: Columna
-          descriptionHeader: Descripción
-          rows:
-            # locales → pmv.monitoring
-            - id: bot.monitoreo.col.id
-              label: ID Panel
-              description: Identificador del panel en la plataforma.
-            - id: bot.monitoreo.col.ubicacion
-              label: Ubicación
-              description: Punto de la vía donde está instalado.
-            - id: bot.monitoreo.col.mensaje
-              label: Mensaje Activo
-              description: Contenido que el panel está mostrando en ese momento.
-            - id: bot.monitoreo.col.senal
-              label: Última señal
-              description: Momento del último reporte recibido desde el panel.
-            - id: bot.monitoreo.col.estado
-              label: Estado
-              description: Indica si el panel se encuentra comunicando.
-
-  # ========================================================== PMV Auditoría ===
-  - id: bot.pmv-auditoria
-    title: PMV — Registro de Auditoría
-    children:
-      - id: bot.pmv-auditoria.que-hace
-        type: prose
-        props:
-          text: >-
-            Deja trazabilidad de cada acción realizada sobre los paneles. Cada
-            asiento indica el usuario, su rol, la acción, el panel afectado, el
-            detalle y la fecha y hora.
-
-      - id: bot.pmv-auditoria.filtros
-        type: prose
-        props:
-          text: >-
-            El registro puede filtrarse por **Usuario**, **Panel** y **Fecha**.
-            La plataforma informa cuántos registros coinciden, y avisa cuando no
-            se encuentra ninguno con los filtros aplicados.
-
-      # Overview figure: the module/submodule at a glance, before any detail.
-      - id: bot.pmv-auditoria.fig
-        type: figure
-        props:
-          caption: "El registro de auditoría, con un asiento por acción realizada."
-          widthPercent: 90
-
-      - id: bot.pmv-auditoria.acciones
-        type: data-table
-        props:
-          labelHeader: Acción
-          descriptionHeader: Cuándo se registra
-          rows:
-            # locales → pmv.audit.action
-            - id: bot.auditoria.accion.creado
-              label: Mensaje creado
-              description: Se programó un mensaje nuevo.
-            - id: bot.auditoria.accion.editado
-              label: Mensaje editado
-              description: Se modificó un mensaje existente.
-            - id: bot.auditoria.accion.eliminado
-              label: Mensaje eliminado
-              description: Se retiró un mensaje de la programación.
-            - id: bot.auditoria.accion.reinicio
-              label: Panel reiniciado
-              description: Se ordenó el reinicio de un panel.
-            - id: bot.auditoria.accion.config
-              label: Config. actualizada
-              description: Se modificó la configuración de un panel.
-            - id: bot.auditoria.accion.sesion-inicio
-              label: Sesión iniciada
-              description: Un usuario ingresó al módulo.
-            - id: bot.auditoria.accion.sesion-cierre
-              label: Sesión cerrada
-              description: Un usuario finalizó su sesión.
+  # PMV Monitoreo and PMV Auditoria were REMOVED, not left undocumented.
+  #
+  # Both panes exist in the product — PMVPage renders them and BOTSidebar
+  # declares "monitoreo" and "auditoria" in its Tab union — but NOTHING ever
+  # sets activeTab to either. There is no sidebar entry and no setActiveTab call
+  # anywhere in the source, so an operator cannot reach either screen.
+  #
+  # The product is the source of truth. Documenting a screen nobody can open
+  # sends the reader hunting through a menu for something that is not there,
+  # which is worse than an absent section. If the entries come back, restore
+  # these from git history rather than rewriting them.
 
   # ============================================================== Alarmas ===
   - id: bot.alarmas
