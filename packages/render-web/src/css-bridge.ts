@@ -43,25 +43,11 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
   /* Widened so the brand sits at the page edge rather than drifting inward:
      the corner box is the only thing left of @top-left. */
   @top-left-corner { content: ""; background: ${t.cover.background}; }
-  @top-left {
-    content: "${safeBrand}";
-    color: ${t.runningHeader.brandColor};
-    font: bold ${t.runningHeader.textSize} ${t.font.display};
-    letter-spacing: 1.6pt;
-    vertical-align: middle;
-    text-align: left;
-    white-space: pre;
-    padding-left: 4pt;
-  }
-  @top-center {
-    content: "${safeRest}";
-    color: ${t.runningHeader.textColor};
-    font: ${t.runningHeader.textSize} ${t.font.sans};
-    letter-spacing: 0.2pt;
-    vertical-align: middle;
-    text-align: left;
-    white-space: pre;
-  }
+  /* The brand line lives in the LEFT box so it is flush left, and never wraps:
+     a narrow box made it break across two lines. INOVISEC keeps its own box on
+     the right. */
+  @top-left { content: element(rh); }
+  @top-center { content: ""; }
   @top-right {
     content: "INOVISEC";
     color: ${t.runningHeader.textColor};
@@ -107,14 +93,47 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
 .pagedjs_margin-top,
 .pagedjs_margin-top-left-corner-holder,
 .pagedjs_margin-top-right-corner-holder { background: ${t.cover.background}; }
-.pagedjs_margin-top { border-bottom: 1.5pt solid ${t.runningHeader.deck}; }
-.pagedjs_cover_page .pagedjs_margin-top { border-bottom: none; }
+.pagedjs_margin-top,
+.pagedjs_margin-top-left-corner-holder,
+.pagedjs_margin-top-right-corner-holder { border-bottom: 1.5pt solid ${t.runningHeader.deck}; }
+.pagedjs_cover_page .pagedjs_margin-top,
+.pagedjs_cover_page .pagedjs_margin-top-left-corner-holder,
+.pagedjs_cover_page .pagedjs_margin-top-right-corner-holder { border-bottom: none; }
 .pagedjs_cover_page .pagedjs_margin-top,
 .pagedjs_cover_page .pagedjs_margin-top-left-corner-holder,
 .pagedjs_cover_page .pagedjs_margin-top-right-corner-holder { background: none; }
 
 .pagedjs_page_content { padding-top: ${t.page.contentTop}; }
 .pagedjs_cover_page .pagedjs_page_content { padding-top: 0; }
+
+/* The running header: real DOM, so the brand can carry the accent while the
+   whole line stays flush left. Margin boxes could do one or the other. */
+/* The centre margin box and the wrapper the paginator puts inside it. Without
+   both the box shrinks to its content and the header sits centred, which is
+   what "width: 100%" on the running element alone could not fix. */
+
+.rh {
+  position: running(rh);
+  display: flex;
+  align-items: baseline;
+  gap: 7pt;
+  white-space: nowrap;
+  padding-left: 14pt;
+}
+.rh__brand {
+  font-family: ${t.font.display};
+  font-weight: bold;
+  font-size: ${t.runningHeader.textSize};
+  letter-spacing: 1.6pt;
+  color: ${t.runningHeader.brandColor};
+}
+.rh__rest {
+  margin-left: 8pt;
+  font-family: ${t.font.sans};
+  font-size: ${t.runningHeader.textSize};
+  color: ${t.runningHeader.textColor};
+}
+
 
 * { box-sizing: border-box; }
 

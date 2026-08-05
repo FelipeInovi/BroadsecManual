@@ -413,6 +413,23 @@ const bridgeMark = (accent: string): string =>
  * Two files, not one configurable file. Broadsec's document is already
  * delivered; sharing a sheet would mean a Bridge change could alter it.
  */
+/**
+ * The running header as real DOM, for brands that need more than one colour in
+ * it. The CLI composes "BRAND  |  Title  |  vX", so the first separator splits
+ * the brand from the rest.
+ */
+function runningHeader(header: string): string {
+  const cut = header.indexOf("|");
+  const brand = cut === -1 ? "" : header.slice(0, cut).trim();
+  const rest = cut === -1 ? header : header.slice(cut + 1).trim();
+  return (
+    `<div class="rh">` +
+    `<span class="rh__brand">${esc(brand)}</span>` +
+    `<span class="rh__rest">${esc(rest)}</span>` +
+    `</div>`
+  );
+}
+
 const sheetFor = (t: Tokens, header: string): string =>
   t.cover.sheet === "bridge" ? bridgeStylesheet(t, header) : stylesheet(t, header);
 
@@ -517,6 +534,7 @@ export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
 <title>${esc(o.cover.brand)} — ${esc(o.cover.title)}</title>
 <style>${sheetFor(o.theme ?? tokens, o.header)}</style>
 </head><body>
+${(o.theme ?? tokens).cover.sheet === "bridge" ? runningHeader(o.header) : ""}
 ${renderCover(o.cover, o.theme ?? tokens)}
 ${renderToc(manual)}
 <main class="content">
