@@ -112,6 +112,7 @@ export function bridgeStylesheet(t: Tokens, header: string): string {
    both the box shrinks to its content and the header sits centred, which is
    what "width: 100%" on the running element alone could not fix. */
 
+.rh-host { height: 0; overflow: hidden; }
 .rh {
   position: running(rh);
   display: flex;

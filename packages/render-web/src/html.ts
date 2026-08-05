@@ -422,11 +422,16 @@ function runningHeader(header: string): string {
   const cut = header.indexOf("|");
   const brand = cut === -1 ? "" : header.slice(0, cut).trim();
   const rest = cut === -1 ? header : header.slice(cut + 1).trim();
+  // Wrapped in a zero-height host. `position: running()` is meant to pull the
+  // element out of flow, and `element(rh)` does find it — but this paginator
+  // leaves the ORIGINAL in the text flow as well, which gave the document a
+  // blank first page carrying nothing but the header and footer.
   return (
+    `<div class="rh-host">` +
     `<div class="rh">` +
     `<span class="rh__brand">${esc(brand)}</span>` +
     `<span class="rh__rest">${esc(rest)}</span>` +
-    `</div>`
+    `</div></div>`
   );
 }
 
@@ -446,7 +451,7 @@ function coverTitle(title: string): string {
   return `<p class="cover__title cover__title--light">${head}<b>${tail}</b></p>`;
 }
 
-function renderCover(c: CoverData, t: Tokens): string {
+function renderCover(c: CoverData, t: Tokens, headerLine: string): string {
   // Two compositions, both in the markup, chosen by the brand. See
   // `coverStyle` in the tokens: a cover is arrangement, not just palette.
   const body =
@@ -474,6 +479,7 @@ function renderCover(c: CoverData, t: Tokens): string {
         ];
   return [
     `<section class="cover cover--${t.cover.style}">`,
+    t.cover.sheet === "bridge" ? runningHeader(headerLine) : "",
     ...body,
     `</section>`,
   ].join("\n");
@@ -534,8 +540,7 @@ export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
 <title>${esc(o.cover.brand)} — ${esc(o.cover.title)}</title>
 <style>${sheetFor(o.theme ?? tokens, o.header)}</style>
 </head><body>
-${(o.theme ?? tokens).cover.sheet === "bridge" ? runningHeader(o.header) : ""}
-${renderCover(o.cover, o.theme ?? tokens)}
+${renderCover(o.cover, o.theme ?? tokens, o.header)}
 ${renderToc(manual)}
 <main class="content">
 ${body}
