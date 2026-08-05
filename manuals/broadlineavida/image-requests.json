@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 240,
-    "delivered": 211,
-    "pending": 29
+    "delivered": 218,
+    "pending": 22
   },
   "pending": [
     {
@@ -284,126 +284,6 @@
       }
     },
     {
-      "slot": "bot.pmv.paso.identificar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv.paso.identificar",
-          "blockType": "procedure",
-          "shows": "Identifique el mensaje"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv.paso.identificar.png",
-        "override": "<tenant>/bot.pmv.paso.identificar.png"
-      }
-    },
-    {
-      "slot": "bot.pmv.paso.clasificar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv.paso.clasificar",
-          "blockType": "procedure",
-          "shows": "Clasifique el mensaje"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv.paso.clasificar.png",
-        "override": "<tenant>/bot.pmv.paso.clasificar.png"
-      }
-    },
-    {
-      "slot": "bot.pmv.paso.destino",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv.paso.destino",
-          "blockType": "procedure",
-          "shows": "Seleccione los paneles de destino"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv.paso.destino.png",
-        "override": "<tenant>/bot.pmv.paso.destino.png"
-      }
-    },
-    {
-      "slot": "bot.pmv.paso.contenido",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv.paso.contenido",
-          "blockType": "procedure",
-          "shows": "Componga el contenido"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv.paso.contenido.png",
-        "override": "<tenant>/bot.pmv.paso.contenido.png"
-      }
-    },
-    {
-      "slot": "bot.pmv.paso.vigencia",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv.paso.vigencia",
-          "blockType": "procedure",
-          "shows": "Defina la vigencia"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv.paso.vigencia.png",
-        "override": "<tenant>/bot.pmv.paso.vigencia.png"
-      }
-    },
-    {
-      "slot": "bot.pmv.paso.guardar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv.paso.guardar",
-          "blockType": "procedure",
-          "shows": "Guarde el mensaje"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv.paso.guardar.png",
-        "override": "<tenant>/bot.pmv.paso.guardar.png"
-      }
-    },
-    {
       "slot": "bot.pmv-gestion.paso.desactivar",
       "neededBy": [
         "mv"
@@ -541,26 +421,6 @@
       "deliverTo": {
         "shared": "_common/bot.alarmas.paso.filtrar.png",
         "override": "<tenant>/bot.alarmas.paso.filtrar.png"
-      }
-    },
-    {
-      "slot": "bot.alarmas.paso.seleccionar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.alarmas.paso.seleccionar",
-          "blockType": "procedure",
-          "shows": "Seleccione las alarmas"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.alarmas.paso.seleccionar.png",
-        "override": "<tenant>/bot.alarmas.paso.seleccionar.png"
       }
     },
     {
@@ -4072,6 +3932,102 @@
       ]
     },
     {
+      "slot": "bot.pmv.paso.identificar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.identificar",
+          "blockType": "procedure",
+          "shows": "Identifique el mensaje"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.identificar.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.clasificar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.clasificar",
+          "blockType": "procedure",
+          "shows": "Clasifique el mensaje"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.clasificar.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.destino",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.destino",
+          "blockType": "procedure",
+          "shows": "Seleccione los paneles de destino"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.destino.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.contenido",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.contenido",
+          "blockType": "procedure",
+          "shows": "Componga el contenido"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.contenido.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.vigencia",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.vigencia",
+          "blockType": "procedure",
+          "shows": "Defina la vigencia"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.vigencia.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv.paso.guardar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.guardar",
+          "blockType": "procedure",
+          "shows": "Guarde el mensaje"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv.paso.guardar.png"
+      ]
+    },
+    {
       "slot": "bot.pmv-gestion.fig",
       "neededBy": [
         "mv"
@@ -4165,6 +4121,22 @@
       ],
       "files": [
         "_common/bot.alarmas.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.paso.seleccionar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.seleccionar",
+          "blockType": "procedure",
+          "shows": "Seleccione las alarmas"
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.paso.seleccionar.png"
       ]
     }
   ]

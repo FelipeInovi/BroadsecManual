@@ -310,3 +310,77 @@ recipes:
     dataReady: 'input[placeholder*="Buscar agentes"]'
     clip: 'input[placeholder*="Buscar agentes"]'
     viewport: { width: 1600, height: 900 }
+
+  # PMV Programación, field by field. The form blocks carry generic Tailwind
+  # classes (plain `div`, `div.relative`) that cannot be told apart in CSS, so
+  # each is anchored on its own LABEL through XPath.
+  #
+  # NOTHING HERE SAVES. Every one of these is a clip of a control sitting
+  # untouched — including `guardar`, which photographs the button rather than
+  # pressing it. Showing is not doing; see the boundary at the top of this file.
+
+  - slot: bot.pmv.paso.identificar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(Contenido de Mensaje)"
+    clip: '::-p-xpath(//*[normalize-space(text())="Título Interno"]/ancestor::div[.//input or .//textarea][1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv.paso.clasificar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(Contenido de Mensaje)"
+    clip: '::-p-xpath(//*[normalize-space(text())="Tipo"]/ancestor::div[.//input or .//select or .//button][1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv.paso.destino
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(Contenido de Mensaje)"
+    clip: '::-p-xpath(//*[normalize-space(text())="Panel"]/ancestor::div[.//input or .//select or .//button][1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv.paso.contenido
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(Contenido de Mensaje)"
+    clip: '::-p-xpath(//*[normalize-space(text())="Texto a Mostrar"]/ancestor::div[.//textarea][1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv.paso.vigencia
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(Contenido de Mensaje)"
+    clip: '::-p-xpath(//*[normalize-space(text())="Rango de Fechas"]/ancestor::div[.//button][1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.pmv.paso.guardar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(Contenido de Mensaje)"
+    clip: '::-p-xpath(//button[contains(., "Guardar")])'
+    viewport: { width: 1600, height: 900 }
+
+  # The header row carries the select-all checkbox the step describes. Clipping
+  # the row rather than the box alone keeps the columns visible, so the reader
+  # can see WHAT is being selected.
+  - slot: bot.alarmas.paso.seleccionar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Alarmas)"
+    screenIs: "::-p-text(reconoce las alarmas del sistema)"
+    dataReady: "table tbody tr:nth-child(3) td"
+    clip: "table thead"
+    viewport: { width: 1600, height: 900 }
