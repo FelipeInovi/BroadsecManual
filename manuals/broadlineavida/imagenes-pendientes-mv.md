@@ -1,6 +1,6 @@
 # Imágenes pendientes
 
-17 imágenes pendientes, en el orden en que aparecen en el manual.
+16 imágenes pendientes, en el orden en que aparecen en el manual.
 Complete la tercera columna con la instrucción de extracción desde `Manual_Broadsec_v5.pdf`.
 
 Los números de página valen para la última construcción del manual. Regenere la tabla (`build --pending-table`) después de cambiar contenido: las instrucciones ya escritas se conservan.
@@ -22,5 +22,4 @@ Los números de página valen para la última construcción del manual. Regenere
 | `bot.pmv-gestion.paso.reactivar` — Reactive si corresponde | 78 |  |
 | `bot.pmv-variables.paso.nombrar` — Nombre el grupo | 80 |  |
 | `bot.pmv-variables.paso.seleccionar` — Seleccione los paneles | 80 |  |
-| `bot.alarmas.paso.reconocer` — Accione Reconocer | 82 |  |
 | `bot.alarmas.paso.resultado` — Verifique el resultado | 82 |  |

@@ -435,3 +435,19 @@ recipes:
     clip: '::-p-xpath(//*[normalize-space(text())="Añadir Familia"]/ancestor::div[1])'
     viewport: { width: 1600, height: 900 }
 
+  # The Reconocer button PHOTOGRAPHED, never pressed. Acknowledging an alarm
+  # writes an operational record with a name on it.
+  - slot: bot.alarmas.paso.reconocer
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Alarmas)"
+    screenIs: "::-p-text(reconoce las alarmas del sistema)"
+    dataReady: "table tbody tr:nth-child(3) td"
+    clip: '::-p-xpath((//button[contains(.,"Reconocer")])[1])'
+    viewport: { width: 1600, height: 900 }
+
+  # bot.cctv.fn.estado hits the SAME codec wall as bot.cctv.fn.grilla. The drag
+  # works and the tile appears, but with no frame decoding the only status the
+  # tile ever shows is "mediaError: bufferAddCodecError" — so the clip returned
+  # the error text instead of the transmission state. Not a selector problem.
+  # Needs a headful run or a hand capture, like the mosaic.

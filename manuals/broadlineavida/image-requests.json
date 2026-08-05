@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 240,
-    "delivered": 223,
-    "pending": 17
+    "delivered": 224,
+    "pending": 16
   },
   "pending": [
     {
@@ -321,26 +321,6 @@
       "deliverTo": {
         "shared": "_common/bot.pmv-variables.paso.seleccionar.png",
         "override": "<tenant>/bot.pmv-variables.paso.seleccionar.png"
-      }
-    },
-    {
-      "slot": "bot.alarmas.paso.reconocer",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.alarmas.paso.reconocer",
-          "blockType": "procedure",
-          "shows": "Accione Reconocer"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.alarmas.paso.reconocer.png",
-        "override": "<tenant>/bot.alarmas.paso.reconocer.png"
       }
     },
     {
@@ -4117,6 +4097,22 @@
       ],
       "files": [
         "_common/bot.alarmas.paso.seleccionar.png"
+      ]
+    },
+    {
+      "slot": "bot.alarmas.paso.reconocer",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.alarmas.paso.reconocer",
+          "blockType": "procedure",
+          "shows": "Accione Reconocer"
+        }
+      ],
+      "files": [
+        "_common/bot.alarmas.paso.reconocer.png"
       ]
     }
   ]
