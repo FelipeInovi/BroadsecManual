@@ -47,6 +47,20 @@ interface Brand {
   readonly deckRule: string;
   /** The ghosted section number behind a section opener. */
   readonly ghostNumber: string;
+  /**
+   * Composition, not colour. Two brands can share a renderer and still not
+   * share a cover: these say WHICH arrangement to draw, and the markup and
+   * stylesheet carry both.
+   *
+   * `band`  the wordmark set large against a rule — Broadsec's.
+   * `mark`  a logo beside a wordmark, the title light and set low — Bridge's.
+   */
+  readonly coverStyle: "band" | "mark";
+  /** Small label above a section title ("MÓDULO"). Empty for none. */
+  readonly sectionKicker: string;
+  /** How tall the section opener sits, and how big its ghost number runs. */
+  readonly openerPad: string;
+  readonly ghostSize: string;
 }
 
 const broadsec: Brand = {
@@ -69,6 +83,10 @@ const broadsec: Brand = {
   },
   deckRule: "transparent",
   ghostNumber: "transparent",
+  coverStyle: "band",
+  sectionKicker: "",
+  openerPad: "10pt 14pt",
+  ghostSize: "46pt",
 };
 
 /** Bridge360. Palette and type from its own `@theme`; see the header above. */
@@ -91,7 +109,13 @@ const bridge: Brand = {
     mono: "'Geist Mono', Consolas, 'DejaVu Sans Mono', Menlo, monospace",
   },
   deckRule: "#14B8A6",
-  ghostNumber: "rgba(94,234,212,0.13)",
+  ghostNumber: "rgba(94,234,212,0.15)",
+  coverStyle: "mark",
+  sectionKicker: "Módulo",
+  // Taller than Broadsec's, and the ghost runs big enough to bleed off the top
+  // edge — the pier the opener is meant to read as.
+  openerPad: "20pt 16pt 18pt",
+  ghostSize: "72pt",
 };
 
 /** Sizes and rhythm are shared: they are page geometry, not brand. */
@@ -167,7 +191,9 @@ function build(brand: Brand) {
     subtitleSize: scale.size.md,
     /** The section number, set large and ghosted behind the title. */
     ghost: brand.ghostNumber,
-    ghostSize: "46pt",
+    ghostSize: brand.ghostSize,
+    kicker: brand.sectionKicker,
+    pad: brand.openerPad,
   },
   subsectionHeader: {
     background: brand.color.surfaceAccent,
@@ -235,6 +261,7 @@ function build(brand: Brand) {
     rowAltBackground: brand.color.surfaceAccent,
   },
   cover: {
+    style: brand.coverStyle,
     background: brand.color.deepest,
     accent: brand.color.accentLight,
     titleColor: "#FFFFFF",

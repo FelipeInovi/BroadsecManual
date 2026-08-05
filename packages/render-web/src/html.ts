@@ -361,6 +361,9 @@ function renderSection(
       : "";
     return [
       `<header class="section-header" id="${esc(node.id)}">`,
+      o.theme?.sectionHeader.kicker
+        ? `<p class="section-header__kicker">${esc(o.theme.sectionHeader.kicker)}</p>`
+        : "",
       // The number rides along as an attribute so a theme can set it large and
       // ghosted behind the title. Taken from `numbers`, never re-derived: the
       // ghost and the heading must never disagree.
@@ -388,15 +391,50 @@ function renderNode(
     : renderBlock(node, numbers, o);
 }
 
-function renderCover(c: CoverData): string {
+/**
+ * The Bridge mark, inline.
+ *
+ * Inline rather than an <img>: the cover must render before any asset resolves,
+ * and a brand mark that arrives late — or not at all — is the one image on the
+ * page nobody would forgive being a placeholder.
+ */
+const bridgeMark = (accent: string): string =>
+  `<svg class="cover__mark" viewBox="0 0 100 100" fill="none" stroke="${accent}"` +
+  ` stroke-width="3.4" stroke-linecap="round" aria-hidden="true">` +
+  `<circle cx="50" cy="50" r="44"/><path d="M14 62h72"/><path d="M14 54h72"/>` +
+  `<path d="M30 54V30M70 54V30"/>` +
+  `<path d="M14 46c10-16 26-16 36-16s26 0 36 16" stroke-width="2.6"/>` +
+  `<path d="M30 30l20 16 20-16" stroke-width="2.2"/></svg>`;
+
+function renderCover(c: CoverData, t: Tokens): string {
+  // Two compositions, both in the markup, chosen by the brand. See
+  // `coverStyle` in the tokens: a cover is arrangement, not just palette.
+  const body =
+    t.cover.style === "mark"
+      ? [
+          `<div class="cover__lockup">`,
+          bridgeMark(t.cover.accent),
+          `<span class="cover__wordmark">${esc(c.brand)}</span>`,
+          `</div>`,
+          `<div class="cover__stack">`,
+          `<p class="cover__title cover__title--light">${esc(c.title)}</p>`,
+          `<div class="cover__rule"></div>`,
+          `<p class="cover__lede">${esc(c.lede)}</p>`,
+          `</div>`,
+          `<p class="cover__meta"><span>${esc(c.meta)}</span>` +
+            `<span class="cover__ver">v${esc(c.version)}</span></p>`,
+        ]
+      : [
+          `<h1 class="cover__brand">${esc(c.brand)}</h1>`,
+          `<div class="cover__rule"></div>`,
+          `<p class="cover__title">${esc(c.title)}</p>`,
+          `<span class="cover__version">Versión ${esc(c.version)}</span>`,
+          `<p class="cover__lede">${esc(c.lede)}</p>`,
+          `<p class="cover__meta">${esc(c.meta)}</p>`,
+        ];
   return [
-    `<section class="cover">`,
-    `<h1 class="cover__brand">${esc(c.brand)}</h1>`,
-    `<div class="cover__rule"></div>`,
-    `<p class="cover__title">${esc(c.title)}</p>`,
-    `<span class="cover__version">Versión ${esc(c.version)}</span>`,
-    `<p class="cover__lede">${esc(c.lede)}</p>`,
-    `<p class="cover__meta">${esc(c.meta)}</p>`,
+    `<section class="cover cover--${t.cover.style}">`,
+    ...body,
     `</section>`,
   ].join("\n");
 }
@@ -456,7 +494,7 @@ export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
 <title>${esc(o.cover.brand)} — ${esc(o.cover.title)}</title>
 <style>${stylesheet(o.theme ?? tokens, o.header)}</style>
 </head><body>
-${renderCover(o.cover)}
+${renderCover(o.cover, o.theme ?? tokens)}
 ${renderToc(manual)}
 <main class="content">
 ${body}
