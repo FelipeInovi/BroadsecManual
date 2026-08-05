@@ -8,24 +8,35 @@
 #
 # CREDENTIALS ARE NEVER WRITTEN HERE. This file is committed. `auth` names the
 # environment variables to read; the schema rejects a literal password outright.
+# The login lives in .env.capture, which is gitignored.
 #
-# WHICH ENVIRONMENT. Point `baseUrl` at whichever deployment shows the data the
-# manual should depict. The hosts, from src/render/config/*.config.ts:
+# ONE URL IS ONE TENANT. src/render/config/index.ts picks the tenant config from
+# `VITE_NAME_PROJECT`, a BUILD-time variable, so the deployment decides which
+# tenant it is and no URL parameter can change it. `basePath` says where a build
+# is served, NOT which config it loaded — demo and lv both use "lv" — so the URL
+# alone cannot identify a tenant. Hence `verify`: every tenant config names a
+# different logo file, and matching it turns "I pointed it at the right place"
+# from an assumption into a check.
 #
-#   demo  https://web.inovisec.com/lv       (basePath "lv")
-#   mv    https://medellin.inovisec.com/... (basePath from mv.config.ts)
-#   med   https://medellin.inovisec.com/... (basePath from med.config.ts)
-#   dev   http://3.20.16.27/...
+# BoT is enabled for demo, dev and mv only (canSeeBoT). med and lv do not have
+# the module at all, so there is nothing there to photograph.
 #
 # ROUTES ARE HASH ROUTES. AppRoutes.tsx uses `createHashRouter`, so the path
 # lives after a `#`. A plain "/broadsec-of-things" silently serves the app shell
-# and the capture would shoot whatever screen happened to be up — verified: the
-# login URL resolves to /lv/login#/login.
+# and the capture would shoot whatever screen happened to be up.
 
 version: 1
 
 target:
-  baseUrl: https://web.inovisec.com/lv
+  deployments:
+    # The manual's own deployment, and where BoT actually runs in production.
+    mv:
+      baseUrl: https://medellin.inovisec.com/mv
+      verify: 'img[src*="movilidad_logo"]'
+    # Kept for a dry run against non-production data. It has BoT too.
+    demo:
+      baseUrl: https://web.inovisec.com/lv
+      verify: 'img[src*="bridge_logo"]'
   auth:
     route: /#/login
     userEnv: BROADSEC_CAPTURE_USER

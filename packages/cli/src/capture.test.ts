@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
+import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
+
+const deployments = {
+  mv: {
+    baseUrl: "https://medellin.inovisec.com/mv",
+    verify: 'img[src*="movilidad_logo"]',
+  },
+  demo: {
+    baseUrl: "https://web.inovisec.com/lv",
+    verify: 'img[src*="bridge_logo"]',
+  },
+};
 
 const target = {
-  baseUrl: "https://web.inovisec.com/lv",
+  deployments,
   auth: {
     route: "/login",
     userEnv: "BROADSEC_CAPTURE_USER",
@@ -28,7 +39,18 @@ describe("parseRecipes", () => {
   it("accepts a well-formed document", () => {
     const parsed = parseRecipes(doc([recipe("bot.alarmas.fig")]));
     expect(parsed.recipes).toHaveLength(1);
-    expect(parsed.target.baseUrl).toBe("https://web.inovisec.com/lv");
+    expect(parsed.target.deployments["mv"]?.baseUrl).toBe("https://medellin.inovisec.com/mv");
+  });
+
+  // The tenant is compiled INTO the bundle by VITE_NAME_PROJECT, so one URL is
+  // one tenant and there is no way to ask a running app to be another. A
+  // deployment that cannot prove which tenant it is could be captured under the
+  // wrong name for months.
+  it("refuses a deployment with no way to prove which tenant it is", () => {
+    const bad = { mv: { baseUrl: "https://x/mv" } };
+    expect(() => parseRecipes({ version: 1, target: { deployments: bad, auth: target.auth }, recipes: [] })).toThrow(
+      /verify/,
+    );
   });
 
   // The single rule that keeps this from producing garbage. A route can render
@@ -77,6 +99,23 @@ describe("parseRecipes", () => {
     expect(() =>
       parseRecipes(doc([recipe("bot.alarmas.fig"), recipe("bot.alarmas.fig", { route: "/x" })])),
     ).toThrow(/bot\.alarmas\.fig/);
+  });
+});
+
+describe("deploymentFor", () => {
+  const parsed = () => parseRecipes(doc([recipe("bot.alarmas.fig")]));
+
+  it("picks the deployment for the tenant being built", () => {
+    expect(deploymentFor(parsed(), "mv").baseUrl).toBe("https://medellin.inovisec.com/mv");
+    expect(deploymentFor(parsed(), "demo").baseUrl).toBe("https://web.inovisec.com/lv");
+  });
+
+  // The alternative is capturing mv's figures off whatever deployment happens to
+  // be first in the file, which is the exact mistake this indirection exists to
+  // stop. The message lists what IS configured so the fix is obvious.
+  it("refuses a tenant with no deployment, and says which ones exist", () => {
+    expect(() => deploymentFor(parsed(), "med")).toThrow(/med/);
+    expect(() => deploymentFor(parsed(), "med")).toThrow(/mv, demo|demo, mv/);
   });
 });
 

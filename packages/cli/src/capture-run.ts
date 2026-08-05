@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import puppeteer from "puppeteer-core";
 import { findChrome } from "./chrome.ts";
-import type { PlannedCapture, RecipeDoc } from "./capture.ts";
+import type { Deployment, PlannedCapture, RecipeDoc } from "./capture.ts";
 
 /** What happened to one planned capture. */
 export interface CaptureResult {
@@ -54,6 +54,8 @@ function credentials(auth: RecipeDoc["target"]["auth"]): { user: string; passwor
  */
 export async function runCaptures(
   doc: RecipeDoc,
+  deployment: Deployment,
+  tenant: string,
   plan: readonly PlannedCapture[],
   figuresDir: string,
   onProgress: (line: string) => void,
@@ -69,7 +71,8 @@ export async function runCaptures(
     const page = await browser.newPage();
     await page.setViewport(DEFAULT_VIEWPORT);
 
-    const { auth, baseUrl } = doc.target;
+    const { auth } = doc.target;
+    const { baseUrl } = deployment;
     await page.goto(`${baseUrl}${auth.route}`, { waitUntil: "networkidle0", timeout: WAIT_MS });
     await page.type(auth.userSelector, user);
     await page.type(auth.passwordSelector, password);
@@ -78,6 +81,21 @@ export async function runCaptures(
     // on the login page and every capture below shoots that same form.
     await page.waitForSelector(auth.doneWhen, { timeout: WAIT_MS });
     onProgress("  signed in");
+
+    // Proof this deployment IS the tenant asked for. The tenant is compiled
+    // into the bundle, so pointing at the wrong URL does not fail — it succeeds
+    // and quietly files another tenant's screens under this one's name. Whole
+    // run, not per shot: if the deployment is wrong, every capture is wrong.
+    try {
+      await page.waitForSelector(deployment.verify, { timeout: WAIT_MS });
+    } catch {
+      throw new Error(
+        `this deployment does not look like "${tenant}": ${baseUrl} never showed ` +
+          `\`${deployment.verify}\`. The tenant is baked in at build time, so the ` +
+          `URL is the only thing that selects it. Nothing was captured.`,
+      );
+    }
+    onProgress(`  confirmed this build is ${tenant}`);
 
     for (const shot of plan) {
       try {

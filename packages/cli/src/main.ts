@@ -18,7 +18,7 @@ import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import { printToPdf } from "./chrome.ts";
 import { extract } from "./extract.ts";
 import { pendingTable } from "./pending-table.ts";
-import { parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
+import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
 
 /** Where the product login lives. Gitignored; see .env.capture.example. */
 const CREDENTIALS_FILE = ".env.capture";
@@ -523,11 +523,17 @@ async function capture(
     throw new Error(`--only names slots with no recipe: ${missing.join(", ")}`);
   }
 
+  // Resolved BEFORE the browser opens: a tenant with no deployment is a typo in
+  // a flag, and it should cost nothing to find out.
+  const deployment = deploymentFor(recipes, tenant);
   const plan = planCaptures(chosen, pending);
+  console.log(`  ${tenant} -> ${deployment.baseUrl}`);
   console.log(`  ${plan.ready.length} recipe(s) to shoot, ${plan.uncovered.length} pending slot(s) with no recipe yet`);
   if (plan.ready.length === 0) return;
 
-  const results = await runCaptures(recipes, plan.ready, figuresDir, (line) => console.log(line));
+  const results = await runCaptures(recipes, deployment, tenant, plan.ready, figuresDir, (line) =>
+    console.log(line),
+  );
   const ok = results.filter((r) => r.ok).length;
   console.log(`\n  ${ok} of ${results.length} captured`);
   // Same discipline the manifest check enforces: a capture is only real once the

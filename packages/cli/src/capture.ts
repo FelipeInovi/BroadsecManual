@@ -65,13 +65,40 @@ const recipeSchema = z
   })
   .strict();
 
+/**
+ * One deployed build of the product.
+ *
+ * The tenant is compiled INTO the bundle: `src/render/config/index.ts` selects
+ * it from `VITE_NAME_PROJECT`, a build-time variable. So one URL is one tenant,
+ * and there is no way to ask a running app to be another. `basePath` in the
+ * tenant config says where it is SERVED, not which config it loaded — demo and
+ * lv both use "lv" — so the URL alone cannot be trusted to identify a tenant.
+ */
+const deploymentSchema = z
+  .object({
+    baseUrl: z.string(),
+    /**
+     * A selector that only matches on THIS tenant's build.
+     *
+     * Required, because "I pointed it at the mv URL" is an assumption and this
+     * makes it a check. Every tenant config names a different logo file, which
+     * is the cheapest reliable signal.
+     */
+    verify: selector("verify"),
+  })
+  .strict();
+
 export const recipeDocSchema = z
   .object({
     version: z.literal(1),
-    target: z.object({ baseUrl: z.string(), auth: authSchema }).strict(),
+    target: z
+      .object({ deployments: z.record(z.string(), deploymentSchema), auth: authSchema })
+      .strict(),
     recipes: z.array(recipeSchema),
   })
   .strict();
+
+export type Deployment = z.infer<typeof deploymentSchema>;
 
 export type CaptureRecipe = z.infer<typeof recipeSchema>;
 export type RecipeDoc = z.infer<typeof recipeDocSchema>;
@@ -91,6 +118,27 @@ export function parseRecipes(raw: unknown): RecipeDoc {
     seen.add(r.slot);
   }
   return doc;
+}
+
+/**
+ * The deployment to shoot for the tenant being captured.
+ *
+ * Named per tenant rather than left as one `baseUrl`, so `capture --tenant mv`
+ * cannot quietly photograph whatever deployment happens to be configured. The
+ * error lists what IS configured, because the fix is always to add one line.
+ */
+export function deploymentFor(doc: RecipeDoc, tenant: string): Deployment {
+  const found = doc.target.deployments[tenant];
+  if (!found) {
+    const known = Object.keys(doc.target.deployments);
+    throw new Error(
+      `no deployment configured for tenant "${tenant}". Configured: ` +
+        `${known.length > 0 ? known.join(", ") : "(none)"}. Add its baseUrl and a ` +
+        `\`verify\` selector to capture-recipes.yaml — the tenant is compiled into ` +
+        `the bundle, so each one is a separate URL.`,
+    );
+  }
+  return found;
 }
 
 /**
