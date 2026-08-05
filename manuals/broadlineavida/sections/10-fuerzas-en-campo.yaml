@@ -144,16 +144,6 @@ children:
             props:
               caption: "Acceso al perfil desde la lista de agentes."
               widthPercent: 70
-          - id: fuerzas.perfil.fig-tarjeta
-            type: figure
-            props:
-              caption: "Tarjeta rápida del agente."
-              widthPercent: 60
-          - id: fuerzas.perfil.fig-perfil
-            type: figure
-            props:
-              caption: "Perfil del agente."
-              widthPercent: 90
           - id: fuerzas.perfil.mapa
             type: prose
             props:

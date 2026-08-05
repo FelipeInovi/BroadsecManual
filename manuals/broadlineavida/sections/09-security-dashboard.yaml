@@ -94,11 +94,6 @@ children:
               text: >-
                 Al seleccionar la Zona se habilita la selección de Comuna y, tras
                 ella, la de Barrio.
-          - id: dashboard.filtros.ubicacion.fig-zona
-            type: figure
-            props:
-              caption: "Filtro de ubicación por Zona, Comuna y Barrio."
-              widthPercent: 70
 
       - id: dashboard.filtros.variables
         title: Variables de Gestión
@@ -230,13 +225,6 @@ children:
             Las ventanas de datos presentan las métricas y los gráficos del
             dashboard. Se pueden quitar para liberar espacio, volver a mostrar, y
             exportar.
-
-      # Overview figure: the submodule at a glance, before any detail.
-      - id: dashboard.ventanas.fig
-        type: figure
-        props:
-          caption: "Ventanas de datos del dashboard."
-          widthPercent: 90
 
       - id: dashboard.ventanas.quitar
         title: Quitar y aplicar ventanas

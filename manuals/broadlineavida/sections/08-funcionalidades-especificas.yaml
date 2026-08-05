@@ -216,13 +216,6 @@ children:
             Los componentes del filtro permiten acotar la lista de casos según
             distintos criterios. A continuación se detalla cada uno.
 
-      # Overview figure: the submodule at a glance, before any detail.
-      - id: funcionalidades.filtros.fig
-        type: figure
-        props:
-          caption: "Panel de filtros de la lista de casos."
-          widthPercent: 90
-
       - id: funcionalidades.filtros.rango
         title: Rango de tiempo y Restaurar filtros
         children:
@@ -982,29 +975,44 @@ children:
                     props:
                       caption: "Luz roja titilante en el ítem de Reporte."
                       widthPercent: 70
+                  # The lead is its own paragraph so the figure can sit directly
+                  # under it, before the steps — a procedure has no room for a
+                  # figure between its lead and its first step.
+                  - id: funcionalidades.reporte-actualizacion.acceso-intro
+                    type: prose
+                    props:
+                      text: >-
+                        Para acceder a la actualización del reporte del agente en
+                        campo, siga estos pasos.
+                  - id: funcionalidades.reporte-actualizacion.fig-acceso
+                    type: figure
+                    props:
+                      caption: "Acceso a la actualización desde el ítem de Reporte."
+                      widthPercent: 50
                   - id: funcionalidades.reporte-actualizacion.acceso
                     type: procedure
                     props:
-                      lead: >-
-                        Para acceder a la actualización del reporte del agente en
-                        campo, siga estos pasos.
                       steps:
+                        # These three steps carry no image: the source manual has
+                        # none for them, and each is a single click the sentence
+                        # already explains. `layout` goes with them — it only
+                        # ever meant "put the figure beside the text".
                         - id: func.act.flecha
                           title: Despliegue el ítem de Reporte
                           text: >-
                             Haga clic en la flecha ubicada al lado del ícono de
                             Reporte.
-                          layout: beside
+                          image: false
                         - id: func.act.placa
                           title: Despliegue la placa del agente
                           text: "Despliegue la placa del o los agentes."
-                          layout: beside
+                          image: false
                         - id: func.act.gestionar
                           title: Entre a gestionar la actualización
                           text: >-
                             Haga clic sobre la placa para entrar a gestionar la
                             actualización correspondiente.
-                          layout: beside
+                          image: false
                   - id: funcionalidades.reporte-actualizacion.paso2
                     type: prose
                     props:

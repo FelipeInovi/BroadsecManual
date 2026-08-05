@@ -42,10 +42,3 @@ children:
             interfaz renovada orientada a mejorar la gestión de incidentes y a
             hacer más eficiente el flujo de atención de emergencias para los
             operadores.
-
-      # Overview figure: the submodule at a glance, before any detail.
-      - id: funcionamiento.inicio.fig
-        type: figure
-        props:
-          caption: "Interfaz de inicio del módulo."
-          widthPercent: 90
