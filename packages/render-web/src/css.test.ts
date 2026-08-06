@@ -24,7 +24,7 @@ describe("stylesheet", () => {
   // delivered document becomes something another brand's change can break.
   it("keeps Broadsec's sheet free of anything Bridge introduced", () => {
     const css = stylesheet(themes.broadsec, "BROADSEC");
-    expect(css).not.toContain("Outfit");
+    expect(css).not.toContain("Century Gothic");
     expect(css).not.toContain("cover__lockup");
     expect(css).not.toContain("section-header__kicker");
   });
@@ -37,7 +37,14 @@ describe("stylesheet", () => {
 
   it("gives Bridge its display face, its deck rule and its cover ornament", () => {
     const css = bridgeStylesheet(themes.bridge, "BRIDGE");
-    expect(css).toContain("Outfit");
+    // Century Gothic, not Outfit. Bridge's web face was named here for months
+    // and never once loaded — no font file, no @font-face — so the printer fell
+    // through to this, and the delivered PDF embeds it. The tokens now say so
+    // out loud, because a second renderer made the difference matter: Word
+    // substitutes a missing family on the READER's machine. See `font` in
+    // packages/tokens.
+    expect(css).toContain("Century Gothic");
+    expect(css).not.toContain("Outfit");
     expect(css).toContain("#14B8A6");
     expect(css).toContain("cover__lockup");
     expect(css).toContain("section-header__kicker");

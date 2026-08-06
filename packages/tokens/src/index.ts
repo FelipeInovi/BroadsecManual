@@ -111,10 +111,33 @@ const bridge: Brand = {
     surfaceCool: "#F1F5F8",
     ruleLight: "#D7E3EA",
   },
+  /**
+   * FROZEN, by decision — these are not Bridge360's web faces.
+   *
+   * The product loads Outfit, Geist Variable and Montserrat from Google Fonts
+   * (`src/app/App.css`), and this block used to name them. Nothing ever served
+   * them: there is no font file in this repository and no `@font-face`, so the
+   * printer silently fell through every chain. Inspecting the delivered PDF's
+   * font table shows what it actually embedded — CenturyGothic, ArialMT,
+   * Consolas. The manual has never been set in Bridge's type.
+   *
+   * They are named explicitly now instead of being restored, because a second
+   * renderer changed what the fallback costs. Word cannot resolve a CSS chain:
+   * it substitutes per reading machine, so a face that is not installed on the
+   * client's computer makes the .docx render differently there than here.
+   * Century Gothic, Arial and Consolas ship with Office, which is what lets the
+   * PDF and the .docx be the same document.
+   *
+   * This keeps the brands apart, which is the point of the field: Broadsec sets
+   * body and display to one neutral, Bridge answers with a geometric display.
+   * Century Gothic carries that contrast. Reversing the freeze means bundling
+   * the real faces as files AND solving Word font embedding — both, or neither,
+   * or the two deliverables stop matching.
+   */
   font: {
-    sans: "'Geist', 'Inter', Helvetica, Arial, sans-serif",
-    display: "'Outfit', 'Avenir Next', 'Century Gothic', Helvetica, sans-serif",
-    mono: "'Geist Mono', Consolas, 'DejaVu Sans Mono', Menlo, monospace",
+    sans: "Arial, Helvetica, sans-serif",
+    display: "'Century Gothic', 'Avenir Next', Arial, sans-serif",
+    mono: "Consolas, 'DejaVu Sans Mono', Menlo, monospace",
   },
   deckRule: "#14B8A6",
   ghostNumber: "rgba(94,234,212,0.15)",
