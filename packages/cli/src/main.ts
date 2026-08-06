@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 import { catalog } from "@broadsec-manual/blocks";
-import type { BuildTarget, ManualDocument, ManualNode } from "@broadsec-manual/blocks";
+import type {
+  BuildTarget,
+  ManualDocument,
+  ManualNode,
+  ResolvedManual,
+} from "@broadsec-manual/blocks";
 import {
   assemble,
   collectSlots,
@@ -15,8 +20,14 @@ import {
   type ImageSlotUse,
 } from "@broadsec-manual/core";
 import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
-import { themes, isThemeName } from "@broadsec-manual/tokens";
+import {
+  renderDocx,
+  type CoverData,
+  type DocxAssetResolver,
+} from "@broadsec-manual/render-docx";
+import { themes, isThemeName, type Tokens } from "@broadsec-manual/tokens";
 import { printToPdf } from "./chrome.ts";
+import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract } from "./extract.ts";
 import { pendingTable } from "./pending-table.ts";
 import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
@@ -614,11 +625,75 @@ export function draftFilename(name: string): string {
   return dot <= 0 ? `${name}-BORRADOR` : `${name.slice(0, dot)}-BORRADOR${name.slice(dot)}`;
 }
 
+/**
+ * The Word deliverable, beside the PDF that was just printed.
+ *
+ * Deliberately built FROM the paginated HTML rather than instead of it: the
+ * cover is shot off the sheet the printer laid out, so the two documents open on
+ * the same page rather than on two attempts at composing it.
+ *
+ * Word cannot reference a file the way `<img src>` can, so every picture is read
+ * and — for the two formats OOXML does not embed — redrawn before it is handed
+ * over. That work lives here because resolving and reading assets is the CLI's
+ * job; the renderer is given bytes and stays free of the filesystem.
+ */
+async function buildDocx(
+  manual: ResolvedManual,
+  htmlPath: string,
+  docxPath: string,
+  slots: ReadonlyMap<string, string>,
+  images: { readonly resolve: (slot: string) => { readonly url: string; readonly state: string } },
+  theme: Tokens,
+  cover: CoverData,
+  header: string,
+  footerNote: string,
+  vendor: string,
+): Promise<void> {
+  const used = [...new Set(slots.values())];
+  const pathFor = new Map(used.map((slot) => [slot, fileURLToPath(images.resolve(slot).url)]));
+  const rasters = await rasterise([...pathFor.values()], dirname(docxPath));
+  const coverShot = await shootFirstPage(htmlPath);
+
+  const assets: DocxAssetResolver = (slot) => {
+    const path = pathFor.get(slot);
+    if (path === undefined) return undefined;
+    const raster = rasters.get(path);
+    if (raster === undefined) return undefined;
+    return {
+      data: raster.data,
+      type: raster.type,
+      widthPx: raster.widthPx,
+      heightPx: raster.heightPx,
+      pending: images.resolve(slot).state === "pending",
+    };
+  };
+
+  const docx = await renderDocx(manual, {
+    header,
+    cover,
+    coverImage: {
+      data: coverShot.data,
+      type: coverShot.type,
+      widthPx: coverShot.widthPx,
+      heightPx: coverShot.heightPx,
+      pending: false,
+    },
+    slots,
+    assets,
+    figures: manual.figures,
+    theme,
+    footerNote,
+    vendor,
+  });
+  writeFileSync(docxPath, docx);
+}
+
 async function build(
   manualDir: string,
   filters: ReadonlyMap<string, string>,
   draft: boolean,
   wantPendingTable: boolean,
+  wantDocx: boolean,
 ): Promise<void> {
   const { config, doc, warnings, targets, figuresDir } = loadManual(manualDir, filters);
   const outDir = join(manualDir, config.output.dir);
@@ -648,34 +723,56 @@ async function build(
           `${Object.keys(themes).join(", ")}.`,
       );
     }
+    // Composed once and handed to every renderer, so the Word deliverable and
+    // the PDF cannot disagree about what the document is called.
+    const headerLine = draft
+      ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${config.manual.contentVersion}  |  NO DISTRIBUIR`
+      : `${brand}  |  ${config.manual.title}  |  v${config.manual.contentVersion}`;
+    const cover = {
+      brand: draft ? "BORRADOR INTERNO" : brand,
+      title: config.manual.title,
+      version: config.manual.contentVersion,
+      lede: draft
+        ? "Borrador para la toma de capturas. Cada imagen pendiente lleva debajo la ruta y el nombre exactos con los que debe entregarse el archivo. Guárdela tal cual, sin cambiar mayúsculas ni extensión. No distribuir."
+        : (config.manual.lede ??
+           `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, "tenant", requireAxisValue(target, "tenant"))}.`),
+      meta: draft
+        ? "© 2026 Inovisec  |  Documento de trabajo interno  |  No es la versión para el cliente"
+        : "© 2026 Inovisec  |  Todos los Derechos Reservados  |  Documento Confidencial",
+    };
+
     const html = renderHtml(manual, {
       ...(declared === undefined ? {} : { theme: themes[declared] }),
-      header: draft
-        ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${config.manual.contentVersion}  |  NO DISTRIBUIR`
-        : `${brand}  |  ${config.manual.title}  |  v${config.manual.contentVersion}`,
+      header: headerLine,
       slots,
       images: (slot) => images.resolve(slot),
       figures: manual.figures,
       draft,
       polyfill,
-      cover: {
-        brand: draft ? "BORRADOR INTERNO" : brand,
-        title: config.manual.title,
-        version: config.manual.contentVersion,
-        lede: draft
-          ? "Borrador para la toma de capturas. Cada imagen pendiente lleva debajo la ruta y el nombre exactos con los que debe entregarse el archivo. Guárdela tal cual, sin cambiar mayúsculas ni extensión. No distribuir."
-          : (config.manual.lede ??
-             `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, "tenant", requireAxisValue(target, "tenant"))}.`),
-        meta: draft
-          ? "© 2026 Inovisec  |  Documento de trabajo interno  |  No es la versión para el cliente"
-          : "© 2026 Inovisec  |  Todos los Derechos Reservados  |  Documento Confidencial",
-      },
+      cover,
     });
 
     const htmlPath = join(outDir, name.replace(/\.pdf$/, ".html"));
     const pdfPath = join(outDir, name);
     writeFileSync(htmlPath, html, "utf8");
     const { pages, placements } = await printToPdf(htmlPath, pdfPath);
+
+    if (wantDocx) {
+      const docxPath = join(outDir, name.replace(/\.pdf$/, ".docx"));
+      await buildDocx(
+        manual,
+        htmlPath,
+        docxPath,
+        slots,
+        images,
+        declared === undefined ? themes.broadsec : themes[declared],
+        cover,
+        headerLine,
+        "© 2026 Inovisec — Confidencial — Uso Interno",
+        "INOVISEC",
+      );
+      console.log(`  ${" ".repeat(16)} Word deliverable -> ${basename(docxPath)}`);
+    }
 
     for (const slot of images.indexed()) seenOnDisk.add(slot);
     for (const entry of entries) askedFor.add(entry.slot);
@@ -761,7 +858,7 @@ export async function run(argv: readonly string[]): Promise<number> {
     !manualId
   ) {
     console.error(
-      `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table]\n` +
+      `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table] [--docx]\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
@@ -774,6 +871,9 @@ export async function run(argv: readonly string[]): Promise<number> {
         `           also write imagenes-pendientes-<tenant>.md: every pending image\n` +
         `           in reading order with the page it landed on, and a blank column\n` +
         `           to fill in. Page numbers are only true of that render.\n` +
+        `  --docx   also write the manual as a Word document, beside the PDF. It\n` +
+        `           matches the PDF's type, palette, tables and figures but NOT its\n` +
+        `           page breaks: Word reflows, so the page count can differ.\n` +
         `  extract  read the source product and write knowledge/module-map.json,\n` +
         `           reporting what changed since the last map.`,
     );
@@ -833,7 +933,13 @@ ${drift.length} change(s) since the previous map:`);
       `building ${draft ? "DRAFT " : ""}${manualId}${label ? ` (${label})` : ""}` +
         `${draft ? " — internal, shows pending image names" : ""}`,
     );
-    await build(manualDir, filters, draft, rest.includes("--pending-table"));
+    await build(
+      manualDir,
+      filters,
+      draft,
+      rest.includes("--pending-table"),
+      rest.includes("--docx"),
+    );
     return 0;
   } catch (error) {
     console.error(`\n${formatCliError(error)}`);

@@ -13,6 +13,7 @@
     "@broadsec-manual/blocks": "workspace:*",
     "@broadsec-manual/core": "workspace:*",
     "@broadsec-manual/extract": "workspace:*",
+    "@broadsec-manual/render-docx": "workspace:*",
     "@broadsec-manual/render-web": "workspace:*",
     "@broadsec-manual/tokens": "workspace:*",
     "puppeteer-core": "^25.4.0",
