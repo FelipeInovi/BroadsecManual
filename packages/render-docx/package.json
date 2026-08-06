@@ -1,0 +1,17 @@
+{
+  "name": "@broadsec-manual/render-docx",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@broadsec-manual/blocks": "workspace:*",
+    "@broadsec-manual/tokens": "workspace:*",
+    "docx": "^9.7.1"
+  }
+}
