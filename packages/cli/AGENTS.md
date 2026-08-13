@@ -1,21 +1,48 @@
 # Agent Information — `@broadsec-manual/cli`
 
 The `broadsec-manual` command line. **The only package allowed to touch the
-filesystem, the network or the clock.**
+filesystem, the network or the clock** — for anything that belongs to a manual:
+content, config, knowledge, figures, output.
+
+One exception exists and it is not a precedent: `render-web/src/polyfill.ts`
+reads `pagedjs`'s bundled `paged.min.js` out of `node_modules` to inline it into
+the HTML. That is a package reading its own dependency's shipped asset, not a
+renderer reaching for the manual's data. A renderer that opens anything under
+`manuals/` is a bug.
 
 ## Commands
 
+There are **four**. The dispatch is `main.ts:854` — treat it, not this table, as
+the authority if they ever disagree.
+
 | Command | Does |
 |---|---|
-| `build <manual> --tenant <id>` | Assemble and render one manual for one target |
-| `build <manual> --all` | Every configured target |
-| `build <manual> --draft` | Internal build: prints the filename each pending image must be delivered under |
-| `images <manual> [--out <path>]` | Export the image request document for the area that produces the screenshots |
-| `validate <manual>` | Run all validations, render nothing |
-| `drift <manual>` | Re-extract the source repo and diff against `knowledge/` |
-| `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting drift |
-| `catalog` | Serve the block gallery |
-| `coverage <manual>` | Report dead content and per-target gaps |
+| `build <manual>` | Assemble and render every configured target |
+| `images <manual>` | Export the image request document for the area that produces the screenshots |
+| `capture <manual> --tenant <id>` | Shoot pending figures off the **running** product, per `manuals/<manual>/capture-recipes.yaml` |
+| `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
+
+Every command takes the axis filters `[--tenant <id>] [--axis <name>=<value> …]`
+except `extract`, which is per-manual and not per-target.
+
+| Flag | On | Does |
+|---|---|---|
+| `--draft` | `build` | Internal build: prints the filename each pending image must be delivered under. Never distribute one. |
+| `--pending-table` | `build` | Also write `imagenes-pendientes-<tenant>.md` — every pending image in reading order, with the page it landed on and a blank column to fill in |
+| `--docx` | `build` | Also write the manual as a Word document beside the PDF |
+| `--out <path>` | `images` | Where to write the request document |
+| `--only <slot,…>` | `capture` | Restrict the run to named slots |
+
+### Commands this file used to claim, and where they went
+
+`validate` and `coverage` were never built. `drift` was folded into `extract`,
+which reports the diff against the previous map. `catalog` was to serve the
+block gallery; the gallery ships instead as the manual `manuals/_catalog`, built
+by `build` like any other.
+
+Do not re-add any of them to this table before the code exists. A command table
+that lists intentions is how an agent ends up invoking a command that is not
+there.
 
 ## Rules
 
