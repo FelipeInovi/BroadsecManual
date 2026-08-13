@@ -74,7 +74,8 @@ exist.
 ## Repository map
 
 ```
-sources/            Registry of source product repos (read-only inputs)
+sources/            Registry of source product repos (read-only inputs).
+                    START HERE to onboard a product this repo does not know yet
 manuals/            One folder per manual — knowledge, content, assets
 packages/
   blocks/           Block type definitions + AST types  ← THE CONTRACT
@@ -125,8 +126,14 @@ something does.
 ## Skills
 
 Skills live in `skills/` as spec-compliant Agent Skills folders
-(https://agentskills.io/specification). Read `skills/AGENTS.md` before adding or
-editing one.
+(https://agentskills.io/specification).
+
+**To find the one that governs your work, read the `AGENTS.md` of the directory
+you are working in — it names them.** No list of skills lives in this file: a
+list here would be a second copy of a mapping each directory already owns, and a
+mapping stated twice is a mapping that drifts.
+
+Read `skills/AGENTS.md` before adding or editing a skill.
 
 ## Current state
 

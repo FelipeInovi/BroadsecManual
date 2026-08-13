@@ -28,12 +28,42 @@ Nobody authors a manual by reading source code directly. That is how a manual
 ends up asserting things nobody can trace, and how it silently rots when the
 code moves.
 
+## Skills that govern work here
+
+| Skill | Owns |
+|---|---|
+| `source-extraction` | Getting facts out of a product and into a module map |
+| `source-assets` | Taking images from the product's own asset files |
+
+Read `source-extraction` before onboarding a product. It owns the extraction
+rules; this file does not restate them.
+
 ## Adding a source
 
-1. Add an entry to `registry.yaml`.
-2. Create `manuals/<id>/` with a `manual.config.yaml`.
-3. Run `broadsec-manual extract <id>`.
-4. Review the generated `module-map.json` before writing a word of content.
+**Investigate first. The registry entry is the OUTPUT of that investigation, not
+its starting point.**
 
-Step 4 is not optional. An extraction nobody checked is a set of confident
-claims nobody verified.
+Every path in an existing entry — `src/render/config/*.config.ts`,
+`AppRoutes.tsx`, a translations file — is true of *that* product and of no
+other. Copying the shape of an existing entry onto a new product produces a map
+that is confidently wrong, and every sentence written against it inherits the
+error.
+
+1. **Survey the product and report before touching this folder.** Framework and
+   structure; whether it is multi-tenant at all and, if so, how tenancy is
+   resolved, with file and line; where UI labels live. State what you could not
+   determine rather than assuming it.
+2. **Judge whether `packages/extract` fits.** It is written for one product's
+   shape — read `packages/extract/AGENTS.md` before assuming it generalises. The
+   answer is *fits*, *fits partly*, or *needs a new extractor*, and it is a
+   finding to report, not a detail to work around.
+3. Add an entry to `registry.yaml` reflecting what you actually found.
+4. Create `manuals/<id>/` with a `manual.config.yaml`. Declare only the axes the
+   product really has — a declared axis nothing varies on is noise in every
+   build.
+5. Run `broadsec-manual extract <id>`.
+6. Review the generated `module-map.json` before writing a word of content.
+
+Steps 1, 2 and 6 are not optional. An extraction nobody checked is a set of
+confident claims nobody verified — and one run on a mis-shaped registry entry
+will happily report a single tenant for a product that has five.
