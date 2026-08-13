@@ -54,8 +54,9 @@ discover them, link that folder into its skills directory — see
 
 ## Status
 
-Scaffolded. The block catalog and the PDF render engine are intentionally
-deferred until the design team delivers the fixed visual structures.
+Implemented and shipping — four tenant PDFs and one .docx across two manuals.
+The block catalogue, the tokens and the PDF engine are all decided in this
+repository; see `AGENTS.md` for what that means before changing one.
 
 Agent instructions live in `AGENTS.md` files throughout the repo — the closest
 one to a file takes precedence.

@@ -1,8 +1,11 @@
 # Block catalogue
 
-**PROVISIONAL.** These block types were derived from `Manual_Broadsec_v5.pdf`
-to prove the pipeline end to end. They are not the design team's catalogue.
+Nine block types, derived by surveying every page of `Manual_Broadsec_v5.pdf`
+for the visual structures the content actually recurs on, then proven against
+two delivered manuals.
 
-Expect them to be replaced or reshaped once the fixed visual structures arrive.
-Content written against them may need migration — that is an accepted cost of
-the spike, not a precedent.
+**This is the catalogue.** No external one is pending, and no type here is a
+placeholder for a shape someone else will decide.
+
+Adding a tenth follows the procedure in `../../AGENTS.md`. It is a versioned
+change to a contract every manual depends on — deliberate, never casual.

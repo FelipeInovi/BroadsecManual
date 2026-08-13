@@ -17,7 +17,8 @@ manual:
   register: neutral-formal
 
 # Block catalogue version this manual's content is written against.
-# Opens once the design team delivers the fixed visual structures.
+# Declarative only: the build imports the catalogue directly from
+# `@broadsec-manual/blocks` and does not read this key today.
 catalog:
   version: null
 

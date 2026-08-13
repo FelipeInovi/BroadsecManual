@@ -80,11 +80,12 @@ packages/
   blocks/           Block type definitions + AST types  ← THE CONTRACT
   core/             Parser, assembler, conditioning, numbering, validation
   extract/          Source product -> facts (pure; the CLI does the file reading)
-  tokens/           Design tokens from the design team
-  render-pdf/       AST → PDF          (engine not yet chosen — see its AGENTS.md)
-  render-web/       AST → HTML preview (engine not yet chosen)
-  catalog/          Live gallery of every block, variant and tenant
-  cli/              broadsec-manual build | validate | drift | catalog
+  tokens/           Design tokens, one palette per brand
+  render-web/       AST → HTML. Also the PDF path, printed by headless Chrome
+  render-docx/      AST → .docx
+  render-pdf/       Unused — read its AGENTS.md before touching it
+  catalog/          Unused — the gallery ships today as `manuals/_catalog`
+  cli/              broadsec-manual build | images | capture | extract
 skills/             Agent Skills (agentskills.io spec) — portable, vendor-neutral
 ```
 
@@ -107,7 +108,9 @@ pnpm type-check          # tsc --noEmit across the workspace
 pnpm test                # vitest
 ```
 
-CLI commands land in `packages/cli` as the pipeline is implemented.
+The CLI lives in `packages/cli` and has four commands: `build`, `images`,
+`capture`, `extract`. Run one with
+`node packages/cli/src/main.ts <command> <manual>`.
 
 ## Testing
 
@@ -127,15 +130,25 @@ editing one.
 
 ## Current state
 
-The repository is **scaffolded, not implemented**. Package boundaries, the AST
-contract and agent instructions exist; the block catalog, renderers and content
-do not yet.
+The pipeline is implemented end to end and has shipped: four tenant PDFs and one
+.docx across two manuals (`broadlineavida`, `bridge-primera-entrega`), plus the
+structure gallery `manuals/_catalog`.
 
-Two decisions are deliberately **deferred until the design team delivers the
-fixed visual structures**:
+Three things once deferred are now **decided in this repository**:
 
-- the concrete block catalog (`packages/blocks/src/catalog/`)
-- the PDF render engine (`packages/render-pdf/`)
+- **The block catalogue** — the nine types in `packages/blocks/src/catalog/`,
+  derived from a survey of `Manual_Broadsec_v5.pdf` and proven against real
+  content.
+- **The tokens** — `packages/tokens/src/index.ts`, one palette per brand, each
+  value traced to a source the brand owns.
+- **The PDF engine** — `render-web` printed by headless Chrome, driven by the
+  CLI.
 
-Do not pre-empt either. Building the invariants first is intentional
-sequencing, not an oversight.
+**No external delivery is pending.** Do not write "awaiting the design team"
+into this repo, and do not treat any of the three as an open question. They are
+versioned decisions: changing one is a normal change with a normal cost, made on
+evidence, not a wait to be ended.
+
+Still genuinely unimplemented: `packages/render-pdf` and `packages/catalog`.
+Each argues why in its own AGENTS.md — read it before assuming the folder is
+merely unfinished.

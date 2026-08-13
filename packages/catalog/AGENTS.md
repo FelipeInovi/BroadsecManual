@@ -5,7 +5,7 @@ targets.
 
 ## Why it exists
 
-It is the **acceptance surface with the design team**. They sign off here — on
+It is the **acceptance surface for the catalogue**. A block type is reviewed on
 one page showing every structure — not on a 120-page PDF where a broken block
 hides on page 74.
 
@@ -34,4 +34,12 @@ For every block type in the catalogue:
 
 ## Status
 
-Empty until the block catalogue opens.
+Unimplemented — but not blocked, and not waiting on anyone.
+
+The gallery ships today as `manuals/_catalog`: hand-written fixtures run through
+the real pipeline, delivered as `catalogo-estructuras-v0.1.0.pdf`. That works,
+and it has the exact flaw the rule above names — the list is hand-written, so a
+block type added to `blocks` does not appear there on its own.
+
+Closing that gap is this package's whole job. Until it does, `manuals/_catalog`
+IS the gallery and must be updated by hand whenever a block type changes.

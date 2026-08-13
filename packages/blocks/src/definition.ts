@@ -2,8 +2,7 @@
  * How a block type is declared.
  *
  * The catalogue of concrete block types is defined in `./catalog/`, one file
- * per type, and is populated once the design team delivers the fixed visual
- * structures. This file describes the shape those declarations take.
+ * per type. This file describes the shape those declarations take.
  */
 
 import type { ZodType, ZodTypeDef } from "zod";

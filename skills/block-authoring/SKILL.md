@@ -10,8 +10,9 @@ metadata:
 # Authoring content as blocks
 
 Manual content is a tree of **typed block instances**, not prose with formatting.
-The catalogue of block types is fixed and defined by the design team. Your job
-is to pick the right one and fill it correctly.
+The catalogue of block types is fixed and defined in
+`packages/blocks/src/catalog/`. Your job is to pick the right one and fill it
+correctly.
 
 ## The rule that keeps this maintainable
 
@@ -69,7 +70,9 @@ Do not add one yourself unless you own the catalogue. Raise it with:
 
 ## Adding a block type to the catalogue
 
-Only when the design team has delivered the structure.
+Only if you own the catalogue, and only after the structure is agreed. The
+catalogue is closed — nine types, decided in this repository — so a tenth is a
+versioned change to a contract every manual depends on, never a convenience.
 
 1. One file per type in `packages/blocks/src/catalog/`.
 2. Fully specified Zod schema. No `z.any()`.

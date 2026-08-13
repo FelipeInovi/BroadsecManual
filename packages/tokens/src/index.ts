@@ -1,13 +1,13 @@
 /**
  * Design tokens, one palette per brand.
  *
- * PROVISIONAL. The Broadsec values were extracted from the vector content
- * stream of `Manual_Broadsec_v5.pdf` (exact source values, not sampled pixels);
- * the Bridge values come from Bridge360's own `@theme` block in
- * `src/app/App.css`. Neither was sampled from a screenshot.
+ * The Broadsec values were extracted from the vector content stream of
+ * `Manual_Broadsec_v5.pdf` (exact source values, not sampled pixels); the
+ * Bridge values come from Bridge360's own `@theme` block in `src/app/App.css`.
+ * Neither was sampled from a screenshot, and neither is a placeholder awaiting
+ * replacement.
  *
- * These are replaced wholesale by the design team's delivery. Nothing outside
- * this file may hardcode a colour or a size.
+ * Nothing outside this file may hardcode a colour or a size.
  *
  * The two brands share the SEMANTIC layer below and differ only in the palette
  * and type fed into it. That is deliberate: a second manual must not become a

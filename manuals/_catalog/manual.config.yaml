@@ -1,9 +1,11 @@
-# Block gallery — PROVISIONAL.
+# Block gallery.
 #
 # Hand-written fixtures rendered through the real pipeline, so what you see is
-# what the system actually produces. packages/catalog will eventually generate
-# this FROM the catalogue; until then a hand-listed gallery can go stale, which
-# is exactly why it is marked provisional.
+# what the system actually produces.
+#
+# The list being hand-written is the known flaw: a block type added to
+# `packages/blocks` does not appear here on its own. Update this file whenever
+# the catalogue changes. Closing that gap is what `packages/catalog` is for.
 
 version: 1
 

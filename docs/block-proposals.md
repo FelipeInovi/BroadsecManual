@@ -4,16 +4,17 @@ Staging document. These are **candidates**, not catalogue entries.
 
 They were derived by surveying all 50 pages of `Manual_Broadsec_v5.pdf` and
 recording which visual structures actually recur, with page evidence for each.
-They exist so the design meeting starts from the structures the content already
+They exist so the decision starts from the structures the content already
 demands, rather than from invented ones.
 
-Nothing here is implemented. When the design team delivers the fixed visual
-structures, these get confirmed, reshaped or dropped — and only then do they
-become files in `packages/blocks/src/catalog/`.
+Nothing here is implemented. Each candidate gets confirmed, reshaped or dropped
+on its own evidence, by the procedure in `packages/blocks/AGENTS.md` — and only
+then becomes a file in `packages/blocks/src/catalog/`. A candidate that never
+earns that is not a backlog item; it is a structure the content did not need.
 
 ## Survey summary
 
-Structures already covered by the provisional catalogue:
+Structures already covered by the catalogue:
 
 | Existing block | Seen on |
 |---|---|
@@ -152,13 +153,13 @@ Worth deciding deliberately rather than by accident.
 
 ---
 
-## P5 — `callout`, with variants
+## P5 — `callout`, with variants — **IMPLEMENTED**
 
 Evidence: p49 (`IMPORTANTE:` in an amber box with a left bar).
 
-The provisional `note` block renders one style only — teal surface, teal bar.
-The source manual has at least a second, visually distinct variant: amber
-surface, amber bar, bold `IMPORTANTE:` lead.
+Shipped as `packages/blocks/src/catalog/callout.ts`, with the closed variant set
+`info | important`. Kept here for the evidence trail; it is no longer a
+candidate.
 
 ```yaml
 - id: observaciones.bloqueo

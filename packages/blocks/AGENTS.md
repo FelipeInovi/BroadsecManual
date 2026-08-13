@@ -9,7 +9,7 @@ deliberate, versioned, and never casual.
 - The manual AST (`ast.ts`)
 - The conditioning model (`conditioning.ts`)
 - How a block type is declared (`definition.ts`)
-- The block catalogue itself (`catalog/`) — **empty on purpose**
+- The block catalogue itself (`catalog/`) — **nine types, and closed**
 
 ## What does NOT belong here
 
@@ -21,17 +21,22 @@ deliberate, versioned, and never casual.
 If you find yourself importing a renderer here, stop. The dependency runs the
 other way.
 
-## The catalogue is deferred
+## The catalogue is closed
 
-`src/catalog/` will hold one file per block type, each exporting a
-`BlockDefinition`. It stays empty until the design team delivers the fixed
-visual structures.
+`src/catalog/` holds one file per block type, each exporting a
+`BlockDefinition`. There are nine. They were derived by surveying every page of
+`Manual_Broadsec_v5.pdf` for the structures the content actually recurs on, and
+proven against two delivered manuals.
 
-Do not populate it by guessing what blocks might be needed. Inventing a
-half-right catalogue now means migrating content later — the exact cost this
-architecture exists to avoid.
+**This is the catalogue.** There is no other one arriving, and nothing here is
+waiting on anyone outside this repository.
 
-## Rules for adding a block type, once the catalogue opens
+Closed does not mean frozen — it means a tenth type is added deliberately, by
+the rules below, and never by guessing what might be needed. Inventing a
+half-right block means migrating content later, the exact cost this architecture
+exists to avoid.
+
+## Rules for adding a block type
 
 1. One file per type in `src/catalog/`, named after the type.
 2. Every block gets a `description` written for whoever must choose between

@@ -19,7 +19,7 @@ export * from "./field-list.ts";
 export * from "./procedure.ts";
 export * from "./term-list.ts";
 
-/** PROVISIONAL — see README.md in this folder. */
+/** The catalogue every manual is written against — see README.md. */
 export const catalog: BlockCatalog = new Map(
   [
     prose,

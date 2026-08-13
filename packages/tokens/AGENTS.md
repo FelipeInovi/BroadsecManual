@@ -16,8 +16,9 @@ second product with different branding is a new token set, not a fork.
   Blocks *consume* tokens; tokens must not know who consumes them.
 - **No renderer-specific values.** A token holds `#1B4D8F`, not a CSS custom
   property and not a Typst colour literal. Renderers translate.
-- **Nothing is authored here by guesswork.** Values come from the design team.
-  A placeholder must be visibly named as one and tracked, never quietly shipped.
+- **Nothing is authored here by guesswork.** Every value traces to a source the
+  brand owns — a vector content stream, a product's own theme block. Never a
+  colour sampled off a screenshot, never one invented to unblock a build.
 
 ## Structure
 
@@ -33,5 +34,14 @@ implementation detail of the semantic layer.
 
 ## Status
 
-Awaiting the design team's delivery. Do not invent a palette to unblock a demo —
-a placeholder that ships is a placeholder that stays.
+Two brands are defined and shipping, each traced to a source:
+
+| Brand | Source |
+|---|---|
+| Broadsec | The vector content stream of `Manual_Broadsec_v5.pdf` — exact values, not sampled pixels |
+| Bridge360 | The product's own `@theme` block in `src/app/App.css` |
+
+Both are decisions, not placeholders, and nothing external is pending on them.
+
+A third brand is a new palette fed into the same semantic layer — not a fork,
+and not a second renderer.
