@@ -1,10 +1,10 @@
 ---
 name: source-extraction
-description: Extracts a module map from a Broadsec product repository — modules, screens, routes, tenant registry, per-element tenant gating, and UI labels from the i18n catalogue — into knowledge/module-map.json with file-and-line provenance for every fact. Use when onboarding a new source product, regenerating a module map, investigating how tenants differ in the product, or checking a manual for drift against the code it documents.
+description: Extracts a module map from a Broadsec product repository into knowledge/module-map.json with file-and-line provenance for every fact. The command emits the tenant registry, the capability matrix, and every line of code that gates on a deployment; routes, screens and i18n labels are specified in this skill and not yet emitted. Use when onboarding a new source product, regenerating a module map, investigating how tenants differ in the product, or checking a manual for drift against the code it documents.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Extracting a module map from a source product
@@ -13,6 +13,27 @@ The module map is the **only** bridge between product code and manual content.
 Content is written against the map, never against source code read ad hoc. If a
 fact is not in the map, it does not go in the manual — you add it to the map
 first.
+
+## What the map carries today
+
+`broadsec-manual extract <manual>` emits four keys, and only these:
+
+| Key | Content |
+|---|---|
+| `source` | the source id, from the registry |
+| `tenants` | one row per deployment the product declares |
+| `capabilities` | flag → which deployments declare it, plus `absentFrom` |
+| `tenantReferences` | every line of code that compares against a deployment |
+
+**Steps 3 and 5 below — routes and screens, UI labels — are specified here and
+not implemented.** Hand-adding them to the file is not a workaround: `extract`
+rewrites the whole map on every run, so a hand-authored key is deleted by the
+next extraction. Growing the map means growing the extractor.
+
+Until it does, routes and labels are the one class of fact a manual cannot trace
+to the map. That gap is recorded rather than papered over: closing it is a
+change to the extractor and to how content references a label, not a decision to
+take again in each section.
 
 ## Hard rules
 
@@ -125,17 +146,34 @@ diff it and report:
 
 The diff is the drift report. It is the point of regenerating the map.
 
+`diffMaps` (`packages/cli/src/extract.ts`) compares deployments, capability
+flags, and deployment gates. A gate is identified by file, deployment codes and
+kind — **never by line or text**, so moving a gate down the file or rewording a
+line that decides the same thing reports nothing. What it reports is a gate
+appearing, disappearing, or changing polarity, which is the case that most
+directly invalidates tenant tagging already written.
+
+Modules and elements are not compared, because they are not emitted.
+
 ## Output shape
+
+**This is the target shape, not today's file.** `modules` and everything under
+it comes from steps 3 and 5, which the command does not emit — see "What the map
+carries today". The block is kept because it is the contract a new extractor is
+written against; deleting it would delete the specification.
 
 The keys are the contract; the values below are `broadlineavida`'s. `kind`,
 `i18nKey` and the tenant ids are that product's vocabulary — a product with no
 map layers has no `"kind": "map-layer"`, and one with no catalogue carries a
 literal label plus its source instead of an `i18nKey`.
 
+There is deliberately **no timestamp**: the map is regenerated constantly, and a
+clock would make every regeneration a diff, drowning the drift the file exists
+to show (`packages/cli/src/extract.ts:201`).
+
 ```jsonc
 {
   "source": "broadlineavida",
-  "extractedAt": "<iso-8601>",
   "tenants": [{ "id": "mv", "code": "MV", "source": "src/…/mv.config.ts:2" }],
   "modules": [
     {
