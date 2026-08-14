@@ -70,12 +70,56 @@ export interface ModuleMap {
   readonly registryMismatch?: readonly string[];
 }
 
+const POLARITIES = ["positive", "negative", "mixed"] as const;
+type PolarityCounts = Record<(typeof POLARITIES)[number], number>;
+
+/**
+ * Identity of a deployment gate: where it lives and what it decides — never its
+ * line, never its text.
+ *
+ * Keying on position would report every gate below an added import, and every
+ * rewrite that decides exactly the same thing. Both are noise, and a report that
+ * fires on noise is a report nobody reads.
+ */
+const gateKey = (r: TenantReference): string => `${r.file}|${r.codes.join(",")}|${r.kind}`;
+
+/** `AddObservation.tsx — MV (inline)` */
+function describeGate(key: string): string {
+  const [file, codes, kind] = key.split("|");
+  return `${file} — ${codes} (${kind})`;
+}
+
+/** `positive, negative x2` — what the gate decides, and in how many places. */
+function summarise(counts: PolarityCounts): string {
+  return POLARITIES.filter((p) => counts[p] > 0)
+    .map((p) => (counts[p] > 1 ? `${p} x${counts[p]}` : p))
+    .join(", ");
+}
+
+function gates(m: ModuleMap): Map<string, PolarityCounts> {
+  const out = new Map<string, PolarityCounts>();
+  // `before` is JSON parsed off disk and may have been written by a version
+  // that predates this key.
+  for (const r of m.tenantReferences ?? []) {
+    const key = gateKey(r);
+    const row = out.get(key) ?? { positive: 0, negative: 0, mixed: 0 };
+    row[r.polarity] += 1;
+    out.set(key, row);
+  }
+  return out;
+}
+
 /**
  * Compare two maps and report what moved.
  *
  * This diff IS the drift report, and it is the reason to regenerate the map at
  * all: a capability that changed hands means tenant tagging in the content may
  * now be wrong, and nothing else in the pipeline can notice that.
+ *
+ * Gates are compared for the same reason and matter more often. Divergence in
+ * this product is mostly element-level — inline comparisons scattered through
+ * components — so a gate that flips polarity invalidates tagging already written
+ * while every other stage of the pipeline succeeds.
  */
 export function diffMaps(before: ModuleMap, after: ModuleMap): readonly string[] {
   const out: string[] = [];
@@ -103,6 +147,27 @@ export function diffMaps(before: ModuleMap, after: ModuleMap): readonly string[]
     }
   }
   for (const flag of b.keys()) if (!a.has(flag)) out.push(`capability removed: ${flag}`);
+
+  const gatesBefore = gates(before);
+  const gatesAfter = gates(after);
+  for (const [key, now] of gatesAfter) {
+    const was = gatesBefore.get(key);
+    if (!was) {
+      out.push(`gating added: ${describeGate(key)} — ${summarise(now)}`);
+      continue;
+    }
+    const wasText = summarise(was);
+    const nowText = summarise(now);
+    if (wasText !== nowText) {
+      out.push(
+        `gating changed: ${describeGate(key)} — was ${wasText}, now ${nowText} ` +
+          `— content tagged on this may be wrong`,
+      );
+    }
+  }
+  for (const key of gatesBefore.keys()) {
+    if (!gatesAfter.has(key)) out.push(`gating removed: ${describeGate(key)}`);
+  }
 
   return out;
 }
