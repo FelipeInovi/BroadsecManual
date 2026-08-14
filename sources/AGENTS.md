@@ -67,3 +67,9 @@ error.
 Steps 1, 2 and 6 are not optional. An extraction nobody checked is a set of
 confident claims nobody verified — and one run on a mis-shaped registry entry
 will happily report a single tenant for a product that has five.
+
+## After the map
+
+The map is the input to authoring, not the end of the work. Content is written
+against it under `manuals/<id>/` — continue in `manuals/AGENTS.md`, which owns
+the authoring rules and names the skills that govern them.
