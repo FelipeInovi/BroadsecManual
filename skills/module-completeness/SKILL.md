@@ -292,8 +292,10 @@ has it.
 
 ## Use the catalogue, always
 
-Content is written by instantiating the eight structures in
-`packages/blocks/src/catalog/`. Never compose layout by hand.
+Content is written by instantiating the structures in
+`packages/blocks/src/catalog/` — read that folder for the current set rather than
+trusting a count written here, which is one more thing that drifts as the
+catalogue grows. Never compose layout by hand.
 
 If the content does not fit any of them, **request a new block type** — see the
 `block-authoring` skill. One hand-rolled table is where maintainability starts

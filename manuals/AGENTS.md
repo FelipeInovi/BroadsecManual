@@ -25,8 +25,18 @@ place needs, the build decides where the file lives. See the
 Manual content is **Spanish**, neutral and formal ("Diríjase a…", "Haga clic
 en…"). No regionalisms, no voseo, no second-person familiar.
 
-Everything else — ids, filenames, config keys, comments, commit messages — is
-English. An id is a symbol, not prose.
+**Ids and section filenames are Spanish too**, because they name this manual's own
+subject matter: `mapa.capa.trafico`, `bot.alarmas.como-llegar`,
+`10-fuerzas-en-campo.yaml`. Product acronyms and words the interface itself
+borrows are written the way the product writes them — `cctv`, `ptz`, `avl`,
+`barra.dashboard`. Whoever debugs a build reads an id beside the content it points
+at, and a translated id makes that harder for no gain.
+
+**The machinery is English**: config keys and block props (`when`, `rows`,
+`widthPercent`), block type names, code comments, commit messages, and
+infrastructure filenames (`manual.config.yaml`, `image-requests.json`). Those
+belong to the pipeline, which is shared by every manual and every product, so
+they cannot follow one manual's language.
 
 ## Skills that govern work here
 

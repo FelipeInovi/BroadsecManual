@@ -31,16 +31,23 @@ Requesting a block is cheap. Migrating improvised content is not.
 1. Read the block's `description`. It says what the block is for **and when to
    use it instead of a similar one**. That sentence exists precisely for this
    decision.
-2. Browse the catalogue gallery (`broadsec-manual catalog`) — seeing the
-   structures beats reading their schemas.
+2. Read the type's own definition in `packages/blocks/src/catalog/<type>.ts`.
+   The schema and its comments are the whole spec. **There is no gallery
+   command** — a catalogue browser was designed and never built, so the source
+   files are the catalogue.
 3. Still unsure between two? Pick the more specific one. A specific block
    carries meaning a generic one loses, and meaning is what survives a restyle.
 
 ## Filling a block
 
-- **Every node gets a stable `id`**: lowercase, dot-separated, meaningful —
-  `mapa.capas.semaforos`. Never derived from a number, never renamed casually
-  (references point at it).
+- **Every node gets a stable `id`**: lowercase, dot-separated, meaningful. Never
+  derived from a number, never renamed casually (references point at it).
+- **A block's rows get their own namespace beside the block, never under it.**
+  The shipped convention is a short singular form of the block's own segment: the
+  `mapa.capas` icon-table holds rows `mapa.capa.trafico`, and
+  `bot.alarmas.columnas` holds `bot.alarmas.col.estado`. Read the ids already in
+  `manuals/<manual>/sections/` before inventing a shape — a manual's id
+  convention is its own, and this one is broadlineavida's.
 - **Props follow the schema exactly.** Validation will reject the rest; do not
   fight it.
 - **UI labels come from i18n**, referenced by key, never retyped. The manual
