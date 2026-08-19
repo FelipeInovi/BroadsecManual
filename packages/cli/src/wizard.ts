@@ -205,6 +205,125 @@ export function themeUsage(repoRoot: string, themeNames: readonly string[]): Map
   return usage;
 }
 
+/**
+ * Where a manual records what was DECIDED — never what was done.
+ *
+ * Deliberately committed, and deliberately not `.broadsec-manual/`: that folder
+ * is gitignored and its files are overwritten per run, so a fresh checkout would
+ * have no memory at all. It also sits beside `AGENTS.md` rather than inside it —
+ * that file is timeless product knowledge, and a status section changing every
+ * session would churn the one file agents read for rules.
+ */
+export const STATE_FILE = "ESTADO.md";
+
+/**
+ * What the repository can work out about a manual on its own.
+ *
+ * Every field here is DERIVED, which is the point: progress is readable off
+ * disk and therefore cannot be stale, whereas a written log of the same facts
+ * drifts the moment a commit is reverted and is believed anyway.
+ */
+export interface ManualState {
+  readonly id: string;
+  readonly title: string;
+  /** `manual.source`. Null blocks extraction entirely — see the prompt's gate. */
+  readonly source: string | null;
+  readonly hasMap: boolean;
+  readonly sections: number;
+  /** Pending image slots, or null when nothing has been exported yet. */
+  readonly pending: number | null;
+  readonly totalImages: number | null;
+  readonly hasState: boolean;
+}
+
+/** Every manual on disk, with the state the repository can derive for it. */
+export function readManualStates(repoRoot: string): ManualState[] {
+  const manualsDir = join(repoRoot, "manuals");
+  if (!existsSync(manualsDir)) return [];
+
+  const out: ManualState[] = [];
+  for (const id of readdirSync(manualsDir).sort()) {
+    const dir = join(manualsDir, id);
+    const configFile = join(dir, "manual.config.yaml");
+    if (!existsSync(configFile)) continue;
+
+    const config = parseYaml(readFileSync(configFile, "utf8")) as {
+      manual?: { title?: string; source?: string };
+    };
+    const sectionsDir = join(dir, "sections");
+    const sections = existsSync(sectionsDir)
+      ? readdirSync(sectionsDir).filter((f) => f.endsWith(".yaml")).length
+      : 0;
+
+    // Read rather than recomputed: `images` is what writes this, and a count
+    // invented here could disagree with the document handed to another team.
+    let pending: number | null = null;
+    let totalImages: number | null = null;
+    const requests = join(dir, "image-requests.json");
+    if (existsSync(requests)) {
+      const counts = (JSON.parse(readFileSync(requests, "utf8")) as {
+        counts?: { pending?: number; total?: number };
+      }).counts;
+      pending = counts?.pending ?? null;
+      totalImages = counts?.total ?? null;
+    }
+
+    out.push({
+      id,
+      title: config.manual?.title ?? id,
+      source: config.manual?.source ?? null,
+      hasMap: existsSync(join(dir, "knowledge", "module-map.json")),
+      sections,
+      pending,
+      totalImages,
+      hasState: existsSync(join(dir, STATE_FILE)),
+    });
+  }
+  return out;
+}
+
+/** One line of derived state, for the picker. Information, never a decision. */
+export function describeState(s: ManualState): string {
+  const parts = [
+    `${s.sections} sección(es)`,
+    s.source === null ? "SIN fuente declarada" : `fuente ${s.source}`,
+    s.hasMap ? "con mapa" : "SIN mapa",
+  ];
+  if (s.pending !== null) {
+    parts.push(s.pending === 0 ? "imágenes completas" : `${s.pending} imagen(es) pendiente(s)`);
+  }
+  parts.push(s.hasState ? `con ${STATE_FILE}` : `sin ${STATE_FILE}`);
+  return parts.join(" · ");
+}
+
+/**
+ * The closing instruction both prompts carry: record decisions, not progress.
+ *
+ * Shared so the two flows cannot drift into describing the same file
+ * differently — the continuation prompt reads what the creation prompt wrote.
+ */
+const stateInstruction = (manualId: string): readonly string[] => [
+  `## Cuando pares, dejá el estado escrito`,
+  "",
+  `Escribí o actualizá \`manuals/${manualId}/${STATE_FILE}\` antes de terminar tu turno.`,
+  `Ese archivo es lo único que le va a decir al próximo agente por qué las cosas`,
+  `están como están.`,
+  "",
+  `Registrá SOLO decisiones:`,
+  "",
+  `  - Qué módulo o sección sigue, y POR QUÉ ese y no otro.`,
+  `  - Qué inventario de módulos se acordó, si se acordó alguno.`,
+  `  - A qué se dijo que no, y el motivo. Una opción descartada sin motivo se`,
+  `    vuelve a proponer en la sesión siguiente.`,
+  `  - Qué quedó sin resolver y qué haría falta para resolverlo.`,
+  "",
+  `NO registres nada que se pueda derivar del disco — qué secciones existen,`,
+  `cuántas imágenes faltan, qué se commiteó. Eso ya lo dicen \`sections/\`,`,
+  `\`image-requests.json\` y \`git log\`, y no pueden mentir. Un log que los repite se`,
+  `desactualiza en el primer revert y después se le cree igual, que es peor que no`,
+  `tenerlo.`,
+];
+
 const SCOPE_INSTRUCTIONS: Readonly<Record<Scope, string>> = {
   spike:
     "Escribí UNA sección, de punta a punta, y detenete. Elegí la sección que " +
@@ -372,6 +491,124 @@ export function assemblePrompt(a: WizardAnswers): string {
     `  - Las imágenes van al final. El contenido declara los slots; \`images\` exporta`,
     `    el documento de pedidos; recién entonces se entrega algo. Un manual recién`,
     `    escrito está 100% pendiente, y ese es el estado correcto.`,
+    "",
+    ...stateInstruction(a.manualId),
+  );
+
+  return lines.join("\n");
+}
+
+/**
+ * The prompt that resumes a manual somebody already started.
+ *
+ * The mirror image of `assemblePrompt`, and the asymmetry is the whole design.
+ * Creating a manual asks three questions because the repository knows nothing;
+ * resuming one asks none, because the repository already knows almost
+ * everything and the answers are on disk. So this prompt does not carry
+ * decisions — it carries where to READ them from, and which of the two sources
+ * wins when they disagree.
+ *
+ * Pure, like its counterpart, so the assembled text is tested without a TTY.
+ */
+export function assembleContinuationPrompt(s: ManualState): string {
+  const lines: string[] = [
+    `Continuar un manual que este repositorio ya empezó.`,
+    "",
+    `  Id del manual      ${s.id}`,
+    `  Título             ${s.title}`,
+    `  Fuente             ${s.source ?? "(ninguna declarada — ver la compuerta de abajo)"}`,
+    `  Mapa del producto  ${s.hasMap ? "knowledge/module-map.json presente" : "NO existe"}`,
+    `  Secciones escritas ${s.sections}`,
+    `  Imágenes           ${
+      s.pending === null
+        ? "todavía no se exportaron pedidos"
+        : `${s.pending} pendiente(s) de ${s.totalImages ?? "?"}`
+    }`,
+    `  Estado registrado  ${s.hasState ? `manuals/${s.id}/${STATE_FILE}` : `NO existe todavía`}`,
+    "",
+  ];
+
+  // The gate comes before everything, and it halts. Both blocking states are
+  // real in this repository today, and neither is recoverable by writing more
+  // content on top — content authored without a map is the defect the map
+  // exists to prevent.
+  if (s.source === null || !s.hasMap) {
+    lines.push(
+      `## Antes de escribir una palabra`,
+      "",
+      `Este manual no está en condiciones de recibir contenido nuevo todavía.`,
+      "",
+    );
+    if (s.source === null) {
+      lines.push(
+        `  - \`manuals/${s.id}/manual.config.yaml\` no declara \`manual.source\`, así que`,
+        `    nada sabe qué producto documenta y \`extract\` no puede ni correr. Esto se`,
+        `    resuelve primero. Si el producto no está en \`sources/registry.yaml\`, su`,
+        `    entrada es el RESULTADO de relevarlo — seguí "Adding a source" en`,
+        `    sources/AGENTS.md y no la escribas de memoria.`,
+      );
+    }
+    if (!s.hasMap) {
+      lines.push(
+        `  - No hay \`manuals/${s.id}/knowledge/module-map.json\`. El contenido se escribe`,
+        `    contra el mapa, nunca leyendo el producto a mano. Corré:`,
+        `      node packages/cli/src/main.ts extract ${s.id}`,
+        `    y revisá el mapa generado antes de seguir. El paso 6 no es opcional.`,
+      );
+    }
+    lines.push(
+      "",
+      `Reportá qué encontraste y ESPERÁ. No escribas secciones para tapar esto: un`,
+      `manual escrito sin mapa parsea y buildea igual, y por eso el defecto no se`,
+      `descubre hasta que lo lee un cliente.`,
+      "",
+    );
+  }
+
+  lines.push(
+    `## Dónde quedó esto`,
+    "",
+    `Hay dos fuentes, y NO valen lo mismo.`,
+    "",
+    `**El disco manda sobre el PROGRESO.** Derivalo, no lo preguntes ni lo asumas:`,
+    "",
+    `  - \`manuals/${s.id}/sections/*.yaml\` — qué secciones existen realmente.`,
+    `  - \`manuals/${s.id}/knowledge/module-map.json\` — tenants, capabilities y cada`,
+    `    línea del producto que discrimina por despliegue.`,
+    `  - \`manuals/${s.id}/image-requests.json\` — qué slots siguen pendientes.`,
+    `  - \`git log -- manuals/${s.id}/\` — qué se movió, cuándo y en qué commit.`,
+    "",
+    s.hasState
+      ? `**\`${STATE_FILE}\` manda sobre las DECISIONES, y solo sobre eso.** Leé`
+      : `**\`${STATE_FILE}\` mandaría sobre las DECISIONES, pero todavía no existe.** Leé`,
+    s.hasState
+      ? `\`manuals/${s.id}/${STATE_FILE}\` primero: dice qué se decidió y por qué, que es`
+      : `el resto del disco y, cuando pares, creá \`manuals/${s.id}/${STATE_FILE}\`: hoy no`,
+    s.hasState
+      ? `lo único que el disco no puede decirte. Si contradice al disco, gana el disco —`
+      : `hay registro de por qué las cosas están como están, que es justamente lo único`,
+    s.hasState
+      ? `es un texto que alguien escribió, no un hecho verificado.`
+      : `que el disco no puede decirte.`,
+    "",
+    `## Lo que NO tenés que hacer`,
+    "",
+    `  - No reescribas una sección que ya existe. Está hecha hasta que alguien diga`,
+    `    lo contrario; regenerarla pisa trabajo revisado y el diff lo esconde.`,
+    `  - No inventes el inventario total de módulos. NADA en este repositorio lo`,
+    `    declara: el module-map emite tenants, capabilities y referencias, no una`,
+    `    lista de módulos. Si necesitás un total, derivalo del producto, decí de`,
+    `    dónde lo sacaste y PEDÍ APROBACIÓN antes de trabajar contra él. Un alcance`,
+    `    inventado es la misma falla que una entrada de registry inventada, un nivel`,
+    `    más arriba.`,
+    "",
+    `## Lo que sí`,
+    "",
+    `Proponé el próximo paso —cuál, por qué ese, y qué vas a tocar— y ESPERÁ una`,
+    `decisión antes de escribir. Las reglas de autoría están en manuals/AGENTS.md, en`,
+    `manuals/${s.id}/AGENTS.md si existe, y en las skills que nombran.`,
+    "",
+    ...stateInstruction(s.id),
   );
 
   return lines.join("\n");
@@ -571,10 +808,43 @@ export async function runWizard(repoRoot: string): Promise<number> {
   splash(repoRoot);
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   try {
-    const action = await select(rl, "¿Qué vamos a hacer?", [
-      { label: "Crear un manual nuevo", value: "new" as const },
-    ]);
-    if (action !== "new") return 0;
+    // Continuing is offered only when there is something to continue, so the
+    // menu never leads to an empty list.
+    const started = readManualStates(repoRoot);
+    const action =
+      started.length === 0
+        ? ("new" as const)
+        : await select(rl, "¿Qué vamos a hacer?", [
+            { label: "Crear un manual nuevo", value: "new" as const },
+            {
+              label: "Continuar un manual que ya empezó",
+              detail:
+                `${started.length} en el repositorio. No pregunta nada: el prompt lee el ` +
+                `estado del disco y propone el próximo paso.`,
+              value: "continue" as const,
+            },
+          ]);
+
+    if (action === "continue") {
+      // Every manual is offered, including the ones missing a source or a map.
+      // Hiding them would hide exactly the manuals that need attention most —
+      // the state is shown so the choice is informed, not made for you.
+      const picked = await select(
+        rl,
+        "¿Cuál manual?",
+        started.map((s) => ({
+          label: `${s.id}  ${dim(s.title)}`,
+          detail: describeState(s),
+          value: s,
+        })),
+      );
+      return await handOff(
+        rl,
+        repoRoot,
+        `.broadsec-manual/continue-${picked.id}.md`,
+        assembleContinuationPrompt(picked),
+      );
+    }
 
     // --- step 1: the product -------------------------------------------------
     const registry = readRegistrySources(repoRoot);
@@ -662,15 +932,34 @@ export async function runWizard(repoRoot: string): Promise<number> {
     ]);
 
     const prompt = assemblePrompt({ sourcePath, sourceId, manualId, scope, target, design });
+    return await handOff(rl, repoRoot, `.broadsec-manual/new-${manualId}.md`, prompt);
+  } finally {
+    rl.close();
+  }
+}
 
+/**
+ * Write the assembled prompt, ask where it goes, and hand it over.
+ *
+ * Shared by both flows rather than duplicated: creating and continuing differ
+ * entirely in what they ask and what they assemble, and not at all in how the
+ * result reaches an agent. Duplicating this is how the two would drift into
+ * launching differently on Windows.
+ */
+async function handOff(
+  rl: ReturnType<typeof createInterface>,
+  repoRoot: string,
+  promptFile: string,
+  prompt: string,
+): Promise<number> {
+  {
     // The prompt is written before the destination is chosen, so "just print"
     // and "launch an agent" hand over the same bytes and the file is a record of
     // what was asked either way.
-    const promptFile = `.broadsec-manual/new-${manualId}.md`;
     mkdirSync(join(repoRoot, ".broadsec-manual"), { recursive: true });
     writeFileSync(join(repoRoot, promptFile), `${prompt}\n`, "utf8");
 
-    // --- step 5: where it goes ----------------------------------------------
+    // --- where it goes ------------------------------------------------------
     const agents = AGENTS.map((a) => ({
       ...a,
       executable: findExecutable(a.command, {
@@ -686,7 +975,7 @@ export async function runWizard(repoRoot: string): Promise<number> {
     // a check somebody has to remember to write.
     const destination = await select<{ readonly label: string; readonly executable: string } | "print">(
       rl,
-      "Paso 5 — ¿a dónde va?",
+      "¿A dónde va?",
       [
         ...agents.map((a) =>
           a.executable === null
@@ -722,7 +1011,7 @@ export async function runWizard(repoRoot: string): Promise<number> {
       ui(
         dim(
           "   No se creó nada más. Este asistente junta lo que solo vos sabés;\n" +
-            "   el relevamiento y todos los archivos son trabajo del agente.",
+            "   leer el estado y escribir cada archivo es trabajo del agente.",
         ),
       );
       ui("");
@@ -753,7 +1042,5 @@ export async function runWizard(repoRoot: string): Promise<number> {
       });
       child.on("exit", (code) => done(code ?? 0));
     });
-  } finally {
-    rl.close();
   }
 }
