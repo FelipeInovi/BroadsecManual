@@ -250,37 +250,50 @@ describe("knownTenants", () => {
 });
 
 describe("assemblePrompt", () => {
-  it("carries the three answers only the human could supply", () => {
+  it("carries the answers only the human could supply", () => {
     const text = assemblePrompt(answers());
     expect(text).toContain("../broadsecInternacional");
     expect(text).toContain("broadsec-internacional");
     expect(text).toContain("Spike de pipeline");
   });
 
+  // The prompt POINTS at the documentation instead of restating it. These are
+  // the load-bearing tests of that decision: `manuals/AGENTS.md` says a rule
+  // stated twice is a rule that drifts, and a Spanish restatement of an English
+  // rule would drift invisibly — the divergence would not even be greppable.
+  describe("does not restate what an AGENTS.md already owns", () => {
+    const text = assemblePrompt(answers());
+
+    it.each([
+      ["the six onboarding steps", "Reportá todo esto antes de tocar sources/"],
+      ["the extractor-fit verdicts", '"fits partly"'],
+      ["how tenancy resolves", "cómo se resuelve la tenancy"],
+      ["which steps are not optional", "Los pasos 1, 2 y"],
+      ["why a copied registry entry is wrong", "confiadamente equivocado"],
+      ["the per-language breakdown", "las claves de config y props de bloque"],
+      ["the image ordering rule", "Las imágenes van al final"],
+    ])("leaves %s to the documentation", (_what, restated) => {
+      expect(text).not.toContain(restated);
+    });
+
+    it("names the document that owns the onboarding steps", () => {
+      expect(text).toContain("sources/AGENTS.md");
+    });
+
+    it("names the document that owns the authoring rules", () => {
+      expect(text).toContain("manuals/AGENTS.md");
+    });
+  });
+
   describe("for a product not in the registry", () => {
     const text = assemblePrompt(answers());
 
-    it("starts at the survey and forbids writing the registry entry first", () => {
-      expect(text).toContain("desde el paso 1");
-      expect(text).toContain("NO escribas todavía la entrada del registry");
-      // Asserted without the following word: the sentence wraps after "del".
-      expect(text).toContain("La entrada es el RESULTADO del");
-    });
-
-    it("demands the two survey answers the flow cannot proceed without", () => {
-      expect(text).toContain("cómo se resuelve la tenancy");
-      // The three verdicts stay in English — they are the answer's vocabulary,
-      // and the sentence wraps between "needs a" and "new extractor".
-      expect(text).toContain('"fits partly"');
-      expect(text).toContain('new extractor"');
-    });
-
-    it("requires that what could not be determined is stated", () => {
-      expect(text).toContain("Qué NO pudiste determinar");
+    it("sends it to the start of the onboarding path", () => {
+      expect(text).toContain('"Adding a source" en sources/AGENTS.md desde el paso 1');
     });
 
     it("stops the agent after the report rather than letting it continue", () => {
-      expect(text).toContain("Detenete después de ese reporte y esperá");
+      expect(text).toContain("detenete ahí y esperá");
     });
 
     it("says the spike target is decided later, because the tenants are unknown", () => {
@@ -292,39 +305,29 @@ describe("assemblePrompt", () => {
     const text = assemblePrompt(answers({ sourceId: "alfa", target: "mv" }));
 
     it("skips the survey and protects the existing entry", () => {
-      // Asserted without the following word: the sentence wraps after "está".
-      expect(text).toContain("el relevamiento está");
-      expect(text).toContain("NO lo relevés de nuevo");
-      expect(text).toContain("NO edites esa entrada");
-      expect(text).not.toContain("NO escribas todavía la entrada del registry");
-    });
-
-    it("starts at step 4 and still requires the map to be reviewed", () => {
-      expect(text).toContain("Arrancá en el paso 4");
-      expect(text).toContain("El paso 6 no es opcional");
+      expect(text).toContain("no la edites ni lo relevés de nuevo");
+      expect(text).toContain("paso 4");
     });
 
     it("says the map is per manual, so a second manual extracts again", () => {
-      expect(text).toContain("por MANUAL, no por producto");
+      expect(text).toContain("por MANUAL");
     });
 
     it("names the chosen spike target", () => {
       expect(text).toContain("Target del spike   mv");
     });
+
+    it("does not send it back to step 1", () => {
+      expect(text).not.toContain("desde el paso 1");
+    });
   });
 
   it.each([
     ["spike", "UNA sección"],
-    ["module", "dieciséis ítems"],
+    ["module", "module-completeness"],
     ["full", "todas las secciones"],
   ] as const)("gives %s its own instruction", (scope, expected) => {
     expect(assemblePrompt(answers({ scope }))).toContain(expected);
-  });
-
-  it("warns about the two things the pipeline will not catch for you", () => {
-    const text = assemblePrompt(answers());
-    expect(text).toContain("cruza un borde de tenant");
-    expect(text).toContain("Las imágenes van al final");
   });
 
   describe("reusing an existing theme", () => {
@@ -336,64 +339,38 @@ describe("assemblePrompt", () => {
     });
 
     it("asks for no proposal", () => {
-      expect(text).not.toContain("proponé el diseño");
+      expect(text).not.toContain("identidad visual propia");
     });
   });
 
   describe("a new design", () => {
     const text = assemblePrompt(answers({ design: { kind: "new" } }));
 
-    it("puts the proposal before everything, including the survey", () => {
-      expect(text).toContain("Antes que nada: proponé el diseño");
-      // Positional, not textual: the section has to physically precede the
-      // onboarding steps, which is the whole point of the instruction.
-      expect(text.indexOf("proponé el diseño")).toBeLessThan(text.indexOf("Adding a source"));
+    it("puts the proposal before the survey and waits for a decision", () => {
+      expect(text).toContain("Proponela ANTES de relevar");
+      expect(text).toContain("esperá una decisión");
+      // Positional, not textual: the instruction has to physically precede the
+      // onboarding path, which is the whole point of it.
+      expect(text.indexOf("identidad visual propia")).toBeLessThan(
+        text.indexOf("Adding a source"),
+      );
     });
 
-    it("says the proposal comes before the survey, and waits for a decision", () => {
-      // Wraps after "ESPERÁ"; the object of the verb is on the next line.
-      expect(text).toContain("Presentá una propuesta y ESPERÁ");
+    it("names the product as where the design comes from", () => {
+      expect(text).toContain("../broadsecInternacional");
     });
 
-    it("names the product path as where the design comes from", () => {
-      expect(text).toContain("en ../broadsecInternacional");
+    it("points at the document that owns where a colour may come from", () => {
+      expect(text).toContain("packages/tokens/AGENTS.md");
     });
+  });
 
-    it("forbids sampling a colour off a screenshot", () => {
-      expect(text).toContain("se muestreó de una captura de pantalla");
-      expect(text).toContain("con archivo y línea");
-    });
-
-    it("asks for the ten colour roles Brand actually declares", () => {
-      for (const role of [
-        "deep",
-        "deepest",
-        "accentLight",
-        "accentDark",
-        "bodyInk",
-        "mutedInk",
-        "headerInk",
-        "surfaceAccent",
-        "surfaceCool",
-        "ruleLight",
-      ]) {
-        expect(text).toContain(role);
-      }
-    });
-
-    it("surfaces the scale trade rather than letting it be discovered", () => {
-      expect(text).toContain("se mergea POR PELDAÑO");
-      expect(text).toContain("peldaño sobreescrito es un peldaño");
-    });
-
-    it("names the closed unions as the expensive case, up front", () => {
-      expect(text).toContain("uniones CERRADAS");
-      expect(text).toContain("puede descubrirse después");
-    });
-
-    it("blocks work until the proposal is accepted", () => {
-      expect(text).toContain("No escribas un token, una config ni una sección");
-    });
+  // No AGENTS.md can anticipate this, because the prompt itself creates the
+  // risk: a Spanish request invites the agent to mirror Spanish into comments.
+  it("warns against mirroring its own language into the code", () => {
+    const text = assemblePrompt(answers());
+    expect(text).toContain("no espejes el");
+    expect(text).toContain("idioma de este texto en el código");
   });
 });
 
@@ -586,12 +563,12 @@ describe("assembleContinuationPrompt", () => {
     });
 
     it("ranks the two sources of truth, and the disk wins", () => {
-      expect(text).toContain("El disco manda sobre el PROGRESO");
-      expect(text).toContain("gana el disco");
+      expect(text).toContain("Derivá el PROGRESO del disco");
+      expect(text).toContain("gana el");
     });
 
     it("names the four places progress is actually readable from", () => {
-      for (const place of ["sections/*.yaml", "module-map.json", "image-requests.json", "git log"]) {
+      for (const place of ["sections/", "module-map.json", "image-requests.json", "git log"]) {
         expect(text).toContain(place);
       }
     });
@@ -601,10 +578,10 @@ describe("assembleContinuationPrompt", () => {
     });
 
     // The map emits tenants, capabilities and references — never a module list.
-    // Nothing else declares one either, so "finish the manual" has no denominator.
+    // Nothing else declares one, so "finish the manual" has no denominator.
     it("forbids inventing the total scope, because nothing declares one", () => {
-      expect(text).toContain("No inventes el inventario total de módulos");
-      expect(text).toContain("PEDÍ APROBACIÓN");
+      expect(text).toContain("no inventes el inventario total de módulos");
+      expect(text).toContain("pedí aprobación");
     });
 
     it("proposes and waits rather than starting to write", () => {
@@ -613,8 +590,13 @@ describe("assembleContinuationPrompt", () => {
 
     it("closes by asking for the decisions to be recorded", () => {
       expect(text).toContain("manuals/broadlineavida/ESTADO.md");
-      expect(text).toContain("Registrá SOLO decisiones");
-      expect(text).toContain("NO registres nada que se pueda derivar del disco");
+    });
+
+    it("leaves the state file's contract to the documentation that owns it", () => {
+      // The rule lives in manuals/AGENTS.md. Restating the four bullet points
+      // here is what would drift the moment that file is edited.
+      expect(text).not.toContain("Registrá SOLO decisiones");
+      expect(text).toContain("manuals/AGENTS.md");
     });
   });
 
@@ -629,25 +611,20 @@ describe("assembleContinuationPrompt", () => {
 
     it("puts the gate ahead of everything else, which is the point of a gate", () => {
       expect(text.indexOf("Antes de escribir una palabra")).toBeLessThan(
-        text.indexOf("Dónde quedó esto"),
+        text.indexOf("Dónde quedó"),
       );
     });
 
     it("refuses to let content paper over the problem", () => {
       expect(text).toContain("No escribas secciones para tapar esto");
     });
-
-    it("still forbids writing the registry entry from memory", () => {
-      expect(text).toContain("es el RESULTADO de relevarlo");
-    });
   });
 
   describe("a manual with a source but no map", () => {
     const text = assembleContinuationPrompt(state({ hasMap: false }));
 
-    it("asks for extract by name and holds step 6 as mandatory", () => {
+    it("asks for extract by name", () => {
       expect(text).toContain("extract broadlineavida");
-      expect(text).toContain("El paso 6 no es opcional");
     });
 
     it("does not complain about a source that is declared", () => {
@@ -660,11 +637,11 @@ describe("assembleContinuationPrompt", () => {
 
     it("says the file is missing rather than pointing at nothing", () => {
       expect(text).toContain("Estado registrado  NO existe todavía");
-      expect(text).toContain("todavía no existe");
     });
 
-    it("still asks for it to be created on the way out", () => {
-      expect(text).toContain("manuals/broadlineavida/ESTADO.md");
+    it("asks for it to be created, and points at its contract", () => {
+      expect(text).toContain("crealo cuando pares");
+      expect(text).toContain("manuals/AGENTS.md");
     });
   });
 
@@ -677,13 +654,26 @@ describe("assembleContinuationPrompt", () => {
 describe("the creation prompt hands off to the continuation prompt", () => {
   // The two flows meet at one file. If the creation prompt stops asking for it,
   // every later session starts blind — so this is asserted from both ends.
-  it("asks the creation run to record its decisions in the same file", () => {
+  it("asks the creation run to keep the same file up to date", () => {
     const text = assemblePrompt(answers());
     expect(text).toContain("manuals/broadsec-internacional/ESTADO.md");
-    expect(text).toContain("Cuando pares, dejá el estado escrito");
   });
 
-  it("tells it not to log what the disk already knows", () => {
-    expect(assemblePrompt(answers())).toContain("NO registres nada que se pueda derivar del disco");
+  it("points both flows at one contract rather than carrying two copies", () => {
+    for (const text of [
+      assemblePrompt(answers()),
+      assembleContinuationPrompt({
+        id: "m",
+        title: "M",
+        source: "alfa",
+        hasMap: true,
+        sections: 1,
+        pending: 0,
+        totalImages: 1,
+        hasState: true,
+      }),
+    ]) {
+      expect(text).toContain("manuals/AGENTS.md");
+    }
   });
 });

@@ -296,203 +296,96 @@ export function describeState(s: ManualState): string {
   return parts.join(" · ");
 }
 
-/**
- * The closing instruction both prompts carry: record decisions, not progress.
- *
- * Shared so the two flows cannot drift into describing the same file
- * differently — the continuation prompt reads what the creation prompt wrote.
- */
-const stateInstruction = (manualId: string): readonly string[] => [
-  `## Cuando pares, dejá el estado escrito`,
-  "",
-  `Escribí o actualizá \`manuals/${manualId}/${STATE_FILE}\` antes de terminar tu turno.`,
-  `Ese archivo es lo único que le va a decir al próximo agente por qué las cosas`,
-  `están como están.`,
-  "",
-  `Registrá SOLO decisiones:`,
-  "",
-  `  - Qué módulo o sección sigue, y POR QUÉ ese y no otro.`,
-  `  - Qué inventario de módulos se acordó, si se acordó alguno.`,
-  `  - A qué se dijo que no, y el motivo. Una opción descartada sin motivo se`,
-  `    vuelve a proponer en la sesión siguiente.`,
-  `  - Qué quedó sin resolver y qué haría falta para resolverlo.`,
-  "",
-  `NO registres nada que se pueda derivar del disco — qué secciones existen,`,
-  `cuántas imágenes faltan, qué se commiteó. Eso ya lo dicen \`sections/\`,`,
-  `\`image-requests.json\` y \`git log\`, y no pueden mentir. Un log que los repite se`,
-  `desactualiza en el primer revert y después se le cree igual, que es peor que no`,
-  `tenerlo.`,
-];
-
 const SCOPE_INSTRUCTIONS: Readonly<Record<Scope, string>> = {
   spike:
-    "Escribí UNA sección, de punta a punta, y detenete. Elegí la sección que " +
-    "ejercite la mayor cantidad de tipos de bloque y al menos una fila condicionada " +
-    "por tenant — un spike sin ningún `when` no probó el conditioning. Decí qué " +
-    "sección elegiste y por qué antes de escribirla.",
+    "Escribí UNA sección, de punta a punta, y detenete. Elegí la que ejercite la " +
+    "mayor cantidad de tipos de bloque y al menos una fila condicionada por tenant " +
+    "— un spike sin ningún `when` no probó el conditioning. Decí cuál elegiste y " +
+    "por qué antes de escribirla.",
   module:
-    "Escribí UN módulo hasta la definition of done de module-completeness, y verificá " +
-    "sus dieciséis ítems uno por uno explícitamente. Reportá los que todavía no se " +
-    "pueden verificar y por qué — el build y el pase de imágenes deciden dos de " +
-    "ellos, no vos.",
+    "Escribí UN módulo hasta la definition of done de module-completeness, y " +
+    "verificá sus ítems explícitamente. Reportá los que todavía no se pueden " +
+    "verificar y por qué.",
   full:
-    "Escribí todas las secciones. Trabajá módulo por módulo y reportá después de " +
-    "cada uno, en lugar de entregar el manual completo como un solo resultado.",
+    "Escribí todas las secciones, módulo por módulo, reportando después de cada uno " +
+    "en lugar de entregar el manual entero como un solo resultado.",
 };
 
-/** The prompt that starts the work. Pure: no I/O, so it can be tested. */
+/**
+ * The prompt that starts the work.
+ *
+ * It POINTS; it does not instruct. How to onboard a product, author content, tag
+ * a deployment or derive a palette is already written in the nested `AGENTS.md`
+ * files and the skills they name — `manuals/AGENTS.md` puts it plainly: "a rule
+ * stated twice is a rule that drifts". Restating any of it here would be a
+ * second copy that goes stale the moment the real one is edited, and a SPANISH
+ * copy of an English rule at that, so the divergence would not even be
+ * greppable.
+ *
+ * What stays is only what the documentation cannot know: the four answers the
+ * operator just gave, and which end of the process they land at.
+ *
+ * Pure: no I/O, so the assembled text can be tested without a TTY.
+ */
 export function assemblePrompt(a: WizardAnswers): string {
   const mapped = a.sourceId !== null;
-  const lines: string[] = [];
-
-  lines.push(
+  const lines: string[] = [
     mapped
-      ? `Crear un manual nuevo en este repositorio, a partir de un producto que ya conoce.`
+      ? `Crear un manual nuevo a partir de un producto que este repositorio ya conoce.`
       : `Onboardear un producto que este repositorio todavía no conoce, como manual nuevo.`,
     "",
     `  Ruta del producto  ${a.sourcePath}`,
-    `  Id en el registry  ${mapped ? a.sourceId : "(ninguno — no está en sources/registry.yaml)"}`,
+    `  Id en el registry  ${mapped ? a.sourceId : "(ninguno todavía)"}`,
     `  Id del manual      ${a.manualId}`,
     `  Alcance            ${SCOPES.find((s) => s.value === a.scope)?.label ?? a.scope}`,
-    `  Target del spike   ${a.scope === "spike" ? (a.target ?? "se decide después del paso 6 — la lista de tenants es un hallazgo") : "n/a"}`,
+    `  Target del spike   ${a.scope === "spike" ? (a.target ?? "se decide después del paso 6") : "n/a"}`,
     `  Diseño             ${a.design.kind === "existing" ? `tema existente \`${a.design.theme}\`` : "NUEVO — proponelo primero"}`,
     "",
-  );
+  ];
 
   if (a.design.kind === "new") {
     lines.push(
-      `## Antes que nada: proponé el diseño`,
-      "",
-      `Este manual necesita identidad visual propia, así que eso va primero — antes`,
-      `del relevamiento, antes de cualquier archivo. Presentá una propuesta y ESPERÁ`,
-      `una decisión sobre ella.`,
-      "",
-      `Derivala del producto mismo, en ${a.sourcePath}. Su propia hoja de estilos o`,
-      `declaración de tema es la fuente: la paleta de Bridge360 salió del bloque`,
-      `\`@theme\` de su \`src/app/App.css\`, y la de Broadsec del vector content stream`,
-      `de su PDF entregado. Ninguna se muestreó de una captura de pantalla, y esa`,
-      `regla es absoluta — ver packages/tokens/AGENTS.md. Un color inventado para`,
-      `desbloquear el trabajo es peor que uno faltante.`,
-      "",
-      `La propuesta tiene que decir, concretamente:`,
-      "",
-      `  - De dónde salió cada valor, con archivo y línea. Un color que no podés`,
-      `    señalar no entra.`,
-      `  - Los diez roles de color que pide \`Brand\`, mapeados a lo que usa el`,
-      `    producto: deep, deepest, accentLight, accentDark, bodyInk, mutedInk,`,
-      `    headerInk, surfaceAccent, surfaceCool, ruleLight.`,
-      `  - Las tres tipografías: sans, display, mono. Decí si la display difiere de`,
-      `    la del cuerpo — en las dos marcas existentes esa sola decisión es la mayor`,
-      `    parte de lo que distingue sus manuales.`,
-      `  - Si necesita su propia escala tipográfica y rampa de espaciado.`,
-      `    \`Brand.scale\` es opcional y se mergea POR PELDAÑO, así que sobreescribí`,
-      `    solo los peldaños que el diseño realmente necesita, y decí por qué. Cada`,
-      `    peldaño sobreescrito es un peldaño que deja de arreglarse una sola vez`,
-      `    para todos los manuales.`,
-      `  - Si necesita una composición de portada o una hoja de estilos que todavía`,
-      `    no existen. \`coverStyle\` y \`sheet\` son uniones CERRADAS ("band" | "mark",`,
-      `    "broadsec" | "bridge"). Un tercer valor de cualquiera de las dos es un`,
-      `    cambio de tipos más un archivo de estilos nuevo — la composición vive en`,
-      `    el markup y el CSS, y los tokens no pueden expresarla. Si el diseño`,
-      `    necesita eso, decilo en la propuesta: es lo más caro de esta lista y no`,
-      `    puede descubrirse después.`,
-      "",
-      `Mostrala como comparación contra los temas existentes, no en aislamiento. Lo`,
-      `que importa es si este manual se va a leer como documento propio al lado de`,
-      `ellos.`,
-      "",
-      `No escribas un token, una config ni una sección hasta que la propuesta esté`,
-      `aceptada.`,
+      `Este manual necesita identidad visual propia. Proponela ANTES de relevar y`,
+      `antes de escribir ningún archivo, derivada del producto en ${a.sourcePath}, y`,
+      `esperá una decisión. Las reglas de dónde puede salir un color están en`,
+      `packages/tokens/AGENTS.md.`,
       "",
     );
   } else {
     lines.push(
       `Declará \`manual.theme: ${a.design.theme}\` en la config del manual. Ese tema ya`,
-      `existe en packages/tokens — no lo edites, y no agregues una marca. Un manual`,
-      `que reusa un tema es exactamente el caso para el que existe la capa semántica`,
-      `compartida.`,
-      "",
-    );
-  }
-
-  if (mapped) {
-    lines.push(
-      `El producto ya está en \`sources/registry.yaml\`, así que el relevamiento está`,
-      `hecho y sus puntos de extracción quedaron registrados. NO lo relevés de nuevo`,
-      `y NO edites esa entrada: describe al producto, y el producto no cambió porque`,
-      `se esté escribiendo un segundo manual contra él.`,
-      "",
-      `Arrancá en el paso 4 de "Adding a source" en sources/AGENTS.md:`,
-      "",
-      `  4. Creá manuals/${a.manualId}/ con su manual.config.yaml. Declará solo los`,
-      `     ejes que este manual realmente necesita, y solo los targets que va a`,
-      `     construir.`,
-      `  5. Corré: node packages/cli/src/main.ts extract ${a.manualId}`,
-      `     El mapa es por MANUAL, no por producto — este manual necesita el suyo.`,
-      `  6. Revisá el knowledge/module-map.json generado antes de escribir una palabra`,
-      `     de contenido. El paso 6 no es opcional.`,
-      "",
-    );
-  } else {
-    lines.push(
-      `Seguí "Adding a source" en sources/AGENTS.md desde el paso 1. Los pasos 1, 2 y`,
-      `6 NO son opcionales.`,
-      "",
-      `NO escribas todavía la entrada del registry. La entrada es el RESULTADO del`,
-      `relevamiento, no su punto de partida — copiar la forma de una entrada existente`,
-      `sobre un producto nuevo produce un mapa confiadamente equivocado, y la falla es`,
-      `silenciosa: el mapa parsea y el build pasa.`,
-      "",
-      `Reportá todo esto antes de tocar sources/:`,
-      "",
-      `  - Framework y estructura.`,
-      `  - Si es multi-tenant, y en ese caso cómo se resuelve la tenancy, con archivo`,
-      `    y línea.`,
-      `  - Dónde viven las etiquetas de UI, y si hay un catálogo i18n.`,
-      `  - Si hay rutas declaradas en alguna parte.`,
-      `  - Qué NO pudiste determinar. Decilo en lugar de asumirlo.`,
-      `  - Si packages/extract sirve para esta forma: "fits", "fits partly" o "needs a`,
-      `    new extractor". Leé packages/extract/AGENTS.md antes de contestar — está`,
-      `    escrito para la forma de un solo producto, y un segundo producto no entra`,
-      `    por configuración.`,
-      "",
-      `Detenete después de ese reporte y esperá. Los pasos que siguen dependen de sus`,
-      `respuestas.`,
+      `existe: no lo edites y no agregues una marca.`,
       "",
     );
   }
 
   lines.push(
-    `Después, para el contenido en sí:`,
+    ...(mapped
+      ? [
+          `El producto ya está relevado. Su entrada en \`sources/registry.yaml\` describe`,
+          `al producto y no a este manual, así que no la edites ni lo relevés de nuevo:`,
+          `arrancá en el paso 4 de "Adding a source" en sources/AGENTS.md. El mapa es`,
+          `por MANUAL, así que este necesita el suyo.`,
+        ]
+      : [
+          `Seguí "Adding a source" en sources/AGENTS.md desde el paso 1, entero. Ese`,
+          `paso termina en un reporte: detenete ahí y esperá, porque lo que sigue`,
+          `depende de sus respuestas.`,
+        ]),
     "",
-    `  ${SCOPE_INSTRUCTIONS[a.scope]}`,
+    `Para el contenido: ${SCOPE_INSTRUCTIONS[a.scope]}`,
     "",
-    `Las reglas de autoría están en manuals/AGENTS.md y en las skills que nombra. Leé`,
-    `el catálogo de bloques en packages/blocks/src/catalog/ antes de elegir un tipo:`,
-    `el \`description\` de cada definición dice cuándo usarla EN LUGAR DE otra parecida.`,
+    `Las reglas de autoría están en manuals/AGENTS.md y en las skills que nombra.`,
     "",
-    // Stated because this prompt is in Spanish and the repository is not, uniformly.
-    // Without it an agent reasonably mirrors the prompt's language into comments and
-    // commit messages, which the machinery layer does not accept.
-    `Sobre el idioma de lo que produzcas — esto está pedido en español, pero el`,
-    `repositorio no lo es uniformemente, así que seguí manuals/AGENTS.md al pie:`,
+    // The one thing no AGENTS.md can anticipate, because this prompt creates the
+    // risk: a Spanish request invites an agent to mirror Spanish into comments
+    // and commit messages, which the machinery layer does not accept.
+    `Este pedido está en español; el repositorio no lo es uniformemente. Seguí al`,
+    `pie lo que dice manuals/AGENTS.md sobre qué va en cada idioma, y no espejes el`,
+    `idioma de este texto en el código.`,
     "",
-    `  - En español: el contenido del manual, y los ids y nombres de archivo de las`,
-    `    secciones. Nombran el asunto del manual.`,
-    `  - En inglés: las claves de config y props de bloque, los nombres de tipo de`,
-    `    bloque, los comentarios de código, los mensajes de commit y los nombres de`,
-    `    archivo de infraestructura. Pertenecen al pipeline, que comparten todos los`,
-    `    manuales.`,
-    "",
-    `Dos cosas de las que este repositorio no te va a avisar:`,
-    "",
-    `  - Nada valida una referencia que cruza un borde de tenant. Leer la salida`,
-    `    construida de cada target es la única verificación que existe.`,
-    `  - Las imágenes van al final. El contenido declara los slots; \`images\` exporta`,
-    `    el documento de pedidos; recién entonces se entrega algo. Un manual recién`,
-    `    escrito está 100% pendiente, y ese es el estado correcto.`,
-    "",
-    ...stateInstruction(a.manualId),
+    `Cuando pares, dejá \`manuals/${a.manualId}/${STATE_FILE}\` al día. Su contrato —`,
+    `decisiones sí, progreso derivable no— está en manuals/AGENTS.md.`,
   );
 
   return lines.join("\n");
@@ -501,114 +394,80 @@ export function assemblePrompt(a: WizardAnswers): string {
 /**
  * The prompt that resumes a manual somebody already started.
  *
- * The mirror image of `assemblePrompt`, and the asymmetry is the whole design.
- * Creating a manual asks three questions because the repository knows nothing;
- * resuming one asks none, because the repository already knows almost
- * everything and the answers are on disk. So this prompt does not carry
- * decisions — it carries where to READ them from, and which of the two sources
- * wins when they disagree.
- *
- * Pure, like its counterpart, so the assembled text is tested without a TTY.
+ * The mirror image of `assemblePrompt`, and the asymmetry is the design.
+ * Creating asks three questions because the repository knows nothing; resuming
+ * asks none, because it knows almost everything and the answers are on disk. So
+ * this carries no decisions — only the derived state, which of the two sources
+ * wins when they disagree, and a gate for the states that block work outright.
  */
 export function assembleContinuationPrompt(s: ManualState): string {
   const lines: string[] = [
     `Continuar un manual que este repositorio ya empezó.`,
     "",
     `  Id del manual      ${s.id}`,
-    `  Título             ${s.title}`,
-    `  Fuente             ${s.source ?? "(ninguna declarada — ver la compuerta de abajo)"}`,
-    `  Mapa del producto  ${s.hasMap ? "knowledge/module-map.json presente" : "NO existe"}`,
+    `  Fuente             ${s.source ?? "(ninguna declarada)"}`,
+    `  Mapa del producto  ${s.hasMap ? "presente" : "NO existe"}`,
     `  Secciones escritas ${s.sections}`,
     `  Imágenes           ${
       s.pending === null
         ? "todavía no se exportaron pedidos"
         : `${s.pending} pendiente(s) de ${s.totalImages ?? "?"}`
     }`,
-    `  Estado registrado  ${s.hasState ? `manuals/${s.id}/${STATE_FILE}` : `NO existe todavía`}`,
+    `  Estado registrado  ${s.hasState ? `manuals/${s.id}/${STATE_FILE}` : "NO existe todavía"}`,
     "",
   ];
 
-  // The gate comes before everything, and it halts. Both blocking states are
-  // real in this repository today, and neither is recoverable by writing more
-  // content on top — content authored without a map is the defect the map
-  // exists to prevent.
+  // Derived state, not a rule, so it cannot live in AGENTS.md: this manual is
+  // blocked right now. Both cases are real in this repository today, and
+  // neither is fixed by writing more content on top.
   if (s.source === null || !s.hasMap) {
-    lines.push(
-      `## Antes de escribir una palabra`,
-      "",
-      `Este manual no está en condiciones de recibir contenido nuevo todavía.`,
-      "",
-    );
+    lines.push(`## Antes de escribir una palabra`, "");
     if (s.source === null) {
       lines.push(
-        `  - \`manuals/${s.id}/manual.config.yaml\` no declara \`manual.source\`, así que`,
-        `    nada sabe qué producto documenta y \`extract\` no puede ni correr. Esto se`,
-        `    resuelve primero. Si el producto no está en \`sources/registry.yaml\`, su`,
-        `    entrada es el RESULTADO de relevarlo — seguí "Adding a source" en`,
-        `    sources/AGENTS.md y no la escribas de memoria.`,
+        `  - \`manual.config.yaml\` no declara \`manual.source\`, así que nada sabe qué`,
+        `    producto documenta y \`extract\` no puede ni correr.`,
       );
     }
     if (!s.hasMap) {
       lines.push(
-        `  - No hay \`manuals/${s.id}/knowledge/module-map.json\`. El contenido se escribe`,
-        `    contra el mapa, nunca leyendo el producto a mano. Corré:`,
-        `      node packages/cli/src/main.ts extract ${s.id}`,
-        `    y revisá el mapa generado antes de seguir. El paso 6 no es opcional.`,
+        `  - No hay \`knowledge/module-map.json\`. Corré \`extract ${s.id}\` y revisalo`,
+        `    antes de seguir.`,
       );
     }
     lines.push(
       "",
-      `Reportá qué encontraste y ESPERÁ. No escribas secciones para tapar esto: un`,
-      `manual escrito sin mapa parsea y buildea igual, y por eso el defecto no se`,
-      `descubre hasta que lo lee un cliente.`,
+      `Resolvelo, reportá y ESPERÁ. No escribas secciones para tapar esto: un manual`,
+      `escrito sin mapa parsea y buildea igual, y por eso el defecto no se descubre`,
+      `hasta que lo lee un cliente.`,
       "",
     );
   }
 
   lines.push(
-    `## Dónde quedó esto`,
+    `## Dónde quedó`,
     "",
-    `Hay dos fuentes, y NO valen lo mismo.`,
-    "",
-    `**El disco manda sobre el PROGRESO.** Derivalo, no lo preguntes ni lo asumas:`,
-    "",
-    `  - \`manuals/${s.id}/sections/*.yaml\` — qué secciones existen realmente.`,
-    `  - \`manuals/${s.id}/knowledge/module-map.json\` — tenants, capabilities y cada`,
-    `    línea del producto que discrimina por despliegue.`,
-    `  - \`manuals/${s.id}/image-requests.json\` — qué slots siguen pendientes.`,
-    `  - \`git log -- manuals/${s.id}/\` — qué se movió, cuándo y en qué commit.`,
+    `Derivá el PROGRESO del disco — \`sections/\`, \`knowledge/module-map.json\`,`,
+    `\`image-requests.json\`, \`git log -- manuals/${s.id}/\`. No lo preguntes ni lo`,
+    `asumas.`,
     "",
     s.hasState
-      ? `**\`${STATE_FILE}\` manda sobre las DECISIONES, y solo sobre eso.** Leé`
-      : `**\`${STATE_FILE}\` mandaría sobre las DECISIONES, pero todavía no existe.** Leé`,
+      ? `Leé \`manuals/${s.id}/${STATE_FILE}\` para las DECISIONES: qué se decidió y por`
+      : `No hay \`${STATE_FILE}\` todavía, así que no hay registro de por qué las cosas`,
     s.hasState
-      ? `\`manuals/${s.id}/${STATE_FILE}\` primero: dice qué se decidió y por qué, que es`
-      : `el resto del disco y, cuando pares, creá \`manuals/${s.id}/${STATE_FILE}\`: hoy no`,
-    s.hasState
-      ? `lo único que el disco no puede decirte. Si contradice al disco, gana el disco —`
-      : `hay registro de por qué las cosas están como están, que es justamente lo único`,
-    s.hasState
-      ? `es un texto que alguien escribió, no un hecho verificado.`
-      : `que el disco no puede decirte.`,
+      ? `qué, que es lo único que el disco no puede decirte. Si se contradicen, gana el`
+      : `están como están. Derivá lo que puedas del disco y crealo cuando pares. El`,
+    s.hasState ? `disco.` : `contrato está en manuals/AGENTS.md.`,
     "",
-    `## Lo que NO tenés que hacer`,
-    "",
-    `  - No reescribas una sección que ya existe. Está hecha hasta que alguien diga`,
-    `    lo contrario; regenerarla pisa trabajo revisado y el diff lo esconde.`,
-    `  - No inventes el inventario total de módulos. NADA en este repositorio lo`,
-    `    declara: el module-map emite tenants, capabilities y referencias, no una`,
-    `    lista de módulos. Si necesitás un total, derivalo del producto, decí de`,
-    `    dónde lo sacaste y PEDÍ APROBACIÓN antes de trabajar contra él. Un alcance`,
-    `    inventado es la misma falla que una entrada de registry inventada, un nivel`,
-    `    más arriba.`,
-    "",
-    `## Lo que sí`,
+    `No reescribas una sección que ya existe: está hecha hasta que alguien diga lo`,
+    `contrario. Y no inventes el inventario total de módulos — nada en este`,
+    `repositorio lo declara, así que si necesitás un total, derivalo, decí de dónde`,
+    `y pedí aprobación antes de trabajar contra él.`,
     "",
     `Proponé el próximo paso —cuál, por qué ese, y qué vas a tocar— y ESPERÁ una`,
-    `decisión antes de escribir. Las reglas de autoría están en manuals/AGENTS.md, en`,
+    `decisión. Las reglas de autoría están en manuals/AGENTS.md, en`,
     `manuals/${s.id}/AGENTS.md si existe, y en las skills que nombran.`,
     "",
-    ...stateInstruction(s.id),
+    `Cuando pares, dejá \`manuals/${s.id}/${STATE_FILE}\` al día.`,
   );
 
   return lines.join("\n");

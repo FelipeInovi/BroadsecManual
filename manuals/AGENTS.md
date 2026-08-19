@@ -7,6 +7,7 @@ One folder per manual. Everything here is **content and data**, never code.
 ```
 <manual-id>/
   manual.config.yaml   Axes, targets, versioning, catalogue pin
+  ESTADO.md            What was DECIDED, and why — see below
   knowledge/           Extracted facts (GENERATED — never hand-edit)
   sections/            Authored content, a tree of fragments
   assets/figures/      Delivered images + the pending placeholder
@@ -19,6 +20,39 @@ One folder per manual. Everything here is **content and data**, never code.
 Images are addressed by **slot**, never by path — content names which image a
 place needs, the build decides where the file lives. See the
 `module-completeness` skill for the rule and the naming convention.
+
+## `ESTADO.md` — decisions, never progress
+
+A manual is written across many sessions by agents that share no memory. This
+file is the only thing that carries intent from one to the next, so what goes in
+it is narrow on purpose.
+
+**Progress is derivable, so it is never written down.** Which sections exist,
+how many images are outstanding, what was committed — `sections/`,
+`knowledge/module-map.json`, `image-requests.json` and `git log` already answer
+those, and they cannot be stale because they *are* the state.
+
+**Decisions are not derivable, so they go here:**
+
+- Which module or section comes next, and **why that one**.
+- What module inventory was agreed, if any was. Nothing in this repository
+  declares a manual's full module list — the map emits tenants, capabilities and
+  deployment references, never a list of modules — so an agreed scope exists
+  only if it was written down.
+- What was ruled out, and the reason. An option discarded without one gets
+  proposed again next session.
+- What is unresolved, and what would settle it.
+
+Where this file and the disk disagree, **the disk wins**. This is text somebody
+wrote, not a verified fact. A log that restates derivable progress goes stale on
+the first revert and is believed anyway, which is worse than having no log.
+
+Write or update it **at the end of a working session, before the turn ends** —
+not as work happens, or it records intentions that were then abandoned.
+
+It sits beside `AGENTS.md` rather than inside it because that file is timeless
+product knowledge, and a status section rewritten every session would churn the
+one file agents read for rules.
 
 ## Content language
 
