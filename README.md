@@ -38,12 +38,20 @@ pnpm install
 pnpm type-check
 pnpm test
 
+# Start a manual, or pick up one already under way
+pnpm manuales
+
 # Build one tenant's manual (PDF + HTML into manuals/<id>/output/)
 node packages/cli/src/main.ts build broadlineavida --tenant mv
 
 # Every configured tenant
 node packages/cli/src/main.ts build broadlineavida
 ```
+
+`pnpm manuales` is an interactive wizard. It asks only what this repository
+cannot work out for itself — which product, what to call its manual, how much to
+attempt — and hands the assembled prompt to an agent. It writes no manual of its
+own.
 
 Rendering shells out to Chrome or Edge. Set `CHROME_PATH` if neither is found
 in the usual locations.

@@ -109,9 +109,15 @@ pnpm type-check          # tsc --noEmit across the workspace
 pnpm test                # vitest
 ```
 
-The CLI lives in `packages/cli` and has four commands: `build`, `images`,
-`capture`, `extract`. Run one with
+The CLI lives in `packages/cli`. Four commands take a manual id — `build`,
+`images`, `capture`, `extract` — and run as
 `node packages/cli/src/main.ts <command> <manual>`.
+
+A fifth, `new`, takes none. It is an interactive wizard a person runs to start
+or resume a manual: it collects what the repository cannot derive, assembles a
+prompt, and hands that off. Nothing downstream invokes it, and the prompt it
+produces reads as if a human wrote it — so an agent receiving that prompt needs
+nothing from here about the wizard itself.
 
 ## Testing
 
