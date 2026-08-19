@@ -324,7 +324,8 @@ A module ships when all of these hold:
 - [ ] Every image is a figure or a table icon — there is no third convention
 - [ ] No filename or path appears anywhere in the content
 - [ ] Every claim traces to a file and line, or to the module map
-- [ ] UI labels are taken from the i18n catalogue, not retyped
+- [ ] UI labels are taken from the i18n catalogue, not retyped, and each records
+      the key it came from — the value alone cannot reveal label drift
 - [ ] No number, anchor or figure ordinal is written by hand
 - [ ] Conditioning is tagged at the smallest unit that varies
 - [ ] The build succeeds for every deployment

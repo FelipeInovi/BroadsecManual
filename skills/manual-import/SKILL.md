@@ -77,7 +77,10 @@ defaulting to `all` and hoping.
 ### 6. Requote UI labels from i18n
 
 Labels typed into the legacy text are a snapshot of what the screen said once.
-Replace them with i18n key references.
+Look each one up in the product's catalogue and replace it with the value that
+catalogue holds today, recording the key in a comment above it. Not with a key
+reference: the `uiLabel` node exists in the AST and no renderer resolves it, so a
+keyed label renders as nothing. See `block-authoring`.
 
 ### 7. Review per tenant, in the output
 

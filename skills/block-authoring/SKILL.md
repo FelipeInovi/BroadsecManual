@@ -50,8 +50,17 @@ Requesting a block is cheap. Migrating improvised content is not.
   convention is its own, and this one is broadlineavida's.
 - **Props follow the schema exactly.** Validation will reject the rest; do not
   fight it.
-- **UI labels come from i18n**, referenced by key, never retyped. The manual
-  must say what the screen says, including after the screen's wording changes.
+- **UI labels come from the product's i18n catalogue, never retyped off a
+  screenshot.** Resolve the key and write its value: shipped content says
+  `label: Tráfico` because `layers.traffic` is `"Tráfico"`. Where the product
+  hardcodes a label beside the control instead of keying it, that literal is just
+  as sound — `label: AVL` is one of those.
+- **Record the key in a comment above the label.** The value in the file is a
+  copy, and nothing links it back on its own: if the product renames
+  `layers.traffic`, the manual is silently wrong and neither the build nor the
+  drift report can see it. The AST has a `uiLabel` node designed to close that
+  gap and no renderer resolves it, so the comment is the mechanism that actually
+  exists — the same provenance habit conditioned rows already follow.
 - **Cross-references point at ids.** Never write a section number or a
   screen name in place of a reference.
 - **Conditioning goes on the smallest unit that varies.** See the
