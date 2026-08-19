@@ -15,7 +15,14 @@ import type { Conditioned } from "./conditioning.ts";
 
 /**
  * Stable, author-assigned identifier, unique within a manual.
- * Lowercase alphanumerics, hyphens and dots: `mapa.capas.semaforos`.
+ *
+ * Lowercase alphanumerics, hyphens and dots. The dots are namespaces the author
+ * chooses; nothing in the pipeline parses them or attaches meaning to a segment.
+ *
+ * How a given manual structures its ids is an authoring convention, and it lives
+ * with that manual — see `manuals/AGENTS.md`. Nothing in this file names a
+ * product: the AST is the one contract every product shares, and an example
+ * borrowed from one manual gets copied outward as if it were the rule.
  */
 export type NodeId = string;
 

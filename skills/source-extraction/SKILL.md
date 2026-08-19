@@ -184,7 +184,7 @@ to show (`packages/cli/src/extract.ts:201`).
       "source": "src/…/AppRoutes.tsx:120",
       "elements": [
         {
-          "id": "mapa.capas.semaforos",
+          "id": "mapa.capa.semaforos",
           "kind": "map-layer",
           "label": { "i18nKey": "map.layers.traffic_lights" },
           "tenants": ["mv"],
