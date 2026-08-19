@@ -43,6 +43,57 @@ All of it reaches content through `knowledge/module-map.json`. Never read the
 product's source to write a sentence — read the map, and fix the extractor if
 the map is missing something.
 
+## Which images the product ships — read this before requesting captures
+
+What the product repository holds is recorded in `sources/registry.yaml` under
+this source's `assets:`. What follows is the other half: **which of this manual's
+slots turned out deliverable.** Method and reasoning live in the `source-assets`
+skill; these are the verdicts, so the next agent inherits them instead of
+re-deriving them.
+
+| Table | Deliverable | Why |
+|---|---|---|
+| six map layers (`mapa.capa.*`) | **6 of 6** | The product's own `.webp`/`.png`, joined through `LayersMap.tsx` |
+| six BoT sections (`bot.seccion.*`) | **6 of 6** | Tabler outline SVGs via `BOTSidebar.tsx`, recoloured |
+| six map controls (`mapa.ctrl.*`) | **0 of 6** | One MUI icon, one framework-white product SVG, four Google Maps native controls |
+| everything else in BoT (`bot.*`, 47 slots) | **0 of 47** | All figure-convention — screens, panels and procedure steps |
+
+**The first and third sit on the same page.** Judge per row, never per section.
+
+Sorting by convention settled BoT in one query: of its 47 slots, 12 are `figure`,
+28 are `procedure` steps and 7 are `field-list` items — not one `icon-table` row,
+so nothing an asset file can answer. Confirmed the slow way too: across every page
+under `BroadsecOfThings/`, `CCTV/` and `PMV/` the product imports exactly TWO
+asset files, both product-drawn SVGs, and neither answers a pending slot.
+`CCTVPTZControl` is a grid of buttons and `CCTVStatusBadge` is a coloured pill
+driven by a status map — composed at runtime, not shipped as files.
+
+**The trap in this manual** is `bot.cctv.fn.ptz` — "Control PTZ" reads like an
+icon and is not. Its convention is `figure`, so the caption promises the whole
+control. Delivering the arrow glyph the component happens to use would fill the
+slot, pass every count, and show the operator something that is not the control
+being described.
+
+**Recolouring**: this manual's icon column is dark navy, so a library glyph's
+`currentColor` stroke must be replaced with `tokens.color.headerInk` (`#E8EDF2`)
+on copy, and the file must record both the licence and the recolouring.
+
+### Content gaps found while taking assets
+
+Two asset families are ready and have nowhere to go. Both are authoring
+decisions, not extraction problems:
+
+1. **No incident-typification table exists.** `CustomTag.tsx` is the strongest
+   join in the product — 338 incident names onto 68 of 85 label images — and not
+   one can be delivered, because nothing asks. Someone should decide whether that
+   subsection belongs in the manual.
+2. **`bot.mapa` has no icon-table of map element types.** The product ships
+   `layer_panels.png`, `layer_trafficlight.webp`, `layer_camera.webp`,
+   `vehiculo.png`, `alarm.svg` and their `pin_`/`cluster_` variants — exactly the
+   element types `bot.mapa` describes in prose. But it holds a `term-list`, which
+   carries no images, plus one screen figure. If it gets an icon-table, those
+   assets are ready.
+
 ## The legacy manual
 
 `broadlineavida/docs/manual-usuario.md` is the **seed**, not the target. It is a

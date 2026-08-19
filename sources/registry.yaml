@@ -33,3 +33,50 @@ sources:
 
       Extraction must therefore collect inline tenant references, not just
       route gating, or the module map will claim every tenant sees everything.
+
+    # What this product ships as image files, and where the joins live.
+    # Findings for the `source-assets` skill — read by agents, NOT by any
+    # command. They expire when the product changes, not when the manual does.
+    assets:
+      inventory: |
+        389 image files AND three icon libraries. The mix is what matters: the
+        right question is never "does the repo have images" but "does the
+        control I need render from a file".
+      folders:
+        # Photographic assets and shipped glyphs. Takeable.
+        images: src/render/assets/images
+        # The product's OWN SVGs, written as React components. They carry
+        # framework classes (`fill-white`, `stroke="white"`) because they sit on
+        # dark controls, so extracted standalone they turn black or invisible.
+        # Deliverable only with a deliberate recolouring.
+        drawnIcons: src/render/assets/icons
+      libraries:
+        # Wrapper holds no files; the dependency `@tabler/icons` ships
+        # `icons/outline/*.svg`, MIT. Copy the file, never parse the wrapper.
+        "@tabler/icons-react": takeable-via-base-package
+        # JS only, no SVG anywhere in the package.
+        "@mui/icons-material": not-as-a-file
+        # Resolved from a remote API at runtime. Nothing on disk.
+        "@iconify/react": no
+      joins: |
+        Strongest first, matching the skill's hierarchy:
+
+        1. CustomTag.tsx — a literal dictionary mapping 338 incident names onto
+           68 of the 85 incident-type label images. The product states the
+           mapping itself; nothing is inferred.
+        2. LayersMap.tsx — object literals pairing asset and i18n key,
+           `{ img: layer_camera, tittle: t("layers.cameras") }`.
+        3. LayersMap.tsx also holds the hardcoded-label form,
+           `{ img: layer_avl, tittle: "AVL" }` — there is no `layers.avl` key.
+        4. BOTSidebar.tsx — Tabler outline SVGs for the BoT section glyphs.
+      filenameHazards: |
+        Measured, and the reason the skill forbids filename matching outright:
+
+        - Of the nine top-bar icons the manual needed, exactly ONE had an asset
+          of the same name.
+        - The map layer control uses `layer_camera.webp`. Beside it in the same
+          folder sit `cluster_camera.webp` and `cluster_cameras.webp`, which
+          belong to map marker clustering — a different feature.
+      runtimeOnly: |
+        Google Maps native controls (street view, 3D, zoom) are drawn by their
+        SDK. Nothing in this repository to take, at any effort.

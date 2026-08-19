@@ -1,10 +1,10 @@
 ---
 name: source-assets
-description: Fills a manual's pending image slots from the product's own asset files instead of waiting for someone to photograph the screen — by following the import in the component that renders the control, never by matching filenames. Covers which images can be taken this way and which genuinely cannot, how to join a manual row to a product asset through the i18n key, and how to verify a delivery landed on the slot that asked for it. Use when pending images could already exist in the source repository, when onboarding a product's assets, or when deciding whether an image must be captured by hand.
+description: Fills a manual's pending image slots from the product's own asset files instead of waiting for someone to photograph the screen — by following the import in the component that renders the control, never by matching filenames. Covers which images can be taken this way and which genuinely cannot, how to join a manual row to a product asset, and how to verify a delivery landed on the slot that asked for it. Use when pending images could already exist in the source repository, when onboarding a product's assets, or when deciding whether an image must be captured by hand.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "1.0"
+  version: "2.0"
 ---
 
 # Taking images from the product
@@ -17,21 +17,23 @@ already have.
 Others do not exist as files and never will. Telling the two apart is most of
 this skill.
 
+This file is the method. **Which assets a given product actually ships, and which
+of its slots turned out deliverable, are findings — they live with that product
+and that manual, not here.** See "Where a product's findings live" at the end.
+
 ## The rule that matters
 
 **Follow the import in the component that renders the control. Never match a
 filename to a slot.**
 
 Filename matching feels obviously right and is wrong at a rate you cannot
-tolerate. Measured on this product:
+tolerate. On the first product measured, of the nine top-bar icons the manual
+needed, **one** had an asset of the same name. Worse, that folder held names
+differing by a single character that belonged to an entirely different feature.
 
-- Of the nine top-bar icons the manual needs, **one** has an asset of the same
-  name. The other eight would silently resolve to nothing, or to the wrong file.
-- The map layer control uses `layer_camera.webp`. Sitting beside it in the same
-  folder are `cluster_camera.webp` and `cluster_cameras.webp`, which belong to
-  map marker clustering — a different feature. Name similarity picks one of three
-  at random and the build cannot tell it chose wrong: the image renders, the
-  caption fits, and the manual shows the operator a control that is not there.
+Name similarity picks one of several at random and the build cannot tell it chose
+wrong: the image renders, the caption fits, and the manual shows the operator a
+control that is not there.
 
 A wrong image is worse than a pending one. A pending slot announces itself; a
 confidently wrong screenshot teaches the operator something false.
@@ -41,66 +43,71 @@ confidently wrong screenshot teaches the operator something false.
 Four hops, every one of them checkable, ending in a file and a line:
 
 ```
-manual row label  ->  i18n key  ->  the component's own object literal  ->  imported asset
+manual row label  ->  UI string  ->  the component's own pairing  ->  imported asset
 ```
 
-Worked example, end to end:
-
-1. The manual's row `mapa.capa.camaras` carries `label: Cámaras`. Labels are
-   taken from the i18n catalogue, never retyped — that is what makes this hop
-   sound.
-2. `layers.cameras` is `"Cámaras"` in `src/render/locales/translations/es.json`.
-3. `src/render/components/LayersMap.tsx` contains
-   `{ img: layer_camera, tittle: t("layers.cameras") }` — the asset and the key
-   in ONE object literal. That co-location is the evidence.
-4. Line 2 of the same file: `import layer_camera from "@/render/assets/images/layer_camera.webp"`.
+The label hop is sound because manual labels are the product's own UI strings,
+never retyped off a screenshot — see `block-authoring`. That is what lets you
+search the component for the string and land on the control that displays it.
 
 Record the component path and line for every asset you take. An asset with no
 recorded provenance is indistinguishable from a guess six months from now.
 
 If any hop cannot be made, **stop and leave the slot pending.** A missing image
-is a known state the pipeline is built around. Do not close the gap by
-reasoning about what the file probably is.
+is a known state the pipeline is built around. Do not close the gap by reasoning
+about what the file probably is.
+
+### Where the join lives, in order of strength
+
+1. **A literal dictionary** — the product states the mapping itself, e.g. an
+   object mapping incident names onto label assets. Nothing is inferred.
+2. **An object literal pairing asset and UI string** — the asset and the key or
+   label sit in ONE object. That co-location is the evidence.
+3. **A hardcoded label beside the asset** — one hop shorter than going through
+   the catalogue, and just as sound.
+
+Anything weaker than these three is a guess. Leave the slot pending.
+
+The mix matters more than the total. A product can ship hundreds of image files
+and still answer none of your slots, so "does the repo have images" is the wrong
+question. The right one is **"does the control I need render from a file"**.
 
 ## No slot, no delivery
 
 **Extraction cannot create demand.** An asset is only worth taking if a slot in
 the manual is already asking for it. Check the request document first.
 
-This is not bureaucracy. The product ships 85 incident-type label images and a
-dictionary in `CustomTag.tsx` mapping 338 incident names onto 68 of them — the
-strongest join in the repository. And not one of them can be delivered, because
-the manual has no incident-typification table: nothing asks. Copying them in
-would produce 85 orphans, and `undeclared` would report every one.
+This is not bureaucracy. A product can ship a rich, perfectly joined family of
+label images that cannot be delivered at all, because the manual has no table
+that asks for them. Copying them in would produce orphans, and `undeclared` would
+report every one.
 
-When a rich asset family has no slot, the gap is in the CONTENT, not in the
-extraction. Say so, and let someone decide whether that subsection should exist.
-Writing it is authoring work with its own decisions — which of 68 labels a given
-deployment actually shows, for one — and it is not this skill's job.
+When a rich asset family has no slot, **the gap is in the CONTENT, not in the
+extraction.** Say so, record it with the manual, and let someone decide whether
+that subsection should exist. Writing it is authoring work with its own decisions
+— which of the labels a given deployment actually shows, for one — and it is not
+this skill's job.
 
 ## What can be taken, and what cannot
 
+Classify by the question "is there a file on disk, and does it survive being
+loaded as an image?"
+
 | Kind | Can it be taken? | Why |
 |---|---|---|
-| Static asset the app ships (`assets/images/**`) | **Yes** | A real file, reachable through the join |
-| SVG drawn as the product's own component (`assets/icons/*.tsx`) | Usually **no** | The geometry is here, but the colour is not: these carry Tailwind classes like `fill-white` because they sit on a dark control. Extracted standalone there is no Tailwind, so the glyph turns black — or `stroke="white"` renders invisible on the page. Deliverable only with a deliberate recolouring, which is a design decision |
-| Icon from `@tabler/icons-react` | **Yes, via the base package** | The React wrapper holds no files, but its dependency `@tabler/icons` ships `icons/outline/*.svg` — real SVG, MIT. Copy the file; do not parse the wrapper. Needs recolouring, below |
-| Icon from `@mui/icons-material` | Not as a file | JS only, no SVG anywhere in the package. Extractable solely by parsing the path data out of a module |
-| Icon from `@iconify/react` | **No** | Resolved from a remote API at runtime. Without `@iconify/json` installed there is nothing on disk |
-| Native control of an embedded third party (Google Maps street view, 3D, zoom) | **No** | Drawn by their SDK at runtime. Nothing exists in this repository to take |
+| Static asset the app ships | **Yes** | A real file, reachable through the join |
+| SVG drawn as the product's own component | Usually **no** | The geometry is here, the colour is not: these carry framework classes because they sit on a coloured control. Extracted standalone the glyph turns black, or a white stroke renders invisible. Deliverable only with a deliberate recolouring, which is a design decision |
+| Icon from a library that ships SVG files | **Yes, via the base package** | A React wrapper usually holds no files while its dependency ships the real SVGs. Copy the file, do not parse the wrapper. Check the licence, and recolour — see below |
+| Icon from a library that ships only JS | Not as a file | Extractable solely by parsing path data out of a module |
+| Icon resolved from a remote API at runtime | **No** | Nothing on disk to take |
+| Native control of an embedded third party (maps, street view, 3D, zoom) | **No** | Drawn by their SDK at runtime. Nothing exists in the repository to take |
 | A screen, a panel, a populated list | **No** | Needs the app running against real data. This is what the capture team is for |
 
-Expect a mixed verdict inside ONE table of the manual, and judge per row, never
-per section. Measured on this manual:
+**Read `package.json` before assuming.** An icon library added later changes these
+answers, and a product that draws its own icons as files changes them entirely.
 
-| Table | Deliverable | Why |
-|---|---|---|
-| six map layers (`mapa.capa.*`) | **6 of 6** | Product's own `.webp`/`.png`, joined through `LayersMap.tsx` |
-| six BoT sections (`bot.seccion.*`) | **6 of 6** | Tabler outline SVGs, joined through `BOTSidebar.tsx`, recoloured |
-| six map controls (`mapa.ctrl.*`) | **0 of 6** | One MUI icon, one Tailwind-white product SVG, four Google Maps native controls |
-| everything else in BoT (`bot.*`, 47 slots) | **0 of 47** | All figure-convention — screens, panels and procedure steps. See below |
-
-The first and third sit on the same page.
+Expect a mixed verdict inside ONE table of the manual, and **judge per row, never
+per section.** Two rows on the same page routinely land on opposite sides.
 
 ### Sort by CONVENTION first — it answers most of the question in one query
 
@@ -109,50 +116,14 @@ file comes in. The `figure` convention means a captioned picture of a screen,
 which is the shape it does not.
 
 So before opening a single component, ask what conventions are actually pending.
-On BoT that took one query and settled all 47 slots: 12 `figure`, 28 `procedure`
-steps, 7 `field-list` items — every one of them figure-convention, and not one
-`icon-table` row left. Nothing an asset file can answer.
+A module whose pending slots are all `figure`, `procedure` steps and `field-list`
+items has nothing an asset file can answer, and one query settles it.
 
-Confirmed the slow way too, and it agreed: across every page under
-`BroadsecOfThings/`, `CCTV/` and `PMV/` the product imports exactly TWO asset
-files, both `assets/icons/*.tsx` product-drawn SVGs, and neither answers a
-pending slot. `CCTVPTZControl` is a grid of buttons; `CCTVStatusBadge` is a
-coloured pill driven by a status map. Composed at runtime, not shipped as files.
-
-The trap here is a `field-list` row like `bot.cctv.fn.ptz` — "Control PTZ" reads
-like an icon and is not. Its convention is `figure`, so the caption promises the
-whole control. Delivering the arrow glyph the component happens to use would
-fill the slot, pass every count, and show the operator something that is not the
-control being described.
-
-### BoT map assets exist and nothing asks for them
-
-The product ships `layer_panels.png`, `layer_trafficlight.webp`, `layer_camera.webp`,
-`vehiculo.png`, `alarm.svg` and their `pin_`/`cluster_` variants — exactly the
-element types `bot.mapa` describes in prose. But `bot.mapa` holds a `term-list`,
-which carries no images, and one screen figure. No slot, no delivery.
-
-This is the CONTENT gap the section above describes, and the second instance of
-it in this manual. Someone should decide whether BoT's map subsection deserves
-an icon-table of map element types. If it gets one, those assets are ready.
-
-### Where the join lives, in order of strength
-
-1. **A literal dictionary** — `"Accidente de Tránsito": LabelAccidenteTransito`.
-   The product itself states the mapping; nothing is inferred.
-2. **An object literal pairing asset and i18n key** —
-   `{ img: layer_camera, tittle: t("layers.cameras") }`.
-3. **A hardcoded label beside the asset** — `{ img: layer_avl, tittle: "AVL" }`.
-   One hop shorter than the i18n route and just as sound.
-
-Anything weaker than these three is a guess. Leave the slot pending.
-
-Check `package.json` before assuming: an icon library added later changes these
-answers, and a product that draws its own icons as files changes them entirely.
-
-The mix matters more than the total. This product ships 389 image files AND
-three icon libraries, so "does the repo have images" is the wrong question. The
-right one is "does the control I need render from a file".
+The trap is a `field-list` row that reads like an icon and is not — "Control PTZ",
+"Selector de vista". Its convention is `figure`, so the caption promises the whole
+control. Delivering the arrow glyph the component happens to use would fill the
+slot, pass every count, and show the operator something that is not the control
+being described.
 
 ## A monochrome outline must be recoloured, and that is not optional
 
@@ -161,20 +132,20 @@ it from CSS. **That does not survive being loaded as an image.** Inside
 `<img src="…svg">` the file is an independent document: `currentColor` cannot
 inherit from the page, so it resolves to black.
 
-The manual's icon column is dark navy. A black outline on it is not invisible —
-it is worse than invisible, it is *almost* legible, so nobody notices it is
-wrong. It looks fine in a 400 dpi crop and reads as a smudge at its real 20pt.
+If the manual's icon column is dark, a black outline is not invisible — it is
+worse than invisible, it is *almost* legible, so nobody notices it is wrong. It
+looks fine in a 400 dpi crop and reads as a smudge at its real size.
 
-So on copy, replace `currentColor` with the column's own foreground
-(`tokens.color.headerInk`, `#E8EDF2`) and record two things IN the file:
+So on copy, replace `currentColor` with the icon column's own foreground token and
+record two things IN the file:
 
 ```svg
-<!-- @tabler/icons (MIT), stroke recoloured to #E8EDF2 for the manual's dark icon column -->
+<!-- <library> (<licence>), stroke recoloured to <colour> for the manual's icon column -->
 ```
 
 - **the licence**, because a third-party glyph is now shipped in a client document
 - **the recolouring**, because it couples this asset to how the icon column is
-  styled today. If that column ever goes light, these icons disappear and the
+  styled today. If that column ever changes tone, these icons disappear and the
   comment is the only thing that will explain why.
 
 Verify by looking at the rendered page at real size, not zoomed. This is the one
@@ -216,3 +187,17 @@ Say so plainly and leave the slot pending. The request document is the channel
 for that, and it already carries what the image shows and where it goes. A slot
 that stays pending has cost nothing; a slot filled with the wrong file has cost
 the reader their trust in every other image in the manual.
+
+## Where a product's findings live
+
+Two different kinds of finding come out of this work, and they expire at
+different times, so they are recorded in different places:
+
+| Finding | Where it goes | Expires when |
+|---|---|---|
+| What the product repository ships — asset folders, icon libraries, where each join lives, the filename hazards | `sources/registry.yaml`, under that source's `assets:` | the **product** changes |
+| Which of this manual's slots turned out deliverable, and the traps in them | that manual's `AGENTS.md` | the **manual** changes |
+
+Read both before starting. Write to both when you finish: the next agent should
+inherit your verdicts instead of re-deriving them, and neither belongs in this
+file, which every product shares.
