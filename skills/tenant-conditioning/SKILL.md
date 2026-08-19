@@ -59,7 +59,14 @@ Before referencing another node, ask: **is that node visible to every tenant
 that can see this one?** If not, either widen the target's tenants or restate
 the information locally.
 
-Validation catches this. Do not rely on it to think for you.
+**Nothing catches this today.** The `ref` node is defined in the AST and is
+resolved by no renderer, so a reference across a boundary is not rejected — it
+reaches the deployment's PDF. Until that check exists you are the validation, and
+the only way to see it is to read the built output for each deployment.
+
+What IS enforced, at build time: a literal number, an outline reference or an
+anchor written into content is rejected outright (`core/load.ts`). Rule 2 has
+teeth. Rule 3 does not.
 
 ## Rule 4 — default to "all", narrow deliberately
 
@@ -72,37 +79,64 @@ client's manual, and nobody notices until the client does.
 
 ## Rule 5 — the module map decides, not the legacy manual
 
-Tenant metadata in the legacy `manual-usuario.md` is mostly `_(por definir)_` or
-`Todos`. It is not evidence. Rebuild tagging from `knowledge/module-map.json`.
+Tenant metadata in the legacy manual — for broadlineavida, `docs/manual-usuario.md`
+inside the **source product repository**, not in this one — is mostly
+`_(por definir)_` or `Todos`. It is not evidence. Rebuild tagging from the
+manual's own `knowledge/module-map.json`.
 
 ## Data tables
 
 A table whose rows vary by tenant is **data**, not prose. Each row carries its
-own tenants and the table renumbers itself after filtering:
+own selector and the table renumbers itself after filtering. This is the shape
+that ships, copied from `manuals/broadlineavida/sections/07-interfaz-general.yaml`:
 
 ```yaml
-- id: mapa.capas.semaforos
-  label: { i18nKey: map.layers.traffic_lights }
-  tenants: [mv]
-  description: Muestra el estado de cada intersección semaforizada.
-- id: mapa.capas.camaras
-  label: { i18nKey: map.layers.cameras }
-  tenants: [all]
-  description: Muestra la ubicación de las cámaras disponibles.
+rows:
+  - id: mapa.capa.trafico
+    label: Tráfico
+    description: >-
+      Muestra el estado del tráfico en tiempo real sobre la vía.
+  # LayersMap.tsx:76 — the entry only exists when
+  # `config.name === "MV" || config.name === "DEMO"`.
+  - id: mapa.capa.avl
+    label: AVL
+    description: >-
+      Muestra la ubicación en tiempo real de los vehículos con
+      seguimiento automático.
+    when:
+      tenant: [mv, demo]
 ```
+
+Three things in there are not optional:
+
+- **The key is `when`, and it holds a map of axis to a LIST of values.** Not
+  `tenants: [mv]`, not a bare scalar `tenant: mv`. `conditioning.ts` rejects the
+  scalar on purpose: unvalidated it turns `Array#includes` into `String#includes`,
+  which matches substrings instead of values and **leaks content across tenants**.
+- **An untagged row needs no `when` at all.** Omitted means "every value of every
+  axis" — that is the default, and `[all]` is not something you write to get it.
+- **Every tagged row carries a provenance comment above it**, naming the file, the
+  line, and the literal expression in the product that gates it. That comment is
+  Rule 4 made practice: it is how the next author checks the tag instead of
+  trusting it, and how a drift report proves the tag still matches the code.
 
 Hand-written Markdown tables with tenant-varying rows are not maintainable.
 Do not create them.
 
 ## Before you finish
 
-Run `broadsec-manual coverage <manual>` and check:
+**There is no `coverage` command.** The CLI accepts `build`, `images`, `extract`
+and `capture` — nothing else. A coverage report was designed to answer the three
+questions below and was never built, so today you answer them by hand, from one
+build per deployment. Answer them anyway; these are the checks that catch a tag
+that is wrong rather than merely invalid:
 
 - **Dead content** — tagged so narrowly no tenant sees it. Either the tag is
   wrong or the content should go.
 - **Thin tenants** — a tenant with far less content than its peers. Usually
   over-tagging, not a genuinely smaller product.
-- **Cross-target references** — must be zero.
+- **Cross-target references** — must be zero, and **nothing checks this for
+  you**. See Rule 3.
 
 Then read one tenant's build end to end. Numbering gaps, dangling references and
 paragraphs that assume missing context are obvious in the output and invisible
