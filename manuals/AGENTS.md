@@ -50,7 +50,13 @@ restate them, because a rule stated twice is a rule that drifts.
 | `tenant-conditioning` | Tagging content per deployment |
 | `source-extraction` | Getting facts out of the product |
 | `source-assets` | Taking images from the product's own asset files |
-| `manual-import` | Migrating the legacy document |
+
+One more exists and is **not** part of that set, because it applies only when a
+condition holds:
+
+| Skill | Read it only when |
+|---|---|
+| `manual-import` | The product ships a legacy manual that has to be migrated. A manual built from the product directly never needs it, and Broadsec's own import is long done — so this is the cold path, and its detail has not been audited the way the five above have. Treat what it says beyond the seven step headings as unverified. |
 
 ## Authoring rules
 

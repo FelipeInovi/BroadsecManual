@@ -1,6 +1,6 @@
 ---
 name: manual-import
-description: Migrates a legacy single-file Markdown manual into structured, tenant-conditioned block content — stripping hardcoded numbering and anchors, converting cross-references to stable ids, classifying prose into block types, and rebuilding tenant tagging from the module map instead of trusting the legacy badges. Use when seeding a new manual from an existing document, importing manual-usuario.md, or converting packed single-tenant-document content into fragments.
+description: Migrates an EXISTING legacy manual document into structured, tenant-conditioned block content — stripping hardcoded numbering and anchors, converting cross-references to stable ids, classifying prose into block types, and rebuilding tenant tagging from the module map instead of trusting the legacy badges. Use ONLY when such a document already exists and is the input: a packed single-file manual, one document carrying every deployment, SharePoint numbering and anchors to strip. Do NOT use it to start a manual from a product repository — that path begins at source-extraction and needs nothing here. Cold path: Broadsec's own import is finished, and this skill's detail is unaudited beyond its step headings.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
