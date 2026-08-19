@@ -494,7 +494,7 @@ function splash(repoRoot: string): void {
     : 0;
 
   ui("");
-  ui(`   ${accent("▄▄▄")}  ${bold("B R O A D S E C")}  ${dim("·")}  ${bold("M A N U A L")}`);
+  ui(`   ${accent("▄▄▄")}  ${bold("M A N U A L E S")}  ${dim("·")}  ${bold("I N O V I S E C")}`);
   ui(`   ${accent("▀▀▀")}  ${dim("pipeline de documentación condicionada por despliegue")}`);
   ui("");
   ui(dim(`   ${manuals} manual(es) · ${blocks} tipos de bloque · un solo AST`));
