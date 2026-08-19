@@ -14,6 +14,11 @@
  * second renderer, or every fix has to be made twice.
  */
 
+/** One rung of a ramp is a CSS length. Points, in practice — see `Brand.scale`. */
+type Ramp<K extends string> = Readonly<Record<K, string>>;
+type SizeKey = "xs" | "sm" | "base" | "md" | "body" | "lg" | "xl" | "xxl";
+type SpaceKey = "xs" | "sm" | "md" | "lg" | "xl";
+
 /** What one brand supplies. Only the semantic layer may read these. */
 interface Brand {
   readonly color: {
@@ -66,6 +71,23 @@ interface Brand {
   readonly coverGlow: string;
   /** Which stylesheet to render with. Two brands, two files, no shared risk. */
   readonly sheet: "broadsec" | "bridge";
+  /**
+   * Type scale and spacing ramp. Omit it and the brand gets `defaultScale`
+   * unchanged; give part of it and only those keys move.
+   *
+   * Opened because the first two manuals could differ in palette and type but
+   * not in rhythm, and rhythm is most of what makes a design read as its own.
+   * The cost is the one the shared layer was buying: a key overridden here is a
+   * key that no longer gets fixed once for everybody.
+   *
+   * **Points only.** Every value ends up in CSS, where any unit is accepted, and
+   * in Word, where `pt()` throws on anything that is not `<number>pt`. A `--docx`
+   * build is the check that catches a wrong unit; the PDF will not complain.
+   */
+  readonly scale?: {
+    readonly size?: Partial<Ramp<SizeKey>>;
+    readonly space?: Partial<Ramp<SpaceKey>>;
+  };
 }
 
 const broadsec: Brand = {
@@ -152,8 +174,15 @@ const bridge: Brand = {
   sheet: "bridge",
 };
 
-/** Sizes and rhythm are shared: they are page geometry, not brand. */
-const scale = {
+/**
+ * The rhythm every brand starts from. A brand keeps it by saying nothing, and
+ * overrides only the rungs it needs through `Brand.scale`.
+ *
+ * These were shared outright until a second manual needed its own type scale.
+ * They remain the default because most of a manual is page geometry, and a brand
+ * that redefines all thirteen has taken on maintaining all thirteen.
+ */
+const defaultScale: { size: Ramp<SizeKey>; space: Ramp<SpaceKey> } = {
   size: {
     xs: "7pt",
     sm: "8pt",
@@ -175,6 +204,12 @@ const scale = {
 
 /** Named roles. Blocks and renderers reference only these. */
 function build(brand: Brand) {
+  // Merged per rung, not per group: a brand that overrides `size.xxl` keeps the
+  // other seven sizes shared, which is the whole point of the default existing.
+  const scale = {
+    size: { ...defaultScale.size, ...brand.scale?.size },
+    space: { ...defaultScale.space, ...brand.scale?.space },
+  };
   return {
   page: {
     size: "A4",
