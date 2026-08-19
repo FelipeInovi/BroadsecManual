@@ -35,6 +35,7 @@ import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./captu
 /** Where the product login lives. Gitignored; see .env.capture.example. */
 const CREDENTIALS_FILE = ".env.capture";
 import { runCaptures } from "./capture-run.ts";
+import { runWizard } from "./wizard.ts";
 import {
   COMMON_SET,
   buildImageIndex,
@@ -850,6 +851,14 @@ export function formatCliError(error: unknown): string {
 export async function run(argv: readonly string[]): Promise<number> {
   const [command, manualId, ...rest] = argv;
   const axisFlags = "[--tenant <id>] [--axis <name>=<value> ...]";
+
+  // `new` takes no manual id — it is the command that decides what the id will
+  // be. Bare invocation opens the same wizard, but only for a human: with no TTY
+  // the usage text is still what a script or a pipe gets.
+  if (command === "new" || (command === undefined && process.stdin.isTTY)) {
+    return runWizard(process.cwd());
+  }
+
   if (
     (command !== "build" &&
       command !== "images" &&
@@ -875,7 +884,12 @@ export async function run(argv: readonly string[]): Promise<number> {
         `           matches the PDF's type, palette, tables and figures but NOT its\n` +
         `           page breaks: Word reflows, so the page count can differ.\n` +
         `  extract  read the source product and write knowledge/module-map.json,\n` +
-        `           reporting what changed since the last map.`,
+        `           reporting what changed since the last map.\n\n` +
+        `       broadsec-manual new\n` +
+        `  new      interactive: collect which product, what to call its manual and\n` +
+        `           how much to attempt, then print the prompt that starts the work.\n` +
+        `           Creates nothing — the survey and every file are the agent's job.\n` +
+        `           Running with no arguments in a terminal opens the same wizard.`,
     );
     return 2;
   }

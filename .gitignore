@@ -27,3 +27,7 @@ Thumbs.db
 # Local junction/symlink to skills/ for Claude Code discovery.
 # The canonical skills live in skills/ — never commit the link.
 .claude/skills
+
+# Prompts assembled by `broadsec-manual new`. Generated per run, and they carry
+# machine-local paths — the manual they start is what gets committed, not these.
+.broadsec-manual/
