@@ -9,13 +9,6 @@
 # server-side, so the client repository enumerates no deployment and nothing in
 # it branches on one. What does vary the UI is the `permissions[]` claim. See
 # `sources/registry.yaml` for the evidence and ESTADO.md for the decision.
-#
-# KNOWN BLOCKER — this config is correct and does not build yet. The pipeline
-# ENGINE is axis-agnostic (`packages/core/src/condition.ts`), but the CLI still
-# requires an axis literally named `tenant`: `requireAxisValue(target, "tenant")`
-# at packages/cli/src/main.ts:711 (build), :579 (images) and :524 (capture), plus
-# the figure-set folder and the `{tenant}` filename token. Renaming this axis to
-# `tenant` would make the build pass and the manual lie. Do not do it.
 
 version: 1
 
@@ -31,10 +24,10 @@ manual:
   # Palette and type from Bridge360's own theme. Already in packages/tokens —
   # reused unchanged, no new brand.
   theme: bridge
-  # Set EXPLICITLY, not for style. The default lede appends
-  # `axisValueName(config, "tenant", …)` (packages/cli/src/main.ts:739), which
-  # is one of the places that assumes a `tenant` axis. Naming the standfirst
-  # here removes that dependency; the blocker above is what remains.
+  # Set EXPLICITLY, not for style. The default standfirst
+  # (packages/cli/src/main.ts:800-801) describes Broadsec SIMM, not Bridge360,
+  # and appends the axis value's name — which would print the reader's own
+  # permission profile on a client-facing cover.
   lede: >-
     Plataforma de gestión de incidentes y coordinación de recursos para
     operaciones críticas.
@@ -79,8 +72,6 @@ targets:
 
 output:
   dir: output
-  # `{permission}` is the honest intent and is NOT substituted today — the only
-  # axis token the CLI expands is `{tenant}` (packages/cli/src/main.ts:711-713).
-  # Part of the same blocker, listed here so it is fixed with it rather than
-  # discovered as a filename collision later.
+  # `{permission}` is the axis's own name, and that is what the CLI expands:
+  # `outputFilename` substitutes `{<primaryAxis>}` (packages/cli/src/main.ts:473-477).
   filename: "manual-operador-bridge-{permission}-v{contentVersion}.pdf"

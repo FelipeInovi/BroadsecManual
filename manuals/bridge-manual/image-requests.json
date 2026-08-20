@@ -13,6 +13,7 @@
     "preferShared": "deliver to _common/ unless the screen genuinely differs by deployment — six copies of one icon are six things to update"
   },
   "deploymentsCovered": [
+    "agencia-propia",
     "todas-las-agencias"
   ],
   "deploymentsConfigured": 2,
@@ -25,6 +26,7 @@
     {
       "slot": "seatmap.fig",
       "neededBy": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "uses": [
@@ -35,6 +37,7 @@
         }
       ],
       "pendingFor": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "deliverTo": {
@@ -45,6 +48,7 @@
     {
       "slot": "seatmap.distribucion.fig",
       "neededBy": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "uses": [
@@ -55,6 +59,7 @@
         }
       ],
       "pendingFor": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "deliverTo": {
@@ -65,6 +70,7 @@
     {
       "slot": "seatmap.distribucion.encabezado",
       "neededBy": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "uses": [
@@ -75,6 +81,7 @@
         }
       ],
       "pendingFor": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "deliverTo": {
@@ -85,6 +92,7 @@
     {
       "slot": "seatmap.distribucion.zonas",
       "neededBy": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "uses": [
@@ -95,6 +103,7 @@
         }
       ],
       "pendingFor": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "deliverTo": {
@@ -105,6 +114,7 @@
     {
       "slot": "seatmap.distribucion.editar",
       "neededBy": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "uses": [
@@ -115,11 +125,122 @@
         }
       ],
       "pendingFor": [
+        "agencia-propia",
         "todas-las-agencias"
       ],
       "deliverTo": {
         "shared": "_common/seatmap.distribucion.editar.png",
         "override": "<permission>/seatmap.distribucion.editar.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.fig",
+          "blockType": "figure",
+          "shows": "Columna de indicadores con el reparto por categoría, las tarjetas de atención y el recuento por estado."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.fig.png",
+        "override": "<permission>/seatmap.indicadores.fig.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.estado.disponibles",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.disponibles",
+          "blockType": "icon-table",
+          "shows": "Disponibles"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.estado.disponibles.png",
+        "override": "<permission>/seatmap.indicadores.estado.disponibles.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.estado.en-llamada",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.en-llamada",
+          "blockType": "icon-table",
+          "shows": "En llamada"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.estado.en-llamada.png",
+        "override": "<permission>/seatmap.indicadores.estado.en-llamada.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.estado.no-disponibles",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.no-disponibles",
+          "blockType": "icon-table",
+          "shows": "No disponibles"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.estado.no-disponibles.png",
+        "override": "<permission>/seatmap.indicadores.estado.no-disponibles.png"
+      }
+    },
+    {
+      "slot": "seatmap.monitor.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.monitor.fig",
+          "blockType": "figure",
+          "shows": "Banda inferior con las fichas de estados de operadores y de agencias."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.monitor.fig.png",
+        "override": "<permission>/seatmap.monitor.fig.png"
       }
     },
     {
@@ -200,106 +321,6 @@
       "deliverTo": {
         "shared": "_common/seatmap.distribucion.cambiar-agencia.verificar.png",
         "override": "<permission>/seatmap.distribucion.cambiar-agencia.verificar.png"
-      }
-    },
-    {
-      "slot": "seatmap.indicadores.fig",
-      "neededBy": [
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.fig",
-          "blockType": "figure",
-          "shows": "Columna de indicadores con el reparto por categoría, las tarjetas de atención y el recuento por estado."
-        }
-      ],
-      "pendingFor": [
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.fig.png",
-        "override": "<permission>/seatmap.indicadores.fig.png"
-      }
-    },
-    {
-      "slot": "seatmap.indicadores.estado.disponibles",
-      "neededBy": [
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.estado.disponibles",
-          "blockType": "icon-table",
-          "shows": "Disponibles"
-        }
-      ],
-      "pendingFor": [
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.estado.disponibles.png",
-        "override": "<permission>/seatmap.indicadores.estado.disponibles.png"
-      }
-    },
-    {
-      "slot": "seatmap.indicadores.estado.en-llamada",
-      "neededBy": [
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.estado.en-llamada",
-          "blockType": "icon-table",
-          "shows": "En llamada"
-        }
-      ],
-      "pendingFor": [
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.estado.en-llamada.png",
-        "override": "<permission>/seatmap.indicadores.estado.en-llamada.png"
-      }
-    },
-    {
-      "slot": "seatmap.indicadores.estado.no-disponibles",
-      "neededBy": [
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.estado.no-disponibles",
-          "blockType": "icon-table",
-          "shows": "No disponibles"
-        }
-      ],
-      "pendingFor": [
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.estado.no-disponibles.png",
-        "override": "<permission>/seatmap.indicadores.estado.no-disponibles.png"
-      }
-    },
-    {
-      "slot": "seatmap.monitor.fig",
-      "neededBy": [
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.monitor.fig",
-          "blockType": "figure",
-          "shows": "Banda inferior con las fichas de estados de operadores y de agencias."
-        }
-      ],
-      "pendingFor": [
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.monitor.fig.png",
-        "override": "<permission>/seatmap.monitor.fig.png"
       }
     }
   ],
