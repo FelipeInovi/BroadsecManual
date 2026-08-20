@@ -187,6 +187,34 @@ state.
   what a deliberately unfinished feature looks like when it is handled properly —
   the contrast with the finding above is the point.
 
+- **Bridge of Things' own DASHBOARD panel is a fixture, end to end.** The panel
+  the view OPENS with renders `dasboardPanelItems`
+  (`bridge-of-things/home-panel.tsx:20-84`): seven integration cards — CCTV, PRT,
+  PMV, ARS, CITRA, ICAD, AVL — with a hardcoded `status` that drives the
+  green/red dot (`:86-89`, `:115-119`), a hardcoded `lastConnection` shown under
+  "Ult. Conexión" (`:123-124`), and a hardcoded English `description`
+  ("This is the CCTV panel.") rendered as body text in a Spanish product
+  (`:121`). There is no query, no prop, no data source of any kind. Four of the
+  seven (ARS, CITRA, ICAD, AVL) carry `isActivatePanelExternal: false`, so
+  clicking them does nothing (`:102-106`).
+
+  Worse than Dashboard's case, because this is the landing panel: the first thing
+  a reader of that view sees is fabricated integration health.
+
+- **The other three BoT panels are genuinely real.** PMV (`usePmvPanels`,
+  `pmv-panel.tsx:31`), CCTV (`useCCTVCameras`, `cctv-context.tsx:72`) and PRT
+  (`useProgrammingList`, `prt-list-content.tsx:53`; `useResourceManagement`,
+  `prt-panel.tsx:32-33`) all query the backend. They are documented in full.
+
+- **Every panel is reachable from the panel bar, and that is verified, not
+  assumed.** `ToolKitPanel` sits at the foot of the icon rail
+  (`components/layout/icon-sidebar.tsx:158`) and lists the current view's
+  manifest entries with their active state
+  (`components/panels/tool-kit-panel.tsx:186`). It filters only on
+  `requiresCase`/`requiresNoCase`, which no BoT entry sets. This matters because
+  the BoT dashboard panel is one way to open the other three, and it is the way
+  this manual does NOT document.
+
 ## Module inventory — PROPOSED, not agreed
 
 Nothing in this repository declares a manual's module list, and no scope has been
@@ -215,6 +243,16 @@ Treat this as a proposal to confirm, not as an agreed scope.
    author against the source read directly, citing file and line, as Seatmap
    does. **What settles it:** building that extractor, whose first job is not
    tenants but permission gates.
+3. **Whether the other three agency types ever get documented.** Settled for
+   now by scoping the manual to RECEPTION (see Decided), which is what let Home
+   be written. What is NOT settled is what happens when a DISPATCH, SUPERVISOR
+   or OTHER agency needs a manual: a second manual, or `agency-type` as a second
+   axis. The second axis is not free — `primaryAxis` refuses more than one and
+   says why (`packages/cli/src/main.ts:463-469`): "one filename and one figure
+   set need a single value … raise it rather than working around it."
+   **What settles it:** the owner, when a non-RECEPTION agency is actually in
+   scope.
+
 4. **How the manual handles the "Historial de Eventos" defects.** Blocked, and
    the reason it is blocked is not authoring: saying a control works when it does
    not is a lie to the client, and saying it does not work is a product statement
@@ -228,46 +266,51 @@ Treat this as a proposal to confirm, not as an agreed scope.
    NOT done by the `module-completeness` standard, and it should not be counted
    as done.
 
-3. **Whether the other three agency types ever get documented.** Settled for
-   now by scoping the manual to RECEPTION (see Decided), which is what let Home
-   be written. What is NOT settled is what happens when a DISPATCH, SUPERVISOR
-   or OTHER agency needs a manual: a second manual, or `agency-type` as a second
-   axis. The second axis is not free — `primaryAxis` refuses more than one and
-   says why (`packages/cli/src/main.ts:463-469`): "one filename and one figure
-   set need a single value … raise it rather than working around it."
-   **What settles it:** the owner, when a non-RECEPTION agency is actually in
-   scope.
+5. **The same question as 4, for Bridge of Things' DASHBOARD panel** — and
+   sharper, because it is the view's landing panel and its placeholder text is in
+   English. `05-bridge-of-things.yaml` names the panel in the panel inventory and
+   documents the panel bar as the way to reach the other three, and describes
+   nothing the fixture displays. **What settles it:** the product wiring that
+   panel to real data, or the owner deciding how the manual treats it. Until
+   then that submodule is NOT done.
+
+   Questions 4 and 5 are the same shape and should probably be answered together:
+   **how does this manual treat a screen the product has not finished?** Two
+   views in a row have hit it. A general answer would be worth more than two
+   per-section ones.
 
 ## Next section
 
-**`bridge-of-things`** is the proposal — next in the rail order, and it would
-take `05-` with no renumbering.
+**`forces-in-field`** — next in the rail order, `06-`, no renumbering.
 
-Three things to carry into it:
+The three checks, all of which have now caught something real:
 
-- **Check the divergence signals first.** `grep` for `agencyType`,
-  `permissions`, `can[A-Z]`, `role`, `agencyId` before assuming the view is
-  uniform. Three views have come back clean this way; `agencyType` in Home did
-  not, and the source survey had missed it.
-- **Check whether the data is real.** Dashboard is the reason this is now on the
-  list. `grep` for `MOCK`, and read the mapping between the API response and the
-  rows — the defects above are all in that mapping, not in the fetch. A screen
-  can be fed by a real endpoint and still show fabricated values.
-- **Never invent a label without checking for one.** Writing Dashboard, the hour
-  filter was given the made-up name "Franja horaria" before a second look found
-  the product's own caption, `Intervalo horario`
-  (`analytics-filters-panel.tsx:870`). Inventing a name for a control that HAS
-  one sends the reader looking for text that is not on screen. Invent only where
-  the source genuinely has no label, and say so in the comment when you do.
+- **Divergence signals.** `grep` for `agencyType`, `permissions`, `can[A-Z]`,
+  `role`, `agencyId`. Four views have come back clean; Home did not.
+- **Whether the data is real.** `grep` for `MOCK`, and read the mapping between
+  the query and what is rendered — Dashboard's defects were in the mapping, and
+  BoT's whole landing panel had no query at all. Also look for English
+  placeholder copy: `"This is the … panel."` is what gave BoT away.
+- **Labels before names.** Never invent a name for a control without checking
+  the source for one first.
 
-And still: verify every line citation by printing the cited line back before
-committing.
+And verify every line citation by printing the cited line back. This section had
+four wrong on first write, including one — `Preset home` — where checking the
+citation also corrected the DESCRIPTION: it goes to the camera's first saved
+preset and is unavailable with none saved (`cctv-mosaic.tsx:298-301`), not to
+some factory position. Verifying citations is not clerical; it catches content
+errors.
 
-Unchanged: `create-incident` will need care when its turn comes. Two comments
-there name deployments (`create-incident.ts:183`,
-`create-incident.schema.ts:51`) and neither is a gate — the code carries the
-union of deployment behaviours. Do not read them as evidence of a tenant axis.
+Also worth flagging for scope: **PMV and CCTV are each large enough to justify
+their own section** if field-level depth is ever wanted. `05-` documents both at
+workflow depth — what they do, how to reach them, their main controls and their
+procedures — which satisfies `module-completeness`, but PMV alone has eighteen
+components and CCTV's mosaic, PTZ and preset machinery runs to some two thousand
+lines. Splitting them is a scope decision, not an authoring one.
 
-The module inventory above is STILL only proposed. Home, Llamada, Seatmap and
-Dashboard are written — Dashboard with the gap recorded in question 4. No scope
-beyond them has been agreed.
+Unchanged: `create-incident` will need care. Two comments there name deployments
+(`create-incident.ts:183`, `create-incident.schema.ts:51`) and neither is a gate.
+
+The module inventory above is STILL only proposed. Home, Llamada, Seatmap,
+Dashboard and Bridge of Things are written — the last two with the gaps recorded
+in questions 4 and 5. No scope beyond them has been agreed.

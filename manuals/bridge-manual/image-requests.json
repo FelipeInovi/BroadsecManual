@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.3.0",
+  "contentVersion": "0.4.0",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 98,
+    "total": 136,
     "delivered": 0,
-    "pending": 98
+    "pending": 136
   },
   "pending": [
     {
@@ -2089,6 +2089,842 @@
       "deliverTo": {
         "shared": "_common/dashboard.emergency.fig.png",
         "override": "<permission>/dashboard.emergency.fig.png"
+      }
+    },
+    {
+      "slot": "bot.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.fig",
+          "blockType": "figure",
+          "shows": "Vista Bridge of Things con el tablero de sistemas integrados abierto."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.fig.png",
+        "override": "<permission>/bot.fig.png"
+      }
+    },
+    {
+      "slot": "bot.abrir.barra",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.abrir.barra",
+          "blockType": "field-list",
+          "shows": "Barra de paneles"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.abrir.barra.png",
+        "override": "<permission>/bot.abrir.barra.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.fig",
+          "blockType": "figure",
+          "shows": "Panel PMV con la composición del mensaje y su previsualización."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.fig.png",
+        "override": "<permission>/bot.pmv.fig.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.campo.titulo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.campo.titulo",
+          "blockType": "field-list",
+          "shows": "Título Interno"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.campo.titulo.png",
+        "override": "<permission>/bot.pmv.campo.titulo.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.campo.tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.campo.tipo",
+          "blockType": "field-list",
+          "shows": "Tipo"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.campo.tipo.png",
+        "override": "<permission>/bot.pmv.campo.tipo.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.campo.panel",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.campo.panel",
+          "blockType": "field-list",
+          "shows": "Panel"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.campo.panel.png",
+        "override": "<permission>/bot.pmv.campo.panel.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paginas.duracion.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paginas.duracion.campo",
+          "blockType": "field-list",
+          "shows": "Duración Página"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.paginas.duracion.campo.png",
+        "override": "<permission>/bot.pmv.paginas.duracion.campo.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.guardar.datos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.guardar.datos",
+          "blockType": "procedure",
+          "shows": "Complete los datos del mensaje"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.guardar.datos.png",
+        "override": "<permission>/bot.pmv.guardar.datos.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.guardar.contenido",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.guardar.contenido",
+          "blockType": "procedure",
+          "shows": "Componga el contenido"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.guardar.contenido.png",
+        "override": "<permission>/bot.pmv.guardar.contenido.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.guardar.horarios",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.guardar.horarios",
+          "blockType": "procedure",
+          "shows": "Fije los horarios"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.guardar.horarios.png",
+        "override": "<permission>/bot.pmv.guardar.horarios.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.guardar.revisar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.guardar.revisar",
+          "blockType": "procedure",
+          "shows": "Revise la previsualización"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.guardar.revisar.png",
+        "override": "<permission>/bot.pmv.guardar.revisar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.guardar.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.guardar.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Guardar Selección"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.guardar.confirmar.png",
+        "override": "<permission>/bot.pmv.guardar.confirmar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fig",
+          "blockType": "figure",
+          "shows": "Panel CCTV con el mosaico de cámaras y la lista de cámaras disponibles."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.fig.png",
+        "override": "<permission>/bot.cctv.fig.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.camaras.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.camaras.buscar",
+          "blockType": "procedure",
+          "shows": "Ubique la cámara en la lista"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.camaras.buscar.png",
+        "override": "<permission>/bot.cctv.camaras.buscar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.camaras.arrastrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.camaras.arrastrar",
+          "blockType": "procedure",
+          "shows": "Arrástrela hasta la celda"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.camaras.arrastrar.png",
+        "override": "<permission>/bot.cctv.camaras.arrastrar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.camaras.soltar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.camaras.soltar",
+          "blockType": "procedure",
+          "shows": "Suéltela"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.camaras.soltar.png",
+        "override": "<permission>/bot.cctv.camaras.soltar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.tilt-arriba",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.tilt-arriba",
+          "blockType": "icon-table",
+          "shows": "Tilt arriba"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.tilt-arriba.png",
+        "override": "<permission>/bot.cctv.ptz.tilt-arriba.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.tilt-abajo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.tilt-abajo",
+          "blockType": "icon-table",
+          "shows": "Tilt abajo"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.tilt-abajo.png",
+        "override": "<permission>/bot.cctv.ptz.tilt-abajo.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.pan-izquierda",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.pan-izquierda",
+          "blockType": "icon-table",
+          "shows": "Pan izquierda"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.pan-izquierda.png",
+        "override": "<permission>/bot.cctv.ptz.pan-izquierda.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.pan-derecha",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.pan-derecha",
+          "blockType": "icon-table",
+          "shows": "Pan derecha"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.pan-derecha.png",
+        "override": "<permission>/bot.cctv.ptz.pan-derecha.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.diagonales",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.diagonales",
+          "blockType": "icon-table",
+          "shows": "Arriba izquierda, arriba derecha, abajo izquierda y abajo derecha"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.diagonales.png",
+        "override": "<permission>/bot.cctv.ptz.diagonales.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.zoom-mas",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.zoom-mas",
+          "blockType": "icon-table",
+          "shows": "Acercar (Zoom +)"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.zoom-mas.png",
+        "override": "<permission>/bot.cctv.ptz.zoom-mas.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.zoom-menos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.zoom-menos",
+          "blockType": "icon-table",
+          "shows": "Alejar (Zoom -)"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.zoom-menos.png",
+        "override": "<permission>/bot.cctv.ptz.zoom-menos.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.ptz.home",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.home",
+          "blockType": "icon-table",
+          "shows": "Preset home"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.ptz.home.png",
+        "override": "<permission>/bot.cctv.ptz.home.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.presets.orientar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.orientar",
+          "blockType": "procedure",
+          "shows": "Oriente la cámara"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.presets.orientar.png",
+        "override": "<permission>/bot.cctv.presets.orientar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.presets.nombrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.nombrar",
+          "blockType": "procedure",
+          "shows": "Escriba el nombre"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.presets.nombrar.png",
+        "override": "<permission>/bot.cctv.presets.nombrar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.presets.guardar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.guardar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Guardar posición actual"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.presets.guardar.png",
+        "override": "<permission>/bot.cctv.presets.guardar.png"
+      }
+    },
+    {
+      "slot": "bot.cctv.presets.volver",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.volver",
+          "blockType": "procedure",
+          "shows": "Vuelva a la posición cuando la necesite"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.cctv.presets.volver.png",
+        "override": "<permission>/bot.cctv.presets.volver.png"
+      }
+    },
+    {
+      "slot": "bot.prt.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.fig",
+          "blockType": "figure",
+          "shows": "Panel PRT con sus dos fichas y la tabla de programación."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.fig.png",
+        "override": "<permission>/bot.prt.fig.png"
+      }
+    },
+    {
+      "slot": "bot.prt.control.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.control.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar por nombre, cédula, placa o vehículo..."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.control.buscar.png",
+        "override": "<permission>/bot.prt.control.buscar.png"
+      }
+    },
+    {
+      "slot": "bot.prt.control.vehiculo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.control.vehiculo",
+          "blockType": "field-list",
+          "shows": "Tipo de vehículo"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.control.vehiculo.png",
+        "override": "<permission>/bot.prt.control.vehiculo.png"
+      }
+    },
+    {
+      "slot": "bot.prt.control.fechas",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.control.fechas",
+          "blockType": "field-list",
+          "shows": "Rango de fechas"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.control.fechas.png",
+        "override": "<permission>/bot.prt.control.fechas.png"
+      }
+    },
+    {
+      "slot": "bot.prt.control.limpiar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.control.limpiar",
+          "blockType": "field-list",
+          "shows": "Limpiar"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.control.limpiar.png",
+        "override": "<permission>/bot.prt.control.limpiar.png"
+      }
+    },
+    {
+      "slot": "bot.prt.recursos.buscar.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.recursos.buscar.campo",
+          "blockType": "field-list",
+          "shows": "Buscar recurso, agente, zona..."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.recursos.buscar.campo.png",
+        "override": "<permission>/bot.prt.recursos.buscar.campo.png"
+      }
+    },
+    {
+      "slot": "bot.prt.recursos.asignar.ubicar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.recursos.asignar.ubicar",
+          "blockType": "procedure",
+          "shows": "Ubique el recurso disponible"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.recursos.asignar.ubicar.png",
+        "override": "<permission>/bot.prt.recursos.asignar.ubicar.png"
+      }
+    },
+    {
+      "slot": "bot.prt.recursos.asignar.abrir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.recursos.asignar.abrir",
+          "blockType": "procedure",
+          "shows": "Haga clic en ASIGNAR"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.recursos.asignar.abrir.png",
+        "override": "<permission>/bot.prt.recursos.asignar.abrir.png"
+      }
+    },
+    {
+      "slot": "bot.prt.recursos.asignar.caso",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.recursos.asignar.caso",
+          "blockType": "procedure",
+          "shows": "Elija el caso"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.recursos.asignar.caso.png",
+        "override": "<permission>/bot.prt.recursos.asignar.caso.png"
+      }
+    },
+    {
+      "slot": "bot.prt.recursos.asignar.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.prt.recursos.asignar.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Confirmar asignación"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.prt.recursos.asignar.confirmar.png",
+        "override": "<permission>/bot.prt.recursos.asignar.confirmar.png"
       }
     },
     {

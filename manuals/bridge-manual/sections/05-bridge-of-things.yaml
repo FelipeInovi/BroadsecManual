@@ -1,0 +1,827 @@
+# Bridge of Things — written against the Bridge360 source, cited by file and line.
+#
+# There is no module map for this product yet (no extractor exists for its
+# shape), so every claim here carries its own provenance comment instead of
+# tracing to `knowledge/`. There is no i18n catalogue either: every label below
+# is a QUOTATION of a literal in the component, with the line it sits on. If the
+# product rewords one, nothing here notices — that is recorded in ESTADO.md.
+#
+# Checked before writing, per ESTADO's standing note: `bridge-of-things-view.tsx`
+# reads NO divergence signal — no `agencyType`, `permissions`, `role` or
+# `agencyId`. Uniform for every agency type, nothing conditioned on the
+# `permission` axis. No `when` in this file.
+#
+# Data checked too, and this is the reason for the omission below: PMV, CCTV and
+# PRT are fed by real queries (`usePmvPanels`, `useCCTVCameras`,
+# `useProgrammingList`, `useResourceManagement`). The view's OWN dashboard panel
+# is not — see next comment.
+#
+# INCOMPLETE ON PURPOSE — see ESTADO.md, open question 5. The panel labelled
+# DASHBOARD, which is the one this view opens with, is a fixture: its seven
+# integration cards, their connection status and their "last connection" times
+# are hardcoded literals with no data source at all
+# (`home-panel.tsx:20-84`). This section names the panel and how to leave it,
+# and describes NONE of what it displays. The other three panels are complete.
+#
+# Paths in comments are relative to `src/modules/dashboard/presentation/ui/` in
+# the `bridge` source repository, except where another module is named in full.
+
+id: bot
+title: Bridge of Things
+subtitle: Los sistemas integrados a la plataforma
+
+children:
+  - id: bot.proposito
+    type: prose
+    props:
+      text: >-
+        La vista **Bridge of Things** reúne los sistemas de campo integrados a la
+        plataforma y permite operarlos sin salir de ella: los paneles de mensaje
+        variable, las cámaras y la programación de recursos en vía.
+
+  - id: bot.acceso
+    type: prose
+    props:
+      # components/layout/icon-sidebar.tsx:68 — nav item id `bridge-of-things`,
+      # label "Bridge of Things"; pages/dashboard.tsx:738 monta la vista.
+      text: >-
+        Diríjase a **Bridge of Things** en la barra lateral de iconos. La vista
+        se organiza en paneles independientes sobre el mapa, que se abren y se
+        cierran de a uno.
+
+  - id: bot.fig
+    type: figure
+    props:
+      caption: "Vista Bridge of Things con el tablero de sistemas integrados abierto."
+      widthPercent: 90
+
+  - id: bot.paneles
+    type: data-table
+    props:
+      # Rótulos citados de BOT_MANIFEST, bridge-of-things-view.tsx:18, :28, :38
+      # y :48. El primero es el único sin `initiallyInactive`, de modo que es el
+      # que abre con la vista.
+      labelHeader: Panel
+      descriptionHeader: Qué opera
+      rows:
+        - id: bot.panel.dashboard
+          label: DASHBOARD
+          description: >-
+            El tablero de los sistemas integrados. Es el panel con el que abre
+            la vista.
+        - id: bot.panel.pmv
+          label: PMV
+          description: >-
+            Los paneles de mensaje variable: qué muestran, en qué páginas y en
+            qué horarios.
+        - id: bot.panel.cctv
+          label: CCTV
+          description: >-
+            Las cámaras: el mosaico de vistas en vivo y el control de las
+            cámaras móviles.
+        - id: bot.panel.prt
+          label: PRT
+          description: >-
+            La programación de recursos en vía y el estado de cada recurso.
+
+  - id: bot.abrir
+    type: field-list
+    props:
+      items:
+        # La barra de paneles vive al pie del riel de iconos
+        # (components/layout/icon-sidebar.tsx:158) y lista los paneles del
+        # manifiesto de la vista activa, cada uno con su rótulo y si está activo
+        # o no (components/panels/tool-kit-panel.tsx:186). Los cuatro paneles de
+        # esta vista son acoplables, así que los cuatro figuran ahí.
+        - id: bot.abrir.barra
+          label: Barra de paneles
+          text: >-
+            Al pie de la barra lateral de iconos, lista los paneles de la vista
+            e indica cuáles están abiertos. Haga clic en uno para abrirlo o
+            cerrarlo. Es la forma de recuperar un panel que cerró.
+          layout: beside
+
+  - id: bot.disposicion
+    type: prose
+    props:
+      # Un único panel abierto (fuera del tablero) toma la altura completa
+      # (bridge-of-things-view.tsx:99-113); con dos o más, cada uno conserva su
+      # geometría. La vista habilita la expansión (`expandable: true`, :82), y
+      # CCTV y PMV reciben un tamaño distinto según estén expandidos, solos o
+      # acompañados (:144-150 y :157-163).
+      text: >-
+        Cuando queda un solo panel abierto, ocupa la altura completa de la
+        pantalla; al abrir un segundo, ambos vuelven a su tamaño habitual. Los
+        paneles también pueden expandirse desde su propio encabezado, y las
+        vistas de CCTV y PMV aprovechan el espacio adicional mostrando más
+        detalle en lugar de agrandar lo mismo.
+
+  - id: bot.herramientas
+    type: prose
+    props:
+      # Mismo `MapToolsPanel` que Home y Llamada, montado horizontal y centrado
+      # arriba (bridge-of-things-view.tsx:184-186), con `hasLocation={false}`
+      # (:185) — el comentario del producto en :182-183 dice por qué: acá no hay
+      # incidente al que centrar.
+      text: >-
+        Las herramientas de mapa son las mismas que se describen en la sección
+        **Home**, dispuestas aquí en una fila centrada en la parte superior. Como
+        en Home, el control de centrado está deshabilitado: en esta vista no hay
+        un incidente al que llevar el mapa.
+
+  # --- PMV -------------------------------------------------------------------
+  - id: bot.pmv
+    title: PMV
+    children:
+      - id: bot.pmv.proposito
+        type: prose
+        props:
+          text: >-
+            Compone y programa lo que muestran los paneles de mensaje variable
+            de la vía: el texto, los pictogramas, la cantidad de páginas y los
+            horarios en que cada mensaje se exhibe.
+
+      - id: bot.pmv.ubicacion
+        type: prose
+        props:
+          # BOT_MANIFEST, entrada `pmv` (bridge-of-things-view.tsx:26-35):
+          # `initiallyInactive`. Encabezado citado de pmv-panel.tsx:35. La lista
+          # de paneles disponibles viene del backend (`usePmvPanels()`, :31).
+          text: >-
+            No está a la vista al entrar. Ábralo desde la barra de paneles: el
+            panel lleva el título **PMV** y presenta la composición del mensaje
+            a la izquierda y su previsualización a la derecha.
+
+      - id: bot.pmv.fig
+        type: figure
+        props:
+          caption: "Panel PMV con la composición del mensaje y su previsualización."
+          widthPercent: 90
+
+      - id: bot.pmv.mensaje.titulo
+        type: detail-header
+        props:
+          text: Datos del mensaje
+
+      - id: bot.pmv.mensaje.campos
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de
+            # bridge-of-things/pmv/components/pmv-content-section.tsx:192 (con su
+            # texto guía en :195), :206 (con sus opciones en :208) y :240.
+            - id: bot.pmv.campo.titulo
+              label: Título Interno
+              text: >-
+                Nombre con el que se identifica la programación dentro de la
+                plataforma. No se exhibe en el panel de la vía: sirve para
+                encontrarla después.
+              layout: beside
+
+            - id: bot.pmv.campo.tipo
+              label: Tipo
+              text: >-
+                Clasifica el mensaje como **Educativo**, **Informativo** o
+                **Novedad en la vía**.
+              layout: beside
+
+            - id: bot.pmv.campo.panel
+              label: Panel
+              text: >-
+                Panel o paneles de la vía en los que se va a exhibir el mensaje.
+              layout: beside
+
+      - id: bot.pmv.paginas.titulo
+        type: detail-header
+        props:
+          text: Páginas del mensaje
+
+      - id: bot.pmv.paginas.texto
+        type: prose
+        props:
+          # Controles citados de pmv-content-section.tsx:335 ("Agregar página")
+          # y :330 ("Eliminar página"). El campo de duración aparece solo con
+          # dos o más páginas (:343-344) y admite entre 1 y 20 segundos
+          # (:351-352).
+          text: >-
+            Un mensaje puede ocupar más de una página, que el panel de la vía
+            exhibe por turnos. Use **Agregar página** para sumar una y **Eliminar
+            página** para quitarla.
+
+      - id: bot.pmv.paginas.duracion
+        type: field-list
+        props:
+          items:
+            # Rótulo citado de pmv-content-section.tsx:345-348.
+            - id: bot.pmv.paginas.duracion.campo
+              label: Duración Página
+              text: >-
+                Cuántos segundos se exhibe la página antes de pasar a la
+                siguiente, entre uno y veinte. El campo aparece únicamente
+                cuando el mensaje tiene dos páginas o más: con una sola no hay
+                turno que repartir.
+              layout: beside
+
+      - id: bot.pmv.pictogramas.titulo
+        type: detail-header
+        props:
+          # Rótulo citado de pmv-content-section.tsx:418-419.
+          text: Pictograma
+
+      - id: bot.pmv.pictogramas.texto
+        type: prose
+        props:
+          # Catálogo en
+          # bridge-of-things/pmv/constants/pictograms.ts:18 en adelante; las
+          # categorías, en :12-16. El catálogo trae ciento cuarenta y cinco
+          # definiciones.
+          text: >-
+            Cada página puede llevar un pictograma junto al texto. El catálogo se
+            recorre por categoría y la elección reemplaza el pictograma de la
+            página que esté editando.
+
+      - id: bot.pmv.pictogramas.categorias
+        type: term-list
+        props:
+          entries:
+            # Rótulos citados de pmv/constants/pictograms.ts:13-15.
+            - id: bot.pmv.pictograma.reglamentarias
+              term: Reglamentarias
+              definition: >-
+                Señales de obligación y prohibición.
+            - id: bot.pmv.pictograma.preventivas
+              term: Preventivas
+              definition: >-
+                Señales que advierten un riesgo en la vía.
+            - id: bot.pmv.pictograma.informativas
+              term: Informativas
+              definition: >-
+                Señales que orientan o informan sin imponer una conducta.
+
+      - id: bot.pmv.horarios.titulo
+        type: detail-header
+        props:
+          # Rótulo citado de
+          # bridge-of-things/pmv/components/pmv-calendar-section.tsx:96.
+          text: Horarios
+
+      - id: bot.pmv.horarios.texto
+        type: prose
+        props:
+          # El control de borrado de un horario se cita de
+          # pmv-calendar-section.tsx:135.
+          text: >-
+            Define en qué días y en qué franjas del día se exhibe el mensaje.
+            Puede sumar varios horarios a la misma programación, y cada uno se
+            quita con su propio control de **Eliminar**.
+
+      - id: bot.pmv.previsualizacion.titulo
+        type: detail-header
+        props:
+          # Rótulo citado de
+          # bridge-of-things/pmv/components/pmv-preview-section.tsx:128.
+          text: Previsualización
+
+      - id: bot.pmv.previsualizacion.texto
+        type: prose
+        props:
+          text: >-
+            Muestra el mensaje como lo va a ver quien pase por la vía, página por
+            página y con el pictograma en su lugar. Revísela antes de guardar:
+            es la única forma de comprobar que el texto entra en el panel.
+
+      - id: bot.pmv.guardar
+        type: procedure
+        props:
+          # Control citado de
+          # bridge-of-things/pmv/components/pmv-save-footer.tsx:37, que pasa a
+          # "Guardando..." mientras corre.
+          lead: >-
+            Para programar un mensaje en un panel de la vía:
+          steps:
+            - id: bot.pmv.guardar.datos
+              title: Complete los datos del mensaje
+              text: >-
+                Indique el **Título Interno**, el **Tipo** y el **Panel** en el
+                que se va a exhibir.
+              layout: beside
+
+            - id: bot.pmv.guardar.contenido
+              title: Componga el contenido
+              text: >-
+                Escriba el texto de la página y elija su pictograma. Sume las
+                páginas que necesite y fije la duración de cada una.
+              layout: beside
+
+            - id: bot.pmv.guardar.horarios
+              title: Fije los horarios
+              text: >-
+                Indique los días y las franjas en que el mensaje debe exhibirse.
+              layout: beside
+
+            - id: bot.pmv.guardar.revisar
+              title: Revise la previsualización
+              text: >-
+                Recorra las páginas en la previsualización y confirme que el
+                texto y el pictograma se leen como espera.
+              layout: beside
+
+            - id: bot.pmv.guardar.confirmar
+              title: Haga clic en Guardar Selección
+              text: >-
+                La programación queda registrada. Mientras se guarda, el control
+                indica **Guardando...**.
+              layout: beside
+
+  # --- CCTV ------------------------------------------------------------------
+  - id: bot.cctv
+    title: CCTV
+    children:
+      - id: bot.cctv.proposito
+        type: prose
+        props:
+          text: >-
+            Presenta las cámaras en un mosaico de vistas en vivo y permite
+            mover las cámaras móviles, guardar posiciones y volver a ellas.
+
+      - id: bot.cctv.ubicacion
+        type: prose
+        props:
+          # BOT_MANIFEST, entrada `cctv` (bridge-of-things-view.tsx:36-45):
+          # `initiallyInactive`. Encabezado citado de cctv-panel.tsx:36. Las
+          # cámaras vienen del backend (`useCCTVCameras`, cctv-context.tsx:72).
+          text: >-
+            No está a la vista al entrar. Ábralo desde la barra de paneles: el
+            panel lleva el título **CCTV** y presenta el mosaico de cámaras con
+            la lista de cámaras disponibles a un costado.
+
+      - id: bot.cctv.fig
+        type: figure
+        props:
+          caption: "Panel CCTV con el mosaico de cámaras y la lista de cámaras disponibles."
+          widthPercent: 90
+
+      - id: bot.cctv.mosaico.titulo
+        type: detail-header
+        props:
+          text: Disposición del mosaico
+
+      - id: bot.cctv.mosaico.texto
+        type: prose
+        props:
+          # Selector citado de cctv-layout-selector.tsx:72, que rotula el control
+          # con la disposición vigente. El catálogo de disposiciones está en
+          # domain/types/cctv.types.ts:44-53 y la que abre por omisión es la
+          # segunda, 2×2 (cctv-context.tsx:64-66).
+          text: >-
+            El mosaico se reparte en celdas, y el selector de disposición indica
+            cuál está vigente. Al abrir, el panel usa la disposición de dos por
+            dos.
+
+      - id: bot.cctv.mosaico.disposiciones
+        type: data-table
+        props:
+          # Rótulos citados de domain/types/cctv.types.ts:45-52.
+          labelHeader: Disposición
+          descriptionHeader: Celdas
+          rows:
+            - id: bot.cctv.disposicion.1x1
+              label: 1×1
+              description: >-
+                Una sola cámara, a pantalla del panel.
+            - id: bot.cctv.disposicion.2x2
+              label: 2×2
+              description: >-
+                Cuatro cámaras. Es la disposición con la que abre el panel.
+            - id: bot.cctv.disposicion.3x3
+              label: 3×3
+              description: >-
+                Nueve cámaras.
+            - id: bot.cctv.disposicion.4x4
+              label: 4×4
+              description: >-
+                Dieciséis cámaras.
+            - id: bot.cctv.disposicion.2x3
+              label: 2×3
+              description: >-
+                Seis cámaras, en dos columnas.
+            - id: bot.cctv.disposicion.3x2
+              label: 3×2
+              description: >-
+                Seis cámaras, en tres columnas.
+            - id: bot.cctv.disposicion.1x3
+              label: 1×3
+              description: >-
+                Tres cámaras, apiladas en una columna.
+            - id: bot.cctv.disposicion.3x1
+              label: 3×1
+              description: >-
+                Tres cámaras, en una fila.
+
+      - id: bot.cctv.camaras
+        type: procedure
+        props:
+          # Buscador citado de cctv-camera-drag-list.tsx:188. La celda indica
+          # "Arrastrar cámara" y pasa a "Soltar aquí" con el arrastre encima
+          # (mosaic-cell.tsx:50).
+          lead: >-
+            Para poner una cámara en el mosaico:
+          steps:
+            - id: bot.cctv.camaras.buscar
+              title: Ubique la cámara en la lista
+              text: >-
+                Use el buscador de la lista, que admite el alias, el
+                identificador o el nombre de la cámara.
+              layout: beside
+
+            - id: bot.cctv.camaras.arrastrar
+              title: Arrástrela hasta la celda
+              text: >-
+                Las celdas vacías indican **Arrastrar cámara**, y la celda bajo
+                el cursor pasa a indicar **Soltar aquí**.
+              layout: beside
+
+            - id: bot.cctv.camaras.soltar
+              title: Suéltela
+              text: >-
+                La celda queda con esa cámara y su transmisión comienza. Repita
+                para las demás celdas de la disposición.
+              layout: beside
+
+      - id: bot.cctv.ptz.titulo
+        type: detail-header
+        props:
+          text: Control de cámaras móviles
+
+      - id: bot.cctv.ptz.texto
+        type: prose
+        props:
+          # El pad de control usa el modo `hold` por omisión
+          # (cctv-ptz-control-bar.tsx:36; el mosaico no lo sobreescribe,
+          # cctv-mosaic.tsx:295-302), y en ese modo el comando arranca al
+          # presionar y se detiene al soltar o al salir del control
+          # (cctv-ptz-core.tsx:80-84).
+          text: >-
+            Las cámaras móviles se orientan desde el propio mosaico. El control
+            actúa mientras se mantiene presionado y se detiene al soltarlo, de
+            modo que el movimiento se dosifica con el pulso.
+
+      - id: bot.cctv.ptz.controles
+        type: icon-table
+        props:
+          # Rótulos citados de cctv-ptz-control-bar.tsx:50, :60, :70, :81, :91,
+          # :105, :116, :126, :136, :152 y :162.
+          labelHeader: Control
+          descriptionHeader: Qué hace
+          rows:
+            - id: bot.cctv.ptz.tilt-arriba
+              label: Tilt arriba
+              description: >-
+                Levanta la cámara.
+            - id: bot.cctv.ptz.tilt-abajo
+              label: Tilt abajo
+              description: >-
+                Baja la cámara.
+            - id: bot.cctv.ptz.pan-izquierda
+              label: Pan izquierda
+              description: >-
+                Gira la cámara hacia la izquierda.
+            - id: bot.cctv.ptz.pan-derecha
+              label: Pan derecha
+              description: >-
+                Gira la cámara hacia la derecha.
+            - id: bot.cctv.ptz.diagonales
+              label: Arriba izquierda, arriba derecha, abajo izquierda y abajo derecha
+              description: >-
+                Combinan el giro y la inclinación en un solo movimiento
+                diagonal.
+            - id: bot.cctv.ptz.zoom-mas
+              label: Acercar (Zoom +)
+              description: >-
+                Acerca la imagen.
+            - id: bot.cctv.ptz.zoom-menos
+              label: Alejar (Zoom -)
+              description: >-
+                Aleja la imagen.
+            # `onHome` va al PRIMER preset guardado de esa cámara, y llega
+            # `undefined` cuando no hay ninguno (cctv-mosaic.tsx:298-301): con la
+            # lista vacía el control no tiene a dónde ir.
+            - id: bot.cctv.ptz.home
+              label: Preset home
+              description: >-
+                Lleva la cámara a la primera posición que tenga guardada. Sin
+                posiciones guardadas, el control no está disponible.
+
+      - id: bot.cctv.presets
+        type: procedure
+        props:
+          # Controles citados de cctv-presets.tsx:46 (nombre), :53 (guardar),
+          # :109 (ir) y :125 (eliminar).
+          lead: >-
+            Para guardar una posición de cámara y volver a ella:
+          steps:
+            - id: bot.cctv.presets.orientar
+              title: Oriente la cámara
+              text: >-
+                Use los controles de giro, inclinación y acercamiento hasta
+                encuadrar lo que necesita vigilar.
+              layout: beside
+
+            - id: bot.cctv.presets.nombrar
+              title: Escriba el nombre
+              text: >-
+                Complete **Nombre del preset...** con un nombre que le permita
+                reconocer el encuadre después.
+              layout: beside
+
+            - id: bot.cctv.presets.guardar
+              title: Haga clic en Guardar posición actual
+              text: >-
+                La posición queda listada entre las guardadas de esa cámara.
+              layout: beside
+
+            - id: bot.cctv.presets.volver
+              title: Vuelva a la posición cuando la necesite
+              text: >-
+                Use **Ir a preset** en la posición guardada: la cámara se orienta
+                sola. **Eliminar preset** la quita de la lista.
+              layout: beside
+
+      - id: bot.cctv.estados
+        type: term-list
+        props:
+          entries:
+            # Rótulos citados de cctv-camera-stream-pane.tsx:169; el control de
+            # reintento, de :109.
+            - id: bot.cctv.estado.sin-senal
+              term: SIN SEÑAL
+              definition: >-
+                La cámara está comunicada pero no está entregando imagen. Use
+                **Reintentar conexión** para volver a pedirla.
+
+            - id: bot.cctv.estado.fuera
+              term: FUERA DE COMUNICACIONES
+              definition: >-
+                La cámara no responde. No es un problema del encuadre ni del
+                mosaico: informe al administrador.
+
+  # --- PRT -------------------------------------------------------------------
+  - id: bot.prt
+    title: PRT
+    children:
+      - id: bot.prt.proposito
+        type: prose
+        props:
+          text: >-
+            Reúne la programación de recursos en vía y el estado de cada recurso:
+            quién está asignado, dónde, en qué turno, y a qué caso está
+            despachado.
+
+      - id: bot.prt.ubicacion
+        type: prose
+        props:
+          # BOT_MANIFEST, entrada `prt` (bridge-of-things-view.tsx:46-55):
+          # `initiallyInactive`. Encabezado citado de prt-panel.tsx:37. Los datos
+          # vienen del backend (`useProgrammingList` en prt-list-content.tsx:53 y
+          # `useResourceManagement` en prt-panel.tsx:32-33).
+          text: >-
+            No está a la vista al entrar. Ábralo desde la barra de paneles: el
+            panel lleva el título **PRT** y se divide en dos fichas.
+
+      - id: bot.prt.fig
+        type: figure
+        props:
+          caption: "Panel PRT con sus dos fichas y la tabla de programación."
+          widthPercent: 90
+
+      - id: bot.prt.fichas
+        type: term-list
+        props:
+          entries:
+            # Rótulos citados de prt-panel.tsx:57 y :63.
+            - id: bot.prt.ficha.prt
+              term: PRT
+              definition: >-
+                La programación: qué recurso, con qué vehículo, en qué horario y
+                en qué punto de control. Es la ficha con la que abre el panel.
+
+            - id: bot.prt.ficha.recursos
+              term: RECURSOS
+              definition: >-
+                El estado actual de cada recurso y las acciones de despacho
+                sobre él.
+
+      - id: bot.prt.programacion.titulo
+        type: detail-header
+        props:
+          text: La programación
+
+      - id: bot.prt.programacion.columnas
+        type: data-table
+        props:
+          # Encabezados citados de prt-columns.tsx:30, :31, :32, :35, :45, :54,
+          # :57, :62, :67 y :72.
+          labelHeader: Columna
+          descriptionHeader: Contenido
+          rows:
+            - id: bot.prt.columna.placa
+              label: PLACA
+              description: >-
+                Placa del vehículo asignado.
+            - id: bot.prt.columna.cedula
+              label: CÉDULA
+              description: >-
+                Documento del agente.
+            - id: bot.prt.columna.nombres
+              label: NOMBRES Y APELLIDOS
+              description: >-
+                Nombre del agente asignado.
+            - id: bot.prt.columna.seccion
+              label: SECCIÓN
+              description: >-
+                Sección a la que pertenece el agente.
+            - id: bot.prt.columna.horario
+              label: HORARIO
+              description: >-
+                Franja en la que el recurso está programado.
+            - id: bot.prt.columna.vehiculo
+              label: VEHÍCULO
+              description: >-
+                Tipo de vehículo del recurso.
+            - id: bot.prt.columna.zona
+              label: ZONA
+              description: >-
+                Zona asignada.
+            - id: bot.prt.columna.subzona
+              label: SUBZONA
+              description: >-
+                Subdivisión de la zona.
+            - id: bot.prt.columna.punto
+              label: PUNTO DE CONTROL
+              description: >-
+                Punto de la vía en el que el recurso debe ubicarse.
+            - id: bot.prt.columna.observaciones
+              label: OBSERVACIONES
+              description: >-
+                Anotaciones sobre la programación.
+
+      - id: bot.prt.programacion.controles
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de prt-list-content.tsx:159 (buscador), :198 y
+            # :205 (tipo de vehículo), :166-178 (rango de fechas) y :223
+            # (limpiar).
+            - id: bot.prt.control.buscar
+              label: Buscar por nombre, cédula, placa o vehículo...
+              text: >-
+                Acota la programación a lo que coincida con lo que escriba.
+              layout: beside
+
+            - id: bot.prt.control.vehiculo
+              label: Tipo de vehículo
+              text: >-
+                Deja solo la programación de ese tipo de vehículo.
+                **Todos los vehículos** devuelve la lista completa.
+              layout: beside
+
+            - id: bot.prt.control.fechas
+              label: Rango de fechas
+              text: >-
+                Abre un calendario para acotar la programación a un período.
+              layout: beside
+
+            - id: bot.prt.control.limpiar
+              label: Limpiar
+              text: >-
+                Descarta la búsqueda y los filtros aplicados y devuelve la
+                programación completa.
+              layout: beside
+
+      - id: bot.prt.recursos.titulo
+        type: detail-header
+        props:
+          text: Los recursos
+
+      - id: bot.prt.recursos.columnas
+        type: data-table
+        props:
+          # Encabezados citados de resources/resources-columns.tsx:41, :85,
+          # :109, :125, :137, :157, :176, :194 y :213. El buscador de la ficha
+          # se cita de resources/resources-table.tsx:140.
+          labelHeader: Columna
+          descriptionHeader: Contenido
+          rows:
+            - id: bot.prt.recurso.recurso
+              label: Recurso
+              description: >-
+                Identificación del recurso.
+            - id: bot.prt.recurso.agente
+              label: Agente
+              description: >-
+                Agente a cargo.
+            - id: bot.prt.recurso.seccion
+              label: Sección
+              description: >-
+                Sección a la que pertenece.
+            - id: bot.prt.recurso.punto
+              label: Pto. Ctrl
+              description: >-
+                Punto de control en el que está ubicado.
+            - id: bot.prt.recurso.turno
+              label: Turno
+              description: >-
+                Turno en el que está trabajando.
+            - id: bot.prt.recurso.zona
+              label: Zona
+              description: >-
+                Zona asignada.
+            - id: bot.prt.recurso.observaciones
+              label: Observ.
+              description: >-
+                Anotaciones sobre el recurso.
+            - id: bot.prt.recurso.pj
+              label: PJ
+              description: >-
+                Indica si el recurso corresponde a Policía Judicial.
+            - id: bot.prt.recurso.despacho
+              label: Despacho
+              description: >-
+                Estado de despacho del recurso, y el control para asignarlo o
+                para abrir el caso que ya tiene.
+
+      - id: bot.prt.recursos.buscar
+        type: field-list
+        props:
+          items:
+            # Rótulo citado de resources/resources-table.tsx:140. La paginación
+            # de la ficha se cita de resources/resources-pagination.tsx:36, :60
+            # y :73.
+            - id: bot.prt.recursos.buscar.campo
+              label: Buscar recurso, agente, zona...
+              text: >-
+                Acota la lista de recursos. Al pie, **Filas** elige cuántos
+                recursos se muestran por página, y los controles de **Página
+                anterior** y **Página siguiente** recorren el resto.
+              layout: beside
+
+      - id: bot.prt.recursos.asignar
+        type: procedure
+        props:
+          # Control citado de resources/resources-columns.tsx:246 en la columna
+          # de despacho; el cuadro, de resources/assign-resource-modal.tsx:99,
+          # con su buscador en :123 y su confirmación en :187.
+          lead: >-
+            Para despachar un recurso a un caso:
+          steps:
+            - id: bot.prt.recursos.asignar.ubicar
+              title: Ubique el recurso disponible
+              text: >-
+                Use el buscador de la ficha y confirme en la columna de despacho
+                que el recurso no está asignado.
+              layout: beside
+
+            - id: bot.prt.recursos.asignar.abrir
+              title: Haga clic en ASIGNAR
+              text: >-
+                Se abre el cuadro **Asignar recurso**.
+              layout: beside
+
+            - id: bot.prt.recursos.asignar.caso
+              title: Elija el caso
+              text: >-
+                Use **Buscar caso por teléfono, dirección...** y seleccione el
+                caso al que va a despachar el recurso.
+              layout: beside
+
+            - id: bot.prt.recursos.asignar.confirmar
+              title: Haga clic en Confirmar asignación
+              text: >-
+                El recurso queda despachado a ese caso y su columna de despacho
+                lo refleja. Mientras se registra, el control indica
+                **Asignando…**.
+              layout: beside
+
+      - id: bot.prt.recursos.estados
+        type: term-list
+        props:
+          entries:
+            # Estados citados de resources/resources-columns.tsx:47-49 y :218.
+            # Las acciones del cuadro **Caso asignado**
+            # (resources/assigned-case-modal.tsx:75) se citan de :115
+            # ("Desasignar"), :122 ("En sitio") y :136 ("Finalizar atención"), y
+            # dependen del estado en que esté el recurso (:111 y :130).
+            - id: bot.prt.recursos.estado.despachado
+              term: Despachado
+              definition: >-
+                El recurso fue asignado a un caso y va en camino. Al abrir el
+                caso desde su fila, el cuadro **Caso asignado** ofrece
+                **Desasignar**, que lo libera, y **En sitio**, para registrar que
+                llegó.
+
+            - id: bot.prt.recursos.estado.en-sitio
+              term: En sitio
+              definition: >-
+                El recurso llegó al lugar del caso. El cuadro **Caso asignado**
+                ofrece entonces **Finalizar atención**, que lo devuelve a
+                disponible.
