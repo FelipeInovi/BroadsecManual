@@ -11,7 +11,8 @@ One folder per manual. Everything here is **content and data**, never code.
   knowledge/           Extracted facts (GENERATED — never hand-edit)
   sections/            Authored content, a tree of fragments
   assets/figures/      Delivered images + the pending placeholder
-    _pending.svg       Stands in for every slot not delivered yet
+    _pending.svg       Optional — overrides the placeholder the pipeline
+                       ships for every slot not delivered yet
     _common/           One image valid for every deployment
     <tenant>/          Images made for one deployment only
   output/              Build output (gitignored)

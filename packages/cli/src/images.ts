@@ -1,6 +1,6 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join, posix, relative, sep } from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import type { ResolvedImage, SlotState } from "@broadsec-manual/blocks";
 
 /**
@@ -11,7 +11,8 @@ import type { ResolvedImage, SlotState } from "@broadsec-manual/blocks";
  *
  *   1. `<tenant>/<slot>.<ext>` — an image made for this deployment
  *   2. `_common/<slot>.<ext>`  — one image valid for every deployment
- *   3. `_pending.svg`          — the placeholder, identical everywhere
+ *   3. `_pending.svg`          — the placeholder, identical everywhere; the
+ *                               manual's own copy, else the one shipped here
  *
  * The third step is not a fallback of last resort, it is the normal state of a
  * module that has just been written: the slot is declared, the manifest asks
@@ -20,6 +21,20 @@ import type { ResolvedImage, SlotState } from "@broadsec-manual/blocks";
 
 /** The single placeholder, at the root of the figures folder. */
 export const PENDING_PLACEHOLDER = "_pending.svg";
+
+/**
+ * The placeholder the pipeline ships, for a manual that has none of its own.
+ *
+ * Nothing in the pipeline used to create one: the copies that exist arrived by
+ * hand, with the commit that invented image slots. So a manual folder created
+ * from scratch died here on its first build — the one build where EVERY slot is
+ * pending. The file has to exist on disk rather than be generated, because both
+ * renderers are handed a path and read the bytes themselves.
+ *
+ * It is brand-neutral, since the pipeline cannot know which brand is being
+ * built. A manual that wants its own palette keeps its own copy, which wins.
+ */
+const SHIPPED_PLACEHOLDER = fileURLToPath(new URL("../assets/_pending.svg", import.meta.url));
 
 /** The shared set: one image good for every deployment. */
 export const COMMON_SET = "_common";
@@ -96,12 +111,15 @@ function indexSet(root: string, label: string): Map<string, string> {
  * answers every lookup and catches two files claiming one slot.
  */
 export function buildImageIndex(figuresDir: string, tenant: string): ImageIndex {
-  const placeholder = join(figuresDir, PENDING_PLACEHOLDER);
+  const own = join(figuresDir, PENDING_PLACEHOLDER);
+  const placeholder = existsSync(own) ? own : SHIPPED_PLACEHOLDER;
   if (!existsSync(placeholder)) {
     throw new Error(
-      `the pending placeholder is missing: expected "${PENDING_PLACEHOLDER}" in ` +
-        `"${figuresDir}". Every undelivered slot renders it, so without it a ` +
-        `pending image becomes a blank gap — which reads as finished content.`,
+      `the pending placeholder is missing: this manual keeps no ` +
+        `"${PENDING_PLACEHOLDER}" in "${figuresDir}", and the one the pipeline ` +
+        `ships is gone too ("${SHIPPED_PLACEHOLDER}") — the checkout is ` +
+        `incomplete. Every undelivered slot renders it, so without it a pending ` +
+        `image becomes a blank gap, which reads as finished content.`,
     );
   }
 

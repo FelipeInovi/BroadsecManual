@@ -1,6 +1,7 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { PENDING_PLACEHOLDER, buildImageIndex } from "./images.ts";
 
@@ -116,11 +117,23 @@ describe("buildImageIndex", () => {
     expect(buildImageIndex(figures, "mv").indexed()).toEqual([]);
   });
 
-  // The placeholder is infrastructure: without it a pending slot renders a
-  // broken image, which is exactly the blank gap the design forbids.
-  it("refuses to build without the placeholder", () => {
+  // A manual folder created from scratch has no placeholder of its own, and the
+  // first build of a new manual is exactly when every slot is pending. The
+  // pipeline ships one so that build renders instead of dying.
+  it("falls back to the placeholder the pipeline ships when the manual has none", () => {
     rmSync(join(figures, PENDING_PLACEHOLDER));
-    expect(() => buildImageIndex(figures, "mv")).toThrow(/placeholder/i);
+    const index = buildImageIndex(figures, "mv");
+    const resolved = index.resolve("barra.busqueda");
+    expect(resolved.state).toBe("pending");
+    expect(existsSync(fileURLToPath(resolved.url))).toBe(true);
+  });
+
+  // The two shipping manuals keep their own copy, and it has to keep winning:
+  // the shipped one is brand-neutral, theirs is not.
+  it("prefers the manual's own placeholder over the one the pipeline ships", () => {
+    const resolved = buildImageIndex(figures, "mv").resolve("barra.busqueda");
+    expect(resolved.state).toBe("pending");
+    expect(fileURLToPath(resolved.url)).toBe(join(figures, PENDING_PLACEHOLDER));
   });
 
   it("works when a deployment has no folder of its own yet", () => {
