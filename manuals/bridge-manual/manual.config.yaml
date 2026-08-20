@@ -1,0 +1,86 @@
+# Bridge360 — operator manual.
+#
+# Authored from the `bridge` source repository directly. It inherits NOTHING
+# from `manuals/bridge-primera-entrega`, whose content describes Broadsec SIMM;
+# the only thing shared is the visual theme.
+#
+# The conditioning axis here is `permission`, NOT `tenant`. Bridge360 is
+# multi-tenant, but the tenant arrives as a JWT claim and is routed on
+# server-side, so the client repository enumerates no deployment and nothing in
+# it branches on one. What does vary the UI is the `permissions[]` claim. See
+# `sources/registry.yaml` for the evidence and ESTADO.md for the decision.
+#
+# KNOWN BLOCKER — this config is correct and does not build yet. The pipeline
+# ENGINE is axis-agnostic (`packages/core/src/condition.ts`), but the CLI still
+# requires an axis literally named `tenant`: `requireAxisValue(target, "tenant")`
+# at packages/cli/src/main.ts:711 (build), :579 (images) and :524 (capture), plus
+# the figure-set folder and the `{tenant}` filename token. Renaming this axis to
+# `tenant` would make the build pass and the manual lie. Do not do it.
+
+version: 1
+
+manual:
+  id: bridge-manual
+  source: bridge
+  title: Manual de operador
+  product: Bridge360
+  # SemVer of the manual content. 0.x while this is a pipeline spike.
+  contentVersion: 0.0.1
+  language: es
+  register: neutral-formal
+  # Palette and type from Bridge360's own theme. Already in packages/tokens —
+  # reused unchanged, no new brand.
+  theme: bridge
+  # Set EXPLICITLY, not for style. The default lede appends
+  # `axisValueName(config, "tenant", …)` (packages/cli/src/main.ts:739), which
+  # is one of the places that assumes a `tenant` axis. Naming the standfirst
+  # here removes that dependency; the blocker above is what remains.
+  lede: >-
+    Plataforma de gestión de incidentes y coordinación de recursos para
+    operaciones críticas.
+
+# Block catalogue version this manual's content is written against.
+# Declarative only: the build imports the catalogue from `@broadsec-manual/blocks`
+# and does not read this key today.
+catalog:
+  version: null
+
+# Conditioning axes. Exactly one, because exactly one is traceable.
+axes:
+  permission:
+    label: Permission profile
+    # Derived from `canViewAllAgencies`
+    # (src/modules/dashboard/domain/can-view-all-agencies.ts), consumed at
+    # src/modules/dashboard/presentation/ui/views/sitemap-view.tsx:36. That
+    # predicate is the only permission check in the product with a visible,
+    # citable consequence for more than one control.
+    #
+    # `canManageSitemapLayout` is deliberately NOT folded into these values.
+    # The two predicates are independent — nothing in the product says a reader
+    # holding one holds the other — so bundling them into "operator" and
+    # "supervisor" profiles would assert a combination no code backs. Modelling
+    # it needs a second axis or a product statement about which profiles exist;
+    # that is recorded as open in ESTADO.md.
+    values:
+      - id: agencia-propia
+        # `view.sitemap` without `view.sitemap.all`: the reader sees their own
+        # agency and no agency selector.
+        name: Agencia propia
+      - id: todas-las-agencias
+        # `view.sitemap.all`, or the backend wildcard `*`.
+        name: Todas las agencias
+
+# One PDF per target. Both values are built on purpose: the spike proves
+# conditioning only if one output CONTAINS the conditioned row and the other
+# genuinely lacks it.
+targets:
+  - { permission: agencia-propia }
+  - { permission: todas-las-agencias }
+
+output:
+  dir: output
+  # `{permission}` is the honest intent and is NOT substituted today — the only
+  # axis token the CLI expands is `{tenant}` (packages/cli/src/main.ts:711-713).
+  # Part of the same blocker, listed here so it is fixed with it rather than
+  # discovered as a filename collision later.
+  filename: "manual-operador-bridge-{permission}-v{contentVersion}.pdf"

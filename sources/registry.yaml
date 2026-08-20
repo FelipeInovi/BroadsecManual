@@ -87,3 +87,70 @@ sources:
       runtimeOnly: |
         Google Maps native controls (street view, 3D, zoom) are drawn by their
         SDK. Nothing in this repository to take, at any effort.
+
+  bridge:
+    name: Bridge360
+    vendor: Inovisec AG
+    # Relative to this repository's root.
+    path: ../bridge
+    # NOT `react-vite-ts`. React 19 + Vite 7 + TS, but shipped as a Tauri 2
+    # desktop app, routed with `wouter`, laid out hexagonally per module. No
+    # code reads this field yet; it is the discriminator a second extractor
+    # dispatches on (packages/extract/AGENTS.md), so it must not claim the
+    # shape the existing extractor knows.
+    framework: react-tauri-ts
+
+    extract:
+      # `tenantConfigs` is DELIBERATELY ABSENT. The product is multi-tenant and
+      # enumerates no deployment anywhere in this repository: the tenant arrives
+      # as the JWT claim `tid`
+      # (src/modules/auth/infrastructure/mappers/user.mapper.ts:21) and the API
+      # routes on the token (src/shared/config/api.ts:23). The Tauri side only
+      # persists the id it was handed (src-tauri/src/lib.rs:226-247). There is
+      # no per-tenant file to point at, and pointing this at a directory to
+      # satisfy the field would invent a tenant registry.
+      #
+      # The seven views the operator actually moves between. This product has a
+      # router, but it declares five routes and one of them is the whole
+      # application (src/app/App.tsx:126-138) — screens are views switched
+      # inside the dashboard, not routes.
+      pages: src/modules/dashboard/presentation/ui/views
+      components: src/modules/dashboard/presentation/ui/components
+      # No `i18n` key: there is no catalogue. No locales, translations or i18n
+      # module exists anywhere under `src/`.
+
+    notes: |
+      Divergence in this product is NOT on the tenant axis, and an extractor
+      that looks for one will find nothing and report a single deployment.
+
+      What varies the UI is the JWT `permissions[]` claim, through two domain
+      predicates in src/modules/dashboard/domain/:
+
+        - can-view-all-agencies.ts   — `view.sitemap.all`, or `*`
+        - can-manage-sitemap-layout.ts — `manage.sitemap.layout`,
+          `manage.sitemap.layout.all`, or `*`
+
+      Both are consumed in exactly one place,
+      src/modules/dashboard/presentation/ui/views/sitemap-view.tsx:36-37, and
+      the two are INDEPENDENT: nothing in the product asserts that a reader
+      holding one holds the other.
+
+      Mechanisms checked and ruled out as divergence: `role` is typed
+      (auth/domain/entities/user.entity.ts:1) but never compared anywhere;
+      `agencyId` scopes which data is fetched, not which controls exist;
+      `VITE_*_USE_MOCK` flags are build-time dev scaffolding.
+
+      Two comments name deployments — create-incident.ts:183 ("only the LV
+      deployment demanded them") and create-incident.schema.ts:51 — but neither
+      is a gate. The code carries the union of deployment behaviours instead of
+      branching, which is why there is nothing per-deployment to extract.
+
+      There is no i18n catalogue, so every UI label this manual shows is a
+      QUOTATION with file and line, not a keyed reference (hard rule 4 of the
+      source-extraction skill). Labels here will not follow the product when the
+      product changes. `uiLabel` blocks cannot be used against this source.
+
+      The `assets` block is absent because no asset survey has been run. This
+      product ships src/assets with layers/, pins/, labels/, icons/, Forces/ and
+      more, so there is likely a lot to take — but an unaudited inventory is
+      worse than none, and the source-assets skill owns that survey.

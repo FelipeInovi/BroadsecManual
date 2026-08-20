@@ -1,0 +1,307 @@
+{
+  "manual": "bridge-manual",
+  "contentVersion": "0.0.1",
+  "convention": {
+    "resolution": [
+      "<permission>/<slot path>.<ext> — an image made for that one permission profile",
+      "_common/<slot path>.<ext> — one image valid for every permission profile (preferred)",
+      "otherwise the pending placeholder renders in its place"
+    ],
+    "slotPath": "a slot's dots are folders: `barra.filtro.fig` -> `barra/filtro/fig`",
+    "extensions": "png, jpg, jpeg, svg, webp or gif — the slot never names one",
+    "root": "manuals/<manual>/assets/figures/",
+    "preferShared": "deliver to _common/ unless the screen genuinely differs by deployment — six copies of one icon are six things to update"
+  },
+  "deploymentsCovered": [
+    "todas-las-agencias"
+  ],
+  "deploymentsConfigured": 2,
+  "counts": {
+    "total": 14,
+    "delivered": 0,
+    "pending": 14
+  },
+  "pending": [
+    {
+      "slot": "seatmap.fig",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.fig",
+          "blockType": "figure",
+          "shows": "Vista Seatmap con la distribución de la sala, los indicadores de la agencia y el monitor de operadores."
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.fig.png",
+        "override": "<permission>/seatmap.fig.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.fig",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.fig",
+          "blockType": "figure",
+          "shows": "Planta de la agencia con los puestos agrupados por zona."
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.fig.png",
+        "override": "<permission>/seatmap.distribucion.fig.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.encabezado",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.encabezado",
+          "blockType": "field-list",
+          "shows": "Encabezado de la agencia"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.encabezado.png",
+        "override": "<permission>/seatmap.distribucion.encabezado.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.zonas",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.zonas",
+          "blockType": "field-list",
+          "shows": "Cuadrícula de zonas"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.zonas.png",
+        "override": "<permission>/seatmap.distribucion.zonas.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.editar",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.editar",
+          "blockType": "field-list",
+          "shows": "Editar distribución"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.editar.png",
+        "override": "<permission>/seatmap.distribucion.editar.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.agencias",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.agencias",
+          "blockType": "field-list",
+          "shows": "Selector de agencias"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.agencias.png",
+        "override": "<permission>/seatmap.distribucion.agencias.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.cambiar-agencia.abrir",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.cambiar-agencia.abrir",
+          "blockType": "procedure",
+          "shows": "Ubique el selector de agencias"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.cambiar-agencia.abrir.png",
+        "override": "<permission>/seatmap.distribucion.cambiar-agencia.abrir.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.cambiar-agencia.seleccionar",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.cambiar-agencia.seleccionar",
+          "blockType": "procedure",
+          "shows": "Seleccione la agencia"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.cambiar-agencia.seleccionar.png",
+        "override": "<permission>/seatmap.distribucion.cambiar-agencia.seleccionar.png"
+      }
+    },
+    {
+      "slot": "seatmap.distribucion.cambiar-agencia.verificar",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.cambiar-agencia.verificar",
+          "blockType": "procedure",
+          "shows": "Verifique el encabezado"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.distribucion.cambiar-agencia.verificar.png",
+        "override": "<permission>/seatmap.distribucion.cambiar-agencia.verificar.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.fig",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.fig",
+          "blockType": "figure",
+          "shows": "Columna de indicadores con el reparto por categoría, las tarjetas de atención y el recuento por estado."
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.fig.png",
+        "override": "<permission>/seatmap.indicadores.fig.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.estado.disponibles",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.disponibles",
+          "blockType": "icon-table",
+          "shows": "Disponibles"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.estado.disponibles.png",
+        "override": "<permission>/seatmap.indicadores.estado.disponibles.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.estado.en-llamada",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.en-llamada",
+          "blockType": "icon-table",
+          "shows": "En llamada"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.estado.en-llamada.png",
+        "override": "<permission>/seatmap.indicadores.estado.en-llamada.png"
+      }
+    },
+    {
+      "slot": "seatmap.indicadores.estado.no-disponibles",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.no-disponibles",
+          "blockType": "icon-table",
+          "shows": "No disponibles"
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.indicadores.estado.no-disponibles.png",
+        "override": "<permission>/seatmap.indicadores.estado.no-disponibles.png"
+      }
+    },
+    {
+      "slot": "seatmap.monitor.fig",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.monitor.fig",
+          "blockType": "figure",
+          "shows": "Banda inferior con las fichas de estados de operadores y de agencias."
+        }
+      ],
+      "pendingFor": [
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/seatmap.monitor.fig.png",
+        "override": "<permission>/seatmap.monitor.fig.png"
+      }
+    }
+  ],
+  "delivered": []
+}
