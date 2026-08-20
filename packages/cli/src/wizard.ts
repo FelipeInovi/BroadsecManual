@@ -341,6 +341,14 @@ export function assemblePrompt(a: WizardAnswers): string {
     `  Target del spike   ${a.scope === "spike" ? (a.target ?? "se decide después del paso 6") : "n/a"}`,
     `  Diseño             ${a.design.kind === "existing" ? `tema existente \`${a.design.theme}\`` : "NUEVO — proponelo primero"}`,
     "",
+    // The root file first, and only ever as a pointer. It is where the four
+    // invariants live and where the rule that nested `AGENTS.md` files exist —
+    // and which of them wins — is stated. Naming the leaves by hand, as the
+    // lines below do, works only for the leaves somebody remembered to name;
+    // reading the root is what lets the agent find the ones nobody did.
+    `Empezá por AGENTS.md en la raíz: fija los invariantes del sistema y dónde`,
+    `está el resto de la documentación.`,
+    "",
   ];
 
   if (a.design.kind === "new") {
@@ -414,6 +422,11 @@ export function assembleContinuationPrompt(s: ManualState): string {
         : `${s.pending} pendiente(s) de ${s.totalImages ?? "?"}`
     }`,
     `  Estado registrado  ${s.hasState ? `manuals/${s.id}/${STATE_FILE}` : "NO existe todavía"}`,
+    "",
+    // Same pointer as the creation prompt, for the same reason: this prompt also
+    // names only the leaves it knows about.
+    `Empezá por AGENTS.md en la raíz: fija los invariantes del sistema y dónde`,
+    `está el resto de la documentación.`,
     "",
   ];
 

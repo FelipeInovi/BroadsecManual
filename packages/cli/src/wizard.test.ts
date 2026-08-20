@@ -272,6 +272,8 @@ describe("assemblePrompt", () => {
       ["why a copied registry entry is wrong", "confiadamente equivocado"],
       ["the per-language breakdown", "las claves de config y props de bloque"],
       ["the image ordering rule", "Las imágenes van al final"],
+      ["the four invariants", "El AST es el contrato"],
+      ["the nesting rule itself", "el más cercano manda"],
     ])("leaves %s to the documentation", (_what, restated) => {
       expect(text).not.toContain(restated);
     });
@@ -282,6 +284,13 @@ describe("assemblePrompt", () => {
 
     it("names the document that owns the authoring rules", () => {
       expect(text).toContain("manuals/AGENTS.md");
+    });
+
+    // The root file is the one that says nested AGENTS.md files exist and which
+    // one wins. Skip it and the agent never learns to look for the others — it
+    // only ever reads the ones a prompt line happened to name by hand.
+    it("opens at the root AGENTS.md, the only file that indexes the rest", () => {
+      expect(text).toContain("AGENTS.md en la raíz");
     });
   });
 
@@ -597,6 +606,10 @@ describe("assembleContinuationPrompt", () => {
       // here is what would drift the moment that file is edited.
       expect(text).not.toContain("Registrá SOLO decisiones");
       expect(text).toContain("manuals/AGENTS.md");
+    });
+
+    it("opens at the root AGENTS.md, exactly as the creation prompt does", () => {
+      expect(text).toContain("AGENTS.md en la raíz");
     });
   });
 
