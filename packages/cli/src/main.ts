@@ -52,6 +52,13 @@ const axisValueSchema = z
 
 const axisSchema = z
   .object({
+    /**
+     * How to name this axis to a human. Both manuals already carry one; it is
+     * typed because the image manifest borrows it to describe the convention to
+     * a team that has never read this repository, and "deployment" is only the
+     * right word for one of the axes a manual can be conditioned on.
+     */
+    label: z.string().min(1).optional(),
     values: z.array(axisValueSchema).min(1),
   })
   .passthrough();
@@ -250,7 +257,11 @@ export function imageRequests(
           deliverTo: {
             // From the resolver, never rebuilt here — see ManifestSlot.deliverTo.
             shared: acc.deliverTo ?? `${COMMON_SET}/${slot}.png`,
-            override: `<tenant>/${slot}.png`,
+            // The axis's own name, because this template names a FOLDER and the
+            // folder is the axis value. Hardcoding `tenant` pointed the
+            // delivering team at a directory that will never exist for a manual
+            // conditioned on anything else.
+            override: `<${primaryAxis(config)}>/${slot}.png`,
           },
         }
       : {}),
@@ -258,6 +269,11 @@ export function imageRequests(
   }));
 
   const pending = all.filter((i) => i.pendingFor !== undefined);
+  // What one target IS, in the words the manual's own config uses for it. The
+  // label falls back to the axis name, so a config that omits it still reads.
+  const axis = primaryAxis(config);
+  const perTargetNoun = (config.axes[axis]?.label ?? axis).toLowerCase();
+
   return {
     manual: config.manual.id,
     contentVersion: config.manual.contentVersion,
@@ -265,8 +281,8 @@ export function imageRequests(
     // repository's documentation.
     convention: {
       resolution: [
-        "<tenant>/<slot path>.<ext> — an image made for that one deployment",
-        `${COMMON_SET}/<slot path>.<ext> — one image valid for every deployment (preferred)`,
+        `<${axis}>/<slot path>.<ext> — an image made for that one ${perTargetNoun}`,
+        `${COMMON_SET}/<slot path>.<ext> — one image valid for every ${perTargetNoun} (preferred)`,
         "otherwise the pending placeholder renders in its place",
       ],
       slotPath: "a slot's dots are folders: `barra.filtro.fig` -> `barra/filtro/fig`",

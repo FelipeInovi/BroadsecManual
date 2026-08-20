@@ -101,6 +101,59 @@ describe("imageRequests", () => {
     });
   });
 
+  // The manifest spells the convention out for a reader who has never seen this
+  // repository, and it spelled it out in tenant language whatever the manual was
+  // conditioned on. The axis's own `label` is what the config author already
+  // wrote to describe it to a human, so the document borrows that.
+  it("describes the per-target folder in the manual's own words", () => {
+    const byPermission: ManualConfig = {
+      ...baseConfig,
+      axes: { permission: { label: "Permission profile", values: [{ id: "todas", name: "Todas" }] } },
+      targets: [{ permission: "todas" }],
+    };
+    const report = imageRequests(byPermission, [
+      target("todas", [{ slot: "seatmap.fig", state: "pending", uses: [use("seatmap.fig", "Seatmap")] }]),
+    ]);
+    const convention = report["convention"] as Record<string, unknown>;
+    expect((convention["resolution"] as string[])[0]).toBe(
+      "<permission>/<slot path>.<ext> — an image made for that one permission profile",
+    );
+  });
+
+  it("leaves the shipping manual's wording exactly as it was", () => {
+    const byTenant: ManualConfig = {
+      ...baseConfig,
+      axes: { tenant: { label: "Deployment", values: [{ id: "mv", name: "MV" }] } },
+      targets: [{ tenant: "mv" }],
+    };
+    const report = imageRequests(byTenant, [
+      target("mv", [{ slot: "barra.fig", state: "pending", uses: [use("barra.fig", "Barra")] }]),
+    ]);
+    const convention = report["convention"] as Record<string, unknown>;
+    expect((convention["resolution"] as string[])[0]).toBe(
+      "<tenant>/<slot path>.<ext> — an image made for that one deployment",
+    );
+  });
+
+  // The template names a FOLDER, and the folder is named after the axis value.
+  // For a manual conditioned on anything but tenants it named a directory that
+  // will never exist, in a document handed to the team doing the delivering.
+  it("names the override folder after the manual's own axis", () => {
+    const byPermission: ManualConfig = {
+      ...baseConfig,
+      axes: { permission: { values: [{ id: "todas", name: "Todas" }] } },
+      targets: [{ permission: "todas" }],
+    };
+    const report = imageRequests(byPermission, [
+      target("todas", [{ slot: "seatmap.fig", state: "pending", uses: [use("seatmap.fig", "Seatmap")] }]),
+    ]);
+    const pending = report["pending"] as Array<Record<string, unknown>>;
+    expect(pending[0]?.["deliverTo"]).toEqual({
+      shared: "_common/seatmap.fig.png",
+      override: "<permission>/seatmap.fig.png",
+    });
+  });
+
   // Resolution is per deployment, so a tenant-specific delivery makes one slot
   // done for one deployment and outstanding for another. Reporting it as
   // finished would leave a deployment rendering the placeholder unnoticed.
