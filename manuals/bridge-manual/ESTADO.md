@@ -30,6 +30,18 @@ state.
   whose element-level divergence traces to code, so it is the only place a `when`
   is a documented fact rather than a guess — and it exercises every block type
   in the catalogue, which is what the pipeline spike needed.
+- **The manual is scoped to the RECEPTION agency type.** Owner's decision,
+  taken when `home-view.tsx` turned out to key its whole layout off
+  `agencyType`. RECEPTION is also the backend's own default
+  (`domain/types/agency.types.ts:9`). Consequence, accepted knowingly: the
+  manual is silent for a DISPATCH, SUPERVISOR or OTHER agency, so Home states
+  its scope in content (`home.alcance`) rather than leaving a reader of another
+  agency hunting for panels their platform never mounts. This keeps `permission`
+  as the single axis and needs no pipeline change.
+- **In 0.x a new module bumps the MINOR, not the major.** The major slot is held
+  at 0 deliberately while this is a spike, so Home took the manual to 0.1.0
+  under the `manuals/AGENTS.md` rule that a new module is a major change.
+
 - **Labels are quotations, not references.** The product has no i18n catalogue,
   so each label in content records the component and line it was copied from.
   `uiLabel` blocks cannot be used against this source.
@@ -133,21 +145,6 @@ Treat this as a proposal to confirm, not as an agreed scope.
    or a product statement about which permission profiles actually ship.
    **What settles it:** the owner, or a backend source that enumerates profiles.
    Until then the control is documented unconditionally.
-3. **Which agency type Home describes.** Home cannot be written honestly
-   without this. The `module-completeness` rule is that every submodule the
-   product offers is covered or its absence is justified, and everything Home
-   does once a case is selected varies by `agencyType` — a section covering only
-   the invariant core (map, docked panel grid, "Revisión de Llamadas",
-   "Teclado", map tools, new-case notice) would leave the reader concluding the
-   case workflow does not matter, which is the broken-module case that rule
-   names. Three ways out, none of them an authoring detail:
-   scope the manual to one agency type; add `agency-type` as a second axis;
-   or document the union and accept that every reader sees panels they do not
-   have. **What settles it:** the owner. A second axis also needs a pipeline
-   decision — `primaryAxis` refuses more than one and says so
-   (`packages/cli/src/main.ts:463-469`): "one filename and one figure set need a
-   single value … raise it rather than working around it."
-
 2. **No extractor for Bridge — and this does not block authoring.** The
    `framework` dispatch in `packages/extract` is still inert, so there is no map
    and no drift report. `extract bridge-manual` refusing is the CORRECT state,
@@ -156,28 +153,35 @@ Treat this as a proposal to confirm, not as an agreed scope.
    author against the source read directly, citing file and line, as Seatmap
    does. **What settles it:** building that extractor, whose first job is not
    tenants but permission gates.
+3. **Whether the other three agency types ever get documented.** Settled for
+   now by scoping the manual to RECEPTION (see Decided), which is what let Home
+   be written. What is NOT settled is what happens when a DISPATCH, SUPERVISOR
+   or OTHER agency needs a manual: a second manual, or `agency-type` as a second
+   axis. The second axis is not free — `primaryAxis` refuses more than one and
+   says why (`packages/cli/src/main.ts:463-469`): "one filename and one figure
+   set need a single value … raise it rather than working around it."
+   **What settles it:** the owner, when a non-RECEPTION agency is actually in
+   scope.
 
 ## Next section
 
-**`home`, as the first section** — the operator's entry view, owner's
-decision. `01-` is reserved for it and Seatmap was renamed to `02-seatmap.yaml`
-(rename only; ids are stable, so no content changed and both targets still
-build). **Not written yet: blocked on question 3 below**, which was found while
-reading the view and is not a detail an author can decide.
+**`call` (Llamada)** is the proposal: it is the operator's core activity, it is
+the view Home hands off to, and the two already share vocabulary (the case, the
+call, the nearby cameras) so the cross-references land naturally. Still a
+proposal — the module inventory above is not agreed, and nothing beyond Home and
+Seatmap has been.
 
-**Question 1 does not block the other six views.** An earlier note
-here claimed every remaining view has at least one permission-gated control;
-that is false. `grep` for the two predicates across the whole source finds
-exactly two call sites, both in
-`src/modules/dashboard/presentation/ui/views/sitemap-view.tsx:36-37`. The other
-six views — `home`, `call`, `dashboard`, `bridge-of-things`, `forces-in-field`,
-`create-incident` — read no permission at all, so their content is
-unconditioned: identical in both targets, with no `when` to guess at.
+Two things to carry into it:
 
-Two things a next section needs decided first, neither of them question 1:
+- **Check `agencyType` first, every time.** It was missed by the source survey
+  once already. `grep` for it before assuming a view is uniform; today it reaches
+  only `HomeView`, and that is a fact with a date on it.
+- **`create-incident` needs care when its turn comes.** Two comments there name
+  deployments (`create-incident.ts:183`, `create-incident.schema.ts:51`) and
+  neither is a gate — the code carries the union of deployment behaviours. Do not
+  read them as evidence of a tenant axis.
 
-- **Which view**, from the still-unagreed inventory above.
-- **Where it sits in the document.** Sections are ordered by filename
-  (`packages/cli/src/main.ts:132-135`), and Seatmap holds `01-`. A view that
-  belongs before it needs either a lower prefix or a renumber — a renumber
-  touches an existing section, so it is a decision, not a detail.
+Question 1 still does not block anything: the two permission predicates are
+consumed only in `sitemap-view.tsx:36-37`, which `grep` over the whole source
+confirms, so every remaining view is unconditioned on this manual's axis. Home
+was written with no `when` at all for exactly that reason.
