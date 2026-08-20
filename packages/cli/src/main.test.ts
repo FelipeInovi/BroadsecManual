@@ -5,8 +5,10 @@ import {
   formatCliError,
   imageRequests,
   manualConfigSchema,
+  outputFilename,
   parseAxisFilters,
   parseOutPath,
+  primaryAxis,
   run,
   type ManualConfig,
   type TargetImages,
@@ -230,6 +232,60 @@ describe("manualConfigSchema", () => {
       targets: [{ tenant: "mv" }],
     };
     expect(manualConfigSchema.safeParse(bad).success).toBe(false);
+  });
+});
+
+// The engine conditions on whatever axis a target names (`core/src/condition.ts`),
+// and invariant 3 says tenant is one named axis among possible others. The CLI
+// did not honour that: it asked for an axis literally called `tenant`, so a
+// manual conditioned on permissions could not be built at all — and the only way
+// to make it build was to call a permission profile a deployment on the cover,
+// in the filename and in the figure folders.
+describe("primaryAxis", () => {
+  const withAxes = (axes: ManualConfig["axes"]): ManualConfig => ({ ...baseConfig, axes });
+
+  it("is the only axis a manual declares, whatever it is called", () => {
+    expect(primaryAxis(withAxes({ permission: { values: [{ id: "propia", name: "Propia" }] } }))).toBe(
+      "permission",
+    );
+  });
+
+  it("is still `tenant` for a manual whose one axis is tenant", () => {
+    expect(primaryAxis(baseConfig)).toBe("tenant");
+  });
+
+  // Picking the first key would make the output filename depend on the order
+  // somebody happened to write the YAML in.
+  it("refuses to guess between two axes, naming both", () => {
+    const two = withAxes({
+      tenant: { values: [{ id: "mv", name: "MV" }] },
+      permission: { values: [{ id: "propia", name: "Propia" }] },
+    });
+    expect(() => primaryAxis(two)).toThrow(/tenant/);
+    expect(() => primaryAxis(two)).toThrow(/permission/);
+  });
+
+  it("says what is missing when a manual declares no axis at all", () => {
+    expect(() => primaryAxis(withAxes({}))).toThrow(/no axes/);
+  });
+});
+
+describe("outputFilename", () => {
+  it("expands the axis token by the axis's own name", () => {
+    const config: ManualConfig = {
+      ...baseConfig,
+      axes: { permission: { values: [{ id: "todas", name: "Todas" }] } },
+      output: { dir: "output", filename: "manual-{permission}-v{contentVersion}.pdf" },
+    };
+    expect(outputFilename(config, { permission: "todas" })).toBe("manual-todas-v0.1.0.pdf");
+  });
+
+  it("keeps expanding `{tenant}` for the manual that already ships", () => {
+    const config: ManualConfig = {
+      ...baseConfig,
+      output: { dir: "output", filename: "manual-operador-{tenant}-v{contentVersion}.pdf" },
+    };
+    expect(outputFilename(config, { tenant: "mv" })).toBe("manual-operador-mv-v0.1.0.pdf");
   });
 });
 

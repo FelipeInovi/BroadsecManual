@@ -409,9 +409,56 @@ export function axisValueName(config: ManualConfig, axis: string, valueId: strin
 function requireAxisValue(target: BuildTarget, axis: string): string {
   const value = target[axis];
   if (value === undefined) {
-    throw new Error(`internal error: build target is missing axis "${axis}"`);
+    throw new Error(
+      `no value for axis "${axis}" on this target — \`axes\` and \`targets\` ` +
+        `disagree in manual.config.yaml.`,
+    );
   }
   return value;
+}
+
+/**
+ * The axis the outputs are named and organised by.
+ *
+ * Read from the config rather than assumed, because the engine conditions on
+ * whatever axis a target names and tenant is one named axis among possible
+ * others. Asking for a `tenant` key here made that untrue in practice: a manual
+ * conditioned on permissions could not be built at all, and the only way to make
+ * it build was to call a permission profile a deployment — on the cover, in the
+ * filename and in the figure folders, in a document that goes to a client.
+ *
+ * DERIVED, not declared. One axis cannot be ambiguous, and every manual here has
+ * exactly one, so nothing needs a new config key. Two or more is a shape this
+ * pipeline has never had: it asks instead of guessing, because taking the first
+ * key would make the output filename depend on the order the YAML was written in.
+ */
+export function primaryAxis(config: ManualConfig): string {
+  const names = Object.keys(config.axes);
+  const only = names[0];
+  if (names.length === 1 && only !== undefined) return only;
+
+  if (names.length === 0) {
+    throw new Error(
+      `manual.config.yaml declares no axes. One document is produced per target ` +
+        `and a target is an assignment of every axis, so there is nothing to ` +
+        `build — declare the axis this manual's content actually varies on.`,
+    );
+  }
+  throw new Error(
+    `manual.config.yaml declares ${names.length} axes (${names.join(", ")}) and ` +
+      `nothing says which one names the output. Conditioning handles any number ` +
+      `of axes, but one filename and one figure set need a single value. More ` +
+      `than one axis has never been needed here — raise it rather than working ` +
+      `around it.`,
+  );
+}
+
+/** One target's output filename, with the axis token expanded by the axis's own name. */
+export function outputFilename(config: ManualConfig, target: BuildTarget): string {
+  const axis = primaryAxis(config);
+  return config.output.filename
+    .replace(`{${axis}}`, requireAxisValue(target, axis))
+    .replace("{contentVersion}", config.manual.contentVersion);
 }
 
 /**
@@ -518,10 +565,10 @@ async function capture(
   filters: ReadonlyMap<string, string>,
   only: readonly string[],
 ): Promise<void> {
-  const { doc, targets, figuresDir } = loadManual(manualDir, filters);
+  const { config, doc, targets, figuresDir } = loadManual(manualDir, filters);
   const target = targets[0];
   if (!target) throw new Error("no deployment selected — pass --tenant");
-  const tenant = requireAxisValue(target, "tenant");
+  const tenant = requireAxisValue(target, primaryAxis(config));
   const manual = assemble(doc, target, catalog);
   const { entries } = resolveTargetImages(manual, figuresDir, tenant);
   const pending = new Set(entries.filter((e) => e.state === "pending").map((e) => e.slot));
@@ -576,7 +623,7 @@ function exportImages(
   const { config, doc, targets, figuresDir } = loadManual(manualDir, filters);
 
   const perTarget = targets.map((target) => {
-    const tenant = requireAxisValue(target, "tenant");
+    const tenant = requireAxisValue(target, primaryAxis(config));
     const manual = assemble(doc, target, catalog);
     const { entries, images } = resolveTargetImages(manual, figuresDir, tenant);
     return { tenant, entries, indexed: images.indexed() };
@@ -708,10 +755,9 @@ async function build(
 
   for (const target of targets) {
     const manual = assemble(doc, target, catalog);
-    const tenant = requireAxisValue(target, "tenant");
-    const rendered = config.output.filename
-      .replace("{tenant}", tenant)
-      .replace("{contentVersion}", config.manual.contentVersion);
+    const axis = primaryAxis(config);
+    const tenant = requireAxisValue(target, axis);
+    const rendered = outputFilename(config, target);
     const name = draft ? draftFilename(rendered) : rendered;
 
     const { entries, slots, images, uses } = resolveTargetImages(manual, figuresDir, tenant);
@@ -736,7 +782,7 @@ async function build(
       lede: draft
         ? "Borrador para la toma de capturas. Cada imagen pendiente lleva debajo la ruta y el nombre exactos con los que debe entregarse el archivo. Guárdela tal cual, sin cambiar mayúsculas ni extensión. No distribuir."
         : (config.manual.lede ??
-           `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, "tenant", requireAxisValue(target, "tenant"))}.`),
+           `Plataforma de Gestión de Incidentes y Seguridad para Operaciones Críticas — ${axisValueName(config, axis, tenant)}.`),
       meta: draft
         ? "© 2026 Inovisec  |  Documento de trabajo interno  |  No es la versión para el cliente"
         : "© 2026 Inovisec  |  Todos los Derechos Reservados  |  Documento Confidencial",
