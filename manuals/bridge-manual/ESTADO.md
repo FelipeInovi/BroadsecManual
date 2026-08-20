@@ -156,6 +156,37 @@ state.
   (link sent, units available, call ended) — runtime, not a build axis, and
   documented as states in prose.
 
+- **The "Historial de Eventos" table has three controls that cannot be
+  documented as working.** The rows themselves are real (`useEventHistory`,
+  `events-history-panel.tsx:121`), but:
+  - **ESTADO column** — the dot's colour is
+    `STATUS_DOT_COLORS[row.index % STATUS_DOT_COLORS.length]`
+    (`events-history-columns.tsx:103`). It is picked by the row's POSITION in the
+    table, not by the event's state.
+  - **Underlying status** — the mapping hardcodes `status: "Cerrado"` for every
+    row (`events-history-panel.tsx:139`), so the Estado filter's other two
+    options (`Abierto`, `En gestión`, `events-history-filters.tsx:9-13`) can
+    never match anything.
+  - **Fecha filter** — its options are derived from `MOCK_EVENTS`
+    (`events-history-filters.tsx:6-8`), i.e. from fixture dates that will not
+    match the real rows.
+  - **AGENCIA column** — hardcoded `agency: "-"` (`events-history-panel.tsx:141`),
+    as is `handlingTime` (`:146`).
+  - And every column filter runs client-side (`getFilteredRowModel`, `:171`) over
+    a server-paginated table (`manualPagination: true`, `:169`), so a filter only
+    ever filters the page currently loaded.
+
+  All of them are on screen: the panel renders `fullColumns` (`:155`).
+  `previewColumns` (`events-history-columns.tsx:122`) is exported and used
+  nowhere — dead code.
+
+- **A hidden tab is the CLEAN case, and it is worth contrasting.** Analytics
+  declares four sub-tabs and marks `Análisis de Colas` as `enabled: false`
+  (`analytics-panel.tsx:26`), and `VISIBLE_TABS` filters it out (`:30-32`). It is
+  not on screen, so there is nothing to document and nothing to explain. That is
+  what a deliberately unfinished feature looks like when it is handled properly —
+  the contrast with the finding above is the point.
+
 ## Module inventory — PROPOSED, not agreed
 
 Nothing in this repository declares a manual's module list, and no scope has been
@@ -184,6 +215,19 @@ Treat this as a proposal to confirm, not as an agreed scope.
    author against the source read directly, citing file and line, as Seatmap
    does. **What settles it:** building that extractor, whose first job is not
    tenants but permission gates.
+4. **How the manual handles the "Historial de Eventos" defects.** Blocked, and
+   the reason it is blocked is not authoring: saying a control works when it does
+   not is a lie to the client, and saying it does not work is a product statement
+   inside a client-facing PDF. Neither is an author's call. `04-dashboard.yaml`
+   therefore covers that tab's search, pagination, detail dialog, row selection
+   and export, and deliberately does NOT describe the ESTADO column, the AGENCIA
+   column or the Fecha/Estado filters. The file says so in its own header.
+   **What settles it:** the product fixing them — they are source-repo defects,
+   not pipeline and not content — or the owner deciding how a manual should
+   describe a control that is on screen and inert. Until then that submodule is
+   NOT done by the `module-completeness` standard, and it should not be counted
+   as done.
+
 3. **Whether the other three agency types ever get documented.** Settled for
    now by scoping the manual to RECEPTION (see Decided), which is what let Home
    be written. What is NOT settled is what happens when a DISPATCH, SUPERVISOR
@@ -196,25 +240,34 @@ Treat this as a proposal to confirm, not as an agreed scope.
 
 ## Next section
 
-**`dashboard`** is the proposal, because the rail order puts it next and nothing
-argues for jumping it. It would take `04-`, with no renumbering.
+**`bridge-of-things`** is the proposal — next in the rail order, and it would
+take `05-` with no renumbering.
 
-Two things to carry into it, both earned the hard way:
+Three things to carry into it:
 
-- **Check the divergence signals first, every time.** `grep` for `agencyType`,
-  `permissions`, `can[A-Z]`, `role`, `agencyId` in the view before assuming it is
-  uniform. `agencyType` was missed by the source survey once; `call-view.tsx` came
-  back clean only because it was checked.
-- **Verify every line citation before committing.** Ten of Llamada's provenance
-  comments were off by one to three lines on first write — arithmetic on `sed`
-  offsets, not misreadings. They were caught by printing each cited line back and
-  reading it. Do that; the citations are the only audit this manual has while
-  there is no extractor.
+- **Check the divergence signals first.** `grep` for `agencyType`,
+  `permissions`, `can[A-Z]`, `role`, `agencyId` before assuming the view is
+  uniform. Three views have come back clean this way; `agencyType` in Home did
+  not, and the source survey had missed it.
+- **Check whether the data is real.** Dashboard is the reason this is now on the
+  list. `grep` for `MOCK`, and read the mapping between the API response and the
+  rows — the defects above are all in that mapping, not in the fetch. A screen
+  can be fed by a real endpoint and still show fabricated values.
+- **Never invent a label without checking for one.** Writing Dashboard, the hour
+  filter was given the made-up name "Franja horaria" before a second look found
+  the product's own caption, `Intervalo horario`
+  (`analytics-filters-panel.tsx:870`). Inventing a name for a control that HAS
+  one sends the reader looking for text that is not on screen. Invent only where
+  the source genuinely has no label, and say so in the comment when you do.
 
-Still open and unchanged: `create-incident` will need care when its turn comes.
-Two comments there name deployments (`create-incident.ts:183`,
+And still: verify every line citation by printing the cited line back before
+committing.
+
+Unchanged: `create-incident` will need care when its turn comes. Two comments
+there name deployments (`create-incident.ts:183`,
 `create-incident.schema.ts:51`) and neither is a gate — the code carries the
 union of deployment behaviours. Do not read them as evidence of a tenant axis.
 
-The module inventory above is STILL only proposed. Home, Llamada and Seatmap are
-written; no scope beyond them has been agreed.
+The module inventory above is STILL only proposed. Home, Llamada, Seatmap and
+Dashboard are written — Dashboard with the gap recorded in question 4. No scope
+beyond them has been agreed.

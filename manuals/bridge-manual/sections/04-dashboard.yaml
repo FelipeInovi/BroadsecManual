@@ -1,0 +1,614 @@
+# Dashboard — written against the Bridge360 source, cited by file and line.
+#
+# There is no module map for this product yet (no extractor exists for its
+# shape), so every claim here carries its own provenance comment instead of
+# tracing to `knowledge/`. There is no i18n catalogue either: every label below
+# is a QUOTATION of a literal in the component, with the line it sits on. If the
+# product rewords one, nothing here notices — that is recorded in ESTADO.md.
+#
+# Checked before writing, per ESTADO's standing note: `dashboard-view.tsx` reads
+# NO divergence signal — no `agencyType`, `permissions`, `role` or `agencyId`.
+# The view is uniform for every agency type, and nothing here is conditioned on
+# the `permission` axis. No `when` in this file.
+#
+# INCOMPLETE ON PURPOSE — see ESTADO.md, open question 4. The "Historial de
+# Eventos" tab has three visible things this section does NOT describe: the
+# ESTADO column, the AGENCIA column, and the Fecha/Estado column filters. They
+# cannot be documented truthfully as working, and saying so in a client-facing
+# PDF is a product statement, not an authoring one. Everything else in that tab
+# is covered. The other two tabs are complete.
+#
+# Paths in comments are relative to `src/modules/dashboard/presentation/ui/` in
+# the `bridge` source repository, except where another module is named in full.
+
+id: dashboard
+title: Dashboard
+subtitle: Historial, analítica e indicadores de la operación
+
+children:
+  - id: dashboard.proposito
+    type: prose
+    props:
+      text: >-
+        La vista **Dashboard** reúne los tableros con los que se mira la
+        operación hacia atrás en lugar de atenderla en vivo: el historial de
+        eventos registrados, la analítica de llamadas y operadores, y los
+        indicadores del turno.
+
+  - id: dashboard.acceso
+    type: prose
+    props:
+      # components/layout/icon-sidebar.tsx:62 — nav item id `dashboard`, label
+      # "Dashboard"; pages/dashboard.tsx:722 monta la vista. A diferencia de
+      # Home y Llamada, el fondo NO es el mapa de la operación: es una imagen
+      # fija (dashboard-view.tsx:3-6).
+      text: >-
+        Diríjase a **Dashboard** en la barra lateral de iconos. La vista ocupa
+        la pantalla completa y se organiza en tres fichas, seleccionables desde
+        la barra superior. A diferencia de las vistas de atención, no lleva el
+        mapa de la operación de fondo.
+
+  - id: dashboard.fig
+    type: figure
+    props:
+      caption: "Vista Dashboard con la barra de fichas en la parte superior."
+      widthPercent: 90
+
+  - id: dashboard.fichas
+    type: data-table
+    props:
+      # Rótulos citados de DASHBOARD_TABS, dashboard-view.tsx:37, :42 y :47. La
+      # primera es la que abre por omisión (:94).
+      labelHeader: Ficha
+      descriptionHeader: Qué muestra
+      rows:
+        - id: dashboard.ficha.historial
+          label: Historial de Eventos
+          description: >-
+            El registro de eventos ya cerrados, en tabla, con búsqueda y
+            exportación. Es la ficha con la que abre la vista.
+        - id: dashboard.ficha.analitica
+          label: Analítica
+          description: >-
+            Los tableros de análisis de llamadas y de desempeño de operadores,
+            con su propio juego de filtros.
+        - id: dashboard.ficha.emergency
+          label: Emergency Dashboard
+          description: >-
+            Los indicadores del turno: llamadas atendidas, distribución de casos
+            y tiempos de respuesta.
+
+  - id: dashboard.calor
+    type: field-list
+    props:
+      items:
+        # Rótulo citado de DASHBOARD_MANIFEST, dashboard-view.tsx:25. Arranca
+        # ACTIVO al entrar a la vista, a diferencia de Home, y el comentario del
+        # producto lo dice explícito (:20-21). El toggle alimenta la capa de
+        # calor (:82-84) y la sección se dibuja dentro de las fichas de
+        # Analítica (analytics-panel.tsx:164) y Emergency Dashboard
+        # (emergency-dashboard-panel.tsx:476).
+        - id: dashboard.calor.control
+          label: Mapa de calor
+          text: >-
+            Se controla desde la barra de paneles y viene activado al entrar a
+            la vista. Con el mapa de calor activo, las fichas de **Analítica** y
+            **Emergency Dashboard** agregan al pie la sección **Mapa de Calor**,
+            que concentra geográficamente los eventos del período consultado.
+          layout: beside
+
+  - id: dashboard.calor.radio
+    type: prose
+    props:
+      # Sección titulada en dashboard-heatmap-section.tsx:14. El control de
+      # radio no lleva rótulo en pantalla: es un deslizador que muestra su valor
+      # en píxeles (heatmap-control.tsx:18-26), acotado entre 10 y 80 (:4-5).
+      # Se oculta solo cuando el mapa de calor está apagado o hay un panel
+      # expandido (:13). El nombre lo da el manual.
+      text: >-
+        Sobre el mapa de calor, un deslizador regula el radio de cada punto,
+        entre diez y ochenta píxeles, y muestra el valor elegido a su derecha.
+        Un radio mayor agrupa eventos próximos en una sola mancha; uno menor los
+        separa. El deslizador desaparece al apagar el mapa de calor.
+
+  # --- Historial de Eventos --------------------------------------------------
+  - id: dashboard.historial
+    title: Historial de Eventos
+    children:
+      - id: dashboard.historial.proposito
+        type: prose
+        props:
+          text: >-
+            Presenta en tabla los eventos registrados, con el teléfono, el
+            identificador, la fecha de creación, la queue, el operador que
+            atendió, la duración y el tiempo de espera de cada uno. Sirve para
+            recuperar un caso puntual y para llevarse el registro a otra
+            herramienta.
+
+      - id: dashboard.historial.ubicacion
+        type: prose
+        props:
+          # Es la primera ficha de DASHBOARD_TABS (dashboard-view.tsx:36-39) y
+          # la que abre por omisión (:94). Las filas vienen del backend
+          # (`useEventHistory`, events-history-panel.tsx:121).
+          text: >-
+            Es la ficha con la que abre la vista. La tabla ocupa el cuerpo
+            completo, con la barra de herramientas arriba y la paginación al
+            pie.
+
+      - id: dashboard.historial.fig
+        type: figure
+        props:
+          caption: "Ficha de historial de eventos con la barra de herramientas, la tabla y la paginación."
+          widthPercent: 90
+
+      - id: dashboard.historial.buscar
+        type: field-list
+        props:
+          items:
+            # Rótulo citado de events-history-toolbar.tsx:86. La búsqueda va al
+            # backend, no al navegador: viaja como parámetro de la consulta
+            # (events-history-panel.tsx:121-127) y reinicia la paginación
+            # (:113-115).
+            - id: dashboard.historial.buscar.campo
+              label: Buscar por tipo, queue o teléfono...
+              text: >-
+                Acota el historial completo, no solo la página que está viendo:
+                la búsqueda se resuelve en el servidor. Al escribir, la tabla
+                vuelve a la primera página.
+              layout: beside
+
+      - id: dashboard.historial.paginacion
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de events-history-panel.tsx:344 y :354; el
+            # indicador de posición, de :330-332. La paginación es del servidor
+            # (`manualPagination: true`, :169).
+            - id: dashboard.historial.paginacion.indicador
+              label: Página
+              text: >-
+                Al pie de la tabla, indica en qué página está y cuántas hay en
+                total.
+              layout: beside
+
+            - id: dashboard.historial.paginacion.mover
+              label: Anterior y Siguiente
+              text: >-
+                Recorren el historial página por página. Cada movimiento
+                consulta al servidor, de modo que la tabla siempre trae el
+                registro vigente. Los controles se deshabilitan en los
+                extremos.
+              layout: beside
+
+      - id: dashboard.historial.detalle
+        type: procedure
+        props:
+          # La fila abre el detalle (events-history-panel.tsx:303); el título
+          # del cuadro se cita de event-detail-dialog.tsx:17.
+          lead: >-
+            Para ver el detalle de un evento:
+          steps:
+            - id: dashboard.historial.detalle.ubicar
+              title: Ubique el evento en la tabla
+              text: >-
+                Use la búsqueda para acotar el historial y recorra las páginas
+                hasta encontrarlo.
+              layout: beside
+
+            - id: dashboard.historial.detalle.abrir
+              title: Haga clic en la fila
+              text: >-
+                Se abre un cuadro titulado **Evento** seguido del identificador,
+                con todo lo registrado de ese evento.
+              layout: beside
+
+            - id: dashboard.historial.detalle.cerrar
+              title: Cierre el cuadro
+              text: >-
+                La tabla queda como estaba, en la misma página y con la misma
+                búsqueda.
+              layout: beside
+
+      - id: dashboard.historial.exportar
+        type: procedure
+        props:
+          # Controles citados de events-history-toolbar.tsx:140 y :155; la
+          # cuenta de filas marcadas, de :124; las casillas, de
+          # events-history-columns.tsx:29 y :37.
+          lead: >-
+            Para llevarse el historial a una planilla:
+          steps:
+            - id: dashboard.historial.exportar.marcar
+              title: Marque las filas que necesita
+              text: >-
+                Cada fila lleva una casilla al comienzo, y la del encabezado
+                marca todas las de la página. La barra de herramientas informa
+                cuántas quedaron marcadas.
+              layout: beside
+
+            - id: dashboard.historial.exportar.formato
+              title: Haga clic en CSV o en Excel
+              text: >-
+                La exportación se prepara y el control queda a la espera
+                mientras se genera el archivo.
+              layout: beside
+
+            - id: dashboard.historial.exportar.guardar
+              title: Guarde el archivo
+              text: >-
+                El archivo se descarga con el nombre que la plataforma le
+                asigna. La tabla no cambia: la exportación no altera lo que
+                está viendo.
+              layout: beside
+
+  # --- Analítica -------------------------------------------------------------
+  - id: dashboard.analitica
+    title: Analítica
+    children:
+      - id: dashboard.analitica.proposito
+        type: prose
+        props:
+          text: >-
+            Reúne los tableros que responden cómo viene funcionando la
+            operación: el volumen y la clasificación de las llamadas, y el
+            desempeño de los operadores. Todo lo que muestra depende de los
+            filtros que se apliquen.
+
+      - id: dashboard.analitica.ubicacion
+        type: prose
+        props:
+          # Segunda ficha de DASHBOARD_TABS (dashboard-view.tsx:40-44). Sus
+          # subfichas visibles se resuelven en analytics-panel.tsx:30-32.
+          text: >-
+            Diríjase a **Analítica** en la barra de fichas. La ficha se divide a
+            su vez en subfichas, con el panel de filtros a un costado.
+
+      - id: dashboard.analitica.fig
+        type: figure
+        props:
+          caption: "Ficha de analítica con sus subfichas y el panel de filtros."
+          widthPercent: 90
+
+      - id: dashboard.analitica.subfichas
+        type: data-table
+        props:
+          # Rótulos citados de analytics-panel.tsx:23, :24 y :27. Una cuarta,
+          # "Análisis de Colas" (:26), está marcada `enabled: false` y queda
+          # fuera de las visibles (:30-32): no está en pantalla, así que el
+          # manual no la nombra.
+          labelHeader: Subficha
+          descriptionHeader: Qué analiza
+          rows:
+            - id: dashboard.analitica.subficha.general
+              label: General
+              description: >-
+                El panorama del período: volumen de llamadas y su distribución.
+                Es la subficha con la que abre.
+            - id: dashboard.analitica.subficha.llamadas
+              label: Análisis de Llamadas
+              description: >-
+                Las llamadas en detalle, por tipo, estado y prioridad.
+            - id: dashboard.analitica.subficha.operadores
+              label: Rendimiento de Operadores
+              description: >-
+                El desempeño de cada operador y su nivel.
+
+      - id: dashboard.analitica.filtros.titulo
+        type: detail-header
+        props:
+          # Citado de analytics-filters-panel.tsx:826.
+          text: Filtros
+
+      - id: dashboard.analitica.filtros.texto
+        type: prose
+        props:
+          # El juego de campos cambia por subficha (`fields.includes(…)`), de
+          # modo que no todos están siempre presentes. Cada campo ofrece
+          # **Todos** por omisión (analytics-filters-panel.tsx:129) y los que
+          # tienen muchas opciones agregan un buscador (:196).
+          text: >-
+            El panel de filtros acompaña a la subficha activa y no siempre
+            ofrece los mismos campos: cada subficha presenta los que tienen
+            sentido para lo que analiza. Todo campo sin elección tomada muestra
+            **Todos**, y los que manejan muchas opciones incorporan un buscador.
+
+      - id: dashboard.analitica.filtros.campos
+        type: data-table
+        props:
+          # Rótulos citados de analytics-filters-panel.tsx:852, :860, :908,
+          # :916, :924, :932, :942, :951, :960 y :968. Las OPCIONES de cada
+          # campo se resuelven con datos del backend, no con literales, así que
+          # el manual describe qué acota cada campo y no enumera valores que
+          # cambian por instalación.
+          labelHeader: Campo
+          descriptionHeader: Qué acota
+          rows:
+            - id: dashboard.analitica.campo.agencia
+              label: Agencia
+              description: >-
+                Deja solo lo que corresponde a la agencia elegida.
+            - id: dashboard.analitica.campo.turno
+              label: Turno
+              description: >-
+                Deja solo lo ocurrido en el turno elegido.
+            - id: dashboard.analitica.campo.tipo-llamada
+              label: Tipo de llamada
+              description: >-
+                Distingue entre emergencia y los demás tipos registrados.
+            - id: dashboard.analitica.campo.estado-llamada
+              label: Estado de la llamada
+              description: >-
+                Deja solo las llamadas en el estado elegido.
+            - id: dashboard.analitica.campo.prioridad
+              label: Prioridad
+              description: >-
+                Deja solo lo registrado con la prioridad elegida.
+            - id: dashboard.analitica.campo.operador
+              label: Operador
+              description: >-
+                Deja solo la actividad del operador elegido.
+            - id: dashboard.analitica.campo.estado-operador
+              label: Estado de operador
+              description: >-
+                Deja solo los operadores en el estado elegido.
+            - id: dashboard.analitica.campo.clasificacion
+              label: Clasificación por Tipo de Incidente
+              description: >-
+                Agrupa los resultados según el tipo de incidente.
+            - id: dashboard.analitica.campo.granularidad
+              label: Granularidad del Gráfico
+              description: >-
+                Define el intervalo con el que los gráficos agrupan el período:
+                un intervalo más fino muestra más detalle y más ruido.
+            - id: dashboard.analitica.campo.desempeno
+              label: Nivel de desempeño
+              description: >-
+                Deja solo los operadores del nivel elegido.
+
+      - id: dashboard.analitica.filtros.horario
+        type: field-list
+        props:
+          items:
+            # Rótulo citado de analytics-filters-panel.tsx:870. El intervalo
+            # elegido se muestra al lado, como HH:00-HH:00 (:872-874). Los dos
+            # selectores se ajustan entre sí y no pueden cruzarse: `Math.max`
+            # empuja el de fin (:887) y `Math.min` retrocede el de inicio
+            # (:898).
+            - id: dashboard.analitica.filtros.horario.rango
+              label: Intervalo horario
+              text: >-
+                Dos selectores acotan el análisis a una franja del día, y el
+                intervalo elegido queda a la vista al lado del rótulo. No pueden
+                cruzarse: al mover uno más allá del otro, el otro lo acompaña,
+                de modo que el intervalo nunca queda invertido.
+              layout: beside
+
+      - id: dashboard.analitica.filtros.rangos
+        type: term-list
+        props:
+          entries:
+            # Rótulos citados de RANGE_MODE_OPTIONS,
+            # analytics-filters-panel.tsx:252-255. Los campos de valor se citan
+            # de :459 y :469 (numéricos) y :640-642 (tiempos, en mm:ss según el
+            # texto guía de :548).
+            - id: dashboard.analitica.rango.todos
+              term: Todos
+              definition: >-
+                No acota por valor. Es la opción de partida.
+            - id: dashboard.analitica.rango.mayor
+              term: Mayor que
+              definition: >-
+                Deja solo los valores por encima del que indique en **Desde**.
+            - id: dashboard.analitica.rango.menor
+              term: Menor que
+              definition: >-
+                Deja solo los valores por debajo del que indique en **Hasta**.
+            - id: dashboard.analitica.rango.personalizado
+              term: Rango personalizado
+              definition: >-
+                Deja solo los valores entre **Desde** y **Hasta**. Los campos de
+                tiempo se escriben en minutos y segundos.
+
+      - id: dashboard.analitica.filtros.medidas
+        type: data-table
+        props:
+          # Rótulos citados de analytics-filters-panel.tsx:976, :985, :994,
+          # :1002 y :1011. Cada uno usa el juego de rangos descrito arriba.
+          labelHeader: Medida
+          descriptionHeader: Sobre qué aplica el rango
+          rows:
+            - id: dashboard.analitica.medida.total
+              label: Total de llamadas
+              description: >-
+                Cantidad de llamadas registradas.
+            - id: dashboard.analitica.medida.abandonadas
+              label: Llamadas abandonadas
+              description: >-
+                Cantidad de llamadas que se cortaron antes de ser atendidas.
+            - id: dashboard.analitica.medida.promedio
+              label: Tiempo promedio en llamada
+              description: >-
+                Duración media de las llamadas atendidas.
+            - id: dashboard.analitica.medida.timbre
+              label: Tiempo de Timbre
+              description: >-
+                Cuánto sonó la llamada antes de ser atendida.
+            - id: dashboard.analitica.medida.kpi
+              label: Tiempo de Respuesta KPI (Segundos)
+              description: >-
+                Umbral de respuesta contra el que se mide la atención.
+
+      - id: dashboard.analitica.presets
+        type: term-list
+        props:
+          entries:
+            # Rótulos citados de analytics-filters-panel.tsx:701, :706, :711,
+            # :716, :719 y :722. El selector que los ofrece se titula
+            # "Período" en General y "Filtro rápido" en Rendimiento de
+            # Operadores (:730-731).
+            - id: dashboard.analitica.preset.24h
+              term: Últimas 24 horas
+              definition: >-
+                El día en curso, hacia atrás desde este momento.
+            - id: dashboard.analitica.preset.semana
+              term: Esta semana
+              definition: >-
+                La semana en curso.
+            - id: dashboard.analitica.preset.mes
+              term: Este mes
+              definition: >-
+                El mes en curso.
+            - id: dashboard.analitica.preset.anio
+              term: Este año
+              definition: >-
+                El año en curso.
+            - id: dashboard.analitica.preset.pico
+              term: Horas pico
+              definition: >-
+                Acota la franja horaria a las horas de mayor actividad, sin
+                cambiar el período.
+            - id: dashboard.analitica.preset.desempeno
+              term: Mejor desempeño
+              definition: >-
+                Deja solo los operadores de nivel alto.
+
+      - id: dashboard.analitica.acciones
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de analytics-panel.tsx:108 ("Actualizar", que pasa
+            # a "Actualizando…" mientras corre) y
+            # analytics-filters-panel.tsx:1038.
+            - id: dashboard.analitica.accion.actualizar
+              label: Actualizar
+              text: >-
+                Vuelve a consultar los datos sin tocar los filtros aplicados.
+                Mientras la consulta corre, el control indica
+                **Actualizando…**.
+              layout: beside
+
+            - id: dashboard.analitica.accion.limpiar
+              label: Limpiar filtros
+              text: >-
+                Devuelve todos los campos a **Todos** y deja el tablero sin
+                acotar. Es lo contrario de **Actualizar**: no consulta de nuevo,
+                cambia qué se está consultando.
+              layout: beside
+
+  # --- Emergency Dashboard ---------------------------------------------------
+  - id: dashboard.emergency
+    title: Emergency Dashboard
+    children:
+      - id: dashboard.emergency.proposito
+        type: prose
+        props:
+          text: >-
+            Resume el turno en indicadores: cuántas llamadas se atendieron y
+            cómo se reparten, cómo se distribuyen los casos, cuánto se tarda en
+            responder y cómo se reparte el tiempo del turno.
+
+      - id: dashboard.emergency.ubicacion
+        type: prose
+        props:
+          # Tercera ficha de DASHBOARD_TABS (dashboard-view.tsx:45-49);
+          # encabezado del panel citado de
+          # components/panels/emergency-dashboard/emergency-dashboard-panel.tsx:315.
+          # Los datos vienen del backend (`useMyDashboard()`, :273) y el panel
+          # muestra una espera mientras llegan (:325-328).
+          text: >-
+            Diríjase a **Emergency Dashboard** en la barra de fichas. El panel
+            lleva ese mismo título y se recorre de arriba hacia abajo: primero
+            los recuentos, después los repartos. Mientras los datos llegan,
+            muestra una espera en lugar de valores en cero.
+
+      - id: dashboard.emergency.fig
+        type: figure
+        props:
+          caption: "Ficha de indicadores con la franja de recuentos y los repartos debajo."
+          widthPercent: 90
+
+      - id: dashboard.emergency.recuentos
+        type: data-table
+        props:
+          # Rótulos citados de emergency-dashboard-panel.tsx:211, :217, :224 y
+          # :231. Los valores se animan al aparecer (`useCountUp`, :53-56 y
+          # :110): el número sube hasta su valor real, no está calculándose.
+          labelHeader: Recuento
+          descriptionHeader: Qué cuenta
+          rows:
+            - id: dashboard.emergency.recuento.atendidas
+              label: Llamadas atendidas
+              description: >-
+                Total de llamadas atendidas en el turno.
+            - id: dashboard.emergency.recuento.emergencias
+              label: Emergencias
+              description: >-
+                Cuántas de ellas se clasificaron como emergencia.
+            - id: dashboard.emergency.recuento.no-emergencias
+              label: No emergencias
+              description: >-
+                Cuántas se clasificaron como no emergencia.
+            - id: dashboard.emergency.recuento.rechazados
+              label: Rechazados
+              description: >-
+                Cuántas llamadas se rechazaron.
+
+      - id: dashboard.emergency.recuentos.aviso
+        type: prose
+        props:
+          text: >-
+            Los recuentos suben desde cero hasta su valor al aparecer en
+            pantalla. Es la animación de entrada: el valor mostrado al detenerse
+            es el definitivo.
+
+      - id: dashboard.emergency.casos.titulo
+        type: detail-header
+        props:
+          # Citado de emergency-dashboard-panel.tsx:343.
+          text: Distribución de casos
+
+      - id: dashboard.emergency.casos.texto
+        type: prose
+        props:
+          # Anillo con la leyenda al costado (:346-373); el total acompaña al
+          # título (:342) y cada entrada lleva su porcentaje sobre ese total
+          # (:364-366).
+          text: >-
+            Reparte los casos del turno entre sus categorías, con el total al
+            lado del título y el porcentaje de cada categoría sobre ese total.
+            Responde qué tipo de caso está concentrando la operación.
+
+      - id: dashboard.emergency.respuesta.titulo
+        type: detail-header
+        props:
+          # Citado de emergency-dashboard-panel.tsx:377.
+          text: Tiempo de respuesta promedio
+
+      - id: dashboard.emergency.respuesta.texto
+        type: prose
+        props:
+          # Dos medidas, citadas de :382 y :390. El cumplimiento acompaña al
+          # título como `SLA` con su porcentaje (:376).
+          text: >-
+            Muestra cuánto se tarda en promedio en responder, separando
+            **Emergencia** de **No emergencia**, y acompaña el título con el
+            porcentaje de cumplimiento del compromiso de atención. Es el
+            indicador que anticipa un incumplimiento antes de que se reclame.
+
+      - id: dashboard.emergency.turno.titulo
+        type: detail-header
+        props:
+          # Citado de emergency-dashboard-panel.tsx:433.
+          text: Distribución del turno
+
+      - id: dashboard.emergency.turno.texto
+        type: prose
+        props:
+          # El apartado completo se omite cuando no hay reparto que mostrar
+          # (:431), con el total al lado del título (:432).
+          text: >-
+            Reparte el tiempo del turno entre los estados por los que pasaron
+            los operadores, con el total al lado del título. Cuando no hay
+            reparto registrado, el apartado no se muestra: no queda un espacio
+            vacío en su lugar.
