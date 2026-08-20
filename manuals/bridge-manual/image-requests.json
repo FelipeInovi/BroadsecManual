@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.1.0",
+  "contentVersion": "0.2.0",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 53,
+    "total": 81,
     "delivered": 0,
-    "pending": 53
+    "pending": 81
   },
   "pending": [
     {
@@ -879,6 +879,622 @@
       "deliverTo": {
         "shared": "_common/home.herramientas.control.street-view.png",
         "override": "<permission>/home.herramientas.control.street-view.png"
+      }
+    },
+    {
+      "slot": "llamada.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fig",
+          "blockType": "figure",
+          "shows": "Vista Llamada durante una llamada en curso, con la transcripción a la izquierda y el mapa del incidente al centro."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fig.png",
+        "override": "<permission>/llamada.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.transcripcion.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.transcripcion.fig",
+          "blockType": "figure",
+          "shows": "Panel de transcripción con las intervenciones del llamante y del operador."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.transcripcion.fig.png",
+        "override": "<permission>/llamada.transcripcion.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.video.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.video.fig",
+          "blockType": "figure",
+          "shows": "Panel de video en vivo con el avance del llamante al pie."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.video.fig.png",
+        "override": "<permission>/llamada.video.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.chat.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.chat.fig",
+          "blockType": "figure",
+          "shows": "Panel de chat con el intercambio de mensajes y el campo de escritura."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.chat.fig.png",
+        "override": "<permission>/llamada.chat.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.camaras.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.camaras.fig",
+          "blockType": "figure",
+          "shows": "Panel de cámaras con las cámaras próximas al incidente."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.camaras.fig.png",
+        "override": "<permission>/llamada.camaras.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.fig",
+          "blockType": "figure",
+          "shows": "Panel de fuerzas de respuesta con el filtro por fuerza y los recursos disponibles."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.fig.png",
+        "override": "<permission>/llamada.fuerzas.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.todos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.todos",
+          "blockType": "icon-table",
+          "shows": "Todos"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.filtro.todos.png",
+        "override": "<permission>/llamada.fuerzas.filtro.todos.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.salud",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.salud",
+          "blockType": "icon-table",
+          "shows": "Salud"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.filtro.salud.png",
+        "override": "<permission>/llamada.fuerzas.filtro.salud.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.bomberos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.bomberos",
+          "blockType": "icon-table",
+          "shows": "Bomberos"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.filtro.bomberos.png",
+        "override": "<permission>/llamada.fuerzas.filtro.bomberos.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.policia",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.policia",
+          "blockType": "icon-table",
+          "shows": "Policía"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.filtro.policia.png",
+        "override": "<permission>/llamada.fuerzas.filtro.policia.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.transito",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.transito",
+          "blockType": "icon-table",
+          "shows": "Tránsito"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.filtro.transito.png",
+        "override": "<permission>/llamada.fuerzas.filtro.transito.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.gaula",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.gaula",
+          "blockType": "icon-table",
+          "shows": "Gaula"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.filtro.gaula.png",
+        "override": "<permission>/llamada.fuerzas.filtro.gaula.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.rapida.marca",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.rapida.marca",
+          "blockType": "field-list",
+          "shows": "Llegada más rápida"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.rapida.marca.png",
+        "override": "<permission>/llamada.fuerzas.rapida.marca.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.despachar.filtrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.despachar.filtrar",
+          "blockType": "procedure",
+          "shows": "Elija la fuerza"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.despachar.filtrar.png",
+        "override": "<permission>/llamada.fuerzas.despachar.filtrar.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.despachar.elegir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.despachar.elegir",
+          "blockType": "procedure",
+          "shows": "Elija el recurso"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.despachar.elegir.png",
+        "override": "<permission>/llamada.fuerzas.despachar.elegir.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.despachar.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.despachar.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Despachar"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.despachar.confirmar.png",
+        "override": "<permission>/llamada.fuerzas.despachar.confirmar.png"
+      }
+    },
+    {
+      "slot": "llamada.mapa.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.fig",
+          "blockType": "figure",
+          "shows": "Mapa del incidente con la barra de ubicación y la bitácora del caso apoyadas sobre él."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.mapa.fig.png",
+        "override": "<permission>/llamada.mapa.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.editar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.editar",
+          "blockType": "field-list",
+          "shows": "Editar dirección"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.mapa.ubicacion.editar.png",
+        "override": "<permission>/llamada.mapa.ubicacion.editar.png"
+      }
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar dirección…"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.mapa.ubicacion.buscar.png",
+        "override": "<permission>/llamada.mapa.ubicacion.buscar.png"
+      }
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.aceptar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.aceptar",
+          "blockType": "field-list",
+          "shows": "Aceptar dirección"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.mapa.ubicacion.aceptar.png",
+        "override": "<permission>/llamada.mapa.ubicacion.aceptar.png"
+      }
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.copiar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.copiar",
+          "blockType": "field-list",
+          "shows": "Copiar dirección"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.mapa.ubicacion.copiar.png",
+        "override": "<permission>/llamada.mapa.ubicacion.copiar.png"
+      }
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.street-view",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.street-view",
+          "blockType": "field-list",
+          "shows": "Abrir Street View"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.mapa.ubicacion.street-view.png",
+        "override": "<permission>/llamada.mapa.ubicacion.street-view.png"
+      }
+    },
+    {
+      "slot": "llamada.mapa.bitacora.comentar.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.bitacora.comentar.campo",
+          "blockType": "field-list",
+          "shows": "Agregar comentario…"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.mapa.bitacora.comentar.campo.png",
+        "override": "<permission>/llamada.mapa.bitacora.comentar.campo.png"
+      }
+    },
+    {
+      "slot": "llamada.banda.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.banda.fig",
+          "blockType": "figure",
+          "shows": "Banda inferior con el libro del caso, el análisis de la llamada y la franja de resumen."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.banda.fig.png",
+        "override": "<permission>/llamada.banda.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.cierre.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.fig",
+          "blockType": "figure",
+          "shows": "Vista de cierre: el libro del caso y el análisis en primer plano, y la barra de envío al pie."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.cierre.fig.png",
+        "override": "<permission>/llamada.cierre.fig.png"
+      }
+    },
+    {
+      "slot": "llamada.cierre.enviar.completar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.enviar.completar",
+          "blockType": "procedure",
+          "shows": "Complete el libro del caso"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.cierre.enviar.completar.png",
+        "override": "<permission>/llamada.cierre.enviar.completar.png"
+      }
+    },
+    {
+      "slot": "llamada.cierre.enviar.guardar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.enviar.guardar",
+          "blockType": "procedure",
+          "shows": "Guarde el informe"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.cierre.enviar.guardar.png",
+        "override": "<permission>/llamada.cierre.enviar.guardar.png"
+      }
+    },
+    {
+      "slot": "llamada.cierre.enviar.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.enviar.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Enviar a la agencia"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.cierre.enviar.confirmar.png",
+        "override": "<permission>/llamada.cierre.enviar.confirmar.png"
       }
     },
     {

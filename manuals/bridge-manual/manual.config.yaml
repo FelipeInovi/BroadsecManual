@@ -19,8 +19,8 @@ manual:
   product: Bridge360
   # SemVer of the manual content. 0.x while this is a pipeline spike, so a new
   # module bumps the minor rather than the major: the major stays at 0
-  # deliberately. Home is the second module.
-  contentVersion: 0.1.0
+  # deliberately. Llamada is the third module.
+  contentVersion: 0.2.0
   language: es
   register: neutral-formal
   # Palette and type from Bridge360's own theme. Already in packages/tokens —

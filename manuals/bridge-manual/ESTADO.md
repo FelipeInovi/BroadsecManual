@@ -42,6 +42,14 @@ state.
   at 0 deliberately while this is a spike, so Home took the manual to 0.1.0
   under the `manuals/AGENTS.md` rule that a new module is a major change.
 
+- **Section order follows the product's own sidebar rail.** `navItems`
+  (`components/layout/icon-sidebar.tsx:51-84`) lists `home`, `call`, `sitemap`,
+  `dashboard`, `bridge-of-things`, `forces-in-field`, `create-incident` — the
+  order the operator reads in the icon rail. Filenames follow it, so Llamada took
+  `02-` and Seatmap moved to `03-`. This is derived from the product, not
+  invented, and it means a new section renumbers the ones after it. That is
+  cheap: cross-references are stable ids, so a rename touches no content.
+
 - **Labels are quotations, not references.** The product has no i18n catalogue,
   so each label in content records the component and line it was copied from.
   `uiLabel` blocks cannot be used against this source.
@@ -125,6 +133,29 @@ state.
   flags as mechanisms checked and ruled out. `agencyType` is not in that list;
   the survey missed it. Those notes are incomplete, not wrong.
 
+- **`{{ref:…}}` cross-references do NOT exist in the pipeline.** The root
+  `AGENTS.md` states the invariant as "Cross-reference by **stable ID** only:
+  `{{ref:mapa.capas}}`", but nothing in `packages/core` substitutes that token —
+  no `{{` handling in `load.ts` or `assemble.ts` — and no manual in this
+  repository uses it, `broadlineavida` included. Writing one would put the raw
+  token in a client-facing PDF. Reported, not worked around: Llamada refers to
+  Home by its TITLE in prose ("la sección **Home**"), which breaks no invariant
+  — a title is a stable name, not a number or an anchor.
+
+- **One panel, two names on screen: "Call AI" and "FLOW AI".** The panel header
+  reads `Call AI` (`components/panels/call-ai-panel.tsx:104`); the dock toggle
+  for the same panel reads `FLOW AI` (`CALL_MANIFEST`, `call-view.tsx:176`). Both
+  are visible to the operator, so the manual names both rather than picking one
+  and leaving the reader unable to find the control. Worth watching: this is the
+  shape a rename-in-progress leaves behind.
+
+- **`call-view.tsx` carries NO divergence signal.** Checked before authoring, as
+  this file's own next-section note demands: no `agencyType`, `permissions`,
+  `role` or `agencyId` anywhere in it. The view is uniform for every agency type,
+  so the RECEPTION scope costs Llamada nothing. What varies it is call STATE
+  (link sent, units available, call ended) — runtime, not a build axis, and
+  documented as states in prose.
+
 ## Module inventory — PROPOSED, not agreed
 
 Nothing in this repository declares a manual's module list, and no scope has been
@@ -165,23 +196,25 @@ Treat this as a proposal to confirm, not as an agreed scope.
 
 ## Next section
 
-**`call` (Llamada)** is the proposal: it is the operator's core activity, it is
-the view Home hands off to, and the two already share vocabulary (the case, the
-call, the nearby cameras) so the cross-references land naturally. Still a
-proposal — the module inventory above is not agreed, and nothing beyond Home and
-Seatmap has been.
+**`dashboard`** is the proposal, because the rail order puts it next and nothing
+argues for jumping it. It would take `04-`, with no renumbering.
 
-Two things to carry into it:
+Two things to carry into it, both earned the hard way:
 
-- **Check `agencyType` first, every time.** It was missed by the source survey
-  once already. `grep` for it before assuming a view is uniform; today it reaches
-  only `HomeView`, and that is a fact with a date on it.
-- **`create-incident` needs care when its turn comes.** Two comments there name
-  deployments (`create-incident.ts:183`, `create-incident.schema.ts:51`) and
-  neither is a gate — the code carries the union of deployment behaviours. Do not
-  read them as evidence of a tenant axis.
+- **Check the divergence signals first, every time.** `grep` for `agencyType`,
+  `permissions`, `can[A-Z]`, `role`, `agencyId` in the view before assuming it is
+  uniform. `agencyType` was missed by the source survey once; `call-view.tsx` came
+  back clean only because it was checked.
+- **Verify every line citation before committing.** Ten of Llamada's provenance
+  comments were off by one to three lines on first write — arithmetic on `sed`
+  offsets, not misreadings. They were caught by printing each cited line back and
+  reading it. Do that; the citations are the only audit this manual has while
+  there is no extractor.
 
-Question 1 still does not block anything: the two permission predicates are
-consumed only in `sitemap-view.tsx:36-37`, which `grep` over the whole source
-confirms, so every remaining view is unconditioned on this manual's axis. Home
-was written with no `when` at all for exactly that reason.
+Still open and unchanged: `create-incident` will need care when its turn comes.
+Two comments there name deployments (`create-incident.ts:183`,
+`create-incident.schema.ts:51`) and neither is a gate — the code carries the
+union of deployment behaviours. Do not read them as evidence of a tenant axis.
+
+The module inventory above is STILL only proposed. Home, Llamada and Seatmap are
+written; no scope beyond them has been agreed.
