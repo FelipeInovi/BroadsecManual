@@ -34,7 +34,12 @@ const registrySchema = z.object({
         path: z.string().min(1),
         extract: z
           .object({
-            tenantConfigs: z.string().min(1),
+            // OPTIONAL, because a product can be genuinely multi-tenant without
+            // saying so anywhere in its own repository — Bridge360 resolves the
+            // tenant from a JWT claim and routes on it server-side. Requiring
+            // this field forced such a product to be described with an invented
+            // path, which is the one failure this layer exists to prevent.
+            tenantConfigs: z.string().min(1).optional(),
             components: z.string().min(1),
             pages: z.string().min(1),
           })
@@ -219,8 +224,35 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
   }
 
   // --- tenants ------------------------------------------------------------
+  //
+  // Refused rather than answered with an empty map. `tenants: []` is not the
+  // absence of a claim, it IS a claim — that the product ships one deployment —
+  // and content conditioned on it would be wrong in the direction nobody checks.
+  // The honest outcome for a product this extractor cannot read is no map.
   const configGlob = entry.extract.tenantConfigs;
+  if (configGlob === undefined) {
+    throw new Error(
+      `the registry entry for "${sourceId}" declares no \`tenantConfigs\`, so this ` +
+        `extractor has no tenant registry to read. That is a legitimate product ` +
+        `shape: tenancy can be resolved server-side and never appear in the ` +
+        `client repository at all. It is also the "needs a new extractor" verdict ` +
+        `that step 2 of "Adding a source" asks for — the seam is \`framework\` in ` +
+        `sources/registry.yaml, described in packages/extract/AGENTS.md. Nothing ` +
+        `was written: content can still be authored against facts cited from the ` +
+        `source by file and line, on whichever axis actually varies.`,
+    );
+  }
   const configDir = join(sourceRoot, configGlob.slice(0, configGlob.lastIndexOf("/")));
+  if (!existsSync(configDir)) {
+    throw new Error(
+      `\`tenantConfigs\` points at "${configGlob}", but that directory does not ` +
+        `exist in the source repository (looked in ${configDir}). The entry ` +
+        `describes a shape this product does not have — survey the product and ` +
+        `fix the entry, rather than widening the glob until something matches. ` +
+        `Widening it is how a build ends up reporting a tenant for every stray ` +
+        `config file in the repository.`,
+    );
+  }
   const configs: TenantConfig[] = readdirSync(configDir)
     .filter((f) => f.endsWith(".config.ts"))
     .map((f) => parseTenantConfig(f, readFileSync(join(configDir, f), "utf8")))

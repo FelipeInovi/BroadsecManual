@@ -61,7 +61,11 @@ error.
 4. Create `manuals/<id>/` with a `manual.config.yaml`. Declare only the axes the
    product really has — a declared axis nothing varies on is noise in every
    build.
-5. Run `broadsec-manual extract <id>`.
+5. Run `broadsec-manual extract <id>` — unless step 2 answered *needs a new
+   extractor*. Then there is no map to generate yet, and the command refuses
+   rather than emitting one: report that and stop, because whether to build the
+   extractor or to author against cited facts meanwhile is a decision, not a
+   workaround.
 6. Review the generated `module-map.json` before writing a word of content.
 
 Steps 1, 2 and 6 are not optional. An extraction nobody checked is a set of

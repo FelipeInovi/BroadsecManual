@@ -643,6 +643,14 @@ describe("assembleContinuationPrompt", () => {
     it("does not complain about a source that is declared", () => {
       expect(text).not.toContain("no declara `manual.source`");
     });
+
+    // `extract` refuses outright for a product whose tenancy is not in its own
+    // repository, and there is no map to wait for until somebody writes an
+    // extractor for it. A prompt that only says "run extract" sends the agent
+    // back to a command that cannot succeed, with nothing to do about it.
+    it("names the refusal as an answer, so the agent reports it instead of retrying", () => {
+      expect(text).toContain("se niega");
+    });
   });
 
   describe("a manual that never recorded its decisions", () => {

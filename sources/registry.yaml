@@ -2,6 +2,13 @@
 #
 # `extract` tells the extractor where the facts live. Paths are relative to the
 # source repo root. Adjust per product; nothing here is assumed to generalise.
+#
+# `extract.tenantConfigs` is OPTIONAL. A product can be genuinely multi-tenant
+# and declare none: if tenancy is resolved outside the client repository — from a
+# token claim, server-side — there is no per-tenant file to point at. Leave it
+# out in that case. `broadsec-manual extract` then refuses, because a map with no
+# tenants would claim the product ships a single deployment. Never point it at a
+# directory to satisfy the field.
 
 version: 1
 

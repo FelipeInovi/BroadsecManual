@@ -444,7 +444,9 @@ export function assembleContinuationPrompt(s: ManualState): string {
     if (!s.hasMap) {
       lines.push(
         `  - No hay \`knowledge/module-map.json\`. Corré \`extract ${s.id}\` y revisalo`,
-        `    antes de seguir.`,
+        `    antes de seguir. Si el comando se niega porque el producto no declara`,
+        `    registro de tenants, eso ES una respuesta: reportala y esperá. No hay`,
+        `    mapa que esperar hasta que alguien escriba un extractor para él.`,
       );
     }
     lines.push(
