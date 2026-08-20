@@ -91,6 +91,28 @@ state.
   (`packages/cli/src/main.ts:295-296`, fixed by `main.test.ts:232-233`).
   Regenerate with no `--axis`/`--tenant` filter before committing a manifest.
 
+- **`agencyType` is a SECOND divergence axis, and Home is where it bites.**
+  `HomeView` keys its whole panel layout off `props.agencyType`
+  (`home-view.tsx:320`), fed from the backend agent-context
+  (`dashboard.tsx:205`, `:669` — it reaches no other view). The four values are
+  enumerated in the client itself: `RECEPTION | DISPATCH | SUPERVISOR | OTHER`
+  (`domain/types/agency.types.ts:6`, default `RECEPTION` at `:9`). It decides
+  which panels EXIST, not merely which are visible: `home-view.tsx:356-364`
+  drops `field-forces` and `cctv` from the manifest for every non-DISPATCH
+  agency, and the code says why — "absent everywhere (dock, layout, saved
+  positions), not merely invisible". `HOME_LAYOUT_RULES` (`:57-80`) then gives
+  RECEPTION a three-column case view and the `agencies` panel, DISPATCH a tabbed
+  one plus field forces and CCTV, and SUPERVISOR/OTHER neither.
+
+  This is better evidence than the axis this manual is built on: `permission`
+  values had to be derived from one predicate, while these four are enumerated
+  in the product. It is also NOT the same axis — nothing gates on both — and
+  `permission` does not reach Home at all.
+
+  `sources/registry.yaml`'s notes list `role`, `agencyId` and the `VITE_*`
+  flags as mechanisms checked and ruled out. `agencyType` is not in that list;
+  the survey missed it. Those notes are incomplete, not wrong.
+
 ## Module inventory — PROPOSED, not agreed
 
 Nothing in this repository declares a manual's module list, and no scope has been
@@ -111,6 +133,21 @@ Treat this as a proposal to confirm, not as an agreed scope.
    or a product statement about which permission profiles actually ship.
    **What settles it:** the owner, or a backend source that enumerates profiles.
    Until then the control is documented unconditionally.
+3. **Which agency type Home describes.** Home cannot be written honestly
+   without this. The `module-completeness` rule is that every submodule the
+   product offers is covered or its absence is justified, and everything Home
+   does once a case is selected varies by `agencyType` — a section covering only
+   the invariant core (map, docked panel grid, "Revisión de Llamadas",
+   "Teclado", map tools, new-case notice) would leave the reader concluding the
+   case workflow does not matter, which is the broken-module case that rule
+   names. Three ways out, none of them an authoring detail:
+   scope the manual to one agency type; add `agency-type` as a second axis;
+   or document the union and accept that every reader sees panels they do not
+   have. **What settles it:** the owner. A second axis also needs a pipeline
+   decision — `primaryAxis` refuses more than one and says so
+   (`packages/cli/src/main.ts:463-469`): "one filename and one figure set need a
+   single value … raise it rather than working around it."
+
 2. **No extractor for Bridge — and this does not block authoring.** The
    `framework` dispatch in `packages/extract` is still inert, so there is no map
    and no drift report. `extract bridge-manual` refusing is the CORRECT state,
@@ -122,7 +159,13 @@ Treat this as a proposal to confirm, not as an agreed scope.
 
 ## Next section
 
-None chosen. **Question 1 does not block the other six views.** An earlier note
+**`home`, as the first section** — the operator's entry view, owner's
+decision. `01-` is reserved for it and Seatmap was renamed to `02-seatmap.yaml`
+(rename only; ids are stable, so no content changed and both targets still
+build). **Not written yet: blocked on question 3 below**, which was found while
+reading the view and is not a detail an author can decide.
+
+**Question 1 does not block the other six views.** An earlier note
 here claimed every remaining view has at least one permission-gated control;
 that is false. `grep` for the two predicates across the whole source finds
 exactly two call sites, both in
