@@ -376,3 +376,186 @@ recipes:
     # `closest("div")` cannot return the span, so it lands on the wrapper.
     clipUp: div
     settleMs: 2000
+
+  # --- CCTV, the one integrated Bridge of Things panel ------------------------
+  #
+  # PMV and PRT are gone from the manual at v0.6.6 and gone from here: PMV's data
+  # layer is a fixture, PRT's backend is not live, and both are declared in
+  # `sections/05-bridge-of-things.yaml`'s `pending` list. Nothing below opens
+  # either one.
+  #
+  # The panel opens through its card on the landing DASHBOARD panel, which is the
+  # path the manual documents. That click was once blamed for blanking the
+  # application; it was not. Entering the VIEW a second time is, and the harness
+  # now reloads its way out of that — see AGENTS.md.
+
+  - slot: bot.cctv.fig
+    view: bridge-of-things
+    steps:
+      # The card's own span. The click bubbles to the card, which carries
+      # `isActivatePanelExternal: true` for CCTV. Safe to match on bare text
+      # here: the camera names all begin "CCTV-" but the list does not exist
+      # until this click has landed.
+      - click: span::-p-text(CCTV)
+      # The grid opens with every tile reading "Arrastrar cámara", so without
+      # this the caption's "mosaico de cámaras" is answered by three black
+      # rectangles. Real pointer events are required: nothing here is
+      # `draggable=true`, the drag is pointer-based, and `shootAll` drives the
+      # mouse rather than dispatching a synthetic event with no coordinates.
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          # The GRID, not an empty tile. Dropping on `::-p-text(Arrastrar cámara)`
+          # works exactly once: after the first run the mosaic is populated, that
+          # text is gone from every tile, and the next three shots failed on it.
+          # The grid's centre lands inside the large tile whether it is empty or
+          # already showing a camera, and a drop there replaces what is in it —
+          # so the recipe no longer depends on how the last run left the app.
+          to: div.grid.h-full.w-full
+    screenIs: h3::-p-text(CCTV)
+    # The camera count, not the panel heading: the list is a query, and an empty
+    # aside would photograph as "this deployment has no cameras".
+    dataReady: ::-p-text(Cámaras)
+    clip: h3::-p-text(CCTV)
+    clipUp: div.panel
+    # A stream needs far longer than a table. A tile satisfies any selector the
+    # instant it is created, long before it has decoded a frame.
+    settleMs: 7000
+
+  - slot: bot.cctv.camaras.buscar
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+    screenIs: h3::-p-text(CCTV)
+    dataReady: ::-p-text(Cámaras)
+    # The list header row, which holds BOTH the count and the search field —
+    # the step reads "Ubique la cámara en la lista", and the field alone would
+    # answer only half of it. Clipping the input matched a 242x18 strip.
+    clip: input[placeholder="Buscar por Alias, ID o Nombre..."]
+    clipUp: div[class*="border-b"]
+    settleMs: 3000
+
+  # --- the panel bar, which needs no panel open -------------------------------
+
+  - slot: bot.abrir.barra
+    view: bridge-of-things
+    # NOT a panel heading. The bar is chrome, and which panel happens to be open
+    # is whatever the last run left in the store — this shot failed once on
+    # `h3::-p-text(DASHBOARD)` because the previous recipe left CCTV up.
+    #
+    # The bar's PMV icon instead: that icon exists only where the view's manifest
+    # lists a PMV panel, which is this view alone, so it proves WHERE we are.
+    screenIs: img[alt="PMV"]
+    # And the icon about to be clipped, which proves the thing being photographed
+    # has rendered rather than the bar being half-built.
+    dataReady: img[alt="CCTV"]
+    clip: img[alt="CCTV"]
+    # The `ToolKitPanel` dock — a draggable motion.div portalled to document.body
+    # at `bottom-24 left-5.5`, four icon-only buttons, one per panel of the view.
+    # It carries no text of its own, which is why text probes kept missing it.
+    clipUp: div[class*="bottom-24"]
+    settleMs: 2000
+
+  # --- CCTV: what only a SELECTED camera reveals ------------------------------
+  #
+  # The PTZ pad and the presets block do not exist until a camera is in the
+  # mosaic: until then the footer reads "Selecciona una cámara para controlarla".
+  # So every recipe below repeats the card click AND the drag. That is not
+  # duplication to factor out — each shot is its own run and starts from whatever
+  # view the window was left on.
+  #
+  # Every control here carries a real `title`, which is the handle the manual's
+  # own quoted labels come from: Arriba izquierda, Tilt arriba, Arriba derecha,
+  # Pan izquierda, Preset home, Pan derecha, Abajo izquierda, Tilt abajo, Abajo
+  # derecha, Acercar (Zoom +), Alejar (Zoom -).
+
+  - slot: bot.cctv.presets.orientar
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          to: div.grid.h-full.w-full
+    screenIs: h3::-p-text(CCTV)
+    # Title case in the DOM; the screen shows PRESETS DE POSICIÓN, and that is
+    # CSS `uppercase`. Second time this product has charged for that guess.
+    dataReady: ::-p-text(Presets de posición)
+    # The 3x3 pad, reached from its centre button. The step is "Oriente la
+    # cámara", which is what the whole pad does — not any one arrow, each of
+    # which the manual already documents in its own icon row.
+    clip: button[title="Preset home"]
+    clipUp: div[class*="grid"]
+    settleMs: 5000
+
+  - slot: bot.cctv.presets.nombrar
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          to: div.grid.h-full.w-full
+    screenIs: h3::-p-text(CCTV)
+    dataReady: ::-p-text(Presets de posición)
+    clip: input[placeholder="Nombre del preset..."]
+    # The field and the save control sit in one row; the input alone is a 173x16
+    # strip that shows a placeholder and no context.
+    clipUp: div
+    settleMs: 5000
+
+  - slot: bot.cctv.presets.guardar
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          to: div.grid.h-full.w-full
+    screenIs: h3::-p-text(CCTV)
+    dataReady: ::-p-text(Presets de posición)
+    # 12x16, the smallest control in this manual. Deliberate: the step names this
+    # control and nothing else, and a 32x32 control already ships here.
+    clip: button[title="Guardar posición actual"]
+    settleMs: 5000
+
+  - slot: bot.cctv.presets.volver
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          to: div.grid.h-full.w-full
+    screenIs: h3::-p-text(CCTV)
+    dataReady: ::-p-text(Presets de posición)
+    # The first saved preset's row: its name plus the control that returns to it.
+    # The button alone (28x24) would not show WHICH position it returns to, and
+    # the step is "Vuelva a la posición cuando la necesite".
+    clip: button[title="Ir a preset"]
+    clipUp: div[class*="group"]
+    settleMs: 5000
+
+  # The two zooms were ruled out for EXTRACTION and that verdict stands: the
+  # control is a magnifier SVG plus a `<span>` holding the character, so the file
+  # alone is three quarters of it. A capture has no such problem — it photographs
+  # what the operator sees, character included.
+
+  - slot: bot.cctv.ptz.zoom-mas
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          to: div.grid.h-full.w-full
+    screenIs: h3::-p-text(CCTV)
+    dataReady: ::-p-text(Presets de posición)
+    clip: button[title="Acercar (Zoom +)"]
+    settleMs: 5000
+
+  - slot: bot.cctv.ptz.zoom-menos
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          to: div.grid.h-full.w-full
+    screenIs: h3::-p-text(CCTV)
+    dataReady: ::-p-text(Presets de posición)
+    clip: button[title="Alejar (Zoom -)"]
+    settleMs: 5000

@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 161,
-    "delivered": 56,
-    "pending": 105
+    "delivered": 64,
+    "pending": 97
   },
   "pending": [
     {
@@ -1324,72 +1324,6 @@
       }
     },
     {
-      "slot": "bot.abrir.barra",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.abrir.barra",
-          "blockType": "field-list",
-          "shows": "Barra de paneles"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.abrir.barra.png",
-        "override": "<permission>/bot.abrir.barra.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.fig",
-          "blockType": "figure",
-          "shows": "Panel CCTV con el mosaico de cámaras y la lista de cámaras disponibles."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.fig.png",
-        "override": "<permission>/bot.cctv.fig.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.camaras.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.camaras.buscar",
-          "blockType": "procedure",
-          "shows": "Ubique la cámara en la lista"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.camaras.buscar.png",
-        "override": "<permission>/bot.cctv.camaras.buscar.png"
-      }
-    },
-    {
       "slot": "bot.cctv.camaras.arrastrar",
       "neededBy": [
         "agencia-propia",
@@ -1453,116 +1387,6 @@
       "deliverTo": {
         "shared": "_common/bot.cctv.ptz.diagonales.png",
         "override": "<permission>/bot.cctv.ptz.diagonales.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.ptz.zoom-mas",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.zoom-mas",
-          "blockType": "icon-table",
-          "shows": "Acercar (Zoom +)"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.zoom-mas.png",
-        "override": "<permission>/bot.cctv.ptz.zoom-mas.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.ptz.zoom-menos",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.zoom-menos",
-          "blockType": "icon-table",
-          "shows": "Alejar (Zoom -)"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.zoom-menos.png",
-        "override": "<permission>/bot.cctv.ptz.zoom-menos.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.presets.orientar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.presets.orientar",
-          "blockType": "procedure",
-          "shows": "Oriente la cámara"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.presets.orientar.png",
-        "override": "<permission>/bot.cctv.presets.orientar.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.presets.nombrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.presets.nombrar",
-          "blockType": "procedure",
-          "shows": "Escriba el nombre"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.presets.nombrar.png",
-        "override": "<permission>/bot.cctv.presets.nombrar.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.presets.guardar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.presets.guardar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Guardar posición actual"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.presets.guardar.png",
-        "override": "<permission>/bot.cctv.presets.guardar.png"
       }
     },
     {
@@ -2989,6 +2813,57 @@
       ]
     },
     {
+      "slot": "bot.abrir.barra",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.abrir.barra",
+          "blockType": "field-list",
+          "shows": "Barra de paneles"
+        }
+      ],
+      "files": [
+        "_common/bot.abrir.barra.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.fig",
+          "blockType": "figure",
+          "shows": "Panel CCTV con el mosaico de cámaras y la lista de cámaras disponibles."
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.fig.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.camaras.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.camaras.buscar",
+          "blockType": "procedure",
+          "shows": "Ubique la cámara en la lista"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.camaras.buscar.png"
+      ]
+    },
+    {
       "slot": "bot.cctv.ptz.tilt-arriba",
       "neededBy": [
         "agencia-propia",
@@ -3057,6 +2932,40 @@
       ]
     },
     {
+      "slot": "bot.cctv.ptz.zoom-mas",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.zoom-mas",
+          "blockType": "icon-table",
+          "shows": "Acercar (Zoom +)"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.ptz.zoom-mas.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.zoom-menos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.zoom-menos",
+          "blockType": "icon-table",
+          "shows": "Alejar (Zoom -)"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.ptz.zoom-menos.png"
+      ]
+    },
+    {
       "slot": "bot.cctv.ptz.home",
       "neededBy": [
         "agencia-propia",
@@ -3071,6 +2980,57 @@
       ],
       "files": [
         "_common/bot/cctv/ptz/home.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.presets.orientar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.orientar",
+          "blockType": "procedure",
+          "shows": "Oriente la cámara"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.presets.orientar.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.presets.nombrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.nombrar",
+          "blockType": "procedure",
+          "shows": "Escriba el nombre"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.presets.nombrar.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.presets.guardar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.guardar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Guardar posición actual"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.presets.guardar.png"
       ]
     },
     {

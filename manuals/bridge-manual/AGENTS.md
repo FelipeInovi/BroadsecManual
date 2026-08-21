@@ -21,6 +21,10 @@ Settled by survey, not by guessing. The numbers are the point:
 So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
 
+Since then the capture side has run too: at v0.6.6 the manual stands at **64 of
+161 delivered**, and Bridge of Things has 4 slots left, each blocked on something
+no recipe can express. See "What is still pending" below.
+
 Sharing collapsed the twelve force-filter rows into six slots, so the icon
 convention is **33 slots, of which 30 were delivered and 3 cannot be.** The
 `icon` convention is exhausted. Everything still pending is `figure`.
@@ -55,12 +59,18 @@ colour the row label uses), because `stroke="currentColor"` resolves to black
 inside `<img src="…svg">`. Contrast measured: 5.47:1 on white rows, 4.99:1 on the
 alternating tone.
 
-### The three that cannot be
+### The three EXTRACTION cannot answer (two are now captures)
 
 - `bot.cctv.ptz.zoom-mas` and `zoom-menos` — the control is a fragment: the
   magnifier SVG **plus** a `<span>` holding `+` or `-` in the app's font
   (`cctv-ptz-core.tsx:244`, `:263`). The SVG alone is three quarters of what the
   operator sees, and composing the character back in is a design act.
+
+  **This verdict was about EXTRACTION and it still holds; both slots are now
+  filled by CAPTURE.** A screenshot photographs the composed control, character
+  and all, so the fragment problem never arises. Worth keeping in mind for any
+  other slot ruled out on the same grounds: "no file can answer this" is not the
+  same claim as "no image can".
 - `bot.cctv.ptz.diagonales` — its label names four controls at once.
 
 ## Traps this manual hit, and will hit again
@@ -141,6 +151,36 @@ factor included, and the run joins that window. Probe scripts must run from
   pair. `[title=…]` and `[placeholder=…]`, by contrast, match the control itself.
 - **The review panel has a live timer**, so a clip there can fail on a re-render.
   Retry before blaming the selector.
+- **The window drifts.** Twice, between two consecutive read-only probes with
+  nothing of ours running in between, it moved on its own to the Dashboard's
+  `Historial de Eventos`. This is a dispatch console; an incoming event plausibly
+  steals the view. So never assume the window is where the last run left it —
+  that is what `screenIs` is for, and it is why probing by hand is unreliable
+  while the harness is not.
+
+### Bridge of Things blanks on SECOND entry — a product defect
+
+Enter the view, leave, come back, and **the whole application goes blank**: no
+rail, no panel, `innerText.length === 0`. Confirmed by experiment with nothing
+touched in between:
+
+```
+tras reload                 texto=1043  h3=["Revisión de llamadas","Agencias","Mi Turno"]
+1ª vez en BoT               texto=641   h3=["DASHBOARD"]
+home                        texto=1063  h3=["Revisión de llamadas","Agencias","Mi Turno"]
+2ª vez en BoT (sin tocar)   texto=0     h3=[]
+```
+
+This also explains the earlier incident recorded below as a bad click on the PMV
+card: that visit was a re-entry too. The card was never the culprit — **opening
+CCTV through its card works fine**, and the panel comes up with 80 live cameras.
+
+`page.reload()` recovers it fully, and the entry after a reload is a first entry
+again. `runAttachedCaptures` now does exactly that: it detects the blank tree,
+reloads, re-verifies and retries the view once, so a plan with several
+`view: bridge-of-things` recipes no longer dies on the second. The workaround is
+in the harness, and it names the defect — **but the defect is the product's, and
+it belongs in the product's tracker, not in this manual.**
 
 ### One incident, and how to recover
 
@@ -163,9 +203,72 @@ factor.
 |---|---|
 | A call in progress | every `llamada.*`, plus `home.caso.fig` and `home.libro.fig` |
 | A second account without `canViewAllAgencies` | any figure showing a permission-conditioned control — `seatmap.fig` is already one |
-| An interaction not yet found | the three `crear-incidente` step figures (their header click does not open the step); `dashboard.analitica.accion.limpiar` (its filters panel does not open with the tab) |
-| A panel-opening path that does not break the app | CCTV's eight (`bot.cctv.*`) plus `bot.abrir.barra`, and Fuerzas en Campo's three inactive panels |
+| An interaction not yet found | the three `crear-incidente` step figures (their header click does not open the step); `dashboard.analitica.accion.limpiar` (its filters panel does not open with the tab); Fuerzas en Campo's three inactive panels |
+| A gesture no still frame can show | `bot.cctv.camaras.arrastrar` and `.soltar` — their captions are the two halves of ONE drag |
+| A caption that names four of nine | `bot.cctv.ptz.diagonales`. Each diagonal now turns out to have its own `title`, so they are four real controls — but they are the CORNERS of a 3×3 pad whose other five the manual documents separately, and no clip contains exactly the four |
+| A HOVER, which the harness cannot do | `bot.cctv.presets.volver`. See below |
 
-CCTV is the ONLY Bridge of Things panel still asking for images. PMV's and PRT's
-slots went away with their content at v0.6.6 — do not go looking for a way to
-photograph those two panels.
+**Bridge of Things is now as done as this harness can make it: 4 slots left, and
+each is blocked on something a recipe cannot express.** CCTV was the only panel
+still asking for images; PMV's and PRT's slots went away with their content at
+v0.6.6, so do not go looking for a way to photograph those two.
+
+### What the CCTV run learned
+
+**One drag unlocked six slots.** The mosaic drag does not merely fill a tile — it
+SELECTS the camera, and selecting one replaces "Selecciona una cámara para
+controlarla" with the PTZ pad and the presets block. Six slots listed as blocked
+on "a camera selected" were one `drag` step away, and `bot.cctv.fig` came back
+with a live street view, the pad and the presets all in one frame.
+
+**Drop on the GRID, never on an empty tile.** `to: ::-p-text(Arrastrar cámara)`
+works exactly once. After the first run the mosaic is populated, that text is
+gone from every tile, and the next three shots failed on it. `div.grid.h-full.w-full`
+lands inside the large tile whether it is empty or already showing a camera, so
+the recipe stops depending on how the last run left the application.
+
+**A `screenIs` must not be panel state.** `bot.abrir.barra` failed on
+`h3::-p-text(DASHBOARD)` because the previous recipe had left CCTV open. The bar
+is chrome; it is gated on `img[alt="PMV"]`, an icon that exists only where the
+view's manifest lists a PMV panel.
+
+**The rendered case trap, twice more.** `CÁMARAS (80)` is `Cámaras (80)` in the
+DOM and `PRESETS DE POSICIÓN` is `Presets de posición`. Both are CSS `uppercase`,
+both cost a round, and both were already sitting in probe output read earlier the
+same session. Read the probe, do not read the screen.
+
+**`bot.cctv.presets.volver` is hover-gated, and the image was DELETED.** The clip
+came back showing "Preset 1" and no control at all: `cctv-presets.tsx:109` gives
+the "Ir a preset" button `opacity-0 group-hover:opacity-100`, so it is invisible
+until the row is hovered. The picture was correct pixels and a false promise —
+the caption is "Vuelva a la posición cuando la necesite" and the reader would
+hunt for a button that is not in the frame. `steps` has `click` and `drag` and no
+`hover`; adding one would unlock this slot and is the obvious next move, but it
+is a pipeline change and nobody asked for it yet.
+
+**`bot.cctv.presets.guardar` is 12×16 — smaller than anything else here.** It is
+the right control (`title="Guardar posición actual"`, the save glyph) and it is
+delivered, but the smallest previously accepted control is 32×32. Look at it on
+the page before trusting it; if it reads as a smudge the answer is a higher
+device scale factor at capture time, not a different clip.
+
+**The panel bar exists, and earlier probes missed it.** `bot.abrir.barra` is the
+`ToolKitPanel`: a draggable `motion.div` portalled to `document.body`, sitting at
+`div[class*="bottom-24"][class*="left-5.5"]`, 42×186, four icon-only buttons —
+one per panel of the view, three of them `img[alt]` from
+`assets/bot_status_icons/{cctv,pmv,prt}.svg`. Probes kept missing it because
+`railButtons()` bounds `y < 400` to exclude it and it carries no text of its own.
+
+It is capturable: `clip: img[alt="CCTV"]`, `clipUp: div[class*="bottom-24"]`.
+
+**Portrait clips are fine here, and arithmetic said otherwise.** The reasoning
+went: 42×186 is portrait, the box is pinned landscape at 320/200, so `contain`
+letterboxes it to a sliver. Then the delivered figures were measured, and five
+are already portrait and already accepted — `home.revision.fig` at **0.41**,
+`crear-incidente.general.fig` 0.50, `seatmap.indicadores.fig` 0.55,
+`home.agencias.fig` and `home.turno.fig` 0.83 — with a 32×32 control among them
+too. Every one of those is more extreme than the CCTV panel's 0.835.
+
+So do not reject a clip on its ratio. **Look at the rendered page at real size**;
+that is the only check that settles it, and it is the one failure a manifest
+cannot catch.
