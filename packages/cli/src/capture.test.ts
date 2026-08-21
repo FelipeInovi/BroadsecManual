@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
+import {
+  deploymentFor,
+  isAttachTarget,
+  parseEnvFile,
+  parseRecipes,
+  planCaptures,
+} from "./capture.ts";
 
 const deployments = {
   mv: {
@@ -40,7 +46,12 @@ describe("parseRecipes", () => {
   it("accepts a well-formed document", () => {
     const parsed = parseRecipes(doc([recipe("bot.alarmas.fig")]));
     expect(parsed.recipes).toHaveLength(1);
-    expect(parsed.target.deployments["mv"]?.baseUrl).toBe("https://medellin.inovisec.com/mv");
+    // Narrowed rather than asserted: the target is now one of two shapes, and a
+    // cast here would hide the day this document stops being the URL kind.
+    expect(isAttachTarget(parsed.target)).toBe(false);
+    if (!isAttachTarget(parsed.target)) {
+      expect(parsed.target.deployments["mv"]?.baseUrl).toBe("https://medellin.inovisec.com/mv");
+    }
   });
 
   // A run that cannot check it reached the right place before shooting would
@@ -257,5 +268,82 @@ describe("planCaptures", () => {
     const plan = planCaptures([], pending);
     expect(plan.ready).toHaveLength(0);
     expect(plan.uncovered).toHaveLength(3);
+  });
+});
+
+// --- attaching to a product that cannot be reached by URL --------------------
+//
+// Bridge360 is the case. Its window is a Tauri webview, and a browser pointed at
+// the dev server lands on /setup and cannot leave: `workstationConfigExists()`
+// returns false outside Tauri and the gate wrapping every route redirects there.
+// So the run ATTACHES to the signed-in window over CDP, and navigates by
+// clicking the rail rather than by URL — the product declares five routes and
+// one of them is the whole application.
+
+const attachTarget = {
+  attach: {
+    browserURL: "http://localhost:9222",
+    /**
+     * The rail's order, declared once. Copied from the product, cited, so a
+     * recipe can say `view: dashboard` instead of carrying a position.
+     */
+    views: ["home", "sitemap", "dashboard", "bridge-of-things", "forces-in-field", "create-incident"],
+    verify: { selector: "h3::-p-text(Agencias)" },
+  },
+};
+
+const viewRecipe = {
+  slot: "home.fig",
+  view: "home",
+  screenIs: "h3::-p-text(Mi Turno)",
+  dataReady: "h3::-p-text(Agencias)",
+};
+
+describe("parseRecipes — attaching instead of signing in", () => {
+  const attachDoc = (over = {}) => ({
+    version: 1,
+    target: attachTarget,
+    recipes: [viewRecipe],
+    ...over,
+  });
+
+  it("accepts a document that attaches and navigates by view", () => {
+    const parsed = parseRecipes(attachDoc());
+    expect(parsed.recipes[0]?.view).toBe("home");
+  });
+
+  // The whole point of the mode: there are no credentials to put anywhere,
+  // because a person signs in to the window and the run joins it.
+  it("carries no auth block at all", () => {
+    expect(parseRecipes(attachDoc()).target).not.toHaveProperty("auth");
+  });
+
+  it("refuses a recipe naming a view the target never declared", () => {
+    const stray = { ...viewRecipe, view: "libro-del-caso" };
+    expect(() => parseRecipes(attachDoc({ recipes: [stray] }))).toThrow(/libro-del-caso/);
+  });
+
+  // A recipe has to say where it is going, exactly one way. Both is ambiguous
+  // and neither is a shot with no destination.
+  it("refuses a recipe that gives both a route and a view", () => {
+    const both = { ...viewRecipe, route: "/dashboard" };
+    expect(() => parseRecipes(attachDoc({ recipes: [both] }))).toThrow(/route|view/);
+  });
+
+  it("refuses a recipe that gives neither", () => {
+    const { view: _dropped, ...none } = viewRecipe;
+    expect(() => parseRecipes(attachDoc({ recipes: [none] }))).toThrow(/route|view/);
+  });
+
+  // The two modes are alternatives, not a mixture. A document that declared
+  // both would leave the run choosing, and a run that chooses is a run whose
+  // output nobody can predict.
+  it("refuses a document that both attaches and declares deployments", () => {
+    const mixed = { version: 1, target: { ...attachTarget, ...target }, recipes: [viewRecipe] };
+    expect(() => parseRecipes(mixed)).toThrow();
+  });
+
+  it("still accepts the route-based document broadlineavida uses", () => {
+    expect(() => parseRecipes(doc([recipe("bot.alarmas.fig")]))).not.toThrow();
   });
 });

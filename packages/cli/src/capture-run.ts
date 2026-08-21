@@ -1,8 +1,15 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import puppeteer from "puppeteer-core";
+import puppeteer, { type ElementHandle, type Page } from "puppeteer-core";
 import { findChrome } from "./chrome.ts";
-import type { Deployment, PlannedCapture, RecipeDoc } from "./capture.ts";
+import { isAttachTarget } from "./capture.ts";
+import type {
+  AttachConfig,
+  AuthConfig,
+  Deployment,
+  PlannedCapture,
+  RecipeDoc,
+} from "./capture.ts";
 
 /** What happened to one planned capture. */
 export interface CaptureResult {
@@ -24,7 +31,7 @@ const WAIT_MS = 20000;
  * The error therefore has to say which variable to set, or the whole indirection
  * just moves the confusion somewhere else.
  */
-function credentials(auth: RecipeDoc["target"]["auth"]): { user: string; password: string } {
+function credentials(auth: AuthConfig): { user: string; password: string } {
   const user = process.env[auth.userEnv];
   const password = process.env[auth.passwordEnv];
   const missing = [
@@ -43,69 +50,28 @@ function credentials(auth: RecipeDoc["target"]["auth"]): { user: string; passwor
 }
 
 /**
- * Log in once and shoot every planned slot.
+ * Take every planned shot, however the run got to the product.
  *
- * One browser and one session for the whole run: logging in per capture would
- * multiply the slowest step by the number of figures, and every extra login is
- * another chance to be rate-limited half way through a batch.
+ * `navigate` is the seam between the two modes, and it owns the viewport too: a
+ * URL-driven run may resize the window it launched, while an ATTACHED run must
+ * not — resizing somebody's signed-in application to suit a screenshot changes
+ * the layout the reader is being shown, and the operator did not ask for it.
  *
- * A failure is recorded per slot and the run continues. A recipe whose selector
- * has rotted should cost that one figure, not the other eighteen.
+ * Everything after navigation is identical and deliberately shared. The retry on
+ * a detached node, and the order of the two gates, were both learned from wrong
+ * images that the run reported as successes.
  */
-export async function runCaptures(
-  doc: RecipeDoc,
-  deployment: Deployment,
-  tenant: string,
+async function shootAll(
+  page: Page,
   plan: readonly PlannedCapture[],
   figuresDir: string,
   onProgress: (line: string) => void,
-): Promise<readonly CaptureResult[]> {
-  const { user, password } = credentials(doc.target.auth);
-  const browser = await puppeteer.launch({
-    executablePath: findChrome(),
-    headless: true,
-    args: ["--disable-gpu", "--no-sandbox"],
-  });
+  navigate: (shot: PlannedCapture) => Promise<void>,
+): Promise<CaptureResult[]> {
   const results: CaptureResult[] = [];
-  try {
-    const page = await browser.newPage();
-    await page.setViewport(DEFAULT_VIEWPORT);
-
-    const { auth } = doc.target;
-    const { baseUrl } = deployment;
-    await page.goto(`${baseUrl}${auth.route}`, { waitUntil: "networkidle0", timeout: WAIT_MS });
-    await page.type(auth.userSelector, user);
-    await page.type(auth.passwordSelector, password);
-    await page.click(auth.submitSelector);
-    // Proof the session exists. Without it a wrong password silently leaves us
-    // on the login page and every capture below shoots that same form.
-    await page.waitForSelector(auth.doneWhen, { timeout: WAIT_MS });
-    onProgress("  signed in");
-
-    // Once for the whole run, before any shot: if the deployment is wrong or the
-    // module is missing, every capture below is wrong and none should be taken.
-    try {
-      await page.goto(`${baseUrl}${deployment.verify.route}`, {
-        waitUntil: "networkidle0",
-        timeout: WAIT_MS,
-      });
-      await page.waitForSelector(deployment.verify.selector, { timeout: WAIT_MS });
-    } catch {
-      throw new Error(
-        `${baseUrl}${deployment.verify.route} never showed ` +
-          `\`${deployment.verify.selector}\`, so the module this run captures is ` +
-          `not in this build. Nothing was captured.`,
-      );
-    }
-    onProgress(`  reachable, and the module is present`);
-
     for (const shot of plan) {
       try {
-        await page.setViewport(shot.viewport ?? DEFAULT_VIEWPORT);
-        await page.goto(`${baseUrl}${shot.route}`, {
-          waitUntil: "networkidle0",
-          timeout: WAIT_MS,
-        });
+        await navigate(shot);
         // Reach panes that have no route of their own — see `steps` in capture.ts.
         // Each click is retried once: expanding a sidebar parent re-renders the
         // menu, so the node found a moment ago is detached by the time the click
@@ -165,8 +131,169 @@ export async function runCaptures(
         onProgress(`  FAILED  ${shot.slot}: ${reason.split("\n")[0]}`);
       }
     }
+  return results;
+}
+
+/**
+ * Log in once and shoot every planned slot.
+ *
+ * One browser and one session for the whole run: logging in per capture would
+ * multiply the slowest step by the number of figures, and every extra login is
+ * another chance to be rate-limited half way through a batch.
+ *
+ * A failure is recorded per slot and the run continues. A recipe whose selector
+ * has rotted should cost that one figure, not the other eighteen.
+ */
+export async function runCaptures(
+  doc: RecipeDoc,
+  deployment: Deployment,
+  tenant: string,
+  plan: readonly PlannedCapture[],
+  figuresDir: string,
+  onProgress: (line: string) => void,
+): Promise<readonly CaptureResult[]> {
+  if (isAttachTarget(doc.target)) {
+    throw new Error(
+      `this recipe document attaches to a running window; use ` +
+        `\`runAttachedCaptures\`. Launching a browser for it would land on the ` +
+        `product's setup gate and photograph that instead.`,
+    );
+  }
+  const auth = doc.target.auth;
+  const { user, password } = credentials(auth);
+  const browser = await puppeteer.launch({
+    executablePath: findChrome(),
+    headless: true,
+    args: ["--disable-gpu", "--no-sandbox"],
+  });
+  const results: CaptureResult[] = [];
+  try {
+    const page = await browser.newPage();
+    await page.setViewport(DEFAULT_VIEWPORT);
+
+    const { baseUrl } = deployment;
+    await page.goto(`${baseUrl}${auth.route}`, { waitUntil: "networkidle0", timeout: WAIT_MS });
+    await page.type(auth.userSelector, user);
+    await page.type(auth.passwordSelector, password);
+    await page.click(auth.submitSelector);
+    // Proof the session exists. Without it a wrong password silently leaves us
+    // on the login page and every capture below shoots that same form.
+    await page.waitForSelector(auth.doneWhen, { timeout: WAIT_MS });
+    onProgress("  signed in");
+
+    // Once for the whole run, before any shot: if the deployment is wrong or the
+    // module is missing, every capture below is wrong and none should be taken.
+    try {
+      await page.goto(`${baseUrl}${deployment.verify.route}`, {
+        waitUntil: "networkidle0",
+        timeout: WAIT_MS,
+      });
+      await page.waitForSelector(deployment.verify.selector, { timeout: WAIT_MS });
+    } catch {
+      throw new Error(
+        `${baseUrl}${deployment.verify.route} never showed ` +
+          `\`${deployment.verify.selector}\`, so the module this run captures is ` +
+          `not in this build. Nothing was captured.`,
+      );
+    }
+    onProgress(`  reachable, and the module is present`);
+
+    // URL mode: each shot is a page load, and resizing the browser this run
+    // launched costs nobody anything.
+    const navigate = async (shot: PlannedCapture): Promise<void> => {
+      await page.setViewport(shot.viewport ?? DEFAULT_VIEWPORT);
+      await page.goto(`${baseUrl}${shot.route}`, {
+        waitUntil: "networkidle0",
+        timeout: WAIT_MS,
+      });
+    };
+
+    results.push(...(await shootAll(page, plan, figuresDir, onProgress, navigate)));
   } finally {
     await browser.close();
   }
   return results;
+}
+
+
+/**
+ * Capture from a window a person already signed in to.
+ *
+ * CONNECT, never launch, and DISCONNECT, never close. The session, the
+ * workstation config and the second factor all live in that window: a launched
+ * browser lands on `/setup` and cannot leave, and closing the one that works
+ * would take the operator's session with it.
+ *
+ * Navigation is a click on the rail, never a URL. This product declares five
+ * routes and one of them is the whole application, so `page.goto` would take it
+ * away from the signed-in dashboard with nothing to come back to.
+ */
+export async function runAttachedCaptures(
+  attach: AttachConfig,
+  plan: readonly PlannedCapture[],
+  figuresDir: string,
+  onProgress: (line: string) => void,
+): Promise<readonly CaptureResult[]> {
+  const browser = await puppeteer.connect({
+    browserURL: attach.browserURL,
+    // Never resize: the window belongs to whoever signed in, and its size is the
+    // layout the reader is going to be shown.
+    defaultViewport: null,
+  });
+  try {
+    const pages = await browser.pages();
+    const page = pages[0];
+    if (!page) {
+      throw new Error(
+        `nothing is open at ${attach.browserURL}. Start the product with remote ` +
+          `debugging enabled and sign in before running this.`,
+      );
+    }
+
+    // Proof the window is the product AND signed in, once, before any shot. The
+    // alternative is a run that photographs a login screen 40 times and reports
+    // 40 successes.
+    try {
+      await page.waitForSelector(attach.verify.selector, { timeout: WAIT_MS });
+    } catch {
+      throw new Error(
+        `the attached window never showed \`${attach.verify.selector}\`. Either it ` +
+          `is not signed in, or it is not on the product. Nothing was captured.`,
+      );
+    }
+    onProgress("  attached, signed in");
+
+    /** Rail buttons, top to bottom, re-queried because switching view re-renders. */
+    const railButtons = async () => {
+      const found: { handle: ElementHandle; y: number }[] = [];
+      for (const b of await page.$$('button[data-slot="tooltip-trigger"]')) {
+        const box = await b.boundingBox();
+        // The view rail is the top group of the leftmost column. The panel bar
+        // lower down uses the same markup, which is why the y bound matters.
+        if (box && box.x < 24 && box.y < 400) found.push({ handle: b, y: box.y });
+      }
+      return found.sort((p, q) => p.y - q.y);
+    };
+
+    const navigate = async (shot: PlannedCapture): Promise<void> => {
+      const index = attach.views.indexOf(shot.view as string);
+      const rail = await railButtons();
+      if (rail.length !== attach.views.length) {
+        throw new Error(
+          `the rail shows ${rail.length} views and the recipe declares ` +
+            `${attach.views.length}. The product's rail changed, so a position in ` +
+            `that list no longer means what it meant — re-read \`navItems\` before ` +
+            `capturing anything else.`,
+        );
+      }
+      await rail[index]!.handle.click();
+      // The view swap re-renders the whole grid; the gates below still have to
+      // pass, so this is only enough to stop clicking into a dying tree.
+      await new Promise((r) => setTimeout(r, 1500));
+    };
+
+    return await shootAll(page, plan, figuresDir, onProgress, navigate);
+  } finally {
+    await browser.disconnect();
+  }
 }

@@ -36,11 +36,17 @@ import { soleAxis } from "./axis.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
 import { pendingTable } from "./pending-table.ts";
-import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
+import {
+  deploymentFor,
+  isAttachTarget,
+  parseEnvFile,
+  parseRecipes,
+  planCaptures,
+} from "./capture.ts";
 
 /** Where the product login lives. Gitignored; see .env.capture.example. */
 const CREDENTIALS_FILE = ".env.capture";
-import { runCaptures } from "./capture-run.ts";
+import { runAttachedCaptures, runCaptures } from "./capture-run.ts";
 import { runWizard } from "./wizard.ts";
 import {
   COMMON_SET,
@@ -638,17 +644,34 @@ async function capture(
     throw new Error(`--only names slots with no recipe: ${missing.join(", ")}`);
   }
 
-  // Resolved BEFORE the browser opens: a tenant with no deployment is a typo in
-  // a flag, and it should cost nothing to find out.
-  const deployment = deploymentFor(recipes, tenant);
   const plan = planCaptures(chosen, pending);
-  console.log(`  ${tenant} -> ${deployment.baseUrl}`);
+  // Bound to a const so the narrowing survives into the call below; through a
+  // boolean it does not, and the two modes take different arguments.
+  const recipeTarget = recipes.target;
+  if (isAttachTarget(recipeTarget)) {
+    console.log(
+      `  attaching to ${recipeTarget.attach.browserURL} — a person signs in, this joins`,
+    );
+  } else {
+    // Resolved BEFORE the browser opens: a tenant with no deployment is a typo
+    // in a flag, and it should cost nothing to find out.
+    console.log(`  ${tenant} -> ${deploymentFor(recipes, tenant).baseUrl}`);
+  }
   console.log(`  ${plan.ready.length} recipe(s) to shoot, ${plan.uncovered.length} pending slot(s) with no recipe yet`);
   if (plan.ready.length === 0) return;
 
-  const results = await runCaptures(recipes, deployment, tenant, plan.ready, figuresDir, (line) =>
-    console.log(line),
-  );
+  const results = isAttachTarget(recipeTarget)
+    ? await runAttachedCaptures(recipeTarget.attach, plan.ready, figuresDir, (line) =>
+        console.log(line),
+      )
+    : await runCaptures(
+        recipes,
+        deploymentFor(recipes, tenant),
+        tenant,
+        plan.ready,
+        figuresDir,
+        (line) => console.log(line),
+      );
   const ok = results.filter((r) => r.ok).length;
   console.log(`\n  ${ok} of ${results.length} captured`);
   // Same discipline the manifest check enforces: a capture is only real once the

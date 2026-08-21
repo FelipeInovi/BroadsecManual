@@ -38,7 +38,17 @@ const authSchema = z
 const recipeSchema = z
   .object({
     slot: z.string(),
-    route: z.string(),
+    /**
+     * Where to go, ONE of two ways — see `recipeDocSchema.target`.
+     *
+     * `route` for a product whose screens are URLs. `view` for one whose screens
+     * are not: Bridge360 declares five routes and one of them is the whole
+     * application, so its screens are reached by clicking the rail. Naming both
+     * would leave the run choosing; naming neither is a shot with no
+     * destination.
+     */
+    route: z.string().optional(),
+    view: z.string().optional(),
     /**
      * A selector that only matches once real DATA has rendered.
      *
@@ -99,7 +109,10 @@ const recipeSchema = z
     clip: z.string().optional(),
     viewport: z.object({ width: z.number().int(), height: z.number().int() }).optional(),
   })
-  .strict();
+  .strict()
+  .refine((r) => (r.route === undefined) !== (r.view === undefined), {
+    message: "a recipe needs exactly one of `route` or `view`, never both and never neither",
+  });
 
 /**
  * One deployed build of the product.
@@ -127,17 +140,73 @@ const deploymentSchema = z
   })
   .strict();
 
+/**
+ * A product that cannot be reached by pointing a browser at a URL.
+ *
+ * Bridge360 is the case, and it is not a preference. Its window is a Tauri
+ * webview; a browser opened on the same dev server lands on `/setup` and cannot
+ * leave, because `workstationConfigExists()` returns false outside Tauri and the
+ * gate wrapping every route redirects there. The station config lives in the OS
+ * keyring through Rust, so no browser can ever satisfy it.
+ *
+ * So the run ATTACHES to the window a person already signed in to. Two
+ * consequences worth stating, because both are load-bearing:
+ *
+ *  - **No credentials, anywhere.** There is no auth block, no env var, no
+ *    second-factor handling. A person signs in; the run joins. That also
+ *    removes the race against a time-based code expiring mid-handshake.
+ *  - **No navigation.** `page.goto` on this webview would take the app away
+ *    from the signed-in dashboard, and there is no route to come back to. Every
+ *    shot is reached by clicking.
+ */
+const attachSchema = z
+  .object({
+    browserURL: z.string(),
+    /**
+     * The rail's views, in the order the product declares them.
+     *
+     * Declared once here so a recipe can say `view: dashboard` and carry no
+     * position. The order is a fact about the product — for Bridge360 it is
+     * `navItems`, `components/layout/icon-sidebar.tsx:51-83`, with the entry
+     * marked `isCall: true` rendered outside this group — and a rail button
+     * offers no id, no aria-label and no text to select on. Its tooltip does
+     * carry the label, but it stays mounted across reads and returned the
+     * previous button's label every other time, which is worse than a position
+     * because it looks authoritative.
+     */
+    views: z.array(z.string().min(1)).min(1),
+    /** Proof the attached window is signed in and showing the product. */
+    verify: z.object({ selector: selector("verify.selector") }).strict(),
+  })
+  .strict();
+
 export const recipeDocSchema = z
   .object({
     version: z.literal(1),
-    target: z
-      .object({ deployments: z.record(z.string(), deploymentSchema), auth: authSchema })
-      .strict(),
+    // Alternatives, never a mixture: a document declaring both would leave the
+    // run deciding how to reach the product, and a run that decides is a run
+    // whose output nobody can predict.
+    target: z.union([
+      z
+        .object({ deployments: z.record(z.string(), deploymentSchema), auth: authSchema })
+        .strict(),
+      z.object({ attach: attachSchema }).strict(),
+    ]),
     recipes: z.array(recipeSchema),
   })
   .strict();
 
+/** Whether this document attaches to a running window rather than signing in. */
+export function isAttachTarget(
+  target: RecipeDoc["target"],
+): target is { attach: z.infer<typeof attachSchema> } {
+  return "attach" in target;
+}
+
 export type Deployment = z.infer<typeof deploymentSchema>;
+
+export type AuthConfig = z.infer<typeof authSchema>;
+export type AttachConfig = z.infer<typeof attachSchema>;
 
 export type CaptureRecipe = z.infer<typeof recipeSchema>;
 export type RecipeDoc = z.infer<typeof recipeDocSchema>;
@@ -156,6 +225,32 @@ export function parseRecipes(raw: unknown): RecipeDoc {
     }
     seen.add(r.slot);
   }
+
+  // A `view` the target never declared is a click nobody can make. Caught here
+  // rather than at capture time, because by then the run is attached to a live
+  // signed-in window and every minute of it is somebody waiting.
+  if (isAttachTarget(doc.target)) {
+    const known = new Set(doc.target.attach.views);
+    for (const r of doc.recipes) {
+      if (r.view !== undefined && !known.has(r.view)) {
+        throw new Error(
+          `recipe for "${r.slot}" names the view "${r.view}", which the target does ` +
+            `not declare. Declared: ${[...known].join(", ")}. A view is added to ` +
+            `\`target.attach.views\` in the order the product's own rail lists it.`,
+        );
+      }
+    }
+  } else {
+    for (const r of doc.recipes) {
+      if (r.view !== undefined) {
+        throw new Error(
+          `recipe for "${r.slot}" navigates by \`view\`, but this document reaches ` +
+            `the product by URL. Either give it a \`route\`, or switch the target ` +
+            `to \`attach\`.`,
+        );
+      }
+    }
+  }
   return doc;
 }
 
@@ -167,6 +262,14 @@ export function parseRecipes(raw: unknown): RecipeDoc {
  * error lists what IS configured, because the fix is always to add one line.
  */
 export function deploymentFor(doc: RecipeDoc, tenant: string): Deployment {
+  if (isAttachTarget(doc.target)) {
+    throw new Error(
+      `this recipe document attaches to a running window, so there is no ` +
+        `deployment to resolve for "${tenant}". An attached run photographs ` +
+        `whatever window a person signed in to, and which deployment that is ` +
+        `cannot be read from the app — see \`attachSchema\`.`,
+    );
+  }
   const found = doc.target.deployments[tenant];
   if (!found) {
     const known = Object.keys(doc.target.deployments);
