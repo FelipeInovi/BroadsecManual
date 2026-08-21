@@ -1,0 +1,121 @@
+# How each pending figure of this manual is photographed off the running product.
+#
+# THIS DOCUMENT ATTACHES; it does not sign in. Bridge360's window is a Tauri
+# webview, and a browser opened on the same dev server lands on `/setup` and
+# cannot leave: `workstationConfigExists()` returns false outside Tauri
+# (`shared/infrastructure/tauri-bridge.ts:38`) and `WorkstationSetupGate`, which
+# wraps every route, redirects there. The station config lives in the OS keyring
+# through Rust, so no browser can ever satisfy it.
+#
+# So a person starts the app with remote debugging on, signs in — second factor
+# included — and this run joins that window:
+#
+#     WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222" pnpm tauri dev
+#
+# Two consequences, both deliberate:
+#
+#   * There are NO credentials here and no `.env` entry for this manual. Nothing
+#     to leak, and no race against a time-based code expiring mid-handshake.
+#   * There is NO navigation. Every shot is reached by clicking the rail. This
+#     product declares five routes and one of them is the whole application, so
+#     `goto` would take the app away from the signed-in dashboard with nothing to
+#     come back to.
+
+version: 1
+
+target:
+  attach:
+    browserURL: http://localhost:9222
+
+    # The rail's views, in the order the product declares them — `navItems`,
+    # `components/layout/icon-sidebar.tsx:51-83`. The entry marked
+    # `isCall: true` (Llamada) renders outside this group, which is why it is
+    # absent here and why its figures are not in this file yet.
+    #
+    # A position rather than a selector because every rail button is the same
+    # `button[data-slot="tooltip-trigger"]` with no id, no aria-label and no
+    # text. Its tooltip does carry the label, but it stays mounted across reads
+    # and returned the PREVIOUS button's label every other time — worse than a
+    # position, because it looks authoritative. The run refuses to click if the
+    # rail's length stops matching this list.
+    views:
+      - home
+      - sitemap
+      - dashboard
+      - bridge-of-things
+      - forces-in-field
+      - create-incident
+
+    # Proof the attached window is the product AND signed in.
+    #
+    # Top-bar CHROME, not a panel: `<span className="text-yellow-500">Agencia:
+    # </span>` at `components/layout/top-bar.tsx:123`, mounted in every view and
+    # absent before the login gate. The first attempt used Home's agencies panel
+    # and failed the moment the window happened to be left on another view —
+    # which is the normal state, since a person was just using it.
+    verify:
+      selector: span::-p-text(Agencia:)
+
+# Each `screenIs` below was read off the running app, not guessed: clicking each
+# rail position and recording what the view puts on screen. That pass also
+# confirmed the manual's own claims — Dashboard opens on Historial de Eventos,
+# Bridge of Things opens on its DASHBOARD panel, Fuerzas en Campo opens with only
+# its own list because the other three are `initiallyInactive`.
+recipes:
+  # --- the seven module overview figures --------------------------------------
+  #
+  # Started here on purpose: these are the images a reader looks for first, and
+  # each is one click plus a shot. The long tail — a control per procedure step,
+  # a field per field-list — is the same mechanism repeated.
+
+  - slot: home.fig
+    view: home
+    screenIs: h3::-p-text(Mi Turno)
+    # Not the heading: the panel renders its shell before the query lands, and a
+    # review list with no case is a screenshot that teaches the operator the
+    # screen is empty.
+    dataReady: h3::-p-text(Revisión de llamadas)
+    settleMs: 2500
+
+  - slot: seatmap.fig
+    view: sitemap
+    # Seatmap puts nothing in an h2/h3 at all — it was the one view that reported
+    # no headings when the rail was walked. So the tell is one of its own stat
+    # card titles, which this manual already quotes and `labels` already checks
+    # against `components/sitemap/sitemap-stats-panel.tsx:276`. A guessed
+    # `::-p-text(Zona)` was tried first and matched nothing.
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    # A row of the operator monitor. The stat titles above are chrome and render
+    # with zeroes; a row only exists once the stream has delivered seats.
+    dataReady: table tbody tr
+    settleMs: 3000
+
+  - slot: dashboard.fig
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    # A row, not the heading: the table paints its head and an empty body while
+    # the query is still out.
+    dataReady: table tbody tr
+    settleMs: 2500
+
+  - slot: bot.fig
+    view: bridge-of-things
+    screenIs: h3::-p-text(DASHBOARD)
+    dataReady: h3::-p-text(DASHBOARD)
+    settleMs: 2000
+
+  - slot: fuerzas-campo.fig
+    view: forces-in-field
+    screenIs: h3::-p-text(Fuerzas en Campo)
+    # The agent list, not its heading. An empty roster would photograph as "no
+    # agents deployed", which is a claim about the operation and not a figure.
+    dataReady: ::-p-text(Disponible)
+    settleMs: 3000
+
+  - slot: crear-incidente.fig
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    # The form's own first field: it renders after the incident-type query, so it
+    # is the cheapest proof the panel is live rather than mounting.
+    dataReady: ::-p-text(Tipo de incidente)
+    settleMs: 2000
