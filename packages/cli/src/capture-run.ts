@@ -116,8 +116,28 @@ async function shootAll(
 
         if (shot.settleMs) await new Promise((r) => setTimeout(r, shot.settleMs));
 
-        const target = shot.clip ? await page.$(shot.clip) : page;
-        if (!target) throw new Error(`clip selector "${shot.clip}" matched nothing`);
+        let target: ElementHandle | Page = page;
+        if (shot.clip) {
+          const found = await page.$(shot.clip);
+          if (!found) throw new Error(`clip selector "${shot.clip}" matched nothing`);
+          target = found;
+          if (shot.clipUp) {
+            // `closest` rather than a hand-rolled walk: it is the DOM's own
+            // answer, and it stops at the first match the way a reader would.
+            const up = await found.evaluateHandle(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- no DOM lib in this tsconfig
+              (el: any, sel: string) => el.closest(sel),
+              shot.clipUp,
+            );
+            const climbed = up.asElement();
+            if (!climbed) {
+              throw new Error(
+                `clipUp "${shot.clipUp}" has no such ancestor above "${shot.clip}"`,
+              );
+            }
+            target = climbed as ElementHandle;
+          }
+        }
         const buffer = (await target.screenshot({ type: "png" })) as Buffer;
 
         const out = join(figuresDir, shot.deliverTo);

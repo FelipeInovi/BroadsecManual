@@ -119,3 +119,126 @@ recipes:
     # is the cheapest proof the panel is live rather than mounting.
     dataReady: ::-p-text(Tipo de incidente)
     settleMs: 2000
+
+  # --- panels, clipped to the panel the caption promises ----------------------
+  #
+  # `clip` finds the panel's heading and `clipUp` climbs to the `div.panel` around
+  # it. Bridge360 gives its panels no id, no test id and nothing to tell them
+  # apart — the heading inside is the only handle, which is why that pair exists.
+
+  - slot: home.revision.fig
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    dataReady: ::-p-text(caso)
+    clip: h3::-p-text(Revisión de llamadas)
+    clipUp: div.panel
+    settleMs: 2500
+
+  - slot: home.agencias.fig
+    view: home
+    screenIs: h3::-p-text(Agencias)
+    # A row, not the heading: the panel paints its shell before the query lands.
+    dataReady: ::-p-text(Despacho)
+    clip: h3::-p-text(Agencias)
+    clipUp: div.panel
+    settleMs: 2500
+
+  - slot: home.turno.fig
+    view: home
+    screenIs: h3::-p-text(Mi Turno)
+    # The shift history, which only exists once the panel has its data.
+    dataReady: ::-p-text(Inicio de turno)
+    clip: h3::-p-text(Mi Turno)
+    clipUp: div.panel
+    settleMs: 2500
+
+  # --- Seatmap's three regions ------------------------------------------------
+  #
+  # Seatmap renders no heading at all, so these clip on their own content.
+
+  # Seatmap's regions are NOT `div.panel` — that class belongs to the docked
+  # panels of the other views. Both containers below were read off the running
+  # app after `div.panel` came back with no such ancestor.
+
+  - slot: seatmap.indicadores.fig
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: table tbody tr
+    clip: ::-p-text(Tiempo de espera más larga)
+    # The right-hand column, 497 wide by the full height of the view.
+    clipUp: div.row-span-2
+    settleMs: 3000
+
+  - slot: seatmap.monitor.fig
+    view: sitemap
+    screenIs: ::-p-text(Estados de Operadores)
+    dataReady: table tbody tr
+    clip: ::-p-text(Estados de Operadores)
+    # The BAND, not the card. Its caption promises "las fichas de estados de
+    # operadores Y DE AGENCIAS" — two cards — and a first pass clipped
+    # `div[class*="group/card "]`, which is one of them. The picture was faultless
+    # and did not answer its own caption, which no count can catch.
+    #
+    # `closest` from the operators title climbs: header 636x44, card 636x236,
+    # grid 1283x236, then this at 1307x260 — the band with both.
+    clipUp: div[class*="rounded-[25px]"]
+    settleMs: 3000
+
+  # --- Dashboard's three tabs -------------------------------------------------
+  #
+  # One route, three tabs; each is a click. `screenIs` is the tab's own content
+  # and not its button, which stays on screen whichever tab is open.
+
+  - slot: dashboard.historial.fig
+    view: dashboard
+    # Title case. The screen shows HISTORIAL DE EVENTOS, but that is CSS
+    # `uppercase` — `::-p-text` reads textContent, which is what the component
+    # wrote. Guessing the rendered case cost this shot one round.
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: table tbody tr
+    clip: h3::-p-text(Historial de Eventos)
+    clipUp: div.panel
+    settleMs: 3000
+
+  - slot: dashboard.analitica.fig
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+    screenIs: ::-p-text(Análisis de Llamadas)
+    dataReady: ::-p-text(Análisis de Llamadas)
+    settleMs: 3500
+
+  - slot: dashboard.emergency.fig
+    view: dashboard
+    steps:
+      - click: button::-p-text(Emergency Dashboard)
+    screenIs: ::-p-text(Llamadas atendidas)
+    dataReady: ::-p-text(Llamadas atendidas)
+    settleMs: 3500
+
+  # --- Crear Incidente's four accordion steps ---------------------------------
+  #
+  # The accordion opens one step at a time, so each figure is a click on its own
+  # header. `dataReady` is a field inside that step: the header stays on screen
+  # whether the step is open or shut, so it cannot prove the step opened.
+
+  - slot: crear-incidente.general.fig
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: ::-p-text(Tipo de incidente)
+    clip: h3::-p-text(Crear Incidente)
+    clipUp: div.panel
+    settleMs: 2000
+
+  # NOT captured: `crear-incidente.reportante.fig`, `.detalles.fig` and
+  # `.resumen.fig`.
+  #
+  # Each needs its accordion step OPEN, and clicking the step's header does not
+  # open it. Verified against the running app: `button::-p-text(Datos del
+  # reportante)` matches (275x16), the click lands, and `Nombre del reportante`
+  # is still absent afterwards. So the header is not the toggle, or the step is
+  # gated on something the form has not been given.
+  #
+  # Left pending rather than guessed at. A wrong interaction that happens to
+  # satisfy `screenIs` would deliver the general step's picture into three slots
+  # whose captions promise three different ones, and every count would agree.

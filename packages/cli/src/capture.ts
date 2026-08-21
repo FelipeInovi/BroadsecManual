@@ -107,6 +107,19 @@ const recipeSchema = z
     settleMs: z.number().int().min(0).max(30000).optional(),
     /** What to photograph. Omitted means the whole viewport. */
     clip: z.string().optional(),
+    /**
+     * Climb from what `clip` matched to the nearest ancestor matching this.
+     *
+     * Needed because a product may offer no handle on the thing worth
+     * photographing. Bridge360's panels are all `div.panel` with no id, no test
+     * id and nothing to tell them apart; the only distinguishing thing inside
+     * one is its heading. So `clip` finds the heading and this climbs to the
+     * panel around it.
+     *
+     * The alternative was a full-viewport shot for a caption that promises one
+     * panel, which is a picture that does not answer its own caption.
+     */
+    clipUp: z.string().optional(),
     viewport: z.object({ width: z.number().int(), height: z.number().int() }).optional(),
   })
   .strict()
