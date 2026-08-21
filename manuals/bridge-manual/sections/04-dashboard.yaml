@@ -11,12 +11,8 @@
 # The view is uniform for every agency type, and nothing here is conditioned on
 # the `permission` axis. No `when` in this file.
 #
-# INCOMPLETE ON PURPOSE — see ESTADO.md, open question 4. The "Historial de
-# Eventos" tab has three visible things this section does NOT describe: the
-# ESTADO column, the AGENCIA column, and the Fecha/Estado column filters. They
-# cannot be documented truthfully as working, and saying so in a client-facing
-# PDF is a product statement, not an authoring one. Everything else in that tab
-# is covered. The other two tabs are complete.
+# INCOMPLETE ON PURPOSE — declared in the `pending` list below, which is where
+# the evidence and the exit condition live. Not restated here.
 #
 # Paths in comments are relative to `src/modules/dashboard/presentation/ui/` in
 # the `bridge` source repository, except where another module is named in full.
@@ -24,6 +20,31 @@
 id: dashboard
 title: Dashboard
 subtitle: Historial, analítica e indicadores de la operación
+
+# Parts of the product this section deliberately leaves undescribed. Internal —
+# `awaiting` exports it; the manual names none of it. See `PendingDeclaration`.
+pending:
+  - id: dashboard.historial-columnas-inertes
+    covers: [dashboard.historial]
+    missing: >-
+      Four visible things in the "Historial de Eventos" tab: the ESTADO column,
+      the AGENCIA column, the Estado filter and the Fecha filter. The tab's rows
+      are real, and its search, pagination, detail dialog, row selection and
+      export are documented in full — these four are not mentioned.
+    because: >-
+      The ESTADO dot's colour is
+      `STATUS_DOT_COLORS[row.index % STATUS_DOT_COLORS.length]`
+      (`events-history-columns.tsx:103`) — the row's POSITION in the table, not
+      the event's state. The underlying status is hardcoded `"Cerrado"` for every
+      row (`events-history-panel.tsx:139`), so the Estado filter's other two
+      options (`Abierto`, `En gestión`, `events-history-filters.tsx:9-13`) can
+      never match anything. The Fecha filter's options come from `MOCK_EVENTS`
+      (`events-history-filters.tsx:6-8`), i.e. fixture dates that will not match
+      the real rows. AGENCIA is a hardcoded `"-"` (`events-history-panel.tsx:141`).
+      All four render: the panel uses `fullColumns` (:155).
+    settles: >-
+      The product connecting them to real data, or the owner deciding how a
+      manual describes a control that is on screen and inert.
 
 children:
   - id: dashboard.proposito

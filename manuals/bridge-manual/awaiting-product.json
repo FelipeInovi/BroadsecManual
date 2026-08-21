@@ -1,0 +1,53 @@
+{
+  "manual": "bridge-manual",
+  "contentVersion": "0.4.0",
+  "axis": "permission",
+  "convention": {
+    "what": "Parts of the product that are on screen but not finished, which this manual therefore documents around without naming.",
+    "why": "Describing such a control as working lies to the reader; describing it as broken publishes a product defect inside a client-facing document. Neither is the author's call, so the manual waits.",
+    "whoActs": "Whoever finishes the product. An entry is closed by deleting its `pending` declaration from the section that declares it, once the content it withheld has been written.",
+    "declaredIn": "the `pending` list of a section under manuals/<manual>/sections/ — never in the rendered manual, which names none of this",
+    "notDone": "a section with an entry here is NOT complete by the module-completeness standard, and must not be counted as done"
+  },
+  "targetsCovered": [
+    "agencia-propia",
+    "todas-las-agencias"
+  ],
+  "targetsConfigured": 2,
+  "counts": {
+    "gaps": 2,
+    "sections": 2
+  },
+  "awaiting": [
+    {
+      "id": "dashboard.historial-columnas-inertes",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "dashboard",
+      "declaredIn": "sections/04-dashboard.yaml",
+      "covers": [
+        "dashboard.historial"
+      ],
+      "missing": "Four visible things in the \"Historial de Eventos\" tab: the ESTADO column, the AGENCIA column, the Estado filter and the Fecha filter. The tab's rows are real, and its search, pagination, detail dialog, row selection and export are documented in full — these four are not mentioned.",
+      "because": "The ESTADO dot's colour is `STATUS_DOT_COLORS[row.index % STATUS_DOT_COLORS.length]` (`events-history-columns.tsx:103`) — the row's POSITION in the table, not the event's state. The underlying status is hardcoded `\"Cerrado\"` for every row (`events-history-panel.tsx:139`), so the Estado filter's other two options (`Abierto`, `En gestión`, `events-history-filters.tsx:9-13`) can never match anything. The Fecha filter's options come from `MOCK_EVENTS` (`events-history-filters.tsx:6-8`), i.e. fixture dates that will not match the real rows. AGENCIA is a hardcoded `\"-\"` (`events-history-panel.tsx:141`). All four render: the panel uses `fullColumns` (:155).",
+      "settles": "The product connecting them to real data, or the owner deciding how a manual describes a control that is on screen and inert."
+    },
+    {
+      "id": "bot.panel-dashboard-fixture",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "bot",
+      "declaredIn": "sections/05-bridge-of-things.yaml",
+      "covers": [
+        "bot.paneles"
+      ],
+      "missing": "Everything the panel labelled DASHBOARD displays — the one this view opens with. Its seven integration cards, each card's connection status dot, and the \"Ult. Conexión\" time under it. The section names the panel in the inventory and documents the panel bar as the way to reach the other three, and describes none of what this one shows.",
+      "because": "The cards are a hardcoded literal array with no query, no prop and no data source of any kind (`home-panel.tsx:20` — `dasboardPanelItems`, running to :84). `status` drives the green/red dot through `statusColors` (:86); `lastConnection` is a literal string rendered at :123-124; `description` is English placeholder copy in a Spanish product (\"This is the CCTV panel.\") rendered as body text at :121. Four of the seven carry `isActivatePanelExternal: false` (:53, :62, :71, :80), so clicking them does nothing. Sharper than a fixture elsewhere would be, because this is the landing panel: the first thing a reader of this view sees is fabricated integration health.",
+      "settles": "The product wiring the panel to real data, or the owner deciding how a manual describes a landing panel whose contents are invented."
+    }
+  ]
+}

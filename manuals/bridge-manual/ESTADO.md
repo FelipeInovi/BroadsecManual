@@ -54,6 +54,31 @@ state.
   so each label in content records the component and line it was copied from.
   `uiLabel` blocks cannot be used against this source.
 
+- **A screen the PRODUCT has not finished: the manual shows what works, names
+  none of what does not, and waits.** Owner's decision, taken after two views in
+  a row hit it. In full: document everything around the unfinished part in full;
+  describe nothing it displays, with no warning and no promise of a later
+  version, because either is a leak into a client-facing document; declare it
+  internally so it is queued rather than forgotten; and fill it in as the product
+  fixes it, through the manual-update flow the owner intends to build later.
+
+  The declaration mechanism is `pending` on a section, exported by
+  `broadsec-manual awaiting` to `awaiting-product.json`. It never reaches the
+  AST, so no renderer can print it. The rule now lives in the
+  `module-completeness` skill; this entry records only that the decision was
+  taken and by whom.
+
+  Consequence, accepted: a reader who sees such a control on screen finds nothing
+  about it here and cannot tell whether it was omitted or they misread the
+  screen. That is the least-bad of three bad options, and it is what makes the
+  internal queue load-bearing rather than bookkeeping — it is the only thing
+  separating a deliberate omission from a forgotten one.
+
+  Still open, and NOT settled by this: nothing detects that the product fixed
+  one. That needs a check against the source for whether a fixture became a
+  query, which for a product with no extractor does not exist. Until it does, an
+  entry is closed by a person.
+
 ## Ruled out
 
 - **Pointing `extract.tenantConfigs` at a directory to make `extract` run.**
@@ -156,29 +181,21 @@ state.
   (link sent, units available, call ended) — runtime, not a build axis, and
   documented as states in prose.
 
-- **The "Historial de Eventos" table has three controls that cannot be
-  documented as working.** The rows themselves are real (`useEventHistory`,
-  `events-history-panel.tsx:121`), but:
-  - **ESTADO column** — the dot's colour is
-    `STATUS_DOT_COLORS[row.index % STATUS_DOT_COLORS.length]`
-    (`events-history-columns.tsx:103`). It is picked by the row's POSITION in the
-    table, not by the event's state.
-  - **Underlying status** — the mapping hardcodes `status: "Cerrado"` for every
-    row (`events-history-panel.tsx:139`), so the Estado filter's other two
-    options (`Abierto`, `En gestión`, `events-history-filters.tsx:9-13`) can
-    never match anything.
-  - **Fecha filter** — its options are derived from `MOCK_EVENTS`
-    (`events-history-filters.tsx:6-8`), i.e. from fixture dates that will not
-    match the real rows.
-  - **AGENCIA column** — hardcoded `agency: "-"` (`events-history-panel.tsx:141`),
-    as is `handlingTime` (`:146`).
-  - And every column filter runs client-side (`getFilteredRowModel`, `:171`) over
-    a server-paginated table (`manualPagination: true`, `:169`), so a filter only
-    ever filters the page currently loaded.
-
-  All of them are on screen: the panel renders `fullColumns` (`:155`).
-  `previewColumns` (`events-history-columns.tsx:122`) is exported and used
-  nowhere — dead code.
+- **This product ships screens that are on display and fabricated, and the
+  manual has hit two.** The evidence for each — every file and line — lives in
+  the `pending` declaration that withholds it, and is exported to
+  `awaiting-product.json`. Not restated here: two copies of one finding is the
+  copy that goes stale when the product is fixed. Two facts about them that are
+  NOT in those declarations, because they constrain authoring rather than
+  describe a gap:
+  - Every column filter in "Historial de Eventos" runs client-side
+    (`getFilteredRowModel`, `events-history-panel.tsx:171`) over a
+    server-paginated table (`manualPagination: true`, `:169`), so a filter only
+    ever filters the page currently loaded. This is true of the columns that DO
+    work, so it shapes how they are described.
+  - `previewColumns` (`events-history-columns.tsx:122`) is exported and used
+    nowhere. Dead code — do not document it, and do not mistake it for the
+    column set on screen.
 
 - **A hidden tab is the CLEAN case, and it is worth contrasting.** Analytics
   declares four sub-tabs and marks `Análisis de Colas` as `enabled: false`
@@ -186,20 +203,6 @@ state.
   not on screen, so there is nothing to document and nothing to explain. That is
   what a deliberately unfinished feature looks like when it is handled properly —
   the contrast with the finding above is the point.
-
-- **Bridge of Things' own DASHBOARD panel is a fixture, end to end.** The panel
-  the view OPENS with renders `dasboardPanelItems`
-  (`bridge-of-things/home-panel.tsx:20-84`): seven integration cards — CCTV, PRT,
-  PMV, ARS, CITRA, ICAD, AVL — with a hardcoded `status` that drives the
-  green/red dot (`:86-89`, `:115-119`), a hardcoded `lastConnection` shown under
-  "Ult. Conexión" (`:123-124`), and a hardcoded English `description`
-  ("This is the CCTV panel.") rendered as body text in a Spanish product
-  (`:121`). There is no query, no prop, no data source of any kind. Four of the
-  seven (ARS, CITRA, ICAD, AVL) carry `isActivatePanelExternal: false`, so
-  clicking them does nothing (`:102-106`).
-
-  Worse than Dashboard's case, because this is the landing panel: the first thing
-  a reader of that view sees is fabricated integration health.
 
 - **The other three BoT panels are genuinely real.** PMV (`usePmvPanels`,
   `pmv-panel.tsx:31`), CCTV (`useCCTVCameras`, `cctv-context.tsx:72`) and PRT
@@ -253,31 +256,10 @@ Treat this as a proposal to confirm, not as an agreed scope.
    **What settles it:** the owner, when a non-RECEPTION agency is actually in
    scope.
 
-4. **How the manual handles the "Historial de Eventos" defects.** Blocked, and
-   the reason it is blocked is not authoring: saying a control works when it does
-   not is a lie to the client, and saying it does not work is a product statement
-   inside a client-facing PDF. Neither is an author's call. `04-dashboard.yaml`
-   therefore covers that tab's search, pagination, detail dialog, row selection
-   and export, and deliberately does NOT describe the ESTADO column, the AGENCIA
-   column or the Fecha/Estado filters. The file says so in its own header.
-   **What settles it:** the product fixing them — they are source-repo defects,
-   not pipeline and not content — or the owner deciding how a manual should
-   describe a control that is on screen and inert. Until then that submodule is
-   NOT done by the `module-completeness` standard, and it should not be counted
-   as done.
-
-5. **The same question as 4, for Bridge of Things' DASHBOARD panel** — and
-   sharper, because it is the view's landing panel and its placeholder text is in
-   English. `05-bridge-of-things.yaml` names the panel in the panel inventory and
-   documents the panel bar as the way to reach the other three, and describes
-   nothing the fixture displays. **What settles it:** the product wiring that
-   panel to real data, or the owner deciding how the manual treats it. Until
-   then that submodule is NOT done.
-
-   Questions 4 and 5 are the same shape and should probably be answered together:
-   **how does this manual treat a screen the product has not finished?** Two
-   views in a row have hit it. A general answer would be worth more than two
-   per-section ones.
+*(Questions 4 and 5 were the two per-section forms of one question. It has been
+answered — see the last entry under Decided — and the two gaps they described are
+now declared, not narrated. They live in `awaiting-product.json`, which is
+derivable and therefore not restated here.)*
 
 ## Next section
 
@@ -312,5 +294,6 @@ Unchanged: `create-incident` will need care. Two comments there name deployments
 (`create-incident.ts:183`, `create-incident.schema.ts:51`) and neither is a gate.
 
 The module inventory above is STILL only proposed. Home, Llamada, Seatmap,
-Dashboard and Bridge of Things are written — the last two with the gaps recorded
-in questions 4 and 5. No scope beyond them has been agreed.
+Dashboard and Bridge of Things are written — the last two each carrying a
+declared gap, so neither is complete by the `module-completeness` standard. Run
+`awaiting bridge-manual` to see them. No scope beyond them has been agreed.
