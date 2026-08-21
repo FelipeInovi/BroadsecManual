@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.4.0",
+  "contentVersion": "0.4.1",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 136,
+    "total": 137,
     "delivered": 0,
-    "pending": 136
+    "pending": 137
   },
   "pending": [
     {
@@ -1121,6 +1121,28 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.filtro.transito.png",
         "override": "<permission>/llamada.fuerzas.filtro.transito.png"
+      }
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.defensa-civil",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.defensa-civil",
+          "blockType": "icon-table",
+          "shows": "Defensa Civil"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.fuerzas.filtro.defensa-civil.png",
+        "override": "<permission>/llamada.fuerzas.filtro.defensa-civil.png"
       }
     },
     {

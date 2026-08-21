@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.4.0",
+  "contentVersion": "0.4.1",
   "axis": "permission",
   "convention": {
     "what": "Parts of the product that are on screen but not finished, which this manual therefore documents around without naming.",

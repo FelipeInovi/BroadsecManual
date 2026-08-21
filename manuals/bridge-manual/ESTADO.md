@@ -224,20 +224,20 @@ state.
     nowhere. Dead code — do not document it, and do not mistake it for the
     column set on screen.
 
-- **Two options the product offers and Llamada does not list.** Found while
-  citing its labels, which is not what the citation check is for — it fell out of
-  reading the source list beside the manual's:
-  - The force filter has SEVEN options; the manual documents six. `Defensa
-    Civil` sits at `available-agents-list.tsx:33`, between `Tránsito` and
-    `Gaula`.
-  - The case log has FOUR event origins; the manual documents three. `CALL AI`
-    sits at `incident-events/incident-events.tsx:54`, among the other three.
+- **Reading the product's LIST beside the manual's catches skipped options, and
+  citing labels is when it happens.** Llamada was missing two, both found this
+  way and both since written: the force filter declares seven options and the
+  manual documented six, and the case log declares four event origins and the
+  manual documented three. Neither was a product defect and neither showed up in
+  any check — a manual that documents six of seven options builds clean, and the
+  reader cannot tell one was skipped.
 
-  Both are coverage gaps by the `module-completeness` standard — a reader cannot
-  tell an option was skipped, and will conclude it does not matter. Neither is a
-  product defect and neither is blocked on anything: they are content to write.
-  Not written here because citing labels was the task, and widening it silently
-  is how a small change becomes an unreviewable one.
+  Worth repeating deliberately per section: when the source declares a LIST —
+  `FORCE_FILTERS`, `SOURCE_BADGE`, `TABS`, `MOSAIC_LAYOUTS`, a column array —
+  count it against the manual's rows. The citation check verifies the rows that
+  exist; it cannot know about a row nobody wrote. Note also that a citation
+  comment naming a RANGE (":28-34") reads as complete while skipping a line
+  inside it, which is exactly how this one survived.
 
 - **A hidden tab is the CLEAN case, and it is worth contrasting.** Analytics
   declares four sub-tabs and marks `Análisis de Colas` as `enabled: false`

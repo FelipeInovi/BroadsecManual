@@ -57,8 +57,7 @@ labels:
   - at: llamada.video.avance.gps
     from: components/caller-progress-stepper.tsx:10
 
-  # The force filter. `Defensa Civil` sits at :33 between Tránsito and Gaula and
-  # the manual does not list it — that is a content gap, not a citation one.
+  # `FORCE_FILTERS`, all seven.
   - at: llamada.fuerzas.filtro.todos
     from: components/panels/available-agents-list.tsx:28
   - at: llamada.fuerzas.filtro.salud
@@ -69,6 +68,8 @@ labels:
     from: components/panels/available-agents-list.tsx:31
   - at: llamada.fuerzas.filtro.transito
     from: components/panels/available-agents-list.tsx:32
+  - at: llamada.fuerzas.filtro.defensa-civil
+    from: components/panels/available-agents-list.tsx:33
   - at: llamada.fuerzas.filtro.gaula
     from: components/panels/available-agents-list.tsx:34
 
@@ -99,10 +100,11 @@ labels:
   - at: llamada.mapa.ubicacion.copiar
     from: components/panels/incident-location-bar.tsx:260
 
-  # Event origins. `CALL AI` sits at :54 among them and the manual does not
-  # list it.
+  # `SOURCE_BADGE`, all four.
   - at: llamada.mapa.bitacora.origen.llamante
     from: components/panels/incident-events/incident-events.tsx:50
+  - at: llamada.mapa.bitacora.origen.call-ai
+    from: components/panels/incident-events/incident-events.tsx:54
   - at: llamada.mapa.bitacora.origen.operador
     from: components/panels/incident-events/incident-events.tsx:58
   - at: llamada.mapa.bitacora.origen.sistema
@@ -427,6 +429,10 @@ children:
               label: Tránsito
               description: >-
                 Solo los recursos de tránsito.
+            - id: llamada.fuerzas.filtro.defensa-civil
+              label: Defensa Civil
+              description: >-
+                Solo los recursos de defensa civil.
             - id: llamada.fuerzas.filtro.gaula
               label: Gaula
               description: >-
@@ -638,13 +644,21 @@ children:
         type: term-list
         props:
           entries:
-            # Rótulos citados de incident-events/incident-events.tsx:50, :58 y
-            # :62.
+            # Rótulos citados de `SOURCE_BADGE`,
+            # incident-events/incident-events.tsx:50, :54, :58 y :62 — las cuatro
+            # entradas, en el orden en que el producto las declara.
             - id: llamada.mapa.bitacora.origen.llamante
               term: Llamante
               definition: >-
                 El evento lo originó quien llamó: abrir el enlace, compartir el
                 video o la ubicación.
+            - id: llamada.mapa.bitacora.origen.call-ai
+              term: CALL AI
+              definition: >-
+                El evento lo originó el análisis de la llamada, el mismo que
+                alimenta la sección **Call AI** de la banda inferior. El rótulo
+                de la bitácora está en mayúsculas, a diferencia del encabezado
+                de esa sección.
             - id: llamada.mapa.bitacora.origen.operador
               term: Operador
               definition: >-
