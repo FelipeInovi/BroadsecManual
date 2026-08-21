@@ -1,10 +1,10 @@
 ---
 name: module-completeness
-description: Defines when a manual module is finished — every submodule covered, each opening with an overview figure of the whole screen and then stating what it does, how to reach it, its main functions, its step-by-step procedures and the control the operator must press. Also covers the image rule: content declares image slots, never file paths, and every declared slot always renders — the delivered image, or one temporary placeholder holding its place until an external team supplies it. Use when writing a new module, extending an existing one, reviewing a module before it ships, deciding whether a section is complete, naming images so they can be synchronised from an external folder, or working out which images an external team must produce.
+description: Defines when a manual module is finished — every submodule covered, each opening with an overview figure of the whole screen and then stating what it does, how to reach it, its main functions, its step-by-step procedures and the control the operator must press. Also covers the image rule: content declares image slots, never file paths, and every declared slot always renders — the delivered image, or one temporary placeholder holding its place until an external team supplies it. Use when writing a new module, extending an existing one, reviewing a module before it ships, deciding whether a section is complete, naming images so they can be synchronised from an external folder, or working out which images an external team must produce. Also covers the third kind of gap: a screen the PRODUCT has not finished, which the manual documents around without naming and declares in the section's `pending` list for the `awaiting` queue.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "2.2"
+  version: "2.3"
 ---
 
 # When a module is finished
@@ -129,6 +129,72 @@ telling the reader whether it worked is unfinished.
 
 > *Al guardar, la plataforma lo redirige a **PMV › Gestión**, donde el mensaje
 > queda listado.*
+
+## When the PRODUCT has not finished it
+
+A third kind of gap, and it is neither of the other two. A pipeline defect is
+fixed in `packages/`; a content defect is fixed in `manuals/`. This one is a
+screen that is **on display and showing fabricated data**.
+
+Not an empty screen — an empty screen is easy, you describe the empty state. The
+hard case is the one that fills itself with plausible content: a status dot whose
+colour comes from the row's index, a "last connection" time that is a literal
+string, seven integration cards with no query behind them.
+
+**Both ways of writing about it are statements about the product, not about the
+manual:**
+
+- Document the control as working → the manual lies to the reader, who will make
+  operational decisions on it.
+- Document it as not working → the manual publishes a product defect list inside
+  a document marked Confidential.
+
+Neither is the author's call, so **the manual waits.**
+
+### What to do
+
+1. **Document everything around it, in full.** The real parts of that screen get
+   the same treatment as anything else.
+2. **Name none of the broken part.** Not with a warning, not with "will be
+   documented later" — a promise in a client PDF is still a leak that something
+   is unfinished.
+3. **Declare it** in the section's `pending` list, with `covers`, `missing`,
+   `because` (file and line in the source product) and `settles`. Every field is
+   required.
+4. **Export the queue** with `broadsec-manual awaiting <manual>`, which writes
+   `awaiting-product.json` beside the manual, and commit it.
+
+The declaration never reaches the AST, so no renderer can print it. That is the
+load-bearing property, not a filing preference: the whole policy is that the
+manual names none of this, and a declaration that could render would publish
+exactly what it exists to withhold.
+
+### Why declared and not narrated
+
+This is the coverage rule's own escape hatch — *"cover it, or state explicitly
+why an item is out of scope"* — with a shape a command can read. The statement
+used to be a comment in the section header and a question in `ESTADO.md`, and
+that did not hold: two gaps were recorded that way and two more sections were
+written over them before either was chased.
+
+`awaiting-product.json` is the sibling of `image-requests.json` and works the
+same way. Content DECLARES, the pipeline DERIVES, and neither list is maintained
+by hand. It is likewise **not build output** — `build` reports the count and
+writes nothing, because a queue only whoever last ran a build can see is not a
+queue.
+
+### Closing an entry
+
+An entry leaves the queue when somebody **deletes its declaration**, having
+written the content it withheld. Nothing detects that the product was fixed:
+that needs a check against the source — whether a fixture became a query — and
+for a product with no extractor there is no such check yet. Until there is, the
+two checks that surface these by hand are `grep` for `MOCK`, and reading the
+mapping between the query and what is rendered. English placeholder copy in a
+Spanish product is the loudest tell.
+
+**A section with an entry in that queue is NOT complete**, and must not be
+counted as done.
 
 ## The image rule
 
@@ -314,6 +380,9 @@ in the legacy manual.
 A module ships when all of these hold:
 
 - [ ] Every submodule the product offers is covered, or its absence is justified
+- [ ] Anything left out because the PRODUCT has not finished it is declared in
+      the section's `pending` list, and `awaiting` was re-exported — a gap
+      recorded only in a comment is a gap nobody will chase
 - [ ] Each one states what it does, how to reach it, and its main functions
 - [ ] The module opens with an overview figure, and so does every submodule
 - [ ] Every procedure is a `procedure` block, naming the control at each step

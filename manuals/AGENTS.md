@@ -29,9 +29,19 @@ file is the only thing that carries intent from one to the next, so what goes in
 it is narrow on purpose.
 
 **Progress is derivable, so it is never written down.** Which sections exist,
-how many images are outstanding, what was committed — `sections/`,
-`knowledge/module-map.json`, `image-requests.json` and `git log` already answer
+how many images are outstanding, which parts of the product the manual is waiting
+on, what was committed — `sections/`, `knowledge/module-map.json`,
+`image-requests.json`, `awaiting-product.json` and `git log` already answer
 those, and they cannot be stale because they *are* the state.
+
+That last one is the newest and the one most likely to be written here by habit.
+A part of the product that is on screen but unfinished — which the manual
+therefore documents around without naming — is **declared** in its section's
+`pending` list and exported by `broadsec-manual awaiting`. It is not narrated
+here. Two of them were, as open questions, and two more sections were written
+over them before either was chased; that is what a queue is for and prose is not.
+What still belongs here is the DECISION about how such a part is handled, which
+is not derivable from anything.
 
 **Decisions are not derivable, so they go here:**
 

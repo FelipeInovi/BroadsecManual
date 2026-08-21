@@ -21,6 +21,7 @@ the authority if they ever disagree.
 | `images <manual>` | Export the image request document for the area that produces the screenshots |
 | `capture <manual> --tenant <id>` | Shoot pending figures off the **running** product, per `manuals/<manual>/capture-recipes.yaml` |
 | `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
+| `awaiting <manual>` | Write `awaiting-product.json`: the parts of the product that are on screen but unfinished, which the manual documents around without naming. Declared by a section's `pending` list — never rendered |
 
 Every command takes the axis filters `[--tenant <id>] [--axis <name>=<value> …]`
 except `extract`, which is per-manual and not per-target.

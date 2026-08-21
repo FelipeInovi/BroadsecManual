@@ -6,6 +6,7 @@ import type {
   ManualNode,
   Selector,
 } from "@broadsec-manual/blocks";
+import type { PendingDeclaration } from "./pending.ts";
 
 /**
  * Authoring format for the pipeline spike: YAML mirroring the AST.
@@ -256,6 +257,134 @@ export interface LoadedSection {
    * responsible for surfacing these to the author.
    */
   readonly warnings: readonly ContentWarning[];
+  /**
+   * Parts of the product this section deliberately does not describe.
+   *
+   * Beside the tree rather than in it — see `PendingDeclaration` for why that is
+   * the load-bearing part and not a filing preference.
+   */
+  readonly pending: readonly PendingDeclaration[];
+}
+
+/** Fields every entry must carry. A half-filled one is the prose it replaces. */
+const PENDING_FIELDS = {
+  missing: "what is on screen and this section does not describe",
+  because: "the evidence, by file and line in the source product",
+  settles: "what would close this",
+} as const;
+
+/**
+ * Parse a section's `pending` list.
+ *
+ * `covers` is resolved against the ids of the section being parsed, which is
+ * what keeps this checkable at all: a gap is declared in the file whose content
+ * it is missing from, so nothing has to be looked up across files and an id that
+ * stops existing is a content error rather than a queue entry pointing at
+ * nothing.
+ */
+function parsePending(
+  node: Record<string, unknown>,
+  file: string,
+  sectionId: string,
+  ownIds: ReadonlySet<string>,
+): PendingDeclaration[] {
+  const raw = node["pending"];
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw)) {
+    throw new ContentError(
+      file,
+      sectionId,
+      "`pending` must be a list of entries, one per part of the product this " +
+        "section leaves undescribed.",
+    );
+  }
+
+  const out: PendingDeclaration[] = [];
+  const seen = new Set<string>();
+
+  for (const item of raw) {
+    if (typeof item !== "object" || item === null) {
+      throw new ContentError(file, sectionId, "every `pending` entry must be a mapping");
+    }
+    const entry = item as Record<string, unknown>;
+
+    const id = entry["id"];
+    if (typeof id !== "string" || !id.trim()) {
+      throw new ContentError(
+        file,
+        sectionId,
+        "a `pending` entry needs a stable `id` — the queue is keyed on it, so an " +
+          "entry without one cannot be tracked from one export to the next.",
+      );
+    }
+    if (seen.has(id)) {
+      throw new ContentError(file, id, "duplicate `pending` id in this section");
+    }
+    seen.add(id);
+
+    const covers = entry["covers"];
+    if (!Array.isArray(covers) || covers.some((c) => typeof c !== "string" || !c.trim())) {
+      throw new ContentError(
+        file,
+        id,
+        "a `pending` entry needs `covers`: a list of node ids in this section " +
+          "whose content the gap sits inside. It is what joins the queue to the " +
+          "manual — without it nobody reading the queue can find the place.",
+      );
+    }
+    if (covers.length === 0) {
+      throw new ContentError(
+        file,
+        id,
+        "`covers` needs at least one node id, or the entry points the queue at nothing",
+      );
+    }
+    for (const covered of covers as string[]) {
+      if (!ownIds.has(covered)) {
+        throw new ContentError(
+          file,
+          id,
+          `\`covers\` names "${covered}", which is not an id in this section. A gap ` +
+            `is declared in the file whose content it is missing from — declare it ` +
+            `there, rather than pointing across files at content this file cannot ` +
+            `check.`,
+        );
+      }
+    }
+
+    const fields: Record<string, string> = {};
+    for (const [field, meaning] of Object.entries(PENDING_FIELDS)) {
+      const value = entry[field];
+      if (typeof value !== "string" || !value.trim()) {
+        throw new ContentError(
+          file,
+          id,
+          `a \`pending\` entry needs \`${field}\` — ${meaning}. Every field is ` +
+            `required: an entry missing one is the prose note this replaces, and ` +
+            `prose is what stopped these being chased.`,
+        );
+      }
+      fields[field] = value.trim();
+    }
+
+    out.push({
+      id,
+      section: sectionId,
+      file,
+      covers: covers as string[],
+      missing: fields["missing"] ?? "",
+      because: fields["because"] ?? "",
+      settles: fields["settles"] ?? "",
+    });
+  }
+
+  return out;
+}
+
+/** Every id in a parsed subtree, so `covers` can be resolved within its section. */
+function idsWithin(node: ManualNode, out: Set<string>): void {
+  out.add(node.id);
+  for (const child of node.children ?? []) idsWithin(child, out);
 }
 
 /** Parse one YAML content file into AST nodes. */
@@ -265,6 +394,25 @@ export function loadSection(
   catalog: BlockCatalog,
 ): LoadedSection {
   const warnings: ContentWarning[] = [];
-  const node = loadNode(parseYaml(source), file, catalog, warnings);
-  return { node, warnings };
+  const raw = parseYaml(source);
+  const node = loadNode(raw, file, catalog, warnings);
+
+  // Read from the RAW mapping, not the node: `pending` is deliberately absent
+  // from the AST, so `loadNode` never saw it.
+  const top = (typeof raw === "object" && raw !== null ? raw : {}) as Record<string, unknown>;
+  if (node.kind !== "section") {
+    if (top["pending"] !== undefined) {
+      throw new ContentError(
+        file,
+        node.id,
+        "`pending` belongs on a section, not on a block. Coverage is a section's " +
+          "obligation — a block has no submodules of its own to leave out.",
+      );
+    }
+    return { node, warnings, pending: [] };
+  }
+
+  const ownIds = new Set<string>();
+  idsWithin(node, ownIds);
+  return { node, warnings, pending: parsePending(top, file, node.id, ownIds) };
 }

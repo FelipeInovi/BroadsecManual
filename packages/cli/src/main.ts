@@ -13,11 +13,13 @@ import type {
 } from "@broadsec-manual/blocks";
 import {
   assemble,
+  collectPending,
   collectSlots,
   loadSection,
   ContentError,
   type ContentWarning,
   type ImageSlotUse,
+  type PendingDeclaration,
 } from "@broadsec-manual/core";
 import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
 import {
@@ -30,6 +32,7 @@ import { printToPdf } from "./chrome.ts";
 import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
+import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { pendingTable } from "./pending-table.ts";
 import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
 
@@ -129,17 +132,33 @@ export type ManualConfig = z.infer<typeof manualConfigSchema>;
 function loadDocument(
   manualDir: string,
   config: ManualConfig,
-): { doc: ManualDocument; warnings: ContentWarning[] } {
+): { doc: ManualDocument; warnings: ContentWarning[]; pending: PendingDeclaration[] } {
   const dir = join(manualDir, "sections");
   const files = readdirSync(dir)
     .filter((f) => f.endsWith(".yaml"))
     .sort();
   const warnings: ContentWarning[] = [];
+  const pending: PendingDeclaration[] = [];
   const children: ManualNode[] = files.map((f) => {
     const loaded = loadSection(readFileSync(join(dir, f), "utf8"), `sections/${f}`, catalog);
     warnings.push(...loaded.warnings);
+    // Beside the tree, never in it. See `PendingDeclaration`.
+    pending.push(...loaded.pending);
     return loaded.node;
   });
+  const ids = new Set<string>();
+  for (const entry of pending) {
+    if (ids.has(entry.id)) {
+      throw new ContentError(
+        entry.file,
+        entry.id,
+        `duplicate \`pending\` id across sections. The queue is keyed on it, so ` +
+          `two entries sharing one id collapse into a single line and one of the ` +
+          `two gaps stops being tracked.`,
+      );
+    }
+    ids.add(entry.id);
+  }
   return {
     doc: {
       manualId: config.manual.id,
@@ -147,6 +166,7 @@ function loadDocument(
       children,
     },
     warnings,
+    pending,
   };
 }
 
@@ -495,6 +515,8 @@ interface LoadedManual {
   readonly config: ManualConfig;
   readonly doc: ManualDocument;
   readonly warnings: readonly ContentWarning[];
+  /** Gaps the sections declare, before conditioning narrows them per target. */
+  readonly pending: readonly PendingDeclaration[];
   readonly targets: readonly BuildTarget[];
   readonly figuresDir: string;
 }
@@ -516,7 +538,7 @@ function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): Lo
     throw new ContentError(configFile, "manual.config", `invalid manual configuration — ${detail}`);
   }
   const config = parsed.data;
-  const { doc, warnings } = loadDocument(manualDir, config);
+  const { doc, warnings, pending } = loadDocument(manualDir, config);
 
   const targets = config.targets.filter((t) =>
     [...filters.entries()].every(([axis, value]) => t[axis] === value),
@@ -526,7 +548,14 @@ function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): Lo
     throw new Error(`No target matches ${desc || "(no filter)"}`);
   }
 
-  return { config, doc, warnings, targets, figuresDir: join(manualDir, "assets", "figures") };
+  return {
+    config,
+    doc,
+    warnings,
+    pending,
+    targets,
+    figuresDir: join(manualDir, "assets", "figures"),
+  };
 }
 
 /**
@@ -649,14 +678,58 @@ function exportImages(
  * only existed for whoever last ran a build, the team producing the images
  * could not read it at all.
  */
-export function parseOutPath(args: readonly string[], manualId: string): string {
+export function parseOutPath(
+  args: readonly string[],
+  manualId: string,
+  defaultName = "image-requests.json",
+): string {
   const flag = args.indexOf("--out");
-  if (flag === -1) return `manuals/${manualId}/image-requests.json`;
+  if (flag === -1) return `manuals/${manualId}/${defaultName}`;
   const value = args[flag + 1];
   if (!value || value.startsWith("--")) {
     throw new Error("--out requires a path, e.g. `--out requests/broadlineavida.json`");
   }
   return value;
+}
+
+/** The queue's default filename, beside the manual and outside `output/`. */
+export const AWAITING_FILE = "awaiting-product.json";
+
+/**
+ * Export the queue of parts the manual is waiting on the product for.
+ *
+ * Its own command rather than build output, for the reason the image manifest is
+ * one: a queue only whoever last ran a build can see is not a queue, and this
+ * file is committed so the debt is visible in review rather than in somebody's
+ * terminal.
+ */
+function exportAwaiting(
+  manualDir: string,
+  filters: ReadonlyMap<string, string>,
+  outPath: string,
+): void {
+  const { config, doc, pending, targets } = loadManual(manualDir, filters);
+
+  const perTarget: TargetPending[] = targets.map((target) => {
+    const value = requireAxisValue(target, primaryAxis(config));
+    // Conditioned first, exactly as image slots are: a gap inside content this
+    // target never ships is not this target's debt.
+    const manual = assemble(doc, target, catalog);
+    return { value, entries: collectPending(manual, pending) };
+  });
+
+  const report = awaitingProduct(config, perTarget);
+  mkdirSync(dirname(outPath), { recursive: true });
+  writeFileSync(outPath, `${JSON.stringify(report, null, 2)}
+`, "utf8");
+
+  const counts = report["counts"] as { gaps: number; sections: number };
+  console.log(
+    counts.gaps === 0
+      ? `  nothing queued — no section declares a part of the product it leaves undescribed`
+      : `  ${counts.gaps} gap(s) awaiting the product, across ${counts.sections} section(s)`,
+  );
+  console.log(`  -> ${outPath}`);
 }
 
 /**
@@ -742,7 +815,7 @@ async function build(
   wantPendingTable: boolean,
   wantDocx: boolean,
 ): Promise<void> {
-  const { config, doc, warnings, targets, figuresDir } = loadManual(manualDir, filters);
+  const { config, doc, warnings, pending, targets, figuresDir } = loadManual(manualDir, filters);
   const outDir = join(manualDir, config.output.dir);
   mkdirSync(outDir, { recursive: true });
 
@@ -870,6 +943,16 @@ async function build(
         `build covered ${targets.length} of ${config.targets.length})`,
     );
   }
+  // Reported, never written. The queue is a committed contract produced by
+  // `awaiting`; surfacing the count here is what stops a declared gap being
+  // invisible until somebody remembers to run that command.
+  if (pending.length > 0) {
+    const sections = new Set(pending.map((p) => p.section)).size;
+    console.log(
+      `\n${pending.length} part(s) of the product awaited, across ${sections} section(s) — ` +
+        `those sections are NOT complete. Run \`awaiting ${config.manual.id}\` for the queue.`,
+    );
+  }
   printWarnings(warnings);
 }
 
@@ -907,6 +990,7 @@ export async function run(argv: readonly string[]): Promise<number> {
   if (
     (command !== "build" &&
       command !== "images" &&
+      command !== "awaiting" &&
       command !== "extract" &&
       command !== "capture") ||
     !manualId
@@ -914,6 +998,7 @@ export async function run(argv: readonly string[]): Promise<number> {
     console.error(
       `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table] [--docx]\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
+        `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
         `  capture  shoot pending figures off the running product, per\n` +
@@ -929,7 +1014,11 @@ export async function run(argv: readonly string[]): Promise<number> {
         `           matches the PDF's type, palette, tables and figures but NOT its\n` +
         `           page breaks: Word reflows, so the page count can differ.\n` +
         `  extract  read the source product and write knowledge/module-map.json,\n` +
-        `           reporting what changed since the last map.\n\n` +
+        `           reporting what changed since the last map.\n` +
+        `  awaiting write awaiting-product.json: the parts of the product that are\n` +
+        `           on screen but unfinished, which the manual documents around\n` +
+        `           without naming. Declared by a section's \`pending\` list — the\n` +
+        `           manual itself never mentions any of it.\n\n` +
         `       broadsec-manual new\n` +
         `  new      interactive: collect which product, what to call its manual and\n` +
         `           how much to attempt, then print the prompt that starts the work.\n` +
@@ -984,6 +1073,16 @@ ${drift.length} change(s) since the previous map:`);
     if (command === "images") {
       console.log(`exporting image requests for ${manualId}${label ? ` (${label})` : ""}`);
       exportImages(manualDir, filters, resolve(process.cwd(), parseOutPath(rest, manualId)));
+      return 0;
+    }
+
+    if (command === "awaiting") {
+      console.log(`exporting the product queue for ${manualId}${label ? ` (${label})` : ""}`);
+      exportAwaiting(
+        manualDir,
+        filters,
+        resolve(process.cwd(), parseOutPath(rest, manualId, AWAITING_FILE)),
+      );
       return 0;
     }
 
