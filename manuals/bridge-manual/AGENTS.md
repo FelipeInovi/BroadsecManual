@@ -21,8 +21,8 @@ Settled by survey, not by guessing. The numbers are the point:
 So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
 
-Since then the capture side has run too: at v0.6.6 the manual stands at **64 of
-161 delivered**, and Bridge of Things has 4 slots left, each blocked on something
+Since then the capture side has run too: at v0.6.6 the manual stands at **65 of
+161 delivered**, and Bridge of Things has 3 slots left, each blocked on something
 no recipe can express. See "What is still pending" below.
 
 Sharing collapsed the twelve force-filter rows into six slots, so the icon
@@ -206,9 +206,8 @@ factor.
 | An interaction not yet found | the three `crear-incidente` step figures (their header click does not open the step); `dashboard.analitica.accion.limpiar` (its filters panel does not open with the tab); Fuerzas en Campo's three inactive panels |
 | A gesture no still frame can show | `bot.cctv.camaras.arrastrar` and `.soltar` — their captions are the two halves of ONE drag |
 | A caption that names four of nine | `bot.cctv.ptz.diagonales`. Each diagonal now turns out to have its own `title`, so they are four real controls — but they are the CORNERS of a 3×3 pad whose other five the manual documents separately, and no clip contains exactly the four |
-| A HOVER, which the harness cannot do | `bot.cctv.presets.volver`. See below |
 
-**Bridge of Things is now as done as this harness can make it: 4 slots left, and
+**Bridge of Things is now as done as this harness can make it: 3 slots left, and
 each is blocked on something a recipe cannot express.** CCTV was the only panel
 still asking for images; PMV's and PRT's slots went away with their content at
 v0.6.6, so do not go looking for a way to photograph those two.
@@ -237,14 +236,30 @@ DOM and `PRESETS DE POSICIÓN` is `Presets de posición`. Both are CSS `uppercas
 both cost a round, and both were already sitting in probe output read earlier the
 same session. Read the probe, do not read the screen.
 
-**`bot.cctv.presets.volver` is hover-gated, and the image was DELETED.** The clip
-came back showing "Preset 1" and no control at all: `cctv-presets.tsx:109` gives
-the "Ir a preset" button `opacity-0 group-hover:opacity-100`, so it is invisible
-until the row is hovered. The picture was correct pixels and a false promise —
-the caption is "Vuelva a la posición cuando la necesite" and the reader would
-hunt for a button that is not in the frame. `steps` has `click` and `drag` and no
-`hover`; adding one would unlock this slot and is the obvious next move, but it
-is a pipeline change and nobody asked for it yet.
+**`bot.cctv.presets.volver` was hover-gated, and `steps` now has a `hover`.**
+The first clip came back showing "Preset 1" and no control at all:
+`cctv-presets.tsx:109` gives the "Ir a preset" button
+`opacity-0 group-hover:opacity-100`. Correct pixels, false promise — the caption
+is "Vuelva a la posición cuando la necesite" and the reader would hunt for a
+button not in the frame. That file was deleted rather than shipped.
+
+`opacity`, not `display` and not `visibility`, is what made the fix clean: the
+button keeps its box and its pointer events, so the hover targets the very
+selector the clip is about to use instead of guessing at the row around it.
+
+Two things to carry forward:
+
+- **A `hover` must come AFTER any `drag` in the same sequence.** Both drive the
+  same mouse, and a drag would carry the cursor off whatever the hover
+  uncovered. Nothing after the steps moves it — the gates and the clip only
+  query — so the control is still revealed when the shot lands.
+- **The step's own text named BOTH controls**, and that is why the row-level clip
+  is right rather than a tighter one on the button alone: "Use **Ir a preset** en
+  la posición guardada… **Eliminar preset** la quita de la lista." The delivered
+  picture shows the row with ▶ and the red ✕, which is exactly what the prose
+  describes and exactly what the operator sees on hover. Read the step text
+  before choosing how tight to clip; a caption that names two controls is not
+  answered by a picture of one.
 
 **`bot.cctv.presets.guardar` is 12×16 — smaller than anything else here.** It is
 the right control (`title="Guardar posición actual"`, the save glyph) and it is

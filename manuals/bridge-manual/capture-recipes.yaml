@@ -522,6 +522,19 @@ recipes:
       - drag:
           from: ::-p-text(CCTV-Sena)
           to: div.grid.h-full.w-full
+      # AFTER the drag, never before: a drag drives the same mouse and would
+      # carry the cursor off whatever a hover had uncovered.
+      #
+      # This shot was taken once without this step and DELETED. It came back
+      # showing "Preset 1" and no control at all, because the row's button is
+      # `opacity-0 group-hover:opacity-100` (`cctv-presets.tsx:109`). Correct
+      # pixels, false promise: the caption is "Vuelva a la posición cuando la
+      # necesite" and the reader would hunt for a button not in the frame.
+      #
+      # Opacity — not display, not visibility — so the button keeps its box and
+      # its pointer events. That is why the hover can target the very selector
+      # the clip is about to use, instead of guessing at the row around it.
+      - hover: button[title="Ir a preset"]
     screenIs: h3::-p-text(CCTV)
     dataReady: ::-p-text(Presets de posición)
     # The first saved preset's row: its name plus the control that returns to it.

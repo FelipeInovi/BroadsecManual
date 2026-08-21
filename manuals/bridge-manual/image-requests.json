@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 161,
-    "delivered": 64,
-    "pending": 97
+    "delivered": 65,
+    "pending": 96
   },
   "pending": [
     {
@@ -1387,28 +1387,6 @@
       "deliverTo": {
         "shared": "_common/bot.cctv.ptz.diagonales.png",
         "override": "<permission>/bot.cctv.ptz.diagonales.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.presets.volver",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.presets.volver",
-          "blockType": "procedure",
-          "shows": "Vuelva a la posición cuando la necesite"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.presets.volver.png",
-        "override": "<permission>/bot.cctv.presets.volver.png"
       }
     },
     {
@@ -3031,6 +3009,23 @@
       ],
       "files": [
         "_common/bot.cctv.presets.guardar.png"
+      ]
+    },
+    {
+      "slot": "bot.cctv.presets.volver",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.presets.volver",
+          "blockType": "procedure",
+          "shows": "Vuelva a la posición cuando la necesite"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.presets.volver.png"
       ]
     },
     {
