@@ -19,7 +19,7 @@ export type DataTableProps = z.infer<typeof dataTableProps>;
 
 export const dataTable: BlockDefinition<DataTableProps> = {
   type: "data-table",
-  version: "0.1.0",
+  version: "0.2.0",
   description:
     "A two-column reference table of labels and descriptions, with no icons " +
     "and no item numbers — module capabilities, states, categories. Use " +
@@ -28,4 +28,11 @@ export const dataTable: BlockDefinition<DataTableProps> = {
     "numbers exist for.",
   schema: dataTableProps,
   children: { kind: "none" },
+  // Same split as icon-table: the headers and each row's `label` are quoted from
+  // the product, `description` is the manual's own.
+  labels: {
+    props: ["labelHeader", "descriptionHeader"],
+    itemsProp: "rows",
+    itemProps: ["label"],
+  },
 };

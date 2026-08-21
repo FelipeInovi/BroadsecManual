@@ -22,6 +22,7 @@ the authority if they ever disagree.
 | `capture <manual> --tenant <id>` | Shoot pending figures off the **running** product, per `manuals/<manual>/capture-recipes.yaml` |
 | `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
 | `awaiting <manual>` | Write `awaiting-product.json`: the parts of the product that are on screen but unfinished, which the manual documents around without naming. Declared by a section's `pending` list — never rendered |
+| `labels <manual>` | Hold every UI label the manual QUOTES against the line it was copied from, per a section's `labels` list. Needs the source checked out; reports, never blocks |
 
 Every command takes the axis filters `[--tenant <id>] [--axis <name>=<value> …]`
 except `extract`, which is per-manual and not per-target.

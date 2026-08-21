@@ -126,6 +126,35 @@ export interface ImageSlotPolicy {
   readonly convention: ImageConvention;
 }
 
+/**
+ * Which of a block's props hold a UI LABEL — text quoted from the product
+ * because the operator reads it on screen.
+ *
+ * Only labels. Not prose about a control, not a step's instruction, not a
+ * caption: those are the manual's own words and the manual is free to reword
+ * them. A label is the product's word, and if the product changes it the manual
+ * is quoting something that no longer exists — which nothing else in the
+ * pipeline can notice.
+ *
+ * This is deliberately NOT `ImageSlotPolicy.showsProp`. That prop is the caption
+ * source, which for a `procedure` step is its title — an instruction like
+ * "Presione Guardar", not a label. Borrowing it would have this checker verify
+ * the manual's own sentences against the product's source and report every one
+ * of them as drifted.
+ *
+ * Declared, never inferred, for the reason `numbering.itemsProp` is: a walker
+ * guessing that a prop called `label` holds a label is right until the first
+ * block whose `label` is the manual's own heading.
+ */
+export interface LabelPolicy {
+  /** Props on the block itself — a table's column headers. */
+  readonly props?: readonly string[];
+  /** Prop holding the items, when labels live one per item. */
+  readonly itemsProp?: string;
+  /** Props on each item. */
+  readonly itemProps?: readonly string[];
+}
+
 export interface BlockDefinition<TProps = unknown> {
   readonly type: BlockType;
   /** SemVer. Manuals pin a catalogue version; a breaking change bumps major. */
@@ -142,6 +171,8 @@ export interface BlockDefinition<TProps = unknown> {
   readonly numbering?: NumberingPolicy;
   /** Present only if this block carries images. */
   readonly images?: ImageSlotPolicy;
+  /** Present only if this block quotes UI labels from the product. */
+  readonly labels?: LabelPolicy;
 }
 
 /** The full set of block types available to a manual. */

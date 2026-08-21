@@ -268,11 +268,25 @@ export interface ExtractResult {
  * and reads which source it documents from its own config. One manual documents
  * one product; the reverse is not guaranteed.
  */
-export function extract(repoRoot: string, manualId: string): ExtractResult {
+/** A manual's source product, resolved through the registry. */
+export interface ResolvedSource {
+  readonly sourceId: string;
+  /** Absolute path to the product checkout. READ-ONLY. */
+  readonly sourceRoot: string;
+  readonly entry: z.infer<typeof registrySchema>["sources"][string];
+}
+
+/**
+ * Where the product a manual documents actually lives.
+ *
+ * Shared rather than repeated: every command that reads the source has to agree
+ * about which checkout that is, and two readers of the registry are two places
+ * for the answer to differ.
+ */
+export function sourceRootFor(repoRoot: string, manualId: string): ResolvedSource {
   const manualDir = join(repoRoot, "manuals", manualId);
   const manualConfig = parseYaml(readFileSync(join(manualDir, "manual.config.yaml"), "utf8")) as {
     manual?: { source?: string };
-    axes?: Record<string, { values?: Array<{ id?: string }> }>;
   };
   const sourceId = manualConfig.manual?.source;
   if (!sourceId) {
@@ -288,7 +302,7 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
   if (!entry) {
     throw new Error(
       `sources/registry.yaml has no source "${sourceId}". Add it there before ` +
-        `extracting: the registry is what says where the product lives and which ` +
+        `reading the product: the registry is what says where it lives and which ` +
         `files to read.`,
     );
   }
@@ -300,6 +314,16 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
         `\`path\` in sources/registry.yaml is relative to this repository's root.`,
     );
   }
+
+  return { sourceId, sourceRoot, entry };
+}
+
+export function extract(repoRoot: string, manualId: string): ExtractResult {
+  const manualDir = join(repoRoot, "manuals", manualId);
+  const manualConfig = parseYaml(readFileSync(join(manualDir, "manual.config.yaml"), "utf8")) as {
+    axes?: Record<string, { values?: Array<{ id?: string }> }>;
+  };
+  const { sourceId, sourceRoot, entry } = sourceRootFor(repoRoot, manualId);
 
   // --- the product's own registry of axis values ---------------------------
   //

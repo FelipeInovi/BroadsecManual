@@ -148,6 +148,19 @@ label as a literal with its file and line, and flag in the map that labels here
 are quotations. That distinction matters downstream — a keyed label follows the
 product when it changes, a quoted one does not.
 
+**A quotation is CHECKED, not trusted, and the check is not part of this map.**
+Content declares where each label came from, in the declaring section's `labels`
+list, and `broadsec-manual labels <manual>` holds every one against its line —
+reporting a label that moved, and a label that is gone. That last one is the
+failure this exists for: the manual telling an operator to press a control the
+product renamed, while every other stage of the pipeline succeeds.
+
+It lives there rather than here because it needs no map. The citation names a
+file and a line, so the check is a substring test against that line — no
+extractor, no classification, and nothing to build before it works. Which is why
+a product with no catalogue can have its labels checked today, and this step's
+index still is not emitted.
+
 ### 6. Emit and diff
 
 Write `manuals/<manual>/knowledge/module-map.json`. If a previous map exists,

@@ -20,7 +20,7 @@ export type TermListProps = z.infer<typeof termListProps>;
 
 export const termList: BlockDefinition<TermListProps> = {
   type: "term-list",
-  version: "0.3.0",
+  version: "0.4.0",
   description:
     "A tight run of term-and-definition pairs, one line each — the options of a " +
     "single control, a short glossary. Entries normally carry no image; one that " +
@@ -37,4 +37,6 @@ export const termList: BlockDefinition<TermListProps> = {
     policy: "optional",
     convention: "figure",
   },
+  // `term` is what the screen calls it; `definition` is the manual's own words.
+  labels: { itemsProp: "entries", itemProps: ["term"] },
 };

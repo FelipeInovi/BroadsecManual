@@ -49,7 +49,7 @@ export type FieldListProps = z.infer<typeof fieldListProps>;
 
 export const fieldList: BlockDefinition<FieldListProps> = {
   type: "field-list",
-  version: "0.4.0",
+  version: "0.5.0",
   description:
     "A run of named UI elements, each with its own explanation and its own " +
     "screenshot — filter fields, dashboard widgets, panel controls. Use this " +
@@ -66,4 +66,7 @@ export const fieldList: BlockDefinition<FieldListProps> = {
     policy: "always",
     convention: "figure",
   },
+  // `label` is the element's name as the product shows it (see the schema).
+  // `text` is the manual's own explanation and is not quoted from anywhere.
+  labels: { itemsProp: "items", itemProps: ["label"] },
 };

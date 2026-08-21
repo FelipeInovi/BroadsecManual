@@ -395,6 +395,9 @@ A module ships when all of these hold:
 - [ ] Every claim traces to a file and line, or to the module map
 - [ ] UI labels are taken from the i18n catalogue, not retyped, and each records
       the key it came from — the value alone cannot reveal label drift
+- [ ] For a product with NO catalogue, every quoted label is cited in the
+      section's `labels` list and `broadsec-manual labels <manual>` reports it
+      exact — a quotation in a comment is a quotation nothing checks
 - [ ] No number, anchor or figure ordinal is written by hand
 - [ ] Conditioning is tagged at the smallest unit that varies
 - [ ] The build succeeds for every deployment

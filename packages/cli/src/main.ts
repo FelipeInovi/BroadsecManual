@@ -19,6 +19,7 @@ import {
   ContentError,
   type ContentWarning,
   type ImageSlotUse,
+  type LabelCitation,
   type PendingDeclaration,
 } from "@broadsec-manual/core";
 import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
@@ -30,9 +31,10 @@ import {
 import { themes, isThemeName, type Tokens } from "@broadsec-manual/tokens";
 import { printToPdf } from "./chrome.ts";
 import { rasterise, shootFirstPage } from "./raster.ts";
-import { extract } from "./extract.ts";
+import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
+import { checkLabels, labelLines, labelReport } from "./labels.ts";
 import { pendingTable } from "./pending-table.ts";
 import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
 
@@ -132,18 +134,25 @@ export type ManualConfig = z.infer<typeof manualConfigSchema>;
 function loadDocument(
   manualDir: string,
   config: ManualConfig,
-): { doc: ManualDocument; warnings: ContentWarning[]; pending: PendingDeclaration[] } {
+): {
+  doc: ManualDocument;
+  warnings: ContentWarning[];
+  pending: PendingDeclaration[];
+  labels: LabelCitation[];
+} {
   const dir = join(manualDir, "sections");
   const files = readdirSync(dir)
     .filter((f) => f.endsWith(".yaml"))
     .sort();
   const warnings: ContentWarning[] = [];
   const pending: PendingDeclaration[] = [];
+  const labels: LabelCitation[] = [];
   const children: ManualNode[] = files.map((f) => {
     const loaded = loadSection(readFileSync(join(dir, f), "utf8"), `sections/${f}`, catalog);
     warnings.push(...loaded.warnings);
     // Beside the tree, never in it. See `PendingDeclaration`.
     pending.push(...loaded.pending);
+    labels.push(...loaded.labels);
     return loaded.node;
   });
   const ids = new Set<string>();
@@ -167,6 +176,7 @@ function loadDocument(
     },
     warnings,
     pending,
+    labels,
   };
 }
 
@@ -517,6 +527,9 @@ interface LoadedManual {
   readonly warnings: readonly ContentWarning[];
   /** Gaps the sections declare, before conditioning narrows them per target. */
   readonly pending: readonly PendingDeclaration[];
+  /** Where each quoted UI label was copied from. Not conditioned: a label the
+   * product renamed is wrong in every document that shows it. */
+  readonly labels: readonly LabelCitation[];
   readonly targets: readonly BuildTarget[];
   readonly figuresDir: string;
 }
@@ -538,7 +551,7 @@ function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): Lo
     throw new ContentError(configFile, "manual.config", `invalid manual configuration — ${detail}`);
   }
   const config = parsed.data;
-  const { doc, warnings, pending } = loadDocument(manualDir, config);
+  const { doc, warnings, pending, labels } = loadDocument(manualDir, config);
 
   const targets = config.targets.filter((t) =>
     [...filters.entries()].every(([axis, value]) => t[axis] === value),
@@ -553,6 +566,7 @@ function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): Lo
     doc,
     warnings,
     pending,
+    labels,
     targets,
     figuresDir: join(manualDir, "assets", "figures"),
   };
@@ -991,6 +1005,7 @@ export async function run(argv: readonly string[]): Promise<number> {
     (command !== "build" &&
       command !== "images" &&
       command !== "awaiting" &&
+      command !== "labels" &&
       command !== "extract" &&
       command !== "capture") ||
     !manualId
@@ -999,6 +1014,7 @@ export async function run(argv: readonly string[]): Promise<number> {
       `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table] [--docx]\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
+        `       broadsec-manual labels <manual>\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
         `  capture  shoot pending figures off the running product, per\n` +
@@ -1015,6 +1031,10 @@ export async function run(argv: readonly string[]): Promise<number> {
         `           page breaks: Word reflows, so the page count can differ.\n` +
         `  extract  read the source product and write knowledge/module-map.json,\n` +
         `           reporting what changed since the last map.\n` +
+        `  labels   hold every UI label the manual QUOTES against the line it was\n` +
+        `           copied from. This product has no i18n catalogue, so a label is a\n` +
+        `           copy, and a copy does not follow what it copied. Needs the source\n` +
+        `           checked out; reports, never blocks.\n` +
         `  awaiting write awaiting-product.json: the parts of the product that are\n` +
         `           on screen but unfinished, which the manual documents around\n` +
         `           without naming. Declared by a section's \`pending\` list — the\n` +
@@ -1073,6 +1093,26 @@ ${drift.length} change(s) since the previous map:`);
     if (command === "images") {
       console.log(`exporting image requests for ${manualId}${label ? ` (${label})` : ""}`);
       exportImages(manualDir, filters, resolve(process.cwd(), parseOutPath(rest, manualId)));
+      return 0;
+    }
+
+    if (command === "labels") {
+      console.log(`checking quoted labels for ${manualId} against the product`);
+      const { labels } = loadManual(manualDir, filters);
+      if (labels.length === 0) {
+        console.log(
+          `  no label citations — this manual's sections declare none, so nothing ` +
+            `here follows the product when it renames a control`,
+        );
+        return 0;
+      }
+      const { sourceRoot } = sourceRootFor(process.cwd(), manualId);
+      const report = labelReport(checkLabels(sourceRoot, labels));
+      const bad = report.total - report.ok;
+      console.log(`  ${report.total} cited, ${report.ok} still exact, ${bad} to look at`);
+      for (const line of labelLines(report)) console.log(line);
+      // Reports, never blocks: what a renamed label should now say is a
+      // judgement about the product, not something this command decides.
       return 0;
     }
 

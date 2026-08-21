@@ -37,7 +37,7 @@ export type IconTableProps = z.infer<typeof iconTableProps>;
 
 export const iconTable: BlockDefinition<IconTableProps> = {
   type: "icon-table",
-  version: "0.3.0",
+  version: "0.4.0",
   description:
     "A table describing icon-based UI controls, one row per control. The first " +
     "column always shows something: the control's icon once it is delivered, " +
@@ -60,5 +60,12 @@ export const iconTable: BlockDefinition<IconTableProps> = {
     showsProp: "label",
     policy: "always",
     convention: "icon",
+  },
+  // The headers are the product's own column headings, and each row's `label`
+  // names the control. `description` is the manual explaining it.
+  labels: {
+    props: ["labelHeader", "descriptionHeader"],
+    itemsProp: "rows",
+    itemProps: ["label"],
   },
 };

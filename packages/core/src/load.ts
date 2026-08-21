@@ -7,6 +7,7 @@ import type {
   Selector,
 } from "@broadsec-manual/blocks";
 import type { PendingDeclaration } from "./pending.ts";
+import { labelSites, type LabelCitation, type LabelSite } from "./labels.ts";
 
 /**
  * Authoring format for the pipeline spike: YAML mirroring the AST.
@@ -264,6 +265,15 @@ export interface LoadedSection {
    * the load-bearing part and not a filing preference.
    */
   readonly pending: readonly PendingDeclaration[];
+  /**
+   * Where each UI label this section quotes was copied from.
+   *
+   * Beside the tree for the same reason as `pending`: it is what the file says
+   * about itself. Unlike `pending` it is not withheld from the reader — the
+   * label IS in the manual — but the citation is pipeline bookkeeping and has no
+   * business reaching a renderer.
+   */
+  readonly labels: readonly LabelCitation[];
 }
 
 /** Fields every entry must carry. A half-filled one is the prose it replaces. */
@@ -387,6 +397,137 @@ function idsWithin(node: ManualNode, out: Set<string>): void {
   for (const child of node.children ?? []) idsWithin(child, out);
 }
 
+/** `<file>:<line>`, with the section's `sourceBase` applied. */
+function parseFrom(
+  raw: unknown,
+  base: string,
+  file: string,
+  id: string,
+): { file: string; line: number } {
+  if (typeof raw !== "string" || !raw.trim()) {
+    throw new ContentError(
+      file,
+      id,
+      "a label citation needs `from`, in the form `<file>:<line>` — the place in " +
+        "the source product this label was copied from.",
+    );
+  }
+  const at = raw.lastIndexOf(":");
+  const line = at === -1 ? Number.NaN : Number(raw.slice(at + 1));
+  if (at <= 0 || !Number.isInteger(line) || line < 1) {
+    throw new ContentError(
+      file,
+      id,
+      `\`from\` must be \`<file>:<line>\`, not "${raw}". The line is what makes ` +
+        `the citation checkable; a bare filename can only be searched, and a ` +
+        `search finds the label wherever it moved to and reports nothing.`,
+    );
+  }
+  return { file: `${base}${raw.slice(0, at)}`, line };
+}
+
+/**
+ * Parse a section's `labels` list.
+ *
+ * Each entry points at an id and says where that id's label was copied from.
+ * The text itself is read from the content, never re-typed here: a second copy
+ * of the label is a second thing to keep in step, and it is the copy meant to
+ * detect drift.
+ */
+function parseLabels(
+  node: Record<string, unknown>,
+  file: string,
+  sectionId: string,
+  sites: readonly LabelSite[],
+): LabelCitation[] {
+  const raw = node["labels"];
+  if (raw === undefined) return [];
+  if (!Array.isArray(raw)) {
+    throw new ContentError(file, sectionId, "`labels` must be a list of citations");
+  }
+
+  const base = node["sourceBase"];
+  if (base !== undefined && typeof base !== "string") {
+    throw new ContentError(file, sectionId, "`sourceBase` must be a string path prefix");
+  }
+
+  const out: LabelCitation[] = [];
+  const seen = new Set<string>();
+
+  for (const item of raw) {
+    if (typeof item !== "object" || item === null) {
+      throw new ContentError(file, sectionId, "every `labels` entry must be a mapping");
+    }
+    const entry = item as Record<string, unknown>;
+
+    const at = entry["at"];
+    if (typeof at !== "string" || !at.trim()) {
+      throw new ContentError(
+        file,
+        sectionId,
+        "a label citation needs `at`: the id of the node or item carrying the label.",
+      );
+    }
+
+    const carried = sites.filter((s) => s.at === at);
+    if (carried.length === 0) {
+      throw new ContentError(
+        file,
+        at,
+        `\`at\` names "${at}", which carries no UI label in this section. Either the ` +
+          `id is not here, or it is not a label-bearing prop — a step's title and a ` +
+          `paragraph are the MANUAL's words, not the product's, so there is nothing ` +
+          `to check them against. See \`LabelPolicy\` for which props count.`,
+      );
+    }
+
+    const wanted = entry["prop"];
+    let site: LabelSite | undefined;
+    if (wanted === undefined) {
+      if (carried.length > 1) {
+        throw new ContentError(
+          file,
+          at,
+          `"${at}" carries ${carried.length} labels (${carried
+            .map((s) => s.prop)
+            .join(", ")}), so \`prop\` must say which one this citation is for.`,
+        );
+      }
+      site = carried[0];
+    } else {
+      if (typeof wanted !== "string") {
+        throw new ContentError(file, at, "`prop` must be the name of a label prop");
+      }
+      site = carried.find((s) => s.prop === wanted);
+      if (!site) {
+        throw new ContentError(
+          file,
+          at,
+          `"${at}" has no label prop called "${wanted}". It carries: ` +
+            `${carried.map((s) => s.prop).join(", ")}.`,
+        );
+      }
+    }
+    if (!site) continue;
+
+    const key = `${at}|${site.prop}`;
+    if (seen.has(key)) {
+      throw new ContentError(
+        file,
+        at,
+        `"${at}" (${site.prop}) is cited twice. One label came from one place; two ` +
+          `citations mean one of them is wrong and nothing can tell which.`,
+      );
+    }
+    seen.add(key);
+
+    const { file: sourceFile, line } = parseFrom(entry["from"], base ?? "", file, at);
+    out.push({ at, prop: site.prop, text: site.text, file: sourceFile, line, declaredIn: file });
+  }
+
+  return out;
+}
+
 /** Parse one YAML content file into AST nodes. */
 export function loadSection(
   source: string,
@@ -401,18 +542,25 @@ export function loadSection(
   // from the AST, so `loadNode` never saw it.
   const top = (typeof raw === "object" && raw !== null ? raw : {}) as Record<string, unknown>;
   if (node.kind !== "section") {
-    if (top["pending"] !== undefined) {
-      throw new ContentError(
-        file,
-        node.id,
-        "`pending` belongs on a section, not on a block. Coverage is a section's " +
-          "obligation — a block has no submodules of its own to leave out.",
-      );
+    for (const key of ["pending", "labels", "sourceBase"]) {
+      if (top[key] !== undefined) {
+        throw new ContentError(
+          file,
+          node.id,
+          `\`${key}\` belongs on a section, not on a block. Both are things a ` +
+            `content FILE says about itself, and a file is a section.`,
+        );
+      }
     }
-    return { node, warnings, pending: [] };
+    return { node, warnings, pending: [], labels: [] };
   }
 
   const ownIds = new Set<string>();
   idsWithin(node, ownIds);
-  return { node, warnings, pending: parsePending(top, file, node.id, ownIds) };
+  return {
+    node,
+    warnings,
+    pending: parsePending(top, file, node.id, ownIds),
+    labels: parseLabels(top, file, node.id, labelSites(node, catalog)),
+  };
 }
