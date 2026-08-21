@@ -26,6 +26,153 @@ id: bot
 title: Bridge of Things
 subtitle: Los sistemas integrados a la plataforma
 
+# One level higher than the other sections, because this one cites
+# `domain/types/` as well as `presentation/ui/`.
+sourceBase: src/modules/dashboard/
+
+# Where every quoted UI label in this section was copied from. Checked by
+# `broadsec-manual labels bridge-manual`.
+#
+# NOT cited: the column headings (`Panel`, `Qué opera`, `Disposición`, `Celdas`,
+# `Control`, `Qué hace`, `Columna`, `Contenido`); `Barra de paneles`, which is
+# the manual's name for the rail's panel list; `Rango de fechas`, which names the
+# PRT calendar control the product leaves unlabelled; and
+# `bot.cctv.ptz.diagonales`, whose label lists four controls at once, so no
+# single line says it.
+labels:
+  # BOT_MANIFEST.
+  - at: bot.panel.dashboard
+    from: presentation/ui/views/bridge-of-things-view.tsx:18
+  - at: bot.panel.pmv
+    from: presentation/ui/views/bridge-of-things-view.tsx:28
+  - at: bot.panel.cctv
+    from: presentation/ui/views/bridge-of-things-view.tsx:38
+  - at: bot.panel.prt
+    from: presentation/ui/views/bridge-of-things-view.tsx:48
+
+  # PMV's message form, each from its `FieldLabel`.
+  - at: bot.pmv.campo.titulo
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:192
+  - at: bot.pmv.campo.tipo
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:206
+  - at: bot.pmv.campo.panel
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:240
+  # The rendered label continues with the page number and "(seg)"; the citation
+  # holds only the part the manual quotes.
+  - at: bot.pmv.paginas.duracion.campo
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:346
+
+  - at: bot.pmv.pictograma.reglamentarias
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/constants/pictograms.ts:13
+  - at: bot.pmv.pictograma.preventivas
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/constants/pictograms.ts:14
+  - at: bot.pmv.pictograma.informativas
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/constants/pictograms.ts:15
+
+  # `MOSAIC_LAYOUTS`. The product writes the multiplication sign, not the letter
+  # x — worth keeping exact, since the two are indistinguishable on the page.
+  - at: bot.cctv.disposicion.1x1
+    from: domain/types/cctv.types.ts:45
+  - at: bot.cctv.disposicion.2x2
+    from: domain/types/cctv.types.ts:46
+  - at: bot.cctv.disposicion.3x3
+    from: domain/types/cctv.types.ts:47
+  - at: bot.cctv.disposicion.4x4
+    from: domain/types/cctv.types.ts:48
+  - at: bot.cctv.disposicion.2x3
+    from: domain/types/cctv.types.ts:49
+  - at: bot.cctv.disposicion.3x2
+    from: domain/types/cctv.types.ts:50
+  - at: bot.cctv.disposicion.1x3
+    from: domain/types/cctv.types.ts:51
+  - at: bot.cctv.disposicion.3x1
+    from: domain/types/cctv.types.ts:52
+
+  # The PTZ bar's buttons.
+  - at: bot.cctv.ptz.tilt-arriba
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:60
+  - at: bot.cctv.ptz.pan-izquierda
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:81
+  - at: bot.cctv.ptz.home
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:91
+  - at: bot.cctv.ptz.pan-derecha
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:105
+  - at: bot.cctv.ptz.tilt-abajo
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:126
+  - at: bot.cctv.ptz.zoom-mas
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:152
+  - at: bot.cctv.ptz.zoom-menos
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:162
+
+  # Both states are the two arms of one ternary, so both cite the same line.
+  - at: bot.cctv.estado.sin-senal
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-camera-stream-pane.tsx:169
+  - at: bot.cctv.estado.fuera
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-camera-stream-pane.tsx:169
+
+  - at: bot.prt.ficha.prt
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-panel.tsx:57
+  - at: bot.prt.ficha.recursos
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-panel.tsx:63
+
+  # The programming table's column headers.
+  - at: bot.prt.columna.placa
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:30
+  - at: bot.prt.columna.cedula
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:31
+  - at: bot.prt.columna.nombres
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:32
+  - at: bot.prt.columna.seccion
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:35
+  - at: bot.prt.columna.horario
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:45
+  - at: bot.prt.columna.vehiculo
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:54
+  - at: bot.prt.columna.zona
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:57
+  - at: bot.prt.columna.subzona
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:62
+  - at: bot.prt.columna.punto
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:67
+  - at: bot.prt.columna.observaciones
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:72
+
+  - at: bot.prt.control.buscar
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-list-content.tsx:159
+  - at: bot.prt.control.vehiculo
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-list-content.tsx:198
+  - at: bot.prt.control.limpiar
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-list-content.tsx:223
+
+  # The resources table's column headers.
+  - at: bot.prt.recurso.recurso
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:41
+  - at: bot.prt.recurso.agente
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:85
+  - at: bot.prt.recurso.seccion
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:109
+  - at: bot.prt.recurso.punto
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:125
+  - at: bot.prt.recurso.turno
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:137
+  - at: bot.prt.recurso.zona
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:157
+  - at: bot.prt.recurso.observaciones
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:176
+  - at: bot.prt.recurso.pj
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:194
+  - at: bot.prt.recurso.despacho
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:213
+
+  # The two dispatch states, read off the status comparison that colours the row.
+  - at: bot.prt.recursos.estado.despachado
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:47
+  - at: bot.prt.recursos.estado.en-sitio
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:49
+
+  - at: bot.prt.recursos.buscar.campo
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-table.tsx:140
+
 # Parts of the product this section deliberately leaves undescribed. Internal —
 # `awaiting` exports it; the manual names none of it. See `PendingDeclaration`.
 pending:

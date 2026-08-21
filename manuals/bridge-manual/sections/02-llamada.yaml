@@ -24,6 +24,106 @@ id: llamada
 title: Llamada
 subtitle: Atención de la llamada en curso, sobre el mapa del incidente
 
+sourceBase: src/modules/dashboard/presentation/ui/
+
+# Where every quoted UI label in this section was copied from. Checked by
+# `broadsec-manual labels bridge-manual`.
+#
+# NOT cited, because they are the MANUAL's own naming and the product never said
+# them: the column headings `Panel`, `Cuándo aparece`, `Fuerza`, `Qué deja a la
+# vista`, `Dato` and `Qué indica`.
+labels:
+  # CALL_MANIFEST — the dock labels of the panels this view offers. Verified
+  # against the manifest rather than assumed from the order the manual lists
+  # them in, which is not the manifest's order.
+  - at: llamada.aparicion.video
+    from: views/call-view.tsx:93
+  - at: llamada.aparicion.transcripcion
+    from: views/call-view.tsx:104
+  - at: llamada.aparicion.camaras
+    from: views/call-view.tsx:116
+  - at: llamada.aparicion.fuerzas
+    from: views/call-view.tsx:127
+  - at: llamada.aparicion.incidente
+    from: views/call-view.tsx:142
+  - at: llamada.aparicion.chat
+    from: views/call-view.tsx:153
+
+  # The caller's progress steps.
+  - at: llamada.video.avance.enlace
+    from: components/caller-progress-stepper.tsx:8
+  - at: llamada.video.avance.video
+    from: components/caller-progress-stepper.tsx:9
+  - at: llamada.video.avance.gps
+    from: components/caller-progress-stepper.tsx:10
+
+  # The force filter. `Defensa Civil` sits at :33 between Tránsito and Gaula and
+  # the manual does not list it — that is a content gap, not a citation one.
+  - at: llamada.fuerzas.filtro.todos
+    from: components/panels/available-agents-list.tsx:28
+  - at: llamada.fuerzas.filtro.salud
+    from: components/panels/available-agents-list.tsx:29
+  - at: llamada.fuerzas.filtro.bomberos
+    from: components/panels/available-agents-list.tsx:30
+  - at: llamada.fuerzas.filtro.policia
+    from: components/panels/available-agents-list.tsx:31
+  - at: llamada.fuerzas.filtro.transito
+    from: components/panels/available-agents-list.tsx:32
+  - at: llamada.fuerzas.filtro.gaula
+    from: components/panels/available-agents-list.tsx:34
+
+  # The tooltip the operator reads, not the `aria-label` at :257 that says the
+  # same thing to a screen reader.
+  - at: llamada.fuerzas.rapida.marca
+    from: components/panels/available-agent-row.tsx:260
+
+  - at: llamada.fuerzas.ruta.dato.distancia
+    from: components/panels/agent-route-card.tsx:143
+  - at: llamada.fuerzas.ruta.dato.llegada
+    from: components/panels/agent-route-card.tsx:148
+  # Bare JSX text, not a `label=` prop like the three above it.
+  - at: llamada.fuerzas.ruta.dato.intendencia
+    from: components/panels/agent-route-card.tsx:167
+  - at: llamada.fuerzas.ruta.dato.agencia
+    from: components/panels/agent-route-card.tsx:182
+
+  # The location bar's controls, each quoted from its `title`.
+  - at: llamada.mapa.ubicacion.street-view
+    from: components/panels/incident-location-bar.tsx:151
+  - at: llamada.mapa.ubicacion.buscar
+    from: components/panels/incident-location-bar.tsx:182
+  - at: llamada.mapa.ubicacion.aceptar
+    from: components/panels/incident-location-bar.tsx:225
+  - at: llamada.mapa.ubicacion.editar
+    from: components/panels/incident-location-bar.tsx:245
+  - at: llamada.mapa.ubicacion.copiar
+    from: components/panels/incident-location-bar.tsx:260
+
+  # Event origins. `CALL AI` sits at :54 among them and the manual does not
+  # list it.
+  - at: llamada.mapa.bitacora.origen.llamante
+    from: components/panels/incident-events/incident-events.tsx:50
+  - at: llamada.mapa.bitacora.origen.operador
+    from: components/panels/incident-events/incident-events.tsx:58
+  - at: llamada.mapa.bitacora.origen.sistema
+    from: components/panels/incident-events/incident-events.tsx:62
+  - at: llamada.mapa.bitacora.comentar.campo
+    from: components/panels/incident-events/incident-events.tsx:239
+
+  - at: llamada.banda.ia.vista.resumen
+    from: components/panels/call-ai-panel.tsx:30
+  - at: llamada.banda.ia.vista.resolucion
+    from: components/panels/call-ai-panel.tsx:31
+
+  # The wrap-up states. Rendered as bare text and inside template literals, not
+  # as label props — which is why the citation names a line and not a prop.
+  - at: llamada.cierre.aviso.error
+    from: views/call-view.tsx:556
+  - at: llamada.cierre.aviso.cargando
+    from: views/call-view.tsx:563
+  - at: llamada.cierre.aviso.sin-detalle
+    from: views/call-view.tsx:568
+
 children:
   - id: llamada.proposito
     type: prose

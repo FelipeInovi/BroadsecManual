@@ -23,6 +23,124 @@ id: home
 title: Home
 subtitle: Punto de entrada del operador, sobre el mapa de la operación
 
+sourceBase: src/modules/dashboard/presentation/ui/
+
+# Where every quoted UI label in this section was copied from. Checked by
+# `broadsec-manual labels bridge-manual`.
+#
+# Roughly half of this section's label props are NOT citable, and the reasons are
+# worth keeping because they are the reasons a checker cannot be pointed at
+# everything:
+#
+#  - **The manual naming a REGION.** The review card's `Tipo de incidente`,
+#    `Antigüedad`, `Dirección`, `Teléfono`, `Duración` and `Estado` name areas of
+#    the card, not rótulos on it — the card shows a relative time, it does not
+#    print the word "Antigüedad". Only `Prioridad` is a rótulo. Same for the
+#    agency row's `Nombre` and `Tipo`, and for `Recursos`, which groups three
+#    counts the product prints separately.
+#  - **Controls with no rótulo at all.** Every entry in `home.herramientas` is an
+#    icon button with neither `title` nor `aria-label`
+#    (`components/panels/map-tools-panel.tsx:228-275`), so the six names in that
+#    table are the manual describing a function. `Acercar` and `Alejar` DO appear
+#    elsewhere in the product — citing those hits would be citing a different
+#    control that happens to share a word.
+#  - **Column headings** — `Dato`, `Qué indica`, `Recuento`, `Qué cuenta`,
+#    `Ficha`, `Qué contiene`, `Acción`, `Qué hace`, `Paso`, `Qué registra`,
+#    `Control`.
+labels:
+  # The review card. Only the one rótulo it actually prints.
+  - at: home.revision.tarjeta.prioridad
+    from: components/panels/dashboard/calls-review/calls-review-card.tsx:388
+
+  # `CASE_STATUS`. A call with no dispatch record falls into "Cerrado".
+  - at: home.revision.estado.abierto
+    from: components/panels/dashboard/calls-review/calls-review.types.ts:13
+  - at: home.revision.estado.despacho
+    from: components/panels/dashboard/calls-review/calls-review.types.ts:15
+  - at: home.revision.estado.cerrado
+    from: components/panels/dashboard/calls-review/calls-review.types.ts:18
+
+  # The review controls. Two of these alternate — the citation names the line
+  # holding the state the manual documents, and the alternate is in its prose.
+  - at: home.revision.control.buscar
+    from: components/panels/dashboard/calls-review/calls-review-search.tsx:214
+  - at: home.revision.control.teclado
+    from: components/panels/dashboard/calls-review/calls-review-search.tsx:226
+  - at: home.revision.control.filtros
+    from: components/panels/dashboard/calls-review/calls-review-search.tsx:243
+  - at: home.revision.control.orden
+    from: components/panels/dashboard/calls-review/calls-review-search.tsx:345
+
+  - at: home.revision.aviso.sin-llamadas
+    from: components/panels/dashboard/calls-review/calls-review-list.tsx:36
+  - at: home.revision.aviso.error
+    from: components/panels/dashboard/call-summary/call-summary-panel.tsx:90
+
+  # `AGENCY_TYPE_LABEL` — display labels over the four backend `AgencyType`
+  # values, which is also the axis this manual is scoped to (RECEPTION).
+  - at: home.agencias.tipo.recepcion
+    from: components/panels/agencies-panel.tsx:29
+  - at: home.agencias.tipo.despacho
+    from: components/panels/agencies-panel.tsx:30
+  - at: home.agencias.tipo.supervision
+    from: components/panels/agencies-panel.tsx:31
+  - at: home.agencias.tipo.otra
+    from: components/panels/agencies-panel.tsx:32
+  - at: home.agencias.fila.casos
+    from: components/panels/agencies-panel.tsx:149
+  - at: home.agencias.aviso.error
+    from: components/panels/agencies-panel.tsx:224
+  - at: home.agencias.aviso.vacio
+    from: components/panels/agencies-panel.tsx:239
+
+  # `shiftMetrics`.
+  - at: home.turno.metrica.atendidos
+    from: components/panels/my-shift-panel.tsx:16
+  - at: home.turno.metrica.rechazados
+    from: components/panels/my-shift-panel.tsx:17
+  - at: home.turno.metrica.transferidas
+    from: components/panels/my-shift-panel.tsx:19
+
+  # The case summary's tabs.
+  - at: home.caso.informacion.ficha.capturas
+    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:30
+  - at: home.caso.informacion.ficha.ubicacion
+    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:31
+  - at: home.caso.informacion.ficha.logs
+    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:32
+  - at: home.caso.informacion.ficha.call-ia
+    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:33
+
+  - at: home.caso.agencias.dato.operacion
+    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:214
+  - at: home.caso.agencias.dato.disponibles
+    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:221
+  - at: home.caso.agencias.dato.cercana
+    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:229
+  # Alternates with "Agencia transferida" once the transfer is done.
+  - at: home.caso.agencias.transferir.control
+    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:264
+
+  - at: home.caso.accion.centrar
+    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:38
+  - at: home.caso.accion.archivar
+    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:48
+  - at: home.caso.accion.llamar
+    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:62
+  - at: home.caso.accion.libro
+    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:79
+
+  - at: home.libro.ficha.notas
+    from: components/panels/incident-book.tsx:69
+  - at: home.libro.ficha.libro
+    from: components/panels/incident-book.tsx:72
+  - at: home.libro.paso.recepcion
+    from: components/panels/incident-book/general-form.tsx:94
+  - at: home.libro.paso.despacho
+    from: components/panels/incident-book/general-form.tsx:95
+  - at: home.libro.paso.extendida
+    from: components/panels/incident-book/general-form.tsx:96
+
 children:
   - id: home.proposito
     type: prose

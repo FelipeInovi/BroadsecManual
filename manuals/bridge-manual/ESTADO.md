@@ -62,11 +62,24 @@ state.
   drifted from a screen that never said them. Nine of Seatmap's twenty-eight
   label-bearing props are the manual's own; twenty are cited.
 
-  Seatmap is backfilled and reports 20/20 exact. **`01-home`, `02-llamada`,
-  `04-dashboard` and `05-bridge-of-things` are NOT backfilled** — their labels
-  still live only in prose comments, which is 202 quotations nothing checks. That
-  is authoring work, one section at a time, and worth doing as each is next
-  touched rather than in one sweep.
+  **All five sections are backfilled: 187 citations, 187 exact.** Roughly a
+  third of the label-bearing props are deliberately NOT cited, and each section's
+  own header says which and why. Three recurring reasons, worth knowing before
+  adding a sixth section:
+
+  - **The manual naming a REGION, not quoting a rótulo.** Home's review card
+    lists `Antigüedad`, `Dirección`, `Duración`; the card prints a relative time
+    and an address, not those words. Only `Prioridad` is on screen.
+  - **A control with no rótulo at all.** Every map tool in
+    `home.herramientas` is an icon button with neither `title` nor `aria-label`
+    (`map-tools-panel.tsx:228-275`), so those six names are the manual describing
+    a function. `Acercar` and `Alejar` DO appear elsewhere in the product —
+    citing those hits would be citing a different control that shares a word.
+  - **One item covering several controls.** `Anterior y Siguiente`, and CCTV's
+    four diagonal PTZ buttons in one row. No single line says either.
+
+  Column headings are never cited: `Dato`, `Qué indica`, `Ficha`, `Paso`,
+  `Columna`, `Contenido` and the rest are the manual's own furniture.
 
 - **A screen the PRODUCT has not finished: the manual shows what works, names
   none of what does not, and waits.** Owner's decision, taken after two views in
@@ -210,6 +223,21 @@ state.
   - `previewColumns` (`events-history-columns.tsx:122`) is exported and used
     nowhere. Dead code — do not document it, and do not mistake it for the
     column set on screen.
+
+- **Two options the product offers and Llamada does not list.** Found while
+  citing its labels, which is not what the citation check is for — it fell out of
+  reading the source list beside the manual's:
+  - The force filter has SEVEN options; the manual documents six. `Defensa
+    Civil` sits at `available-agents-list.tsx:33`, between `Tránsito` and
+    `Gaula`.
+  - The case log has FOUR event origins; the manual documents three. `CALL AI`
+    sits at `incident-events/incident-events.tsx:54`, among the other three.
+
+  Both are coverage gaps by the `module-completeness` standard — a reader cannot
+  tell an option was skipped, and will conclude it does not matter. Neither is a
+  product defect and neither is blocked on anything: they are content to write.
+  Not written here because citing labels was the task, and widening it silently
+  is how a small change becomes an unreviewable one.
 
 - **A hidden tab is the CLEAN case, and it is worth contrasting.** Analytics
   declares four sub-tabs and marks `Análisis de Colas` as `enabled: false`

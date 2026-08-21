@@ -21,6 +21,120 @@ id: dashboard
 title: Dashboard
 subtitle: Historial, analítica e indicadores de la operación
 
+sourceBase: src/modules/dashboard/presentation/ui/
+
+# Where every quoted UI label in this section was copied from. Checked by
+# `broadsec-manual labels bridge-manual`.
+#
+# NOT cited, because the product never said them: the column headings `Ficha`,
+# `Qué muestra`, `Subficha`, `Qué analiza`, `Campo`, `Qué acota`, `Medida`,
+# `Sobre qué aplica el rango`, `Recuento` and `Qué cuenta`. Nor is
+# `dashboard.historial.paginacion.mover`, whose label reads "Anterior y
+# Siguiente" — the manual joining two controls into one item, so no single line
+# says it.
+labels:
+  # The view's own panel labels.
+  - at: dashboard.calor.control
+    from: views/dashboard-view.tsx:25
+  - at: dashboard.ficha.historial
+    from: views/dashboard-view.tsx:37
+  - at: dashboard.ficha.analitica
+    from: views/dashboard-view.tsx:42
+  - at: dashboard.ficha.emergency
+    from: views/dashboard-view.tsx:47
+
+  - at: dashboard.historial.buscar.campo
+    from: components/panels/dashboard/events-history/events-history-toolbar.tsx:86
+  - at: dashboard.historial.paginacion.indicador
+    from: components/panels/dashboard/events-history/events-history-panel.tsx:331
+
+  # `TABS`. `Análisis de Colas` sits at :26 with `enabled: false` and is filtered
+  # out by `VISIBLE_TABS`, so it is not on screen and the manual does not name it.
+  - at: dashboard.analitica.subficha.general
+    from: components/panels/dashboard/analytics-panel.tsx:23
+  - at: dashboard.analitica.subficha.llamadas
+    from: components/panels/dashboard/analytics-panel.tsx:24
+  - at: dashboard.analitica.subficha.operadores
+    from: components/panels/dashboard/analytics-panel.tsx:27
+
+  # Filter fields, each from its `label=`.
+  - at: dashboard.analitica.campo.agencia
+    from: components/panels/dashboard/analytics-filters-panel.tsx:852
+  - at: dashboard.analitica.campo.turno
+    from: components/panels/dashboard/analytics-filters-panel.tsx:860
+  - at: dashboard.analitica.campo.tipo-llamada
+    from: components/panels/dashboard/analytics-filters-panel.tsx:908
+  - at: dashboard.analitica.campo.estado-llamada
+    from: components/panels/dashboard/analytics-filters-panel.tsx:916
+  - at: dashboard.analitica.campo.prioridad
+    from: components/panels/dashboard/analytics-filters-panel.tsx:924
+  - at: dashboard.analitica.campo.operador
+    from: components/panels/dashboard/analytics-filters-panel.tsx:932
+  - at: dashboard.analitica.campo.estado-operador
+    from: components/panels/dashboard/analytics-filters-panel.tsx:942
+  - at: dashboard.analitica.campo.clasificacion
+    from: components/panels/dashboard/analytics-filters-panel.tsx:951
+  - at: dashboard.analitica.campo.granularidad
+    from: components/panels/dashboard/analytics-filters-panel.tsx:960
+  - at: dashboard.analitica.campo.desempeno
+    from: components/panels/dashboard/analytics-filters-panel.tsx:968
+
+  # Bare text, not a `label=` like the fields above. This is the label an earlier
+  # draft called "Franja horaria" before the citation was checked.
+  - at: dashboard.analitica.filtros.horario.rango
+    from: components/panels/dashboard/analytics-filters-panel.tsx:870
+
+  # `RANGE_MODE_OPTIONS`.
+  - at: dashboard.analitica.rango.todos
+    from: components/panels/dashboard/analytics-filters-panel.tsx:252
+  - at: dashboard.analitica.rango.mayor
+    from: components/panels/dashboard/analytics-filters-panel.tsx:253
+  - at: dashboard.analitica.rango.menor
+    from: components/panels/dashboard/analytics-filters-panel.tsx:254
+  - at: dashboard.analitica.rango.personalizado
+    from: components/panels/dashboard/analytics-filters-panel.tsx:255
+
+  - at: dashboard.analitica.medida.total
+    from: components/panels/dashboard/analytics-filters-panel.tsx:976
+  - at: dashboard.analitica.medida.abandonadas
+    from: components/panels/dashboard/analytics-filters-panel.tsx:985
+  - at: dashboard.analitica.medida.promedio
+    from: components/panels/dashboard/analytics-filters-panel.tsx:994
+  - at: dashboard.analitica.medida.timbre
+    from: components/panels/dashboard/analytics-filters-panel.tsx:1002
+  - at: dashboard.analitica.medida.kpi
+    from: components/panels/dashboard/analytics-filters-panel.tsx:1011
+
+  # The filter presets.
+  - at: dashboard.analitica.preset.24h
+    from: components/panels/dashboard/analytics-filters-panel.tsx:701
+  - at: dashboard.analitica.preset.semana
+    from: components/panels/dashboard/analytics-filters-panel.tsx:706
+  - at: dashboard.analitica.preset.mes
+    from: components/panels/dashboard/analytics-filters-panel.tsx:711
+  - at: dashboard.analitica.preset.anio
+    from: components/panels/dashboard/analytics-filters-panel.tsx:716
+  - at: dashboard.analitica.preset.pico
+    from: components/panels/dashboard/analytics-filters-panel.tsx:719
+  - at: dashboard.analitica.preset.desempeno
+    from: components/panels/dashboard/analytics-filters-panel.tsx:722
+
+  # Not in the filters panel: the refresh control lives on the analytics panel
+  # itself, as the `title` that alternates with "Actualizando…".
+  - at: dashboard.analitica.accion.actualizar
+    from: components/panels/dashboard/analytics-panel.tsx:108
+  - at: dashboard.analitica.accion.limpiar
+    from: components/panels/dashboard/analytics-filters-panel.tsx:1038
+
+  - at: dashboard.emergency.recuento.atendidas
+    from: components/panels/emergency-dashboard/emergency-dashboard-panel.tsx:211
+  - at: dashboard.emergency.recuento.emergencias
+    from: components/panels/emergency-dashboard/emergency-dashboard-panel.tsx:217
+  - at: dashboard.emergency.recuento.no-emergencias
+    from: components/panels/emergency-dashboard/emergency-dashboard-panel.tsx:224
+  - at: dashboard.emergency.recuento.rechazados
+    from: components/panels/emergency-dashboard/emergency-dashboard-panel.tsx:231
+
 # Parts of the product this section deliberately leaves undescribed. Internal —
 # `awaiting` exports it; the manual names none of it. See `PendingDeclaration`.
 pending:
