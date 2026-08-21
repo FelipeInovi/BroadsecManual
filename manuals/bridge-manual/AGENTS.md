@@ -102,3 +102,64 @@ So the gap is in the CONTENT: `01-home` has no table of map layers. Whether it
 should is an authoring decision — which layers a reader sees, whether they belong
 under Home at all — and it is not extraction's call. Five deliverable images are
 waiting on it.
+
+
+## Capturing from the running product
+
+The recipes live in `capture-recipes.yaml` beside this file, and its header
+carries the how. What belongs here is what the app turned out to be like.
+
+### Getting in
+
+```
+WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222" pnpm tauri dev
+```
+
+Git Bash, not PowerShell, and close any window already open first — WebView2
+reads that variable when the process starts. A person then signs in, second
+factor included, and the run joins that window. Probe scripts must run from
+`packages/cli`: pnpm does not hoist `puppeteer-core` to the root.
+
+### What the app is like to drive
+
+- **The rail is six identical buttons.** No id, no aria-label, no text. Position
+  only, against the order `navItems` declares. The tooltip does carry the label
+  and is NOT usable: it stays mounted across reads and returns the previous
+  button's label every other time.
+- **`verify` must be chrome, not a panel.** The window is normally left on
+  whatever view someone was last using, so anything view-specific fails. The
+  top bar's `Agencia:` span is the one thing every view has past the login gate.
+- **A rendered case is not a textContent case.** `HISTORIAL DE EVENTOS` is
+  `Historial de Eventos` in the component, uppercased by CSS.
+- **Seatmap renders no heading at all.** Its tell is one of its own stat card
+  titles. Its regions are not `div.panel` either — the indicator column is
+  `div.row-span-2` and the bottom band is `div[class*="rounded-[25px]"]`.
+- **Clipping a `<Label>` gives the WORD, not the field.** `Label` renders a
+  `<span>`, so a field figure needs `clipUp: div` to reach the label-and-input
+  pair. `[title=…]` and `[placeholder=…]`, by contrast, match the control itself.
+- **The review panel has a live timer**, so a clip there can fail on a re-render.
+  Retry before blaming the selector.
+
+### One incident, and how to recover
+
+Clicking `::-p-text(PMV)` on Bridge of Things' landing panel — trying to open the
+PMV panel the way the manual says its cards do — left the application BLANK: no
+text, no buttons, nothing. The click reached something other than the card.
+
+`page.reload()` recovered it fully, signed in, rail intact. That is safe here and
+worth knowing: the tokens live in `localStorage` and the workstation config in the
+OS keyring, so a reload of the same route re-mounts the app with the session. It
+is not the same thing as navigating away, which has no route to come back from.
+
+**Do not click into an unverified target on someone's signed-in window.** Probe
+what a selector matches first. The cost of getting it wrong is their second
+factor.
+
+### What is still pending, and what each needs
+
+| Blocked on | Slots |
+|---|---|
+| A call in progress | every `llamada.*`, plus `home.caso.fig` and `home.libro.fig` |
+| A second account without `canViewAllAgencies` | any figure showing a permission-conditioned control — `seatmap.fig` is already one |
+| An interaction not yet found | the three `crear-incidente` step figures (their header click does not open the step); `dashboard.analitica.accion.limpiar` (its filters panel does not open with the tab) |
+| A panel-opening path that does not break the app | the BoT panels, and Fuerzas en Campo's three inactive ones |
