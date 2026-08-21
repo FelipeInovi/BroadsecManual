@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 161,
-    "delivered": 65,
-    "pending": 96
+    "total": 163,
+    "delivered": 70,
+    "pending": 93
   },
   "pending": [
     {
@@ -1321,72 +1321,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.analitica.accion.limpiar.png",
         "override": "<permission>/dashboard.analitica.accion.limpiar.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.camaras.arrastrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.camaras.arrastrar",
-          "blockType": "procedure",
-          "shows": "Arrástrela hasta la celda"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.camaras.arrastrar.png",
-        "override": "<permission>/bot.cctv.camaras.arrastrar.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.camaras.soltar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.camaras.soltar",
-          "blockType": "procedure",
-          "shows": "Suéltela"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.camaras.soltar.png",
-        "override": "<permission>/bot.cctv.camaras.soltar.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.ptz.diagonales",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.diagonales",
-          "blockType": "icon-table",
-          "shows": "Arriba izquierda, arriba derecha, abajo izquierda y abajo derecha"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.diagonales.png",
-        "override": "<permission>/bot.cctv.ptz.diagonales.png"
       }
     },
     {
@@ -2842,6 +2776,23 @@
       ]
     },
     {
+      "slot": "bot.cctv.camaras.arrastrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.camaras.arrastrar",
+          "blockType": "procedure",
+          "shows": "Arrástrela hasta una celda del mosaico"
+        }
+      ],
+      "files": [
+        "_common/bot.cctv.camaras.arrastrar.png"
+      ]
+    },
+    {
       "slot": "bot.cctv.ptz.tilt-arriba",
       "neededBy": [
         "agencia-propia",
@@ -2907,6 +2858,74 @@
       ],
       "files": [
         "_common/bot/cctv/ptz/pan-derecha.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.arriba-izquierda",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.arriba-izquierda",
+          "blockType": "icon-table",
+          "shows": "Arriba izquierda"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/arriba-izquierda.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.arriba-derecha",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.arriba-derecha",
+          "blockType": "icon-table",
+          "shows": "Arriba derecha"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/arriba-derecha.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.abajo-izquierda",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.abajo-izquierda",
+          "blockType": "icon-table",
+          "shows": "Abajo izquierda"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/abajo-izquierda.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.abajo-derecha",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.abajo-derecha",
+          "blockType": "icon-table",
+          "shows": "Abajo derecha"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/abajo-derecha.svg"
       ]
     },
     {

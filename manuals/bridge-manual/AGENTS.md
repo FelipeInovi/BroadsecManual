@@ -21,9 +21,9 @@ Settled by survey, not by guessing. The numbers are the point:
 So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
 
-Since then the capture side has run too: at v0.6.6 the manual stands at **65 of
-161 delivered**, and Bridge of Things has 3 slots left, each blocked on something
-no recipe can express. See "What is still pending" below.
+Since then the capture side has run too. At v0.6.7 the manual stands at **70 of
+163 delivered** and **Bridge of Things has none left** — every image that section
+asks for is in the repository. See "What is still pending" below.
 
 Sharing collapsed the twelve force-filter rows into six slots, so the icon
 convention is **33 slots, of which 30 were delivered and 3 cannot be.** The
@@ -59,7 +59,7 @@ colour the row label uses), because `stroke="currentColor"` resolves to black
 inside `<img src="…svg">`. Contrast measured: 5.47:1 on white rows, 4.99:1 on the
 alternating tone.
 
-### The three EXTRACTION cannot answer (two are now captures)
+### The three EXTRACTION could not answer — all three are now filled
 
 - `bot.cctv.ptz.zoom-mas` and `zoom-menos` — the control is a fragment: the
   magnifier SVG **plus** a `<span>` holding `+` or `-` in the app's font
@@ -71,7 +71,16 @@ alternating tone.
   and all, so the fragment problem never arises. Worth keeping in mind for any
   other slot ruled out on the same grounds: "no file can answer this" is not the
   same claim as "no image can".
-- `bot.cctv.ptz.diagonales` — its label names four controls at once.
+- `bot.cctv.ptz.diagonales` — its label named four controls at once, so no file
+  and no clip could answer it.
+
+  **That slot no longer exists.** It was one row describing four controls, and
+  the row was the defect: split at v0.6.7 into `arriba-izquierda`,
+  `arriba-derecha`, `abajo-izquierda` and `abajo-derecha`, each of which turned
+  out to have its own glyph component in `cctv-ptz-core.tsx` (:167, :182, :197,
+  :212) and its own label in the control bar (:50, :70, :116, :136). All four are
+  now extracted, recoloured and cited — the same treatment the four cardinal
+  chevrons already had. The "cannot" was never about extraction at all.
 
 ## Traps this manual hit, and will hit again
 
@@ -88,10 +97,15 @@ the file. If that row ever needs the active state, it is a capture, not an
 extraction.
 
 **A row whose label lists several controls cannot take one control's glyph.**
-`bot.cctv.ptz.diagonales` reads "Arriba izquierda, arriba derecha, abajo
-izquierda y abajo derecha". Even if those arrows were files, delivering one would
-fill the slot, pass every count, and show the reader one quarter of what the
-caption promises.
+`bot.cctv.ptz.diagonales` read "Arriba izquierda, arriba derecha, abajo izquierda
+y abajo derecha". Even though those arrows WERE files, delivering one would have
+filled the slot, passed every count, and shown the reader one quarter of what the
+label promised.
+
+The lesson survives; the example was fixed. **A row like that is not an image
+problem to work around, it is a row to split** — and once split, all four
+delivered from files that were sitting there the whole time. Reach for the split
+before reaching for a way to photograph the group.
 
 **Figure heights are pinned, and that is deliberate.** Bridge's stylesheet fixes
 every figure's box to the placeholder's ratio and letterboxes the image inside it
@@ -204,13 +218,56 @@ factor.
 | A call in progress | every `llamada.*`, plus `home.caso.fig` and `home.libro.fig` |
 | A second account without `canViewAllAgencies` | any figure showing a permission-conditioned control — `seatmap.fig` is already one |
 | An interaction not yet found | the three `crear-incidente` step figures (their header click does not open the step); `dashboard.analitica.accion.limpiar` (its filters panel does not open with the tab); Fuerzas en Campo's three inactive panels |
-| A gesture no still frame can show | `bot.cctv.camaras.arrastrar` and `.soltar` — their captions are the two halves of ONE drag |
-| A caption that names four of nine | `bot.cctv.ptz.diagonales`. Each diagonal now turns out to have its own `title`, so they are four real controls — but they are the CORNERS of a 3×3 pad whose other five the manual documents separately, and no clip contains exactly the four |
 
-**Bridge of Things is now as done as this harness can make it: 3 slots left, and
-each is blocked on something a recipe cannot express.** CCTV was the only panel
-still asking for images; PMV's and PRT's slots went away with their content at
-v0.6.6, so do not go looking for a way to photograph those two.
+**Bridge of Things is COMPLETE.** Its last three blockers turned out not to be
+capture problems at all — see below. PMV's and PRT's slots went away with their
+content at v0.6.6, so do not go looking for a way to photograph those two.
+
+### Twice, an unfillable slot was an AUTHORING defect
+
+This is the most useful thing on this page. Three slots sat in the blocked table
+above as though the harness were short a feature. Two of them were the content
+being wrong, and the third was the content being lazy:
+
+| Was | Diagnosis | Fix |
+|---|---|---|
+| `bot.cctv.camaras.arrastrar` + `.soltar` | Three numbered steps for one action, the third of which was "Suéltela" — a step whose entire content is releasing the mouse. BOTH slots could only ever have photographed a gesture | Merged into one step whose image is the mosaic: the cells, filled and streaming, which is the state the step's text ends on |
+| `bot.cctv.ptz.diagonales` | ONE icon row whose label named four controls at once, so no glyph and no clip could answer it | Split into four rows. Each diagonal has its own `title` in the product AND its own glyph component, so all four are now delivered and all four are cited |
+
+**The tell was already in the file.** That row was the single exception in this
+section's `labels` list, excluded because "no single line says it". An uncitable
+label is not a citation problem — it is the row telling you it describes more
+than one thing. Splitting it removed the exception instead of documenting it.
+
+So when a slot cannot be filled, ask what the CONTENT promised before asking what
+the harness lacks. A gesture, a state that does not survive a still frame, a label
+naming several controls: each is a caption no image can ever answer, and no amount
+of recipe will fix it.
+
+### A live video mosaic needs the right cameras, not a longer settle
+
+`bot.cctv.camaras.arrastrar` shows three cells streaming. Getting three clean
+cells took three attempts, and the reason matters: a cell keeps a **"Cargando..."**
+pill until its stream reaches `readyState 4`, and some cameras simply do not get
+there. CCTV-Aeroparque sat at `readyState 1` with the pill up **70 seconds** in
+while its neighbours had cleared theirs.
+
+So that pill is not a stuck indicator and not a settle that is too short —
+`settleMs` caps at 30s for good reason, and no legal value beats a slow stream.
+The fix was a different camera. The recipe now names CCTV-Sena, CCTV-Astor and
+CCTV-AKT, and the comment says why those three.
+
+Two smaller things from the same run:
+
+- **Address cells by position, not by their empty-state text.** Three drops on
+  the grid's centre put the SAME camera in all three cells, which reads as a
+  fault rather than a mosaic. `div.grid.h-full.w-full > div:nth-child(N)` puts one
+  camera in each.
+- **A cell cannot be reliably emptied.** Its remove control is a hover-revealed
+  20×20 button that only exists while the cell is full, so a recipe that clears
+  cells works on a populated mosaic and throws on an empty one. Any figure here
+  has to be reachable by ADDING, which is why this one shows a full mosaic rather
+  than the "Arrastrar cámara" prompt the step's text quotes.
 
 ### What the CCTV run learned
 

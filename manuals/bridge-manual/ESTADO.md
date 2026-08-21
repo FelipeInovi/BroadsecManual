@@ -155,6 +155,26 @@ state.
   views in `src/modules/dashboard/presentation/ui/views/`. Screen mapping follows
   the view switch, not the router.
 
+- **An image slot that cannot be filled is often the CONTENT being wrong.** Three
+  Bridge of Things slots were carried for a while as capture blockers, as though
+  the harness were short a feature. Two were a procedure written as three steps
+  where one would do — the third being "Suéltela", a numbered step whose whole
+  content is releasing the mouse — so both of their images could only ever have
+  photographed a gesture. The third was one icon row whose label named four
+  controls at once, which no glyph and no clip can answer.
+
+  The row had been announcing itself: it was the single exception in that
+  section's `labels` list, excluded because "no single line says it". **An
+  uncitable label is not a citation problem. It is the row telling you it
+  describes more than one thing.** Splitting it into its four controls removed
+  the exception rather than documenting it, and gave four citable labels and four
+  deliverable glyphs.
+
+  Both were fixed at v0.6.7 and Bridge of Things now has no pending image. The
+  habit worth keeping: before asking what the harness lacks, ask what the caption
+  promised. A gesture, a transient state, a label naming several controls — none
+  of those is answerable by any image, ever.
+
 - **Reading the hook is not reading the data path, and Bridge of Things is where
   it cost.** The first pass on that view asked which panels had queries, found
   `usePmvPanels`, `useCCTVCameras`, `useProgrammingList` and

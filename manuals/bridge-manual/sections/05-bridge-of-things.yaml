@@ -40,9 +40,13 @@ sourceBase: src/modules/dashboard/
 # `broadsec-manual labels bridge-manual`.
 #
 # NOT cited: the column headings (`Panel`, `Qué opera`, `Disposición`, `Celdas`,
-# `Control`, `Qué hace`); `Barra de paneles`, which is the manual's name for the
-# rail's panel list; and `bot.cctv.ptz.diagonales`, whose label lists four
-# controls at once, so no single line says it.
+# `Control`, `Qué hace`); and `Barra de paneles`, which is the manual's name for
+# the rail's panel list.
+#
+# There used to be a third exception — one row whose label named the four
+# diagonal controls at once, so no single line said it. Splitting that row into
+# its four controls removed the exception rather than documenting it: an
+# uncitable label was the tell that the row was wrong.
 labels:
   # BOT_MANIFEST.
   - at: bot.panel.dashboard
@@ -74,6 +78,14 @@ labels:
     from: domain/types/cctv.types.ts:52
 
   # The PTZ bar's buttons.
+  - at: bot.cctv.ptz.arriba-izquierda
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:50
+  - at: bot.cctv.ptz.arriba-derecha
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:70
+  - at: bot.cctv.ptz.abajo-izquierda
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:116
+  - at: bot.cctv.ptz.abajo-derecha
+    from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:136
   - at: bot.cctv.ptz.tilt-arriba
     from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-ptz-control-bar.tsx:60
   - at: bot.cctv.ptz.pan-izquierda
@@ -367,18 +379,20 @@ children:
                 identificador o el nombre de la cámara.
               layout: beside
 
+            # Un solo paso, y antes eran dos. "Suéltela" era un paso numerado
+            # cuyo contenido entero era soltar el botón, y ninguna de las dos
+            # imágenes podía existir: la de "Arrástrela" tenía que fotografiar
+            # un gesto y la de "Suéltela", el instante de soltarlo. Fundidos, la
+            # imagen que acompaña es el mosaico — las celdas sobre las que se
+            # suelta, una ya con su cámara y las vacías con el rótulo que este
+            # mismo texto cita.
             - id: bot.cctv.camaras.arrastrar
-              title: Arrástrela hasta la celda
+              title: Arrástrela hasta una celda del mosaico
               text: >-
-                Las celdas vacías indican **Arrastrar cámara**, y la celda bajo
-                el cursor pasa a indicar **Soltar aquí**.
-              layout: beside
-
-            - id: bot.cctv.camaras.soltar
-              title: Suéltela
-              text: >-
-                La celda queda con esa cámara y su transmisión comienza. Repita
-                para las demás celdas de la disposición.
+                Las celdas vacías indican **Arrastrar cámara**, y la que quede
+                bajo el cursor pasa a indicar **Soltar aquí**. Al soltar, la
+                celda queda con esa cámara y su transmisión comienza. Repita para
+                las demás celdas de la disposición.
               layout: beside
 
       - id: bot.cctv.ptz.titulo
@@ -423,11 +437,28 @@ children:
               label: Pan derecha
               description: >-
                 Gira la cámara hacia la derecha.
-            - id: bot.cctv.ptz.diagonales
-              label: Arriba izquierda, arriba derecha, abajo izquierda y abajo derecha
+            # Cuatro filas, y antes era una sola cuyo rótulo las nombraba a las
+            # cuatro juntas. Ningún glifo ni recorte podía responder ese rótulo:
+            # llenaba el slot, pasaba todos los conteos y le mostraba al lector
+            # una cuarta parte de lo prometido. Son cuatro controles reales, cada
+            # uno con su propio rótulo en el producto y su propio glifo.
+            - id: bot.cctv.ptz.arriba-izquierda
+              label: Arriba izquierda
               description: >-
-                Combinan el giro y la inclinación en un solo movimiento
-                diagonal.
+                Combina el giro a la izquierda con la subida, en un solo
+                movimiento diagonal.
+            - id: bot.cctv.ptz.arriba-derecha
+              label: Arriba derecha
+              description: >-
+                Combina el giro a la derecha con la subida.
+            - id: bot.cctv.ptz.abajo-izquierda
+              label: Abajo izquierda
+              description: >-
+                Combina el giro a la izquierda con la bajada.
+            - id: bot.cctv.ptz.abajo-derecha
+              label: Abajo derecha
+              description: >-
+                Combina el giro a la derecha con la bajada.
             - id: bot.cctv.ptz.zoom-mas
               label: Acercar (Zoom +)
               description: >-

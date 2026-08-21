@@ -572,3 +572,38 @@ recipes:
     dataReady: ::-p-text(Presets de posición)
     clip: button[title="Alejar (Zoom -)"]
     settleMs: 5000
+
+  - slot: bot.cctv.camaras.arrastrar
+    view: bridge-of-things
+    steps:
+      - click: span::-p-text(CCTV)
+      # One camera per cell, addressed by position, and three DIFFERENT cameras.
+      # Dropping three times on the grid's centre put CCTV-Sena in all three
+      # cells — a mosaic showing one camera thrice is an artefact of the capture,
+      # not a screen any operator would have, and it would read as a fault.
+      - drag:
+          from: ::-p-text(CCTV-Sena)
+          to: div.grid.h-full.w-full > div:nth-child(1)
+      # NOT CCTV-Aeroparque, which was here first. Its stream sat at
+      # readyState 1 with the cell's "Cargando..." pill still up 70 seconds in,
+      # while the other two reached readyState 4 and cleared theirs. The pill is
+      # not a stuck indicator and not a settle that is too short — it is that one
+      # camera being slow, so the fix is a different camera, not more waiting.
+      - drag:
+          from: ::-p-text(CCTV-Astor)
+          to: div.grid.h-full.w-full > div:nth-child(2)
+      - drag:
+          from: ::-p-text(CCTV-AKT)
+          to: div.grid.h-full.w-full > div:nth-child(3)
+    screenIs: h3::-p-text(CCTV)
+    # A stream INSIDE the grid, not anywhere on the page: proof a cell actually
+    # took a camera rather than the drags having missed.
+    dataReady: div.grid.h-full.w-full video
+    # The mosaic full, which is the state the step's text ends on ("la celda queda
+    # con esa cámara y su transmisión comienza"). The two states it opens on — the
+    # empty cell's "Arrastrar cámara" and the hovered cell's "Soltar aquí" — stay
+    # in the prose, because neither survives a still frame. That is the whole
+    # reason this slot was unfillable until the content was fixed; see the comment
+    # on the step in `sections/05-bridge-of-things.yaml`.
+    clip: div.grid.h-full.w-full
+    settleMs: 28000
