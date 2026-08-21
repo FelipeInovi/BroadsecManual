@@ -54,4 +54,44 @@ describe("stylesheet", () => {
     const css = bridgeStylesheet(themes.bridge, 'BRIDGE </style><script>alert(1)</script>');
     expect(css).not.toMatch(/<\/style/i);
   });
+
+  // A figure's WIDTH is declared (`widthPercent`) and does not move when an
+  // image arrives. Its HEIGHT came from the file's own proportions, and nothing
+  // held it: deliver a 4:3 screenshot into a slot whose placeholder is 8:5 and
+  // that block changes height, the page break moves, and the document has to be
+  // re-laid-out by hand. Measured on the first product: exactly that, repeatedly.
+  //
+  // So the BOX is pinned and the image fits inside it. The box is what the reader
+  // has been looking at all along, because every slot renders the placeholder
+  // until it does not.
+  describe("Bridge pins the figure box so a delivery cannot move the page", () => {
+    const css = bridgeStylesheet(themes.bridge, "BRIDGE");
+
+    it("pins the ratio and lets the image letterbox inside it", () => {
+      expect(css).toContain("aspect-ratio: 320 / 200");
+      expect(css).toContain("object-fit: contain");
+    });
+
+    // The `beside` layout inherits the rule above rather than declaring its own.
+    // Bridge's sheet has no `.pair__figure figure img` at all — Broadsec's does —
+    // so what this asserts is that no such override appears and quietly unpins
+    // exactly the figures that sit beside a procedure step.
+    it("leaves the beside layout covered by that same rule, with no override", () => {
+      expect(css).toContain(".pair__figure figure { margin: 0; }");
+      expect(css).not.toMatch(/\.pair__figure figure img/);
+    });
+
+    // Table icons were never at risk: that cell bounds them on BOTH axes
+    // already, which is why this change is about figures and nothing else.
+    it("leaves the icon cell's own bounds alone", () => {
+      expect(css).toContain("max-width: 26pt; max-height: 26pt");
+    });
+
+    // Same reasoning as every other assertion in this file: Bridge's sheet is
+    // its own, and a delivered document must not change because another brand
+    // needed something.
+    it("does not reach into Broadsec's sheet", () => {
+      expect(stylesheet(themes.broadsec, "BROADSEC")).not.toContain("aspect-ratio");
+    });
+  });
 });

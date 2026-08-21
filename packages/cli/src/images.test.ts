@@ -1,8 +1,10 @@
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { bridgeStylesheet } from "@broadsec-manual/render-web";
+import { themes } from "@broadsec-manual/tokens";
 import { PENDING_PLACEHOLDER, buildImageIndex } from "./images.ts";
 
 let figures: string;
@@ -143,5 +145,33 @@ describe("buildImageIndex", () => {
 
   it("works when nothing has been delivered at all", () => {
     expect(buildImageIndex(figures, "mv").resolve("cualquiera").state).toBe("pending");
+  });
+});
+
+// --- the placeholder's proportions are load-bearing -------------------------
+//
+// Bridge's stylesheet pins every figure's box to the placeholder's ratio, so a
+// delivered image letterboxes inside the box the reader has been looking at
+// instead of changing the height of the page. That couples two files in
+// different packages, and nothing else would notice them disagreeing: the build
+// succeeds, the image renders, and the layout quietly moves.
+//
+// This test lives here because `cli` owns the shipped placeholder and depends on
+// `render-web`. The reverse dependency does not exist and must not be invented
+// for a test.
+describe("the shipped placeholder and the ratio Bridge's CSS pins", () => {
+  const shipped = (): string =>
+    readFileSync(
+      fileURLToPath(new URL("../assets/_pending.svg", import.meta.url)),
+      "utf8",
+    );
+
+  it("agree, so a delivery letterboxes instead of moving the page", () => {
+    const box = /viewBox="0 0 (\d+) (\d+)"/.exec(shipped());
+    expect(box).not.toBeNull();
+    const [, w, h] = box ?? [];
+    expect(bridgeStylesheet(themes.bridge, "BRIDGE")).toContain(
+      `aspect-ratio: ${w} / ${h}`,
+    );
   });
 });

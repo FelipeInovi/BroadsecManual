@@ -377,7 +377,30 @@ table.tbl--data th { background: ${t.dataTable.headBackground}; }
 table.tbl--data tr:nth-child(even) td { background: ${t.dataTable.rowAltBackground}; }
 
 figure { margin: ${t.space.sm} 0 ${t.space.md}; text-align: center; break-inside: avoid; }
-figure img { max-width: 100%; }
+
+/*
+ * THE FIGURE BOX IS PINNED, and the image fits inside it.
+ *
+ * A figure's width is declared in content (\`widthPercent\`) and never moves. Its
+ * HEIGHT used to come from whatever proportions the delivered file happened to
+ * have, and nothing held it — so a 4:3 screenshot dropped into a slot whose
+ * placeholder is 8:5 changed that block's height, moved the page break, and the
+ * document needed re-laying-out by hand. That happened repeatedly on the first
+ * product, one image at a time.
+ *
+ * \`320 / 200\` is the placeholder's own viewBox — see \`packages/cli/assets/_pending.svg\`,
+ * and the test in \`packages/cli/src/images.test.ts\` that fails if the two ever
+ * disagree. Pinning to THAT ratio means the box is the one the reader has been
+ * looking at all along, because every undelivered slot renders the placeholder.
+ *
+ * \`contain\` letterboxes rather than crops: an image that does not match the box
+ * loses nothing, it just sits in it. A wrongly cropped control is a control the
+ * reader cannot recognise, which is worse than empty margin beside it.
+ *
+ * Table icons are deliberately untouched — \`td.tbl__icon img\` above bounds them
+ * on both axes already, so a delivery there could never move the page.
+ */
+figure img { max-width: 100%; aspect-ratio: 320 / 200; object-fit: contain; }
 figure.figure--item img { max-width: 70%; }
 figcaption {
   margin-top: ${t.space.xs};
