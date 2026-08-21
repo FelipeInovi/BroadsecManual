@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.4.1",
+  "contentVersion": "0.5.0",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 137,
+    "total": 170,
     "delivered": 0,
-    "pending": 137
+    "pending": 170
   },
   "pending": [
     {
@@ -2947,6 +2947,732 @@
       "deliverTo": {
         "shared": "_common/bot.prt.recursos.asignar.confirmar.png",
         "override": "<permission>/bot.prt.recursos.asignar.confirmar.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.fig",
+          "blockType": "figure",
+          "shows": "Vista Fuerzas en Campo con la lista de agentes, el mapa de la operación y la columna de turnos."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.fig.png",
+        "override": "<permission>/fuerzas-campo.fig.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.panel.agentes",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.agentes",
+          "blockType": "icon-table",
+          "shows": "Fuerzas en Campo"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.panel.agentes.png",
+        "override": "<permission>/fuerzas-campo.panel.agentes.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.panel.asignacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.asignacion",
+          "blockType": "icon-table",
+          "shows": "Asignación de Incidentes"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.panel.asignacion.png",
+        "override": "<permission>/fuerzas-campo.panel.asignacion.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.panel.turnos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.turnos",
+          "blockType": "icon-table",
+          "shows": "Turnos"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.panel.turnos.png",
+        "override": "<permission>/fuerzas-campo.panel.turnos.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.panel.tarea",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.tarea",
+          "blockType": "icon-table",
+          "shows": "Orden de Tarea"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.panel.tarea.png",
+        "override": "<permission>/fuerzas-campo.panel.tarea.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fig",
+          "blockType": "figure",
+          "shows": "Lista de agentes desplegados, con su buscador y la fila de filtros por fuerza."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fig.png",
+        "override": "<permission>/fuerzas-campo.agentes.fig.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.control.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.control.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar agente..."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.control.buscar.png",
+        "override": "<permission>/fuerzas-campo.agentes.control.buscar.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.control.filtros",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.control.filtros",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.control.filtros.png",
+        "override": "<permission>/fuerzas-campo.agentes.control.filtros.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.todos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.todos",
+          "blockType": "icon-table",
+          "shows": "Todos"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fuerza.todos.png",
+        "override": "<permission>/fuerzas-campo.agentes.fuerza.todos.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.salud",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.salud",
+          "blockType": "icon-table",
+          "shows": "Salud"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fuerza.salud.png",
+        "override": "<permission>/fuerzas-campo.agentes.fuerza.salud.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.bomberos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.bomberos",
+          "blockType": "icon-table",
+          "shows": "Bomberos"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fuerza.bomberos.png",
+        "override": "<permission>/fuerzas-campo.agentes.fuerza.bomberos.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.policia",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.policia",
+          "blockType": "icon-table",
+          "shows": "Policía"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fuerza.policia.png",
+        "override": "<permission>/fuerzas-campo.agentes.fuerza.policia.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.transito",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.transito",
+          "blockType": "icon-table",
+          "shows": "Tránsito"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fuerza.transito.png",
+        "override": "<permission>/fuerzas-campo.agentes.fuerza.transito.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.defensa-civil",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.defensa-civil",
+          "blockType": "icon-table",
+          "shows": "Defensa Civil"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fuerza.defensa-civil.png",
+        "override": "<permission>/fuerzas-campo.agentes.fuerza.defensa-civil.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.gaula",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.gaula",
+          "blockType": "icon-table",
+          "shows": "Gaula"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.fuerza.gaula.png",
+        "override": "<permission>/fuerzas-campo.agentes.fuerza.gaula.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.agentes.detalle.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.detalle.fig",
+          "blockType": "figure",
+          "shows": "Ficha de un agente seleccionado, con sus datos generales y su inventario."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.agentes.detalle.fig.png",
+        "override": "<permission>/fuerzas-campo.agentes.detalle.fig.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.fig",
+          "blockType": "figure",
+          "shows": "Banda de asignación de incidentes al pie del mapa, con un caso por fila."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.asignacion.fig.png",
+        "override": "<permission>/fuerzas-campo.asignacion.fig.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.control.pedir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.control.pedir",
+          "blockType": "field-list",
+          "shows": "Asignar incidente"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.asignacion.control.pedir.png",
+        "override": "<permission>/fuerzas-campo.asignacion.control.pedir.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.control.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.control.confirmar",
+          "blockType": "field-list",
+          "shows": "Confirmar"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.asignacion.control.confirmar.png",
+        "override": "<permission>/fuerzas-campo.asignacion.control.confirmar.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.control.cancelar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.control.cancelar",
+          "blockType": "field-list",
+          "shows": "Cancelar"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.asignacion.control.cancelar.png",
+        "override": "<permission>/fuerzas-campo.asignacion.control.cancelar.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.paso.agente",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.paso.agente",
+          "blockType": "procedure",
+          "shows": "Seleccione el agente en la lista"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.asignacion.paso.agente.png",
+        "override": "<permission>/fuerzas-campo.asignacion.paso.agente.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.paso.pedir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.paso.pedir",
+          "blockType": "procedure",
+          "shows": "Haga clic en Asignar incidente"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.asignacion.paso.pedir.png",
+        "override": "<permission>/fuerzas-campo.asignacion.paso.pedir.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.paso.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.paso.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Confirmar"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.asignacion.paso.confirmar.png",
+        "override": "<permission>/fuerzas-campo.asignacion.paso.confirmar.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.turnos.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.turnos.fig",
+          "blockType": "figure",
+          "shows": "Columna de turnos acotada al agente seleccionado."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.turnos.fig.png",
+        "override": "<permission>/fuerzas-campo.turnos.fig.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.turnos.control.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.turnos.control.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar turno..."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.turnos.control.buscar.png",
+        "override": "<permission>/fuerzas-campo.turnos.control.buscar.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.turnos.control.filtros",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.turnos.control.filtros",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.turnos.control.filtros.png",
+        "override": "<permission>/fuerzas-campo.turnos.control.filtros.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.tarea.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.fig",
+          "blockType": "figure",
+          "shows": "Formulario de orden de tarea, con la acción, el horario y las instrucciones."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.tarea.fig.png",
+        "override": "<permission>/fuerzas-campo.tarea.fig.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.accion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.accion",
+          "blockType": "field-list",
+          "shows": "Acción"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.tarea.campo.accion.png",
+        "override": "<permission>/fuerzas-campo.tarea.campo.accion.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.inicio",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.inicio",
+          "blockType": "field-list",
+          "shows": "Hora inicio"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.tarea.campo.inicio.png",
+        "override": "<permission>/fuerzas-campo.tarea.campo.inicio.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.fin",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.fin",
+          "blockType": "field-list",
+          "shows": "Hora fin"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.tarea.campo.fin.png",
+        "override": "<permission>/fuerzas-campo.tarea.campo.fin.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.instrucciones",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.instrucciones",
+          "blockType": "field-list",
+          "shows": "Instrucciones"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.tarea.campo.instrucciones.png",
+        "override": "<permission>/fuerzas-campo.tarea.campo.instrucciones.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.tarea.paso.completar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.paso.completar",
+          "blockType": "procedure",
+          "shows": "Complete la acción y el horario"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.tarea.paso.completar.png",
+        "override": "<permission>/fuerzas-campo.tarea.paso.completar.png"
+      }
+    },
+    {
+      "slot": "fuerzas-campo.tarea.paso.crear",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.paso.crear",
+          "blockType": "procedure",
+          "shows": "Haga clic en Crear tarea"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas-campo.tarea.paso.crear.png",
+        "override": "<permission>/fuerzas-campo.tarea.paso.crear.png"
       }
     },
     {

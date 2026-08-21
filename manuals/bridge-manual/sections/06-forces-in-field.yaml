@@ -1,0 +1,788 @@
+# Fuerzas en Campo — written against the Bridge360 source, cited by file and line.
+#
+# There is no module map for this product yet (no extractor exists for its
+# shape), so every claim here carries its own provenance comment instead of
+# tracing to `knowledge/`. There is no i18n catalogue either: every label below
+# is a QUOTATION, cited in the `labels` list and checked by
+# `broadsec-manual labels bridge-manual`.
+#
+# Checked before writing, per ESTADO's standing note:
+#
+#  - **Divergence signals: CLEAN.** `views/forces-in-field.tsx` reads no
+#    `agencyType`, no `permissions`, no `can*` predicate, no `role`, no
+#    `agencyId`. The rail item is not gated either — `navItems`
+#    (`components/layout/icon-sidebar.tsx:51-83`) is a flat literal with no
+#    condition on any entry, so this view is reachable for every agency type
+#    including RECEPTION. Nothing here is conditioned on the `permission` axis
+#    and there is no `when` in this file.
+#
+#    Worth stating because it is easy to conclude the opposite: Home DROPS its
+#    own `field-forces` PANEL for every non-DISPATCH agency
+#    (`views/home-view.tsx:356-364`). That is Home's panel manifest, not this
+#    view. The view stands on its own.
+#
+#  - **Data: real.** No `MOCK`, no fixture module, no English placeholder copy
+#    anywhere under `field-forces/`, `shifts/` or `incident-assign/`. The four
+#    panels query the backend: `useAgentsList`
+#    (`field-forces/field-forces-list.tsx:39`), `useShiftsList`
+#    (`shifts/shifts-list.tsx:23`), `useAgentDetail` and `useCallReviewCases`
+#    (`incident-assign/assign-incident-panel.tsx:42`, `:53`).
+#
+# Two things in the view are NOT documented, and neither is a gap:
+#
+#  - `assign-incident-spacer` (`views/forces-in-field.tsx:43-51`) is a layout
+#    placeholder with an empty label, `dockable: false`, and no case in the
+#    render switch. The product's own comment says it "is never rendered, it
+#    only takes up layout space".
+#  - `case "home"` in that switch (`:167-175`) returns the Bridge of Things
+#    fixture panel — and `home` is NOT in `FORCES_MANIFEST`. The layout ids come
+#    only from the manifest (`hooks/use-panel-layout.ts:198-199`,
+#    `manifest.map(m => ({ id: m.id, ...m.layout }))`), so that case can never
+#    fire. Dead code, like `previewColumns` in Dashboard. It is why this section
+#    declares no `pending` entry: the fixture is unreachable here, and the
+#    declaration that covers it lives in Bridge of Things where it does render.
+#
+# Paths in comments are relative to `src/modules/dashboard/presentation/ui/` in
+# the `bridge` source repository.
+
+id: fuerzas-campo
+title: Fuerzas en Campo
+subtitle: Los agentes desplegados, sus turnos y la asignación de incidentes
+
+sourceBase: src/modules/dashboard/presentation/ui/
+
+# Where every quoted UI label in this section was copied from.
+#
+# NOT cited: the column headings (`Panel`, `Qué opera`, `Estado`, `Qué indica`,
+# `Fuerza`, `Qué deja a la vista`, `Ficha`, `Qué contiene`, `Elemento`,
+# `Qué muestra`, `Campo`, `Qué se indica`), and `Barra de paneles`, which is the
+# manual's name for the rail's panel list.
+labels:
+  # FORCES_MANIFEST — the dock labels. The spacer's label is empty and is not
+  # documented; see the header.
+  - at: fuerzas-campo.panel.agentes
+    from: views/forces-in-field.tsx:31
+  - at: fuerzas-campo.panel.asignacion
+    from: views/forces-in-field.tsx:57
+  - at: fuerzas-campo.panel.turnos
+    from: views/forces-in-field.tsx:75
+  - at: fuerzas-campo.panel.tarea
+    from: views/forces-in-field.tsx:86
+
+  # The agent list's search and filters.
+  - at: fuerzas-campo.agentes.control.buscar
+    from: components/panels/dashboard/field-forces/field-forces-search.tsx:61
+  - at: fuerzas-campo.agentes.control.filtros
+    from: components/panels/dashboard/field-forces/field-forces-search.tsx:72
+
+  # `getAgentStatusLabel`. The filter lists them in the order
+  # available/unavailable/assigned/emergency (`field-forces-search.tsx:15`).
+  - at: fuerzas-campo.agentes.estado.disponible
+    from: utils/agent-status.utils.ts:21
+  - at: fuerzas-campo.agentes.estado.no-disponible
+    from: utils/agent-status.utils.ts:23
+  - at: fuerzas-campo.agentes.estado.asignado
+    from: utils/agent-status.utils.ts:19
+  - at: fuerzas-campo.agentes.estado.emergencia
+    from: utils/agent-status.utils.ts:25
+
+  # `FORCE_FILTER_OPTIONS` holds six; `Todos` is a separate button beside them,
+  # so the filter offers seven in total.
+  - at: fuerzas-campo.agentes.fuerza.todos
+    from: components/panels/dashboard/field-forces/field-forces-search.tsx:141
+  - at: fuerzas-campo.agentes.fuerza.salud
+    from: utils/force-icon.utils.ts:23
+  - at: fuerzas-campo.agentes.fuerza.bomberos
+    from: utils/force-icon.utils.ts:24
+  - at: fuerzas-campo.agentes.fuerza.policia
+    from: utils/force-icon.utils.ts:25
+  - at: fuerzas-campo.agentes.fuerza.transito
+    from: utils/force-icon.utils.ts:26
+  - at: fuerzas-campo.agentes.fuerza.defensa-civil
+    from: utils/force-icon.utils.ts:27
+  - at: fuerzas-campo.agentes.fuerza.gaula
+    from: utils/force-icon.utils.ts:28
+
+  # `SHIFT_OPTIONS`.
+  - at: fuerzas-campo.agentes.turno.en-turno
+    from: components/panels/dashboard/field-forces/field-forces-search.tsx:18
+  - at: fuerzas-campo.agentes.turno.fuera
+    from: components/panels/dashboard/field-forces/field-forces-search.tsx:19
+  - at: fuerzas-campo.agentes.turno.ambos
+    from: components/panels/dashboard/field-forces/field-forces-search.tsx:20
+
+  - at: fuerzas-campo.agentes.aviso.error
+    from: components/panels/dashboard/field-forces/field-forces-list.tsx:60
+  - at: fuerzas-campo.agentes.aviso.vacio
+    from: components/panels/dashboard/field-forces/field-forces-list.tsx:68
+
+  # The selected agent's detail cards.
+  - at: fuerzas-campo.agentes.detalle.general
+    from: components/panels/dashboard/field-forces/agent-detail/agent-general-info.tsx:69
+  - at: fuerzas-campo.agentes.detalle.hoja
+    from: components/panels/dashboard/field-forces/agent-detail/agent-general-info.tsx:74
+  - at: fuerzas-campo.agentes.detalle.observaciones
+    from: components/panels/dashboard/field-forces/agent-detail/agent-general-info.tsx:85
+  - at: fuerzas-campo.agentes.detalle.personas
+    from: components/panels/dashboard/field-forces/agent-detail/agent-general-info.tsx:96
+
+  # `INVENTORY_ITEMS`.
+  - at: fuerzas-campo.agentes.inventario.vehiculo
+    from: components/panels/dashboard/field-forces/agent-detail/agent-inventory.tsx:16
+  - at: fuerzas-campo.agentes.inventario.arma
+    from: components/panels/dashboard/field-forces/agent-detail/agent-inventory.tsx:17
+  - at: fuerzas-campo.agentes.inventario.radio
+    from: components/panels/dashboard/field-forces/agent-detail/agent-inventory.tsx:18
+  - at: fuerzas-campo.agentes.inventario.chaleco
+    from: components/panels/dashboard/field-forces/agent-detail/agent-inventory.tsx:19
+
+  # The assign flow's three phases. The visible tooltip, not the `aria-label`
+  # that repeats it for a screen reader.
+  - at: fuerzas-campo.asignacion.control.pedir
+    from: components/panels/dashboard/incident-assign/assign-incident-action.tsx:115
+  - at: fuerzas-campo.asignacion.control.confirmar
+    from: components/panels/dashboard/incident-assign/assign-incident-action.tsx:88
+  - at: fuerzas-campo.asignacion.control.cancelar
+    from: components/panels/dashboard/incident-assign/assign-incident-action.tsx:103
+
+  # Turnos.
+  - at: fuerzas-campo.turnos.control.buscar
+    from: components/panels/dashboard/shifts/shifts-search.tsx:71
+  - at: fuerzas-campo.turnos.control.filtros
+    from: components/panels/dashboard/shifts/shifts-search.tsx:82
+  - at: fuerzas-campo.turnos.estado.activo
+    from: components/panels/dashboard/shifts/shifts-search.tsx:14
+  - at: fuerzas-campo.turnos.estado.inactivo
+    from: components/panels/dashboard/shifts/shifts-search.tsx:15
+  - at: fuerzas-campo.turnos.estado.todos
+    from: components/panels/dashboard/shifts/shifts-search.tsx:16
+  - at: fuerzas-campo.turnos.aviso.error
+    from: components/panels/dashboard/shifts/shifts-list.tsx:44
+  - at: fuerzas-campo.turnos.aviso.vacio
+    from: components/panels/dashboard/shifts/shifts-list.tsx:52
+
+  # Orden de Tarea's form.
+  - at: fuerzas-campo.tarea.campo.accion
+    from: components/panels/dashboard/shifts/create-task/create-task-form.tsx:157
+  - at: fuerzas-campo.tarea.campo.inicio
+    from: components/panels/dashboard/shifts/create-task/create-task-form.tsx:210
+  - at: fuerzas-campo.tarea.campo.fin
+    from: components/panels/dashboard/shifts/create-task/create-task-form.tsx:214
+  - at: fuerzas-campo.tarea.campo.instrucciones
+    from: components/panels/dashboard/shifts/create-task/create-task-form.tsx:226
+
+children:
+  - id: fuerzas-campo.proposito
+    type: prose
+    props:
+      text: >-
+        La vista **Fuerzas en Campo** reúne los agentes desplegados en la vía:
+        quiénes están operando, en qué estado se encuentra cada uno, qué turno
+        cumple y qué incidente tiene asignado. Es la vista desde la que se
+        asigna un incidente a un agente y desde la que se le imparte una orden
+        de tarea.
+
+  - id: fuerzas-campo.acceso
+    type: prose
+    props:
+      # components/layout/icon-sidebar.tsx:74 — nav item id `forces-in-field`,
+      # rótulo "Fuerzas en Campo", sin condición alguna en la entrada.
+      text: >-
+        Diríjase a **Fuerzas en Campo** en la barra lateral de iconos. La vista
+        ocupa la pantalla completa y se organiza en tres columnas: la lista de
+        agentes a la izquierda, el mapa de la operación en el centro y la
+        columna de turnos a la derecha.
+
+  - id: fuerzas-campo.fig
+    type: figure
+    props:
+      caption: "Vista Fuerzas en Campo con la lista de agentes, el mapa de la operación y la columna de turnos."
+      widthPercent: 90
+
+  - id: fuerzas-campo.paneles
+    type: icon-table
+    props:
+      # Rótulos citados de FORCES_MANIFEST, views/forces-in-field.tsx:31, :57,
+      # :75 y :86. Los tres últimos llevan `initiallyInactive`, de modo que la
+      # vista abre solo con la lista de agentes.
+      labelHeader: Panel
+      descriptionHeader: Qué opera
+      rows:
+        - id: fuerzas-campo.panel.agentes
+          label: Fuerzas en Campo
+          description: >-
+            La lista de agentes desplegados, con su buscador y sus filtros. Es
+            el único panel que la vista abre por sí sola.
+        - id: fuerzas-campo.panel.asignacion
+          label: Asignación de Incidentes
+          description: >-
+            Los casos pendientes de asignar, en una banda al pie del mapa, con
+            el control de asignación en cada fila.
+        - id: fuerzas-campo.panel.turnos
+          label: Turnos
+          description: >-
+            Los turnos programados. Al seleccionar un agente en la lista, este
+            panel se abre y queda acotado a ese agente.
+        - id: fuerzas-campo.panel.tarea
+          label: Orden de Tarea
+          description: >-
+            El formulario con el que se imparte una tarea dentro de un turno.
+
+  - id: fuerzas-campo.abrir
+    type: prose
+    props:
+      # ToolKitPanel al pie de la barra de iconos
+      # (components/layout/icon-sidebar.tsx:158), que lista las entradas del
+      # manifiesto de la vista activa
+      # (components/panels/tool-kit-panel.tsx:186).
+      text: >-
+        Los tres paneles que no se abren solos se activan desde la barra de
+        paneles, al pie de la barra lateral de iconos: allí se listan los
+        paneles de la vista en la que está y su estado. **Turnos** además se
+        abre por su cuenta al seleccionar un agente.
+
+  # --- Fuerzas en Campo (la lista de agentes) ---------------------------------
+  - id: fuerzas-campo.agentes
+    title: Fuerzas en Campo
+    children:
+      - id: fuerzas-campo.agentes.proposito
+        type: prose
+        props:
+          # Encabezado citado de
+          # components/panels/dashboard/field-forces/field-forces-panel.tsx:79.
+          # Al abrirse enciende la capa de móviles del mapa y al cerrarse
+          # limpia el agente enfocado (field-forces-panel.tsx:35-40).
+          text: >-
+            Lista los agentes desplegados y es el punto de partida de la vista.
+            Al abrirse enciende la capa de móviles sobre el mapa, de modo que
+            cada agente de la lista tiene su posición a la vista.
+
+      - id: fuerzas-campo.agentes.ubicacion
+        type: prose
+        props:
+          text: >-
+            Ocupa la columna izquierda y está disponible desde que la vista
+            termina de cargar. No requiere ninguna acción previa.
+
+      - id: fuerzas-campo.agentes.fig
+        type: figure
+        props:
+          caption: "Lista de agentes desplegados, con su buscador y la fila de filtros por fuerza."
+          widthPercent: 90
+
+      - id: fuerzas-campo.agentes.controles
+        type: field-list
+        props:
+          items:
+            - id: fuerzas-campo.agentes.control.buscar
+              label: Buscar agente...
+              text: >-
+                Reduce la lista a los agentes cuyos datos contienen lo que
+                escriba. Filtra mientras escribe, sin necesidad de confirmar.
+              layout: beside
+
+            - id: fuerzas-campo.agentes.control.filtros
+              label: Filtros
+              text: >-
+                Abre las opciones por las que puede acotar la lista: el estado
+                del agente y su situación de turno.
+              layout: beside
+
+      - id: fuerzas-campo.agentes.estados.titulo
+        type: detail-header
+        props:
+          text: Estados del agente
+
+      - id: fuerzas-campo.agentes.estados
+        type: data-table
+        props:
+          # Rótulos citados de `getAgentStatusLabel`,
+          # utils/agent-status.utils.ts:19, :21, :23 y :25. El filtro los ofrece
+          # en el orden disponible / no disponible / asignado / emergencia
+          # (field-forces-search.tsx:15).
+          labelHeader: Estado
+          descriptionHeader: Qué indica
+          rows:
+            - id: fuerzas-campo.agentes.estado.disponible
+              label: Disponible
+              description: >-
+                El agente puede recibir un incidente.
+            - id: fuerzas-campo.agentes.estado.no-disponible
+              label: No disponible
+              description: >-
+                El agente no puede recibir un incidente.
+            - id: fuerzas-campo.agentes.estado.asignado
+              label: Asignado
+              description: >-
+                El agente ya tiene un incidente a cargo.
+            - id: fuerzas-campo.agentes.estado.emergencia
+              label: Emergencia
+              description: >-
+                El agente está atendiendo una emergencia.
+
+      - id: fuerzas-campo.agentes.estados.aviso
+        type: callout
+        props:
+          # utils/agent-assignable.utils.ts:5 — el comentario del producto dice
+          # que asignado, no disponible y emergencia significan lo mismo para
+          # la asignación.
+          variant: info
+          text: >-
+            De los cuatro estados, solo **Disponible** admite una asignación:
+            los otros tres impiden por igual que el agente reciba un incidente.
+
+      - id: fuerzas-campo.agentes.fuerzas.titulo
+        type: detail-header
+        props:
+          text: Filtro por fuerza
+
+      - id: fuerzas-campo.agentes.fuerzas
+        type: icon-table
+        props:
+          # Rótulos citados de `FORCE_FILTER_OPTIONS`,
+          # utils/force-icon.utils.ts:23-28, más el botón "Todos" que va aparte
+          # en field-forces-search.tsx:141. Siete opciones en total.
+          labelHeader: Fuerza
+          descriptionHeader: Qué deja a la vista
+          rows:
+            - id: fuerzas-campo.agentes.fuerza.todos
+              label: Todos
+              description: >-
+                Todos los agentes, sin distinguir fuerza.
+            - id: fuerzas-campo.agentes.fuerza.salud
+              label: Salud
+              description: >-
+                Solo los agentes de salud.
+            - id: fuerzas-campo.agentes.fuerza.bomberos
+              label: Bomberos
+              description: >-
+                Solo los agentes de bomberos.
+            - id: fuerzas-campo.agentes.fuerza.policia
+              label: Policía
+              description: >-
+                Solo los agentes de policía.
+            - id: fuerzas-campo.agentes.fuerza.transito
+              label: Tránsito
+              description: >-
+                Solo los agentes de tránsito.
+            - id: fuerzas-campo.agentes.fuerza.defensa-civil
+              label: Defensa Civil
+              description: >-
+                Solo los agentes de defensa civil.
+            - id: fuerzas-campo.agentes.fuerza.gaula
+              label: Gaula
+              description: >-
+                Solo los agentes de Gaula.
+
+      - id: fuerzas-campo.agentes.turnos.titulo
+        type: detail-header
+        props:
+          text: Filtro por turno
+
+      - id: fuerzas-campo.agentes.turnos
+        type: term-list
+        props:
+          entries:
+            # Rótulos citados de `SHIFT_OPTIONS`,
+            # field-forces-search.tsx:18, :19 y :20.
+            - id: fuerzas-campo.agentes.turno.en-turno
+              term: En turno
+              definition: >-
+                Solo los agentes que están cumpliendo turno.
+            - id: fuerzas-campo.agentes.turno.fuera
+              term: Fuera de turno
+              definition: >-
+                Solo los agentes que no están cumpliendo turno.
+            - id: fuerzas-campo.agentes.turno.ambos
+              term: Ambos
+              definition: >-
+                Sin distinguir situación de turno.
+
+      - id: fuerzas-campo.agentes.avisos
+        type: term-list
+        props:
+          entries:
+            # Avisos citados de field-forces-list.tsx:60 y :68.
+            - id: fuerzas-campo.agentes.aviso.error
+              term: No se pudo cargar la lista de agentes
+              definition: >-
+                La consulta no llegó a resolverse. Vuelva a abrir el panel para
+                reintentarla.
+            - id: fuerzas-campo.agentes.aviso.vacio
+              term: Sin agentes encontrados
+              definition: >-
+                La consulta se resolvió y ningún agente cumple lo que pide el
+                buscador o los filtros.
+
+      # --- Detalle del agente ------------------------------------------------
+      - id: fuerzas-campo.agentes.detalle
+        title: Detalle del agente
+        children:
+          - id: fuerzas-campo.agentes.detalle.proposito
+            type: prose
+            props:
+              text: >-
+                Al seleccionar un agente de la lista, la fila se expande y
+                muestra su ficha completa. La selección además acota el panel
+                **Turnos** a ese agente y lo abre si estaba cerrado.
+
+          - id: fuerzas-campo.agentes.detalle.fig
+            type: figure
+            props:
+              caption: "Ficha de un agente seleccionado, con sus datos generales y su inventario."
+              widthPercent: 90
+
+          - id: fuerzas-campo.agentes.detalle.fichas
+            type: data-table
+            props:
+              # Rótulos citados de
+              # field-forces/agent-detail/agent-general-info.tsx:69, :74, :85
+              # y :96.
+              labelHeader: Ficha
+              descriptionHeader: Qué contiene
+              rows:
+                - id: fuerzas-campo.agentes.detalle.general
+                  label: Información General
+                  description: >-
+                    Los datos de identificación del agente.
+                - id: fuerzas-campo.agentes.detalle.hoja
+                  label: Hoja de vida
+                  description: >-
+                    Su historial dentro de la institución.
+                - id: fuerzas-campo.agentes.detalle.observaciones
+                  label: Observaciones
+                  description: >-
+                    Las anotaciones registradas sobre el agente.
+                - id: fuerzas-campo.agentes.detalle.personas
+                  label: Personas asociadas
+                  description: >-
+                    Los contactos vinculados a su legajo.
+
+          - id: fuerzas-campo.agentes.inventario.titulo
+            type: detail-header
+            props:
+              text: Inventario asignado
+
+          - id: fuerzas-campo.agentes.inventario
+            type: data-table
+            props:
+              # Rótulos citados de `INVENTORY_ITEMS`,
+              # field-forces/agent-detail/agent-inventory.tsx:16-19. Cada
+              # elemento muestra su serial, y "N/A" cuando el registro no lo
+              # trae (:74-76).
+              labelHeader: Elemento
+              descriptionHeader: Qué muestra
+              rows:
+                - id: fuerzas-campo.agentes.inventario.vehiculo
+                  label: Vehículo
+                  description: >-
+                    El vehículo a cargo del agente, con su identificación.
+                - id: fuerzas-campo.agentes.inventario.arma
+                  label: Arma
+                  description: >-
+                    El arma asignada, con su identificación.
+                - id: fuerzas-campo.agentes.inventario.radio
+                  label: Radio
+                  description: >-
+                    El equipo de radio asignado, con su identificación.
+                - id: fuerzas-campo.agentes.inventario.chaleco
+                  label: Chaleco
+                  description: >-
+                    El chaleco asignado, con su identificación.
+
+          - id: fuerzas-campo.agentes.inventario.aviso
+            type: callout
+            props:
+              variant: info
+              text: >-
+                Un elemento sin identificación registrada se muestra igual, con
+                **N/A** en su lugar: la ausencia del dato no oculta que el
+                elemento está asignado.
+
+  # --- Asignación de Incidentes ----------------------------------------------
+  - id: fuerzas-campo.asignacion
+    title: Asignación de Incidentes
+    children:
+      - id: fuerzas-campo.asignacion.proposito
+        type: prose
+        props:
+          # Encabezado citado de
+          # incident-assign/assign-incident-panel.tsx:187. La lista es el mismo
+          # origen que Revisión de Llamadas en Home — `useCallReviewCases`
+          # (:53) — con un control de asignación por fila; el comentario del
+          # producto lo dice en :28.
+          text: >-
+            Lista los casos sobre los que todavía no se despachó a nadie, con un
+            control de asignación en cada fila. Es la misma información que
+            **Revisión de Llamadas** ofrece en Home, con la asignación agregada.
+
+      - id: fuerzas-campo.asignacion.ubicacion
+        type: prose
+        props:
+          text: >-
+            Ocupa una banda al pie de la columna central, debajo del mapa. No se
+            abre por sí sola: actívela desde la barra de paneles.
+
+      - id: fuerzas-campo.asignacion.fig
+        type: figure
+        props:
+          caption: "Banda de asignación de incidentes al pie del mapa, con un caso por fila."
+          widthPercent: 90
+
+      - id: fuerzas-campo.asignacion.agente
+        type: prose
+        props:
+          # assign-incident-panel.tsx:41-42 — el panel toma el agente enfocado
+          # y consulta su detalle; :208 muestra "Cargando agente…" mientras la
+          # consulta corre.
+          text: >-
+            El panel trabaja contra el agente que tenga seleccionado en la
+            lista, y lo nombra en su encabezado. Si no seleccionó ninguno, no
+            hay a quién asignar.
+
+      - id: fuerzas-campo.asignacion.controles
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de los tooltips visibles en
+            # incident-assign/assign-incident-action.tsx:115, :88 y :103. Las
+            # tres fases están declaradas en :9 (`AssignPhase`): `idle` muestra
+            # el control, `confirming` lo reemplaza por el par
+            # confirmar/cancelar, `assigning` espera la respuesta.
+            - id: fuerzas-campo.asignacion.control.pedir
+              label: Asignar incidente
+              text: >-
+                Inicia la asignación del caso de esa fila al agente
+                seleccionado. Al presionarlo, el control se reemplaza por el par
+                de confirmación.
+              layout: beside
+
+            - id: fuerzas-campo.asignacion.control.confirmar
+              label: Confirmar
+              text: >-
+                Envía la asignación. Mientras la plataforma responde, el control
+                indica que está en curso.
+              layout: beside
+
+            - id: fuerzas-campo.asignacion.control.cancelar
+              label: Cancelar
+              text: >-
+                Descarta la asignación y devuelve la fila a su estado anterior,
+                sin enviar nada.
+              layout: beside
+
+      - id: fuerzas-campo.asignacion.procedimiento
+        type: procedure
+        props:
+          steps:
+            - id: fuerzas-campo.asignacion.paso.agente
+              title: Seleccione el agente en la lista
+              text: >-
+                La asignación se hace sobre el agente enfocado, y el panel lo
+                nombra en su encabezado. Verifique que sea el que corresponde
+                antes de continuar.
+              layout: beside
+            - id: fuerzas-campo.asignacion.paso.pedir
+              title: Haga clic en Asignar incidente
+              text: >-
+                En la fila del caso que quiere despachar. El control se
+                reemplaza por el par de confirmación.
+              layout: beside
+            - id: fuerzas-campo.asignacion.paso.confirmar
+              title: Haga clic en Confirmar
+              text: >-
+                Envía la asignación. **Cancelar** descarta la operación y
+                devuelve la fila a su estado anterior.
+              layout: beside
+
+      - id: fuerzas-campo.asignacion.resultado
+        type: prose
+        props:
+          text: >-
+            Al confirmarse, la plataforma avisa el resultado y la fila queda
+            marcada como asignada. El caso además queda seleccionado en el mapa,
+            de modo que la asignación se ve sobre la operación.
+
+      - id: fuerzas-campo.asignacion.deshabilitado
+        type: callout
+        props:
+          # El control queda deshabilitado por dos motivos independientes: el
+          # agente no admite asignación (agent-dispatch-button.tsx:70) o el caso
+          # no trae el identificador que la asignación necesita
+          # (case-dispatch-button.tsx:80, agent-dispatch-button.tsx:121). El
+          # producto nombra ese identificador en el aviso; el manual lo describe
+          # sin reimprimirlo, porque es un nombre interno.
+          variant: important
+          text: >-
+            El control de asignación puede aparecer deshabilitado por dos
+            motivos: el agente seleccionado no está **Disponible**, o el caso no
+            trae el dato que la asignación necesita. Al apuntar al control, la
+            plataforma indica cuál de los dos es.
+
+  # --- Turnos ----------------------------------------------------------------
+  - id: fuerzas-campo.turnos
+    title: Turnos
+    children:
+      - id: fuerzas-campo.turnos.proposito
+        type: prose
+        props:
+          # Encabezado citado de shifts/shifts-panel.tsx:90; los datos vienen de
+          # `useShiftsList` (shifts/shifts-list.tsx:23).
+          text: >-
+            Lista los turnos programados, con el detalle de cada uno y las
+            tareas que incluye.
+
+      - id: fuerzas-campo.turnos.ubicacion
+        type: prose
+        props:
+          # shifts-panel.tsx:76-80 — la leyenda "Turnos del agente
+          # seleccionado" aparece solo con un agente enfocado. La apertura
+          # automática está en views/forces-in-field.tsx:130-137, y está
+          # atada al CAMBIO de selección, no al estado del panel: el comentario
+          # del producto explica que de otro modo cerrar Turnos con un agente
+          # todavía seleccionado lo reabriría de inmediato.
+          text: >-
+            Ocupa la columna derecha y no se abre por sí sola, salvo al
+            seleccionar un agente en la lista: ahí se abre y queda acotada a
+            ese agente, lo que la propia columna indica. Si la cierra, no
+            vuelve a abrirse hasta que cambie de agente.
+
+      - id: fuerzas-campo.turnos.fig
+        type: figure
+        props:
+          caption: "Columna de turnos acotada al agente seleccionado."
+          widthPercent: 90
+
+      - id: fuerzas-campo.turnos.controles
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de shifts/shifts-search.tsx:71 y :82.
+            - id: fuerzas-campo.turnos.control.buscar
+              label: Buscar turno...
+              text: >-
+                Reduce la lista a los turnos cuyos datos contienen lo que
+                escriba. Filtra mientras escribe.
+              layout: beside
+
+            - id: fuerzas-campo.turnos.control.filtros
+              label: Filtros
+              text: >-
+                Abre las opciones por las que puede acotar la lista: la
+                situación del turno y el período que quiere consultar.
+              layout: beside
+
+      - id: fuerzas-campo.turnos.estados
+        type: term-list
+        props:
+          entries:
+            # Rótulos citados de shifts/shifts-search.tsx:14, :15 y :16.
+            - id: fuerzas-campo.turnos.estado.activo
+              term: Activo
+              definition: >-
+                Solo los turnos en curso.
+            - id: fuerzas-campo.turnos.estado.inactivo
+              term: Inactivo
+              definition: >-
+                Solo los turnos que no están en curso.
+            - id: fuerzas-campo.turnos.estado.todos
+              term: Todos
+              definition: >-
+                Sin distinguir situación.
+
+      - id: fuerzas-campo.turnos.avisos
+        type: term-list
+        props:
+          entries:
+            # Avisos citados de shifts/shifts-list.tsx:44 y :52.
+            - id: fuerzas-campo.turnos.aviso.error
+              term: No se pudo cargar la lista de turnos
+              definition: >-
+                La consulta no llegó a resolverse. Vuelva a abrir el panel para
+                reintentarla.
+            - id: fuerzas-campo.turnos.aviso.vacio
+              term: Sin turnos encontrados
+              definition: >-
+                La consulta se resolvió y ningún turno cumple lo que pide el
+                buscador o los filtros.
+
+  # --- Orden de Tarea --------------------------------------------------------
+  - id: fuerzas-campo.tarea
+    title: Orden de Tarea
+    children:
+      - id: fuerzas-campo.tarea.proposito
+        type: prose
+        props:
+          # Encabezado citado de
+          # shifts/create-task/create-task-panel.tsx:29.
+          text: >-
+            Imparte una tarea dentro de un turno: qué debe hacer el agente,
+            entre qué horas y con qué instrucciones.
+
+      - id: fuerzas-campo.tarea.ubicacion
+        type: prose
+        props:
+          # Comparte la columna derecha con Turnos, ambos en la región `right`
+          # con el mismo peso (views/forces-in-field.tsx:74-92). El comentario
+          # del producto dice que la región reparte la altura y saltea los
+          # paneles ocultos, así que Turnos recupera la columna entera cuando
+          # Orden de Tarea se cierra.
+          text: >-
+            Comparte la columna derecha con **Turnos**: los dos se reparten la
+            altura mientras están abiertos, y al cerrar uno el otro recupera la
+            columna entera. No se abre por sí solo.
+
+      - id: fuerzas-campo.tarea.fig
+        type: figure
+        props:
+          caption: "Formulario de orden de tarea, con la acción, el horario y las instrucciones."
+          widthPercent: 90
+
+      - id: fuerzas-campo.tarea.campos
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de create-task/create-task-form.tsx:157, :210,
+            # :214 y :226.
+            - id: fuerzas-campo.tarea.campo.accion
+              label: Acción
+              text: >-
+                Qué debe hacer el agente. Al elegirla se habilita la sub-acción,
+                que queda inaccesible mientras no haya acción elegida.
+
+            - id: fuerzas-campo.tarea.campo.inicio
+              label: Hora inicio
+              text: >-
+                Desde qué hora corre la tarea. Llega propuesta a partir del
+                comienzo del turno.
+
+            - id: fuerzas-campo.tarea.campo.fin
+              label: Hora fin
+              text: >-
+                Hasta qué hora corre. Llega propuesta una hora después del
+                inicio.
+
+            - id: fuerzas-campo.tarea.campo.instrucciones
+              label: Instrucciones
+              text: >-
+                Lo que el agente debe tener en cuenta. Es opcional, y el propio
+                campo lo indica.
+
+      - id: fuerzas-campo.tarea.procedimiento
+        type: procedure
+        props:
+          steps:
+            - id: fuerzas-campo.tarea.paso.completar
+              title: Complete la acción y el horario
+              text: >-
+                La sub-acción queda inaccesible hasta que elija una acción. Las
+                horas llegan propuestas a partir del turno y puede ajustarlas.
+              layout: beside
+            # Rótulo citado de create-task-form.tsx:247. El aviso de éxito está
+            # en :118 y el de error en :122.
+            - id: fuerzas-campo.tarea.paso.crear
+              title: Haga clic en Crear tarea
+              text: >-
+                La plataforma avisa si la tarea quedó creada y, si no pudo
+                crearse, cuál fue el motivo.
+              layout: beside

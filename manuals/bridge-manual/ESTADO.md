@@ -323,7 +323,14 @@ derivable and therefore not restated here.)*
 
 ## Next section
 
-**`forces-in-field`** — next in the rail order, `06-`, no renumbering.
+**`create-incident`** — last in the rail order, `07-`, no renumbering. It needs
+care: two comments there name deployments (`create-incident.ts:183`,
+`create-incident.schema.ts:51`) and NEITHER is a gate. The code carries the union
+of deployment behaviours instead of branching, so there is nothing
+per-deployment to condition on — do not let those comments turn into a `when`.
+
+With it, the proposed seven-module inventory is complete and the scope question
+becomes real rather than hypothetical.
 
 The three checks, all of which have now caught something real:
 
@@ -354,6 +361,20 @@ Unchanged: `create-incident` will need care. Two comments there name deployments
 (`create-incident.ts:183`, `create-incident.schema.ts:51`) and neither is a gate.
 
 The module inventory above is STILL only proposed. Home, Llamada, Seatmap,
-Dashboard and Bridge of Things are written — the last two each carrying a
-declared gap, so neither is complete by the `module-completeness` standard. Run
-`awaiting bridge-manual` to see them. No scope beyond them has been agreed.
+Dashboard, Bridge of Things and Fuerzas en Campo are written — Dashboard and
+Bridge of Things each carrying a declared gap, so neither is complete by the
+`module-completeness` standard. Run `awaiting bridge-manual` to see them. Only
+`create-incident` remains of the seven the product's rail offers, and no scope
+beyond those seven has been agreed.
+
+Two findings from Fuerzas en Campo worth carrying forward:
+
+- **A `procedure` step title is an INSTRUCTION, not a label.** This manual's
+  convention throughout is "Haga clic en Editar", "Guarde el informe" — the
+  control's name embedded in the instruction. Writing the bare control name as
+  the title breaks that convention, and `LabelPolicy` declares no label prop for
+  `procedure` precisely because of it. A control worth citing goes in a
+  `field-list` beside the procedure, which is what Asignación de Incidentes does.
+- **Read the block's schema before using a prop value.** `callout.variant` is
+  `info | important` and nothing else — a closed set, by design. Two invented
+  values (`note`, `warning`) failed the build twice before this was checked.
