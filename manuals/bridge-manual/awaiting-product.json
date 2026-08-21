@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.6.0",
+  "contentVersion": "0.6.5",
   "axis": "permission",
   "convention": {
     "what": "Parts of the product that are on screen but not finished, which this manual therefore documents around without naming.",
@@ -15,7 +15,7 @@
   ],
   "targetsConfigured": 2,
   "counts": {
-    "gaps": 2,
+    "gaps": 4,
     "sections": 2
   },
   "awaiting": [
@@ -48,6 +48,36 @@
       "missing": "Everything the panel labelled DASHBOARD displays — the one this view opens with. Its seven integration cards, each card's connection status dot, and the \"Ult. Conexión\" time under it. The section names the panel in the inventory and documents the panel bar as the way to reach the other three, and describes none of what this one shows.",
       "because": "The cards are a hardcoded literal array with no query, no prop and no data source of any kind (`home-panel.tsx:20` — `dasboardPanelItems`, running to :84). `status` drives the green/red dot through `statusColors` (:86); `lastConnection` is a literal string rendered at :123-124; `description` is English placeholder copy in a Spanish product (\"This is the CCTV panel.\") rendered as body text at :121. Four of the seven carry `isActivatePanelExternal: false` (:53, :62, :71, :80), so clicking them does nothing. Sharper than a fixture elsewhere would be, because this is the landing panel: the first thing a reader of this view sees is fabricated integration health.",
       "settles": "The product wiring the panel to real data, or the owner deciding how a manual describes a landing panel whose contents are invented."
+    },
+    {
+      "id": "bot.pmv-fixture-data-layer",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "bot",
+      "declaredIn": "sections/05-bridge-of-things.yaml",
+      "covers": [
+        "bot.paneles"
+      ],
+      "missing": "How the panel labelled PMV is operated. Composing a variable-message sign: the message fields, the pages and each page's dwell time, the pictogram catalogue and its three categories, the schedule, the preview, and the procedure that saves a programme. The section names the panel in the inventory and describes none of it.",
+      "because": "The panel's ENTIRE data layer has a dev-fixture path. `pmv-api.adapter.ts:27` reads `VITE_PMV_USE_MOCK` into `USE_MOCK`, and every read the panel makes branches on it: panels (:247), families (:32), subfamilies (:57, :62), groups (:94) and templates (:197). The fixtures are in `pmv.mock.ts`, declared dev-only at :9, six exports running to :180. The owner reports the integration is not live. Teaching an operator to schedule a sign against panels that may be fixtures is worse than saying nothing.",
+      "settles": "The product removing the fixture path, or confirming the panel reads live PMV data in the deployments this manual covers. The content was written once against the real components; recover it from this file's git history rather than re-deriving it."
+    },
+    {
+      "id": "bot.prt-backend-not-live",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "bot",
+      "declaredIn": "sections/05-bridge-of-things.yaml",
+      "covers": [
+        "bot.paneles"
+      ],
+      "missing": "How the panel labelled PRT is operated. Its two tabs, the ten columns of the programming table and its filters, the nine columns of the resources table and its search, the procedure that dispatches a resource to a case, and the two dispatch states. The section names the panel in the inventory and describes none of it.",
+      "because": "NOT the same situation as PMV, and recorded separately for that reason. The code here is fully wired with no fixture path anywhere: it calls four real endpoints — `prt-api.adapter.ts:46` (`/api/prt/programacion`) and `resources-api.adapter.ts:15`, :29 and :50 (`/prt/resource-managment`, `/prt/resource-pj-flag`, `/prt/resource-dispatch`). So what is missing is not in this repository at all: the owner reports the integration is not live, which makes it a server-side fact this manual cannot see by reading the product. A dispatch procedure that returns nothing costs the reader their trust in the procedures that do work.",
+      "settles": "Confirming those four endpoints answer in the deployments this manual covers. The content was written once against the real components; recover it from this file's git history rather than re-deriving it."
     }
   ]
 }

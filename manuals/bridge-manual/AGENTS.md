@@ -16,7 +16,7 @@ Settled by survey, not by guessing. The numbers are the point:
 | Convention | Slots | Can extraction answer it |
 |---|---|---|
 | `icon` (icon-table rows) | 33 | **Yes, and it is now exhausted** — 30 delivered, 3 genuinely cannot be |
-| `figure` (figure, field-list, procedure) | 148 | **No.** Needs the app running against real data |
+| `figure` (figure, field-list, procedure) | 128 | **No.** Needs the app running against real data |
 
 So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
@@ -35,6 +35,8 @@ convention is **33 slots, of which 30 were delivered and 3 cannot be.** The
   filter table and in Fuerzas en Campo's — and both places import the same six
   binaries, so both rows carry an explicit `icon: fuerza.<x>` instead of two
   copies of one file. That is what collapsed the manifest from 187 slots to 181.
+  Removing PMV's and PRT's operational detail at v0.6.6 took 20 more `figure`
+  slots off, leaving **161**. See ESTADO's finding on reading the data path.
 - **The street-view toggle** (`home.herramientas.control.street-view`), from its
   own id.
 
@@ -162,4 +164,8 @@ factor.
 | A call in progress | every `llamada.*`, plus `home.caso.fig` and `home.libro.fig` |
 | A second account without `canViewAllAgencies` | any figure showing a permission-conditioned control — `seatmap.fig` is already one |
 | An interaction not yet found | the three `crear-incidente` step figures (their header click does not open the step); `dashboard.analitica.accion.limpiar` (its filters panel does not open with the tab) |
-| A panel-opening path that does not break the app | the BoT panels, and Fuerzas en Campo's three inactive ones |
+| A panel-opening path that does not break the app | CCTV's eight (`bot.cctv.*`) plus `bot.abrir.barra`, and Fuerzas en Campo's three inactive panels |
+
+CCTV is the ONLY Bridge of Things panel still asking for images. PMV's and PRT's
+slots went away with their content at v0.6.6 — do not go looking for a way to
+photograph those two panels.

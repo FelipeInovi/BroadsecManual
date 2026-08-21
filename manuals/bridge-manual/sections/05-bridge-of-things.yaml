@@ -11,10 +11,16 @@
 # `agencyId`. Uniform for every agency type, nothing conditioned on the
 # `permission` axis. No `when` in this file.
 #
-# Data checked too, and this is the reason for the omission below: PMV, CCTV and
-# PRT are fed by real queries (`usePmvPanels`, `useCCTVCameras`,
-# `useProgrammingList`, `useResourceManagement`). The view's OWN dashboard panel
-# is not — see next comment.
+# Data checked too, and this is the reason for the omissions below. Of the four
+# panels this view offers, only CCTV is documented, because it is the only one
+# reading live data (`useCCTVCameras`). The other three are each left undescribed
+# for a DIFFERENT reason, which is why each carries its own entry rather than one
+# shared note.
+#
+# An earlier revision of this file claimed PMV, CCTV and PRT were all "fed by
+# real queries". That read the hooks and stopped there: it missed the fixture
+# gate underneath PMV's adapter, and it could not see PRT's server side at all.
+# The owner corrected it. Reading the hook is not reading the data path.
 #
 # INCOMPLETE ON PURPOSE — declared in the `pending` list below, which is where
 # the evidence and the exit condition live. Not restated here.
@@ -34,11 +40,9 @@ sourceBase: src/modules/dashboard/
 # `broadsec-manual labels bridge-manual`.
 #
 # NOT cited: the column headings (`Panel`, `Qué opera`, `Disposición`, `Celdas`,
-# `Control`, `Qué hace`, `Columna`, `Contenido`); `Barra de paneles`, which is
-# the manual's name for the rail's panel list; `Rango de fechas`, which names the
-# PRT calendar control the product leaves unlabelled; and
-# `bot.cctv.ptz.diagonales`, whose label lists four controls at once, so no
-# single line says it.
+# `Control`, `Qué hace`); `Barra de paneles`, which is the manual's name for the
+# rail's panel list; and `bot.cctv.ptz.diagonales`, whose label lists four
+# controls at once, so no single line says it.
 labels:
   # BOT_MANIFEST.
   - at: bot.panel.dashboard
@@ -49,25 +53,6 @@ labels:
     from: presentation/ui/views/bridge-of-things-view.tsx:38
   - at: bot.panel.prt
     from: presentation/ui/views/bridge-of-things-view.tsx:48
-
-  # PMV's message form, each from its `FieldLabel`.
-  - at: bot.pmv.campo.titulo
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:192
-  - at: bot.pmv.campo.tipo
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:206
-  - at: bot.pmv.campo.panel
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:240
-  # The rendered label continues with the page number and "(seg)"; the citation
-  # holds only the part the manual quotes.
-  - at: bot.pmv.paginas.duracion.campo
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/components/pmv-content-section.tsx:346
-
-  - at: bot.pmv.pictograma.reglamentarias
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/constants/pictograms.ts:13
-  - at: bot.pmv.pictograma.preventivas
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/constants/pictograms.ts:14
-  - at: bot.pmv.pictograma.informativas
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/pmv/constants/pictograms.ts:15
 
   # `MOSAIC_LAYOUTS`. The product writes the multiplication sign, not the letter
   # x — worth keeping exact, since the two are indistinguishable on the page.
@@ -110,69 +95,6 @@ labels:
   - at: bot.cctv.estado.fuera
     from: presentation/ui/components/panels/dashboard/bridge-of-things/cctv-camera-stream-pane.tsx:169
 
-  - at: bot.prt.ficha.prt
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-panel.tsx:57
-  - at: bot.prt.ficha.recursos
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-panel.tsx:63
-
-  # The programming table's column headers.
-  - at: bot.prt.columna.placa
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:30
-  - at: bot.prt.columna.cedula
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:31
-  - at: bot.prt.columna.nombres
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:32
-  - at: bot.prt.columna.seccion
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:35
-  - at: bot.prt.columna.horario
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:45
-  - at: bot.prt.columna.vehiculo
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:54
-  - at: bot.prt.columna.zona
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:57
-  - at: bot.prt.columna.subzona
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:62
-  - at: bot.prt.columna.punto
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:67
-  - at: bot.prt.columna.observaciones
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-columns.tsx:72
-
-  - at: bot.prt.control.buscar
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-list-content.tsx:159
-  - at: bot.prt.control.vehiculo
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-list-content.tsx:198
-  - at: bot.prt.control.limpiar
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/prt-list-content.tsx:223
-
-  # The resources table's column headers.
-  - at: bot.prt.recurso.recurso
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:41
-  - at: bot.prt.recurso.agente
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:85
-  - at: bot.prt.recurso.seccion
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:109
-  - at: bot.prt.recurso.punto
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:125
-  - at: bot.prt.recurso.turno
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:137
-  - at: bot.prt.recurso.zona
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:157
-  - at: bot.prt.recurso.observaciones
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:176
-  - at: bot.prt.recurso.pj
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:194
-  - at: bot.prt.recurso.despacho
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:213
-
-  # The two dispatch states, read off the status comparison that colours the row.
-  - at: bot.prt.recursos.estado.despachado
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:47
-  - at: bot.prt.recursos.estado.en-sitio
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-columns.tsx:49
-
-  - at: bot.prt.recursos.buscar.campo
-    from: presentation/ui/components/panels/dashboard/bridge-of-things/resources/resources-table.tsx:140
-
 # Parts of the product this section deliberately leaves undescribed. Internal —
 # `awaiting` exports it; the manual names none of it. See `PendingDeclaration`.
 pending:
@@ -198,6 +120,51 @@ pending:
     settles: >-
       The product wiring the panel to real data, or the owner deciding how a
       manual describes a landing panel whose contents are invented.
+
+  - id: bot.pmv-fixture-data-layer
+    covers: [bot.paneles]
+    missing: >-
+      How the panel labelled PMV is operated. Composing a variable-message sign:
+      the message fields, the pages and each page's dwell time, the pictogram
+      catalogue and its three categories, the schedule, the preview, and the
+      procedure that saves a programme. The section names the panel in the
+      inventory and describes none of it.
+    because: >-
+      The panel's ENTIRE data layer has a dev-fixture path.
+      `pmv-api.adapter.ts:27` reads `VITE_PMV_USE_MOCK` into `USE_MOCK`, and every
+      read the panel makes branches on it: panels (:247), families (:32),
+      subfamilies (:57, :62), groups (:94) and templates (:197). The fixtures are
+      in `pmv.mock.ts`, declared dev-only at :9, six exports running to :180. The
+      owner reports the integration is not live. Teaching an operator to schedule
+      a sign against panels that may be fixtures is worse than saying nothing.
+    settles: >-
+      The product removing the fixture path, or confirming the panel reads live
+      PMV data in the deployments this manual covers. The content was written once
+      against the real components; recover it from this file's git history rather
+      than re-deriving it.
+
+  - id: bot.prt-backend-not-live
+    covers: [bot.paneles]
+    missing: >-
+      How the panel labelled PRT is operated. Its two tabs, the ten columns of the
+      programming table and its filters, the nine columns of the resources table
+      and its search, the procedure that dispatches a resource to a case, and the
+      two dispatch states. The section names the panel in the inventory and
+      describes none of it.
+    because: >-
+      NOT the same situation as PMV, and recorded separately for that reason. The
+      code here is fully wired with no fixture path anywhere: it calls four real
+      endpoints — `prt-api.adapter.ts:46` (`/api/prt/programacion`) and
+      `resources-api.adapter.ts:15`, :29 and :50 (`/prt/resource-managment`,
+      `/prt/resource-pj-flag`, `/prt/resource-dispatch`). So what is missing is
+      not in this repository at all: the owner reports the integration is not
+      live, which makes it a server-side fact this manual cannot see by reading
+      the product. A dispatch procedure that returns nothing costs the reader
+      their trust in the procedures that do work.
+    settles: >-
+      Confirming those four endpoints answer in the deployments this manual
+      covers. The content was written once against the real components; recover it
+      from this file's git history rather than re-deriving it.
 
 children:
   - id: bot.proposito
@@ -275,15 +242,16 @@ children:
     props:
       # Un único panel abierto (fuera del tablero) toma la altura completa
       # (bridge-of-things-view.tsx:99-113); con dos o más, cada uno conserva su
-      # geometría. La vista habilita la expansión (`expandable: true`, :82), y
-      # CCTV y PMV reciben un tamaño distinto según estén expandidos, solos o
-      # acompañados (:144-150 y :157-163).
+      # geometría. La vista habilita la expansión (`expandable: true`, :82).
+      # CCTV recibe un tamaño distinto según esté expandido, solo o acompañado
+      # (:144-150). PMV hace lo mismo (:157-163) y NO se nombra acá: describir
+      # cómo se comporta su panel es describir el panel. Ver `pending`.
       text: >-
         Cuando queda un solo panel abierto, ocupa la altura completa de la
         pantalla; al abrir un segundo, ambos vuelven a su tamaño habitual. Los
-        paneles también pueden expandirse desde su propio encabezado, y las
-        vistas de CCTV y PMV aprovechan el espacio adicional mostrando más
-        detalle en lugar de agrandar lo mismo.
+        paneles también pueden expandirse desde su propio encabezado, y la vista
+        de CCTV aprovecha el espacio adicional mostrando más detalle en lugar de
+        agrandar lo mismo.
 
   - id: bot.herramientas
     type: prose
@@ -297,210 +265,6 @@ children:
         **Home**, dispuestas aquí en una fila centrada en la parte superior. Como
         en Home, el control de centrado está deshabilitado: en esta vista no hay
         un incidente al que llevar el mapa.
-
-  # --- PMV -------------------------------------------------------------------
-  - id: bot.pmv
-    title: PMV
-    children:
-      - id: bot.pmv.proposito
-        type: prose
-        props:
-          text: >-
-            Compone y programa lo que muestran los paneles de mensaje variable
-            de la vía: el texto, los pictogramas, la cantidad de páginas y los
-            horarios en que cada mensaje se exhibe.
-
-      - id: bot.pmv.ubicacion
-        type: prose
-        props:
-          # BOT_MANIFEST, entrada `pmv` (bridge-of-things-view.tsx:26-35):
-          # `initiallyInactive`. Encabezado citado de pmv-panel.tsx:35. La lista
-          # de paneles disponibles viene del backend (`usePmvPanels()`, :31).
-          text: >-
-            No está a la vista al entrar. Ábralo desde la barra de paneles: el
-            panel lleva el título **PMV** y presenta la composición del mensaje
-            a la izquierda y su previsualización a la derecha.
-
-      - id: bot.pmv.fig
-        type: figure
-        props:
-          caption: "Panel PMV con la composición del mensaje y su previsualización."
-          widthPercent: 90
-
-      - id: bot.pmv.mensaje.titulo
-        type: detail-header
-        props:
-          text: Datos del mensaje
-
-      - id: bot.pmv.mensaje.campos
-        type: field-list
-        props:
-          items:
-            # Rótulos citados de
-            # bridge-of-things/pmv/components/pmv-content-section.tsx:192 (con su
-            # texto guía en :195), :206 (con sus opciones en :208) y :240.
-            - id: bot.pmv.campo.titulo
-              label: Título Interno
-              text: >-
-                Nombre con el que se identifica la programación dentro de la
-                plataforma. No se exhibe en el panel de la vía: sirve para
-                encontrarla después.
-              layout: beside
-
-            - id: bot.pmv.campo.tipo
-              label: Tipo
-              text: >-
-                Clasifica el mensaje como **Educativo**, **Informativo** o
-                **Novedad en la vía**.
-              layout: beside
-
-            - id: bot.pmv.campo.panel
-              label: Panel
-              text: >-
-                Panel o paneles de la vía en los que se va a exhibir el mensaje.
-              layout: beside
-
-      - id: bot.pmv.paginas.titulo
-        type: detail-header
-        props:
-          text: Páginas del mensaje
-
-      - id: bot.pmv.paginas.texto
-        type: prose
-        props:
-          # Controles citados de pmv-content-section.tsx:335 ("Agregar página")
-          # y :330 ("Eliminar página"). El campo de duración aparece solo con
-          # dos o más páginas (:343-344) y admite entre 1 y 20 segundos
-          # (:351-352).
-          text: >-
-            Un mensaje puede ocupar más de una página, que el panel de la vía
-            exhibe por turnos. Use **Agregar página** para sumar una y **Eliminar
-            página** para quitarla.
-
-      - id: bot.pmv.paginas.duracion
-        type: field-list
-        props:
-          items:
-            # Rótulo citado de pmv-content-section.tsx:345-348.
-            - id: bot.pmv.paginas.duracion.campo
-              label: Duración Página
-              text: >-
-                Cuántos segundos se exhibe la página antes de pasar a la
-                siguiente, entre uno y veinte. El campo aparece únicamente
-                cuando el mensaje tiene dos páginas o más: con una sola no hay
-                turno que repartir.
-              layout: beside
-
-      - id: bot.pmv.pictogramas.titulo
-        type: detail-header
-        props:
-          # Rótulo citado de pmv-content-section.tsx:418-419.
-          text: Pictograma
-
-      - id: bot.pmv.pictogramas.texto
-        type: prose
-        props:
-          # Catálogo en
-          # bridge-of-things/pmv/constants/pictograms.ts:18 en adelante; las
-          # categorías, en :12-16. El catálogo trae ciento cuarenta y cinco
-          # definiciones.
-          text: >-
-            Cada página puede llevar un pictograma junto al texto. El catálogo se
-            recorre por categoría y la elección reemplaza el pictograma de la
-            página que esté editando.
-
-      - id: bot.pmv.pictogramas.categorias
-        type: term-list
-        props:
-          entries:
-            # Rótulos citados de pmv/constants/pictograms.ts:13-15.
-            - id: bot.pmv.pictograma.reglamentarias
-              term: Reglamentarias
-              definition: >-
-                Señales de obligación y prohibición.
-            - id: bot.pmv.pictograma.preventivas
-              term: Preventivas
-              definition: >-
-                Señales que advierten un riesgo en la vía.
-            - id: bot.pmv.pictograma.informativas
-              term: Informativas
-              definition: >-
-                Señales que orientan o informan sin imponer una conducta.
-
-      - id: bot.pmv.horarios.titulo
-        type: detail-header
-        props:
-          # Rótulo citado de
-          # bridge-of-things/pmv/components/pmv-calendar-section.tsx:96.
-          text: Horarios
-
-      - id: bot.pmv.horarios.texto
-        type: prose
-        props:
-          # El control de borrado de un horario se cita de
-          # pmv-calendar-section.tsx:135.
-          text: >-
-            Define en qué días y en qué franjas del día se exhibe el mensaje.
-            Puede sumar varios horarios a la misma programación, y cada uno se
-            quita con su propio control de **Eliminar**.
-
-      - id: bot.pmv.previsualizacion.titulo
-        type: detail-header
-        props:
-          # Rótulo citado de
-          # bridge-of-things/pmv/components/pmv-preview-section.tsx:128.
-          text: Previsualización
-
-      - id: bot.pmv.previsualizacion.texto
-        type: prose
-        props:
-          text: >-
-            Muestra el mensaje como lo va a ver quien pase por la vía, página por
-            página y con el pictograma en su lugar. Revísela antes de guardar:
-            es la única forma de comprobar que el texto entra en el panel.
-
-      - id: bot.pmv.guardar
-        type: procedure
-        props:
-          # Control citado de
-          # bridge-of-things/pmv/components/pmv-save-footer.tsx:37, que pasa a
-          # "Guardando..." mientras corre.
-          lead: >-
-            Para programar un mensaje en un panel de la vía:
-          steps:
-            - id: bot.pmv.guardar.datos
-              title: Complete los datos del mensaje
-              text: >-
-                Indique el **Título Interno**, el **Tipo** y el **Panel** en el
-                que se va a exhibir.
-              layout: beside
-
-            - id: bot.pmv.guardar.contenido
-              title: Componga el contenido
-              text: >-
-                Escriba el texto de la página y elija su pictograma. Sume las
-                páginas que necesite y fije la duración de cada una.
-              layout: beside
-
-            - id: bot.pmv.guardar.horarios
-              title: Fije los horarios
-              text: >-
-                Indique los días y las franjas en que el mensaje debe exhibirse.
-              layout: beside
-
-            - id: bot.pmv.guardar.revisar
-              title: Revise la previsualización
-              text: >-
-                Recorra las páginas en la previsualización y confirme que el
-                texto y el pictograma se leen como espera.
-              layout: beside
-
-            - id: bot.pmv.guardar.confirmar
-              title: Haga clic en Guardar Selección
-              text: >-
-                La programación queda registrada. Mientras se guarda, el control
-                indica **Guardando...**.
-              layout: beside
 
   # --- CCTV ------------------------------------------------------------------
   - id: bot.cctv
@@ -733,264 +497,3 @@ children:
               definition: >-
                 La cámara no responde. No es un problema del encuadre ni del
                 mosaico: informe al administrador.
-
-  # --- PRT -------------------------------------------------------------------
-  - id: bot.prt
-    title: PRT
-    children:
-      - id: bot.prt.proposito
-        type: prose
-        props:
-          text: >-
-            Reúne la programación de recursos en vía y el estado de cada recurso:
-            quién está asignado, dónde, en qué turno, y a qué caso está
-            despachado.
-
-      - id: bot.prt.ubicacion
-        type: prose
-        props:
-          # BOT_MANIFEST, entrada `prt` (bridge-of-things-view.tsx:46-55):
-          # `initiallyInactive`. Encabezado citado de prt-panel.tsx:37. Los datos
-          # vienen del backend (`useProgrammingList` en prt-list-content.tsx:53 y
-          # `useResourceManagement` en prt-panel.tsx:32-33).
-          text: >-
-            No está a la vista al entrar. Ábralo desde la barra de paneles: el
-            panel lleva el título **PRT** y se divide en dos fichas.
-
-      - id: bot.prt.fig
-        type: figure
-        props:
-          caption: "Panel PRT con sus dos fichas y la tabla de programación."
-          widthPercent: 90
-
-      - id: bot.prt.fichas
-        type: term-list
-        props:
-          entries:
-            # Rótulos citados de prt-panel.tsx:57 y :63.
-            - id: bot.prt.ficha.prt
-              term: PRT
-              definition: >-
-                La programación: qué recurso, con qué vehículo, en qué horario y
-                en qué punto de control. Es la ficha con la que abre el panel.
-
-            - id: bot.prt.ficha.recursos
-              term: RECURSOS
-              definition: >-
-                El estado actual de cada recurso y las acciones de despacho
-                sobre él.
-
-      - id: bot.prt.programacion.titulo
-        type: detail-header
-        props:
-          text: La programación
-
-      - id: bot.prt.programacion.columnas
-        type: data-table
-        props:
-          # Encabezados citados de prt-columns.tsx:30, :31, :32, :35, :45, :54,
-          # :57, :62, :67 y :72.
-          labelHeader: Columna
-          descriptionHeader: Contenido
-          rows:
-            - id: bot.prt.columna.placa
-              label: PLACA
-              description: >-
-                Placa del vehículo asignado.
-            - id: bot.prt.columna.cedula
-              label: CÉDULA
-              description: >-
-                Documento del agente.
-            - id: bot.prt.columna.nombres
-              label: NOMBRES Y APELLIDOS
-              description: >-
-                Nombre del agente asignado.
-            - id: bot.prt.columna.seccion
-              label: SECCIÓN
-              description: >-
-                Sección a la que pertenece el agente.
-            - id: bot.prt.columna.horario
-              label: HORARIO
-              description: >-
-                Franja en la que el recurso está programado.
-            - id: bot.prt.columna.vehiculo
-              label: VEHÍCULO
-              description: >-
-                Tipo de vehículo del recurso.
-            - id: bot.prt.columna.zona
-              label: ZONA
-              description: >-
-                Zona asignada.
-            - id: bot.prt.columna.subzona
-              label: SUBZONA
-              description: >-
-                Subdivisión de la zona.
-            - id: bot.prt.columna.punto
-              label: PUNTO DE CONTROL
-              description: >-
-                Punto de la vía en el que el recurso debe ubicarse.
-            - id: bot.prt.columna.observaciones
-              label: OBSERVACIONES
-              description: >-
-                Anotaciones sobre la programación.
-
-      - id: bot.prt.programacion.controles
-        type: field-list
-        props:
-          items:
-            # Rótulos citados de prt-list-content.tsx:159 (buscador), :198 y
-            # :205 (tipo de vehículo), :166-178 (rango de fechas) y :223
-            # (limpiar).
-            - id: bot.prt.control.buscar
-              label: Buscar por nombre, cédula, placa o vehículo...
-              text: >-
-                Acota la programación a lo que coincida con lo que escriba.
-              layout: beside
-
-            - id: bot.prt.control.vehiculo
-              label: Tipo de vehículo
-              text: >-
-                Deja solo la programación de ese tipo de vehículo.
-                **Todos los vehículos** devuelve la lista completa.
-              layout: beside
-
-            - id: bot.prt.control.fechas
-              label: Rango de fechas
-              text: >-
-                Abre un calendario para acotar la programación a un período.
-              layout: beside
-
-            - id: bot.prt.control.limpiar
-              label: Limpiar
-              text: >-
-                Descarta la búsqueda y los filtros aplicados y devuelve la
-                programación completa.
-              layout: beside
-
-      - id: bot.prt.recursos.titulo
-        type: detail-header
-        props:
-          text: Los recursos
-
-      - id: bot.prt.recursos.columnas
-        type: data-table
-        props:
-          # Encabezados citados de resources/resources-columns.tsx:41, :85,
-          # :109, :125, :137, :157, :176, :194 y :213. El buscador de la ficha
-          # se cita de resources/resources-table.tsx:140.
-          labelHeader: Columna
-          descriptionHeader: Contenido
-          rows:
-            - id: bot.prt.recurso.recurso
-              label: Recurso
-              description: >-
-                Identificación del recurso.
-            - id: bot.prt.recurso.agente
-              label: Agente
-              description: >-
-                Agente a cargo.
-            - id: bot.prt.recurso.seccion
-              label: Sección
-              description: >-
-                Sección a la que pertenece.
-            - id: bot.prt.recurso.punto
-              label: Pto. Ctrl
-              description: >-
-                Punto de control en el que está ubicado.
-            - id: bot.prt.recurso.turno
-              label: Turno
-              description: >-
-                Turno en el que está trabajando.
-            - id: bot.prt.recurso.zona
-              label: Zona
-              description: >-
-                Zona asignada.
-            - id: bot.prt.recurso.observaciones
-              label: Observ.
-              description: >-
-                Anotaciones sobre el recurso.
-            - id: bot.prt.recurso.pj
-              label: PJ
-              description: >-
-                Indica si el recurso corresponde a Policía Judicial.
-            - id: bot.prt.recurso.despacho
-              label: Despacho
-              description: >-
-                Estado de despacho del recurso, y el control para asignarlo o
-                para abrir el caso que ya tiene.
-
-      - id: bot.prt.recursos.buscar
-        type: field-list
-        props:
-          items:
-            # Rótulo citado de resources/resources-table.tsx:140. La paginación
-            # de la ficha se cita de resources/resources-pagination.tsx:36, :60
-            # y :73.
-            - id: bot.prt.recursos.buscar.campo
-              label: Buscar recurso, agente, zona...
-              text: >-
-                Acota la lista de recursos. Al pie, **Filas** elige cuántos
-                recursos se muestran por página, y los controles de **Página
-                anterior** y **Página siguiente** recorren el resto.
-              layout: beside
-
-      - id: bot.prt.recursos.asignar
-        type: procedure
-        props:
-          # Control citado de resources/resources-columns.tsx:246 en la columna
-          # de despacho; el cuadro, de resources/assign-resource-modal.tsx:99,
-          # con su buscador en :123 y su confirmación en :187.
-          lead: >-
-            Para despachar un recurso a un caso:
-          steps:
-            - id: bot.prt.recursos.asignar.ubicar
-              title: Ubique el recurso disponible
-              text: >-
-                Use el buscador de la ficha y confirme en la columna de despacho
-                que el recurso no está asignado.
-              layout: beside
-
-            - id: bot.prt.recursos.asignar.abrir
-              title: Haga clic en ASIGNAR
-              text: >-
-                Se abre el cuadro **Asignar recurso**.
-              layout: beside
-
-            - id: bot.prt.recursos.asignar.caso
-              title: Elija el caso
-              text: >-
-                Use **Buscar caso por teléfono, dirección...** y seleccione el
-                caso al que va a despachar el recurso.
-              layout: beside
-
-            - id: bot.prt.recursos.asignar.confirmar
-              title: Haga clic en Confirmar asignación
-              text: >-
-                El recurso queda despachado a ese caso y su columna de despacho
-                lo refleja. Mientras se registra, el control indica
-                **Asignando…**.
-              layout: beside
-
-      - id: bot.prt.recursos.estados
-        type: term-list
-        props:
-          entries:
-            # Estados citados de resources/resources-columns.tsx:47-49 y :218.
-            # Las acciones del cuadro **Caso asignado**
-            # (resources/assigned-case-modal.tsx:75) se citan de :115
-            # ("Desasignar"), :122 ("En sitio") y :136 ("Finalizar atención"), y
-            # dependen del estado en que esté el recurso (:111 y :130).
-            - id: bot.prt.recursos.estado.despachado
-              term: Despachado
-              definition: >-
-                El recurso fue asignado a un caso y va en camino. Al abrir el
-                caso desde su fila, el cuadro **Caso asignado** ofrece
-                **Desasignar**, que lo libera, y **En sitio**, para registrar que
-                llegó.
-
-            - id: bot.prt.recursos.estado.en-sitio
-              term: En sitio
-              definition: >-
-                El recurso llegó al lugar del caso. El cuadro **Caso asignado**
-                ofrece entonces **Finalizar atención**, que lo devuelve a
-                disponible.

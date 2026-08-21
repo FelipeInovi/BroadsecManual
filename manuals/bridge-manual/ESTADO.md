@@ -155,6 +155,37 @@ state.
   views in `src/modules/dashboard/presentation/ui/views/`. Screen mapping follows
   the view switch, not the router.
 
+- **Reading the hook is not reading the data path, and Bridge of Things is where
+  it cost.** The first pass on that view asked which panels had queries, found
+  `usePmvPanels`, `useCCTVCameras`, `useProgrammingList` and
+  `useResourceManagement`, and wrote all three up as live. The owner corrected
+  it: **only CCTV is integrated.** What the hooks hid, one layer down:
+
+  | Panel | What the adapter actually does | Class of gap |
+  |---|---|---|
+  | CCTV | reads live cameras | none — documented in full |
+  | PMV | `USE_MOCK = import.meta.env.VITE_PMV_USE_MOCK === "true"` (`pmv-api.adapter.ts:27`) branches EVERY read — :32, :57, :62, :94, :197, :247 — against six dev-only fixtures in `pmv.mock.ts` (:9, running to :180) | a fixture, same class as the DASHBOARD panel |
+  | PRT | four real endpoints, no fixture path anywhere: `prt-api.adapter.ts:46`, `resources-api.adapter.ts:15`, :29, :50 | wired client, backend not live |
+  | DASHBOARD | no query at all, a literal array (`home-panel.tsx:20-84`) | invented data |
+
+  So a hook proves a query EXISTS, not that it runs against real data. The
+  adapter is the layer that answers that — and for PRT not even the adapter can,
+  because whether an endpoint responds is a server fact, invisible from this
+  repository at any depth.
+
+  Cost of getting it wrong: two submodules written to workflow depth — the PMV
+  message form, pages, pictogram catalogue, schedule and save procedure; PRT's two
+  tabs, nineteen columns, filters and dispatch procedure — about 400 lines, all
+  removed at v0.6.6 and now queued as `bot.pmv-fixture-data-layer` and
+  `bot.prt-backend-not-live`. Recoverable from git history, which is why both
+  `settles` entries say so rather than asking anyone to re-derive it.
+
+  **This sharpens the open point under the pending policy above.** That entry
+  blames the missing extractor for nothing detecting when the product fixes a
+  gap. PRT is the harder case: no extractor over this repository could ever
+  detect it. That entry closes when a person asks the deployment, and there is no
+  mechanism that will ever replace them.
+
 - **A partial `image-requests.json` is a filtered run, not a pipeline defect.**
   The first committed manifest listed only `todas-las-agencias` under
   `deploymentsCovered` while `deploymentsConfigured` said 2, so all fourteen
