@@ -71,7 +71,7 @@ const recipeSchema = z
      */
     screenIs: selector("screenIs"),
     /**
-     * Clicks needed to reach the pane, in order.
+     * Interactions needed to reach — or to REVEAL — the pane, in order.
      *
      * Not every screen has a route. The whole BroadSec of Things module is one
      * route and its sections are sidebar state, so Alarmas is unreachable by URL.
@@ -93,6 +93,21 @@ const recipeSchema = z
                 .strict(),
             })
             .strict(),
+          // Hovering is not a convenience either, and it is not a click: a click
+          // on a control the manual only DESCRIBES would operate the product on
+          // somebody's signed-in window.
+          //
+          // A control the product reveals on hover is absent from any still
+          // frame taken without one, and absent in the worst way — the clip
+          // succeeds, the file is real, and the caption promises a button that
+          // is not in the picture. `bot.cctv.presets.volver` was captured and
+          // deleted exactly once for that: `cctv-presets.tsx:109` gives the
+          // "Ir a preset" button `opacity-0 group-hover:opacity-100`.
+          //
+          // Opacity, not display or visibility — so the element keeps its box
+          // and its pointer events, and a hover can target the very selector
+          // the shot is about to clip.
+          z.object({ hover: selector("hover") }).strict(),
         ]),
       )
       .optional(),

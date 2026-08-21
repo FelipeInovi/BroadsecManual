@@ -117,6 +117,18 @@ async function shootAll(
                 await page.mouse.up();
                 break;
               }
+              if ("hover" in step) {
+                // The cursor STAYS where this leaves it. Nothing after a step
+                // moves the mouse — the gates and the clip only query — so the
+                // revealed control is still revealed when the shot is taken.
+                //
+                // Which also means a `hover` has to come after any `drag` in the
+                // same sequence: a drag drives the same mouse and would carry
+                // the cursor off whatever this uncovered.
+                await page.waitForSelector(step.hover, { timeout: WAIT_MS });
+                await page.hover(step.hover);
+                break;
+              }
               await page.waitForSelector(step.click, { timeout: WAIT_MS });
               await page.click(step.click);
               break;

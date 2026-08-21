@@ -135,6 +135,40 @@ describe("parseRecipes", () => {
     expect(parsed.recipes[0]?.steps).toHaveLength(2);
   });
 
+  // A control the product only shows on hover is absent from a still frame taken
+  // without one, and absent in the worst way: the clip succeeds and the caption
+  // promises a button that is not in the picture. `bot.cctv.presets.volver` was
+  // captured and deleted once for exactly that.
+  it("accepts a hover step, which is not a click", () => {
+    const parsed = parseRecipes(
+      doc([recipe("bot.alarmas.fig", { steps: [{ hover: '[title="Ir a preset"]' }] })]),
+    );
+    expect(parsed.recipes[0]?.steps?.[0]).toEqual({ hover: '[title="Ir a preset"]' });
+  });
+
+  // Order is load-bearing in the runner: a drag drives the same mouse a hover
+  // does, so a hover before one is carried off whatever it uncovered. Parsing
+  // cannot enforce that, but it must at least preserve the sequence.
+  it("keeps a drag-then-hover sequence in the order it was written", () => {
+    const parsed = parseRecipes(
+      doc([
+        recipe("bot.alarmas.fig", {
+          steps: [{ drag: { from: ".cam", to: ".grid" } }, { hover: ".row" }],
+        }),
+      ]),
+    );
+    expect(parsed.recipes[0]?.steps).toEqual([
+      { drag: { from: ".cam", to: ".grid" } },
+      { hover: ".row" },
+    ]);
+  });
+
+  it("refuses an empty hover selector, which would hover nothing and reveal nothing", () => {
+    expect(() =>
+      parseRecipes(doc([recipe("bot.alarmas.fig", { steps: [{ hover: " " }] })])),
+    ).toThrow(/hover/);
+  });
+
   // A drag with only one end is a typo that would otherwise throw deep inside
   // the browser, long after the run has logged in.
   // A video stream satisfies a `video` selector the moment the element exists,
@@ -154,9 +188,13 @@ describe("parseRecipes", () => {
     ).toThrow(/to/);
   });
 
-  it("refuses a step that is neither a click nor a drag", () => {
+  // The union is CLOSED, and that is the point of this one. `hover` used to be
+  // the example here; it is a real step now, so the example moved to a kind the
+  // runner still cannot perform. A step the runner ignores is worse than a
+  // rejected one — the shot succeeds having skipped it.
+  it("refuses a step kind the runner cannot perform", () => {
     expect(() =>
-      parseRecipes(doc([recipe("bot.alarmas.fig", { steps: [{ hover: ".x" }] })])),
+      parseRecipes(doc([recipe("bot.alarmas.fig", { steps: [{ scroll: ".x" }] })])),
     ).toThrow();
   });
 
