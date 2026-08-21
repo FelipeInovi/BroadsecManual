@@ -150,7 +150,62 @@ sources:
       source-extraction skill). Labels here will not follow the product when the
       product changes. `uiLabel` blocks cannot be used against this source.
 
-      The `assets` block is absent because no asset survey has been run. This
-      product ships src/assets with layers/, pins/, labels/, icons/, Forces/ and
-      more, so there is likely a lot to take — but an unaudited inventory is
-      worse than none, and the source-assets skill owns that survey.
+      The asset survey has been run — see `assets:` below.
+
+    # What this product ships as image files, and where the joins live.
+    # Findings for the `source-assets` skill — read by agents, NOT by any
+    # command. They expire when the product changes, not when the manual does.
+    assets:
+      inventory: |
+        ~186 image files under src/assets: 97 webp, 46 svg, 40 png, 2 gif, 1
+        jpg. Folders: bot_status_icons, Forces, icons, intendence, labels,
+        layers, phonebook, pins, Resources, sitemap, task-icons.
+
+        The mix is not the point; the SHAPE of the UI is. This product draws
+        almost every control with `lucide-react` components, so a rich asset
+        folder sits beside a UI whose controls are not files. Of the 39
+        icon-convention slots the manual asked for, seven were deliverable.
+      libraries:
+        # Only cjs/ and esm/ JS bundles — `find` returns ZERO .svg files, and no
+        # `lucide-static` is installed. So every lucide glyph in this product is
+        # extractable only by parsing path data out of a module, which the skill
+        # rules out. This single fact disqualified 32 of the 39 icon slots.
+        "lucide-react": not-as-a-file
+      joins: |
+        Strongest first, matching the skill's hierarchy:
+
+        1. `utils/force-icon.utils.ts:13-20` — `FORCE_IMAGES`, an object literal
+           whose KEY is the UI string and whose `src` is the imported asset:
+           `Salud: { src: medicalImg, alt: "Salud" }`. Level 2, nothing
+           inferred. Six forces, from src/assets/phonebook/.
+        2. `components/panels/available-agents-list.tsx:28-34` — `FORCE_FILTERS`,
+           the same six assets paired with the same six labels in a second
+           object literal. Independent confirmation of the same join, and the
+           reason those icons are ONE shared slot rather than two copies.
+        3. `components/panels/map-tools-panel.tsx:18-23` — six layer/street-view
+           assets imported by name, each used in one identifiable control.
+           `street_view_layer.png` reaches the street-view toggle at :274,
+           beside `alt="streetViewOutside"`. Level 3.
+      filenameHazards: |
+        The `phonebook/` names describe the AGENT, not the filter: `medical_agent`
+        for "Salud", `traffic_agent` for "Tránsito", `civil_defense` for "Defensa
+        Civil". Matching a slot named `salud` by filename finds nothing at all —
+        the join has to come from `FORCE_IMAGES`, which is the whole point of the
+        rule.
+
+        `assets/layers/layer_trafic.svg` is misspelled in the product. Do not
+        "correct" it when following an import.
+      runtimeOnly: |
+        Every screen, panel and populated list — 148 of the manual's slots are
+        `figure` convention and need the app running against real data. Also the
+        Google Maps native controls, as in broadlineavida.
+      contentGapFound: |
+        `map-tools-panel.tsx:49-56` holds a well-joined family of five map-layer
+        images — Tráfico, Satelital, AVL, Mobile, Cámaras — each an object
+        literal pairing asset and label. **The manual has no table asking for
+        any of them.** Its `home.herramientas` row "Capas de integración" names
+        the control that OPENS the menu, not the layers inside it.
+
+        Per the skill, that gap is in the CONTENT, not the extraction: writing
+        that subsection is authoring work with its own decisions. Recorded in
+        `manuals/bridge-manual/AGENTS.md`.

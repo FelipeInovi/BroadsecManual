@@ -350,26 +350,32 @@ children:
               description: >-
                 Todos los agentes, sin distinguir fuerza.
             - id: fuerzas-campo.agentes.fuerza.salud
+              icon: fuerza.salud
               label: Salud
               description: >-
                 Solo los agentes de salud.
             - id: fuerzas-campo.agentes.fuerza.bomberos
+              icon: fuerza.bomberos
               label: Bomberos
               description: >-
                 Solo los agentes de bomberos.
             - id: fuerzas-campo.agentes.fuerza.policia
+              icon: fuerza.policia
               label: Policía
               description: >-
                 Solo los agentes de policía.
             - id: fuerzas-campo.agentes.fuerza.transito
+              icon: fuerza.transito
               label: Tránsito
               description: >-
                 Solo los agentes de tránsito.
             - id: fuerzas-campo.agentes.fuerza.defensa-civil
+              icon: fuerza.defensa-civil
               label: Defensa Civil
               description: >-
                 Solo los agentes de defensa civil.
             - id: fuerzas-campo.agentes.fuerza.gaula
+              icon: fuerza.gaula
               label: Gaula
               description: >-
                 Solo los agentes de Gaula.

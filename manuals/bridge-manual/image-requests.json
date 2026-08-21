@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 187,
-    "delivered": 0,
-    "pending": 187
+    "total": 181,
+    "delivered": 7,
+    "pending": 174
   },
   "pending": [
     {
@@ -860,28 +860,6 @@
       }
     },
     {
-      "slot": "home.herramientas.control.street-view",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.control.street-view",
-          "blockType": "icon-table",
-          "shows": "Vista de calle"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.control.street-view.png",
-        "override": "<permission>/home.herramientas.control.street-view.png"
-      }
-    },
-    {
       "slot": "llamada.fig",
       "neededBy": [
         "agencia-propia",
@@ -1033,138 +1011,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.filtro.todos.png",
         "override": "<permission>/llamada.fuerzas.filtro.todos.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.salud",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.salud",
-          "blockType": "icon-table",
-          "shows": "Salud"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.salud.png",
-        "override": "<permission>/llamada.fuerzas.filtro.salud.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.bomberos",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.bomberos",
-          "blockType": "icon-table",
-          "shows": "Bomberos"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.bomberos.png",
-        "override": "<permission>/llamada.fuerzas.filtro.bomberos.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.policia",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.policia",
-          "blockType": "icon-table",
-          "shows": "Policía"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.policia.png",
-        "override": "<permission>/llamada.fuerzas.filtro.policia.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.transito",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.transito",
-          "blockType": "icon-table",
-          "shows": "Tránsito"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.transito.png",
-        "override": "<permission>/llamada.fuerzas.filtro.transito.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.defensa-civil",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.defensa-civil",
-          "blockType": "icon-table",
-          "shows": "Defensa Civil"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.defensa-civil.png",
-        "override": "<permission>/llamada.fuerzas.filtro.defensa-civil.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.gaula",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.gaula",
-          "blockType": "icon-table",
-          "shows": "Gaula"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.gaula.png",
-        "override": "<permission>/llamada.fuerzas.filtro.gaula.png"
       }
     },
     {
@@ -3148,138 +2994,6 @@
       }
     },
     {
-      "slot": "fuerzas-campo.agentes.fuerza.salud",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.fuerza.salud",
-          "blockType": "icon-table",
-          "shows": "Salud"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.fuerza.salud.png",
-        "override": "<permission>/fuerzas-campo.agentes.fuerza.salud.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.agentes.fuerza.bomberos",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.fuerza.bomberos",
-          "blockType": "icon-table",
-          "shows": "Bomberos"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.fuerza.bomberos.png",
-        "override": "<permission>/fuerzas-campo.agentes.fuerza.bomberos.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.agentes.fuerza.policia",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.fuerza.policia",
-          "blockType": "icon-table",
-          "shows": "Policía"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.fuerza.policia.png",
-        "override": "<permission>/fuerzas-campo.agentes.fuerza.policia.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.agentes.fuerza.transito",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.fuerza.transito",
-          "blockType": "icon-table",
-          "shows": "Tránsito"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.fuerza.transito.png",
-        "override": "<permission>/fuerzas-campo.agentes.fuerza.transito.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.agentes.fuerza.defensa-civil",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.fuerza.defensa-civil",
-          "blockType": "icon-table",
-          "shows": "Defensa Civil"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.fuerza.defensa-civil.png",
-        "override": "<permission>/fuerzas-campo.agentes.fuerza.defensa-civil.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.agentes.fuerza.gaula",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.fuerza.gaula",
-          "blockType": "icon-table",
-          "shows": "Gaula"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.fuerza.gaula.png",
-        "override": "<permission>/fuerzas-campo.agentes.fuerza.gaula.png"
-      }
-    },
-    {
       "slot": "fuerzas-campo.agentes.detalle.fig",
       "neededBy": [
         "agencia-propia",
@@ -4130,5 +3844,155 @@
       }
     }
   ],
-  "delivered": []
+  "delivered": [
+    {
+      "slot": "home.herramientas.control.street-view",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.control.street-view",
+          "blockType": "icon-table",
+          "shows": "Vista de calle"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/control/street-view.png"
+      ]
+    },
+    {
+      "slot": "fuerza.salud",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.salud",
+          "blockType": "icon-table",
+          "shows": "Salud"
+        },
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.salud",
+          "blockType": "icon-table",
+          "shows": "Salud"
+        }
+      ],
+      "files": [
+        "_common/fuerza/salud.webp"
+      ]
+    },
+    {
+      "slot": "fuerza.bomberos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.bomberos",
+          "blockType": "icon-table",
+          "shows": "Bomberos"
+        },
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.bomberos",
+          "blockType": "icon-table",
+          "shows": "Bomberos"
+        }
+      ],
+      "files": [
+        "_common/fuerza/bomberos.webp"
+      ]
+    },
+    {
+      "slot": "fuerza.policia",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.policia",
+          "blockType": "icon-table",
+          "shows": "Policía"
+        },
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.policia",
+          "blockType": "icon-table",
+          "shows": "Policía"
+        }
+      ],
+      "files": [
+        "_common/fuerza/policia.webp"
+      ]
+    },
+    {
+      "slot": "fuerza.transito",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.transito",
+          "blockType": "icon-table",
+          "shows": "Tránsito"
+        },
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.transito",
+          "blockType": "icon-table",
+          "shows": "Tránsito"
+        }
+      ],
+      "files": [
+        "_common/fuerza/transito.webp"
+      ]
+    },
+    {
+      "slot": "fuerza.defensa-civil",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.defensa-civil",
+          "blockType": "icon-table",
+          "shows": "Defensa Civil"
+        },
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.defensa-civil",
+          "blockType": "icon-table",
+          "shows": "Defensa Civil"
+        }
+      ],
+      "files": [
+        "_common/fuerza/defensa-civil.webp"
+      ]
+    },
+    {
+      "slot": "fuerza.gaula",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.gaula",
+          "blockType": "icon-table",
+          "shows": "Gaula"
+        },
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.gaula",
+          "blockType": "icon-table",
+          "shows": "Gaula"
+        }
+      ],
+      "files": [
+        "_common/fuerza/gaula.webp"
+      ]
+    }
+  ]
 }

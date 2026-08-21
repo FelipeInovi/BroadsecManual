@@ -414,26 +414,32 @@ children:
               description: >-
                 Todos los recursos disponibles, sin distinguir fuerza.
             - id: llamada.fuerzas.filtro.salud
+              icon: fuerza.salud
               label: Salud
               description: >-
                 Solo los recursos de salud.
             - id: llamada.fuerzas.filtro.bomberos
+              icon: fuerza.bomberos
               label: Bomberos
               description: >-
                 Solo los recursos de bomberos.
             - id: llamada.fuerzas.filtro.policia
+              icon: fuerza.policia
               label: Policía
               description: >-
                 Solo los recursos de policía.
             - id: llamada.fuerzas.filtro.transito
+              icon: fuerza.transito
               label: Tránsito
               description: >-
                 Solo los recursos de tránsito.
             - id: llamada.fuerzas.filtro.defensa-civil
+              icon: fuerza.defensa-civil
               label: Defensa Civil
               description: >-
                 Solo los recursos de defensa civil.
             - id: llamada.fuerzas.filtro.gaula
+              icon: fuerza.gaula
               label: Gaula
               description: >-
                 Solo los recursos de Gaula.
