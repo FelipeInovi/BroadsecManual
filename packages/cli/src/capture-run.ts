@@ -25,6 +25,27 @@ const DEFAULT_VIEWPORT = { width: 1600, height: 900 };
 const WAIT_MS = 20000;
 
 /**
+ * How little text means the application is not there at all.
+ *
+ * Measured, not chosen: a blanked Bridge360 tree reports 0, and the emptiest
+ * healthy view measured — Bridge of Things showing only its landing panel —
+ * reports 641. The gap is wide enough that any number in it would do, so this
+ * sits near the bottom of it: a threshold that has to be exact is a threshold
+ * that will drift.
+ */
+const BLANK_TEXT_MAX = 40;
+
+/**
+ * Is this a blanked application rather than a sparse screen?
+ *
+ * Separate and pure so the boundary can be tested without a browser, which
+ * nothing else in this module can be.
+ */
+export function looksBlank(textLength: number): boolean {
+  return textLength <= BLANK_TEXT_MAX;
+}
+
+/**
  * Read the credentials the recipe NAMES, and fail with the variable name.
  *
  * The recipe carries variable names rather than values so it can be committed.
@@ -295,9 +316,27 @@ export async function runAttachedCaptures(
       return found.sort((p, q) => p.y - q.y);
     };
 
-    const navigate = async (shot: PlannedCapture): Promise<void> => {
-      const index = attach.views.indexOf(shot.view as string);
+    /**
+     * How much text is on the page. Zero on a blanked tree.
+     *
+     * `globalThis` is cast rather than typed from `lib.dom`, the same way
+     * `raster.ts:93` does it: this package compiles against ES2023 with no DOM
+     * on purpose, because it is a Node CLI and the browser is a subprocess.
+     */
+    const textLength = () =>
+      page.evaluate(() => {
+        const g = globalThis as unknown as {
+          document: { body: { innerText: string } };
+        };
+        return g.document.body.innerText.trim().length;
+      });
+
+    const enterView = async (index: number): Promise<void> => {
       const rail = await railButtons();
+      // Order matters: a blanked tree has NO rail, and reporting that as "the
+      // product's rail changed" would send the next reader to re-read `navItems`
+      // over a defect that has nothing to do with them.
+      if (rail.length === 0 && looksBlank(await textLength())) return;
       if (rail.length !== attach.views.length) {
         throw new Error(
           `the rail shows ${rail.length} views and the recipe declares ` +
@@ -310,6 +349,35 @@ export async function runAttachedCaptures(
       // The view swap re-renders the whole grid; the gates below still have to
       // pass, so this is only enough to stop clicking into a dying tree.
       await new Promise((r) => setTimeout(r, 1500));
+    };
+
+    const navigate = async (shot: PlannedCapture): Promise<void> => {
+      const index = attach.views.indexOf(shot.view as string);
+      await enterView(index);
+      if (!looksBlank(await textLength())) return;
+
+      // Bridge360 blanks the WHOLE application when Bridge of Things is entered
+      // a second time in one app load — reload, enter, leave, re-enter, and the
+      // tree comes back with no rail, no panel and no text. Confirmed by
+      // experiment and recorded as a product defect in that manual's ESTADO.md.
+      // It is not something a selector can wait out, and it is not this run's
+      // fault: a plan with two recipes on that view hits it on the second.
+      //
+      // Reloading the same route re-mounts with the session intact — the tokens
+      // live in localStorage and the workstation config in the OS keyring — so
+      // the blank IS recoverable, and the entry after a reload is a first entry
+      // again. Recovering beats failing a plan that is otherwise correct.
+      onProgress(`  the app blanked entering ${shot.view} — reloading, then retrying once`);
+      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.waitForSelector(attach.verify.selector, { timeout: WAIT_MS });
+      await enterView(index);
+      if (looksBlank(await textLength())) {
+        throw new Error(
+          `${shot.view} blanked the application, and it blanked again after a ` +
+            `reload. That is past the known re-entry defect, so something else is ` +
+            `wrong — nothing further was captured.`,
+        );
+      }
     };
 
     return await shootAll(page, plan, figuresDir, onProgress, navigate);
