@@ -13,6 +13,73 @@ id: seatmap
 title: Seatmap
 subtitle: Estado de la sala de operación en tiempo real
 
+# What `from` below is relative to. The prose comments in this file already said
+# this in words; as data, `labels` can be checked.
+sourceBase: src/modules/dashboard/presentation/ui/
+
+# Where every UI label in this section was COPIED FROM. This product ships no
+# i18n catalogue, so each label is a quotation and a quotation does not follow
+# what it quoted — `broadsec-manual labels bridge-manual` holds each one against
+# its line.
+#
+# Only quotations are listed. `label: Encabezado de la agencia`,
+# `labelHeader: Tarjeta` and the other column headings are the MANUAL's own
+# naming, not the product's, so there is nothing to check them against and
+# citing them would report the manual's words as drifted from a screen that
+# never said them.
+labels:
+  - at: seatmap.distribucion.editar
+    from: components/sitemap/sitemap-editor-toolbar.tsx:22
+
+  # The four states the view renders in place of the grid. One ternary, three
+  # outcomes, plus `accessDenied`.
+  - at: seatmap.distribucion.aviso.cargando
+    from: views/sitemap-view.tsx:112
+  - at: seatmap.distribucion.aviso.sin-cargar
+    from: views/sitemap-view.tsx:114
+  - at: seatmap.distribucion.aviso.sin-agencia
+    from: views/sitemap-view.tsx:115
+  - at: seatmap.distribucion.aviso.sin-acceso
+    from: views/sitemap-view.tsx:119
+
+  # `title` of each stat card.
+  - at: seatmap.indicadores.tarjeta.espera
+    from: components/sitemap/sitemap-stats-panel.tsx:276
+  - at: seatmap.indicadores.tarjeta.cola
+    from: components/sitemap/sitemap-stats-panel.tsx:288
+  - at: seatmap.indicadores.tarjeta.en-llamada
+    from: components/sitemap/sitemap-stats-panel.tsx:300
+
+  # `label` of each AgentStatusRow.
+  - at: seatmap.indicadores.estado.disponibles
+    from: components/sitemap/sitemap-stats-panel.tsx:318
+  - at: seatmap.indicadores.estado.en-llamada
+    from: components/sitemap/sitemap-stats-panel.tsx:324
+  - at: seatmap.indicadores.estado.no-disponibles
+    from: components/sitemap/sitemap-stats-panel.tsx:330
+
+  # Column `header`s of the operator monitor table.
+  - at: seatmap.monitor.columna.operador-id
+    from: components/sitemap/use-operator-monitor-table.tsx:168
+  - at: seatmap.monitor.columna.operador
+    from: components/sitemap/use-operator-monitor-table.tsx:183
+  - at: seatmap.monitor.columna.estado
+    from: components/sitemap/use-operator-monitor-table.tsx:191
+  - at: seatmap.monitor.columna.duracion
+    from: components/sitemap/use-operator-monitor-table.tsx:212
+
+  # `STATUS_LABEL`, the operator states as the table prints them.
+  - at: seatmap.monitor.estado.disponible
+    from: components/sitemap/use-operator-monitor-table.tsx:21
+  - at: seatmap.monitor.estado.ocupado
+    from: components/sitemap/use-operator-monitor-table.tsx:22
+  - at: seatmap.monitor.estado.pausa
+    from: components/sitemap/use-operator-monitor-table.tsx:23
+  - at: seatmap.monitor.estado.offline
+    from: components/sitemap/use-operator-monitor-table.tsx:24
+  - at: seatmap.monitor.estado.vacio
+    from: components/sitemap/use-operator-monitor-table.tsx:25
+
 children:
   - id: seatmap.proposito
     type: prose

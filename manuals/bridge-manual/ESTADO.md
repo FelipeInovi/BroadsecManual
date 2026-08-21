@@ -50,9 +50,23 @@ state.
   invented, and it means a new section renumbers the ones after it. That is
   cheap: cross-references are stable ids, so a rename touches no content.
 
-- **Labels are quotations, not references.** The product has no i18n catalogue,
-  so each label in content records the component and line it was copied from.
-  `uiLabel` blocks cannot be used against this source.
+- **Labels are quotations, not references — and the quotation is now CHECKED.**
+  The product has no i18n catalogue, so `uiLabel` blocks cannot be used against
+  this source and each label is a copy. A copy does not follow what it copied, so
+  each one is cited in its section's `labels` list and
+  `broadsec-manual labels bridge-manual` holds it against its line.
+
+  **Only quotations get cited.** A `label:` or `labelHeader:` holding the
+  MANUAL's own naming — "Encabezado de la agencia", "Tarjeta", "Qué indica" — has
+  nothing to check against, and citing it would report the manual's own words as
+  drifted from a screen that never said them. Nine of Seatmap's twenty-eight
+  label-bearing props are the manual's own; twenty are cited.
+
+  Seatmap is backfilled and reports 20/20 exact. **`01-home`, `02-llamada`,
+  `04-dashboard` and `05-bridge-of-things` are NOT backfilled** — their labels
+  still live only in prose comments, which is 202 quotations nothing checks. That
+  is authoring work, one section at a time, and worth doing as each is next
+  touched rather than in one sweep.
 
 - **A screen the PRODUCT has not finished: the manual shows what works, names
   none of what does not, and waits.** Owner's decision, taken after two views in
@@ -239,13 +253,31 @@ Treat this as a proposal to confirm, not as an agreed scope.
    **What settles it:** the owner, or a backend source that enumerates profiles.
    Until then the control is documented unconditionally.
 2. **No extractor for Bridge — and this does not block authoring.** The
-   `framework` dispatch in `packages/extract` is still inert, so there is no map
-   and no drift report. `extract bridge-manual` refusing is the CORRECT state,
-   not a wait: the `react-tauri-ts` extractor is a pipeline piece and is not
-   scheduled. Do not hand-write `knowledge/`, and do not hold a section for it —
-   author against the source read directly, citing file and line, as Seatmap
-   does. **What settles it:** building that extractor, whose first job is not
-   tenants but permission gates.
+   `framework` dispatch in `packages/extract` is still inert, so there is no map.
+   `extract bridge-manual` refusing is the CORRECT state, not a wait. Do not
+   hand-write `knowledge/`, and do not hold a section for it — author against the
+   source read directly, citing file and line, as Seatmap does.
+
+   **This note used to say the extractor's "first job is not tenants but
+   permission gates". That was wrong, and here is why.** The product enumerates
+   permission STRINGS — `view.sitemap.all`, `*`
+   (`can-view-all-agencies.ts:1-4`), `manage.sitemap.layout`. It does not
+   enumerate `agencia-propia` or `todas-las-agencias` anywhere: grep the whole of
+   `../bridge/src` and there are zero hits. Those two are a human abstraction
+   over "holds the permission" / "does not", recorded in `manual.config.yaml`.
+
+   So the map's `values` key is **not extractable for this product at all**,
+   which is structurally unlike `broadlineavida` where `mv.config.ts` IS the
+   value. An honest extractor here could emit `references` — the two gate lines
+   at `sitemap-view.tsx:36-37` — and nothing else. Two lines verifiable by eye
+   in one file do not pay for an extractor.
+
+   The extraction work that DOES pay for Bridge is not gating. It is (a) labels,
+   which is now built and not an extractor at all — see the `labels` command; and
+   (b) a check for whether a fixture became a query, which is the trigger the
+   manual-update flow needs and does not exist. **What settles this question:**
+   it is largely answered — the gating extractor is not worth building for
+   Bridge, and what was worth building is being built without it.
 3. **Whether the other three agency types ever get documented.** Settled for
    now by scoping the manual to RECEPTION (see Decided), which is what let Home
    be written. What is NOT settled is what happens when a DISPATCH, SUPERVISOR
