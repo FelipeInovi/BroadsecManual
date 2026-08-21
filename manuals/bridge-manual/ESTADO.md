@@ -224,6 +224,18 @@ state.
     nowhere. Dead code — do not document it, and do not mistake it for the
     column set on screen.
 
+- **A comment naming a deployment is not a gate, and Crear Incidente is the
+  case that proves it.** Two comments there name one — `create-incident.ts:187`
+  ("only the LV deployment demanded them") and
+  `create-incident.schema.ts:50-52` ("which id comes back depends on the
+  deployment") — and NEITHER branches. The first makes two fields optional for
+  everyone; the second accepts all three ids at once. That is the UNION of
+  deployment behaviours, which is the opposite of a gate.
+
+  Conditioning on either would have asserted a divergence the product does not
+  have, and it would have put the word "LV" inside a Bridge360 manual. Read what
+  the code DOES, never what a comment remembers.
+
 - **Reading the product's LIST beside the manual's catches skipped options, and
   citing labels is when it happens.** Llamada was missing two, both found this
   way and both since written: the force filter declares seven options and the
@@ -323,14 +335,20 @@ derivable and therefore not restated here.)*
 
 ## Next section
 
-**`create-incident`** — last in the rail order, `07-`, no renumbering. It needs
-care: two comments there name deployments (`create-incident.ts:183`,
-`create-incident.schema.ts:51`) and NEITHER is a gate. The code carries the union
-of deployment behaviours instead of branching, so there is nothing
-per-deployment to condition on — do not let those comments turn into a `when`.
+**None — the seven the product's rail offers are written.** What comes next is a
+scope decision, not an authoring one. Three candidates, in the order I would
+raise them:
 
-With it, the proposed seven-module inventory is complete and the scope question
-becomes real rather than hypothetical.
+1. **The two declared gaps close** — Dashboard's Historial de Eventos and Bridge
+   of Things' DASHBOARD panel, both waiting on the product. Run
+   `awaiting bridge-manual`. Nothing else can finish those two modules.
+2. **PMV and CCTV split out of Bridge of Things.** `05-` documents both at
+   workflow depth, which satisfies `module-completeness`, but PMV alone has
+   eighteen components and CCTV's mosaic, PTZ and preset machinery runs to some
+   two thousand lines. A scope decision, not a defect.
+3. **The 187 image slots.** Every one is pending; not a single figure has been
+   delivered. The manual reads as finished text over placeholders, and that is
+   the largest single thing standing between it and a document a client can use.
 
 The three checks, all of which have now caught something real:
 
@@ -360,12 +378,12 @@ lines. Splitting them is a scope decision, not an authoring one.
 Unchanged: `create-incident` will need care. Two comments there name deployments
 (`create-incident.ts:183`, `create-incident.schema.ts:51`) and neither is a gate.
 
-The module inventory above is STILL only proposed. Home, Llamada, Seatmap,
-Dashboard, Bridge of Things and Fuerzas en Campo are written — Dashboard and
-Bridge of Things each carrying a declared gap, so neither is complete by the
-`module-completeness` standard. Run `awaiting bridge-manual` to see them. Only
-`create-incident` remains of the seven the product's rail offers, and no scope
-beyond those seven has been agreed.
+**The module inventory above is no longer a proposal: all seven are written.**
+Home, Llamada, Seatmap, Dashboard, Bridge of Things, Fuerzas en Campo and Crear
+Incidente. Dashboard and Bridge of Things each carry a declared gap, so neither
+is complete by the `module-completeness` standard — run `awaiting bridge-manual`.
+No scope beyond those seven has been agreed, and the product's rail offers no
+eighth.
 
 Two findings from Fuerzas en Campo worth carrying forward:
 

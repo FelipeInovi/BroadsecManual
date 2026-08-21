@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.5.0",
+  "contentVersion": "0.6.0",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 170,
+    "total": 187,
     "delivered": 0,
-    "pending": 170
+    "pending": 187
   },
   "pending": [
     {
@@ -3673,6 +3673,380 @@
       "deliverTo": {
         "shared": "_common/fuerzas-campo.tarea.paso.crear.png",
         "override": "<permission>/fuerzas-campo.tarea.paso.crear.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.fig",
+          "blockType": "figure",
+          "shows": "Vista Crear Incidente con el formulario a la izquierda y el mapa de la operación."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.fig.png",
+        "override": "<permission>/crear-incidente.fig.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.general.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.fig",
+          "blockType": "figure",
+          "shows": "Paso de información general, con el tipo de incidente, la prioridad y el horario."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.general.fig.png",
+        "override": "<permission>/crear-incidente.general.fig.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.general.campo.tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.tipo",
+          "blockType": "field-list",
+          "shows": "Tipo de incidente"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.general.campo.tipo.png",
+        "override": "<permission>/crear-incidente.general.campo.tipo.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.general.campo.prioridad",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.prioridad",
+          "blockType": "field-list",
+          "shows": "Prioridad"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.general.campo.prioridad.png",
+        "override": "<permission>/crear-incidente.general.campo.prioridad.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.general.campo.inicio",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.inicio",
+          "blockType": "field-list",
+          "shows": "Hora inicio"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.general.campo.inicio.png",
+        "override": "<permission>/crear-incidente.general.campo.inicio.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.general.campo.fin",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.fin",
+          "blockType": "field-list",
+          "shows": "Hora fin"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.general.campo.fin.png",
+        "override": "<permission>/crear-incidente.general.campo.fin.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.general.campo.ubicacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.ubicacion",
+          "blockType": "field-list",
+          "shows": "Ubicación"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.general.campo.ubicacion.png",
+        "override": "<permission>/crear-incidente.general.campo.ubicacion.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.reportante.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.reportante.fig",
+          "blockType": "figure",
+          "shows": "Paso de datos del reportante, con el nombre y el teléfono."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.reportante.fig.png",
+        "override": "<permission>/crear-incidente.reportante.fig.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.reportante.campo.nombre",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.reportante.campo.nombre",
+          "blockType": "field-list",
+          "shows": "Nombre del reportante"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.reportante.campo.nombre.png",
+        "override": "<permission>/crear-incidente.reportante.campo.nombre.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.reportante.campo.telefono",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.reportante.campo.telefono",
+          "blockType": "field-list",
+          "shows": "Teléfono"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.reportante.campo.telefono.png",
+        "override": "<permission>/crear-incidente.reportante.campo.telefono.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.detalles.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.detalles.fig",
+          "blockType": "figure",
+          "shows": "Paso de detalles del incidente, con los campos de personas, armas, vehículos y sustancias."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.detalles.fig.png",
+        "override": "<permission>/crear-incidente.detalles.fig.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.resumen.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.resumen.fig",
+          "blockType": "figure",
+          "shows": "Paso del resumen, con el relato del incidente."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.resumen.fig.png",
+        "override": "<permission>/crear-incidente.resumen.fig.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.resumen.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.resumen.campo",
+          "blockType": "field-list",
+          "shows": "Resumen del incidente"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.resumen.campo.png",
+        "override": "<permission>/crear-incidente.resumen.campo.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.abrir.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.abrir.fig",
+          "blockType": "figure",
+          "shows": "Control de apertura al pie del formulario."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.abrir.fig.png",
+        "override": "<permission>/crear-incidente.abrir.fig.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.abrir.paso.ubicacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.abrir.paso.ubicacion",
+          "blockType": "procedure",
+          "shows": "Confirme la ubicación en el mapa"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.abrir.paso.ubicacion.png",
+        "override": "<permission>/crear-incidente.abrir.paso.ubicacion.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.abrir.paso.obligatorios",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.abrir.paso.obligatorios",
+          "blockType": "procedure",
+          "shows": "Complete el tipo, la prioridad y el resumen"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.abrir.paso.obligatorios.png",
+        "override": "<permission>/crear-incidente.abrir.paso.obligatorios.png"
+      }
+    },
+    {
+      "slot": "crear-incidente.abrir.paso.crear",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.abrir.paso.crear",
+          "blockType": "procedure",
+          "shows": "Haga clic en Crear incidente"
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/crear-incidente.abrir.paso.crear.png",
+        "override": "<permission>/crear-incidente.abrir.paso.crear.png"
       }
     },
     {

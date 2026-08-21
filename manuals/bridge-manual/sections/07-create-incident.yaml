@@ -1,0 +1,480 @@
+# Crear Incidente — written against the Bridge360 source, cited by file and line.
+#
+# There is no module map for this product yet (no extractor exists for its
+# shape), so every claim here carries its own provenance comment instead of
+# tracing to `knowledge/`. There is no i18n catalogue either: every label below
+# is a QUOTATION, cited in the `labels` list and checked by
+# `broadsec-manual labels bridge-manual`.
+#
+# Checked before writing, per ESTADO's standing note:
+#
+#  - **Divergence signals: CLEAN.** `views/create-incident-view.tsx` reads no
+#    `agencyType`, no `permissions`, no `can*`, no `role`, no `agencyId`, and the
+#    rail entry that reaches it is ungated like every other. No `when` here.
+#
+#  - **The two comments that name deployments are NOT gates**, and this section
+#    is where that mattered most. Both were re-read before writing:
+#
+#      * `domain/create-incident.ts:187-188` — "only the LV deployment demanded
+#        them, and an emergency line takes anonymous reports". The code that
+#        follows makes caller name and phone optional FOR EVERYONE; there is no
+#        branch. The comment records why the requirement was dropped, not a
+#        condition.
+#      * `domain/create-incident.schema.ts:50-52` — "Which id comes back depends
+#        on the deployment, so all three are optional and the caller takes the
+#        first one present". The schema accepts all three at once. That is the
+#        UNION of deployment behaviours, which is the opposite of a gate.
+#
+#    So: nothing in this module is conditioned, and neither comment may become a
+#    `when`. Tagging on either would assert a divergence the product does not
+#    have.
+#
+#  - **Data: real.** No `MOCK`, no fixture, no English placeholder copy under
+#    `create-incident/`. The incident types come from `useEmergencyTypes`
+#    (`create-incident-panel.tsx:63`) and the submit from `useCreateIncident`
+#    (`:58`).
+#
+# The address bar this view uses is the same component Llamada documents, so its
+# controls are not repeated here — the section points at Llamada instead.
+#
+# Paths in comments are relative to `src/modules/dashboard/` in the `bridge`
+# source repository, because the validation messages live in `domain/` rather
+# than under `presentation/ui/`.
+
+id: crear-incidente
+title: Crear Incidente
+subtitle: Apertura manual de un incidente, sin llamada de origen
+
+sourceBase: src/modules/dashboard/
+
+# Where every quoted UI label in this section was copied from.
+#
+# NOT cited: the column headings (`Paso`, `Qué reúne`, `Campo`, `Qué se indica`,
+# `Aviso`, `Cuándo aparece`); and the view's own name, which this section quotes
+# in prose rather than in a panel inventory — one panel does not need a table, so
+# there is no label prop holding it.
+labels:
+  # The accordion's four step headers.
+  - at: crear-incidente.paso.general
+    from: presentation/ui/components/panels/create-incident/create-incident-panel.tsx:218
+  - at: crear-incidente.paso.reportante
+    from: presentation/ui/components/panels/create-incident/create-incident-panel.tsx:236
+  - at: crear-incidente.paso.detalles
+    from: presentation/ui/components/panels/create-incident/create-incident-panel.tsx:253
+  - at: crear-incidente.paso.resumen
+    from: presentation/ui/components/panels/create-incident/create-incident-panel.tsx:266
+
+  # Información general.
+  - at: crear-incidente.general.campo.tipo
+    from: presentation/ui/components/panels/create-incident/incident-type-select.tsx:56
+  - at: crear-incidente.general.campo.prioridad
+    from: presentation/ui/components/panels/create-incident/general-information-step.tsx:56
+  - at: crear-incidente.general.campo.inicio
+    from: presentation/ui/components/panels/create-incident/general-information-step.tsx:77
+  - at: crear-incidente.general.campo.fin
+    from: presentation/ui/components/panels/create-incident/general-information-step.tsx:85
+  - at: crear-incidente.general.campo.ubicacion
+    from: presentation/ui/components/panels/create-incident/general-information-step.tsx:95
+
+  # Datos del reportante. Both optional for every deployment — see the header.
+  - at: crear-incidente.reportante.campo.nombre
+    from: presentation/ui/components/panels/create-incident/caller-information-step.tsx:22
+  - at: crear-incidente.reportante.campo.telefono
+    from: presentation/ui/components/panels/create-incident/caller-information-step.tsx:29
+
+  # Detalles del incidente.
+  - at: crear-incidente.detalles.campo.sospechosos
+    from: presentation/ui/components/panels/create-incident/incident-details-step.tsx:20
+  - at: crear-incidente.detalles.campo.heridos
+    from: presentation/ui/components/panels/create-incident/incident-details-step.tsx:26
+  - at: crear-incidente.detalles.campo.armas
+    from: presentation/ui/components/panels/create-incident/incident-details-step.tsx:32
+  - at: crear-incidente.detalles.campo.vehiculos
+    from: presentation/ui/components/panels/create-incident/incident-details-step.tsx:38
+  - at: crear-incidente.detalles.campo.sustancias
+    from: presentation/ui/components/panels/create-incident/incident-details-step.tsx:44
+
+  # The summary field's own label, which repeats its step header's text at a
+  # different place in the source.
+  - at: crear-incidente.resumen.campo
+    from: presentation/ui/components/panels/create-incident/summary-step.tsx:28
+
+  # `validateCreateIncidentForm` — what the form refuses to submit without.
+  - at: crear-incidente.falta.tipo
+    from: domain/create-incident.ts:192
+  - at: crear-incidente.falta.prioridad
+    from: domain/create-incident.ts:195
+  - at: crear-incidente.falta.ubicacion
+    from: domain/create-incident.ts:203
+  - at: crear-incidente.falta.resumen
+    from: domain/create-incident.ts:212
+
+children:
+  - id: crear-incidente.proposito
+    type: prose
+    props:
+      text: >-
+        La vista **Crear Incidente** abre un incidente por cuenta del operador,
+        sin una llamada que lo origine: un aviso por radio, una novedad
+        observada en cámara, un reporte que llega por otra vía. Reúne en un solo
+        formulario lo mismo que se registraría durante una llamada.
+
+  - id: crear-incidente.acceso
+    type: prose
+    props:
+      # components/layout/icon-sidebar.tsx:81 — nav item id `create-incident`,
+      # rótulo "Crear Incidente", sin condición.
+      text: >-
+        Diríjase a **Crear Incidente** en la barra lateral de iconos. El
+        formulario ocupa la columna izquierda y el resto de la pantalla es el
+        mapa de la operación.
+
+  - id: crear-incidente.fig
+    type: figure
+    props:
+      caption: "Vista Crear Incidente con el formulario a la izquierda y el mapa de la operación."
+      widthPercent: 90
+
+  - id: crear-incidente.mapa
+    type: prose
+    props:
+      # views/create-incident-view.tsx:31-36 — el comentario del producto dice
+      # que el mapa es el fondo de la aplicación y no una segunda instancia
+      # dentro del formulario: el operador ubica el incidente con el pin y la
+      # barra de dirección, y el formulario lee el resultado del borrador.
+      text: >-
+        El mapa no es parte del formulario: es el mapa de la operación, y sobre
+        él se ubica el incidente. El formulario toma de allí la ubicación, de
+        modo que la posición se elige sobre el mapa y no se escribe en un campo.
+
+  - id: crear-incidente.direccion
+    type: callout
+    props:
+      # La barra es `IncidentLocationBar`
+      # (views/create-incident-view.tsx:12), el mismo componente que documenta
+      # Llamada. Sus controles no se repiten acá.
+      variant: info
+      text: >-
+        La barra de dirección es la misma que se usa durante una llamada: sus
+        controles están descritos en la sección **Llamada**, y se comportan
+        igual acá.
+
+  - id: crear-incidente.pin
+    type: prose
+    props:
+      # views/create-incident-view.tsx:58-60 — el borrador se siembra en el
+      # centro del mapa pero SIN confirmar, y el comentario del producto explica
+      # por qué: algo tiene que estar en el mapa para poder arrastrarlo, y el
+      # centro del mapa no puede pasar por una dirección que el operador eligió.
+      text: >-
+        Al abrir la vista aparece un pin en el centro del mapa, todavía sin
+        confirmar: está ahí para poder arrastrarlo, no como ubicación elegida. La
+        ubicación cuenta como elegida solo cuando la confirma, y hasta entonces
+        el formulario la reclama.
+
+  - id: crear-incidente.pasos
+    type: data-table
+    props:
+      # Rótulos citados de los encabezados del acordeón,
+      # create-incident-panel.tsx:218, :236, :253 y :266. El comentario del
+      # producto en :44 dice que los cuatro pasos son los que pedía la consola
+      # anterior, en el mismo orden.
+      labelHeader: Paso
+      descriptionHeader: Qué reúne
+      rows:
+        - id: crear-incidente.paso.general
+          label: Información general
+          description: >-
+            El tipo de incidente, su prioridad, el horario y la ubicación.
+        - id: crear-incidente.paso.reportante
+          label: Datos del reportante
+          description: >-
+            Quién dio el aviso, si se identificó.
+        - id: crear-incidente.paso.detalles
+          label: Detalles del incidente
+          description: >-
+            Lo que hay en el lugar: personas, armas, vehículos, sustancias.
+        - id: crear-incidente.paso.resumen
+          label: Resumen del incidente
+          description: >-
+            El relato breve de lo que está pasando.
+
+  - id: crear-incidente.acordeon
+    type: prose
+    props:
+      # create-incident-panel.tsx:158-160 — `toggleStep` cierra el paso abierto
+      # si se vuelve a presionar, de modo que hay a lo sumo uno abierto.
+      text: >-
+        Los cuatro pasos se abren de a uno: al abrir uno se cierra el anterior, y
+        al presionar el que ya está abierto se cierra. Puede recorrerlos en
+        cualquier orden.
+
+  # --- Información general ----------------------------------------------------
+  - id: crear-incidente.general
+    title: Información general
+    children:
+      - id: crear-incidente.general.proposito
+        type: prose
+        props:
+          text: >-
+            Reúne lo que el incidente es y dónde ocurre. Es el único paso cuyos
+            campos el formulario reclama para poder abrir el incidente.
+
+      - id: crear-incidente.general.fig
+        type: figure
+        props:
+          caption: "Paso de información general, con el tipo de incidente, la prioridad y el horario."
+          widthPercent: 90
+
+      - id: crear-incidente.general.campos
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de incident-type-select.tsx:56 y
+            # general-information-step.tsx:56, :77, :85 y :95. Los tipos vienen
+            # de `useEmergencyTypes` (create-incident-panel.tsx:63), no de una
+            # lista fija.
+            - id: crear-incidente.general.campo.tipo
+              label: Tipo de incidente
+              text: >-
+                Qué clase de incidente es. La lista se consulta a la plataforma
+                y admite más de un tipo; el propio campo ofrece un buscador para
+                encontrarlos.
+
+            - id: crear-incidente.general.campo.prioridad
+              label: Prioridad
+              text: >-
+                Con qué urgencia debe atenderse.
+
+            - id: crear-incidente.general.campo.inicio
+              label: Hora inicio
+              text: >-
+                Desde cuándo corre el incidente.
+
+            - id: crear-incidente.general.campo.fin
+              label: Hora fin
+              text: >-
+                Hasta cuándo corre, si ya terminó.
+
+            - id: crear-incidente.general.campo.ubicacion
+              label: Ubicación
+              text: >-
+                Refleja la dirección confirmada sobre el mapa. No se completa
+                escribiendo: se elige con el pin y la barra de dirección.
+
+  # --- Datos del reportante ---------------------------------------------------
+  - id: crear-incidente.reportante
+    title: Datos del reportante
+    children:
+      - id: crear-incidente.reportante.proposito
+        type: prose
+        props:
+          text: >-
+            Reúne quién dio el aviso. Los dos campos son opcionales: una línea
+            de emergencia recibe reportes anónimos, y el formulario abre el
+            incidente sin ellos.
+
+      - id: crear-incidente.reportante.fig
+        type: figure
+        props:
+          caption: "Paso de datos del reportante, con el nombre y el teléfono."
+          widthPercent: 90
+
+      - id: crear-incidente.reportante.campos
+        type: field-list
+        props:
+          items:
+            # Rótulos citados de caller-information-step.tsx:22 y :29. Los dos
+            # son opcionales para TODA instalación — ver la cabecera de este
+            # archivo sobre el comentario que nombra un deployment sin ser gate.
+            - id: crear-incidente.reportante.campo.nombre
+              label: Nombre del reportante
+              text: >-
+                Quién dio el aviso. El propio campo indica que puede quedar
+                anónimo si la persona no se identifica.
+
+            - id: crear-incidente.reportante.campo.telefono
+              label: Teléfono
+              text: >-
+                Por dónde volver a contactarla. El campo indica que es opcional.
+
+  # --- Detalles del incidente -------------------------------------------------
+  - id: crear-incidente.detalles
+    title: Detalles del incidente
+    children:
+      - id: crear-incidente.detalles.proposito
+        type: prose
+        props:
+          text: >-
+            Reúne lo que hay en el lugar, con el detalle que se tenga. Todos sus
+            campos son opcionales y admiten texto libre: registre lo que sepa y
+            deje en blanco lo que no.
+
+      - id: crear-incidente.detalles.fig
+        type: figure
+        props:
+          caption: "Paso de detalles del incidente, con los campos de personas, armas, vehículos y sustancias."
+          widthPercent: 90
+
+      - id: crear-incidente.detalles.campos
+        type: data-table
+        props:
+          # Rótulos citados de incident-details-step.tsx:20, :26, :32, :38 y
+          # :44. La descripción de cada uno reproduce lo que el propio campo
+          # sugiere en su texto guía (:23, :29, :35, :41 y :47).
+          labelHeader: Campo
+          descriptionHeader: Qué se indica
+          rows:
+            - id: crear-incidente.detalles.campo.sospechosos
+              label: Sospechosos
+              description: >-
+                Cuántos son y cómo se los describe.
+            - id: crear-incidente.detalles.campo.heridos
+              label: Heridos
+              description: >-
+                Cuántos hay y en qué estado.
+            - id: crear-incidente.detalles.campo.armas
+              label: Armas
+              description: >-
+                De qué tipo, si hay.
+            - id: crear-incidente.detalles.campo.vehiculos
+              label: Vehículos
+              description: >-
+                Placa, color y tipo.
+            - id: crear-incidente.detalles.campo.sustancias
+              label: Sustancias
+              description: >-
+                De qué tipo, si hay.
+
+  # --- Resumen del incidente --------------------------------------------------
+  - id: crear-incidente.resumen
+    title: Resumen del incidente
+    children:
+      - id: crear-incidente.resumen.proposito
+        type: prose
+        props:
+          text: >-
+            Reúne el relato breve de lo que está pasando. El formulario lo
+            reclama para poder abrir el incidente.
+
+      - id: crear-incidente.resumen.fig
+        type: figure
+        props:
+          caption: "Paso del resumen, con el relato del incidente."
+          widthPercent: 90
+
+      - id: crear-incidente.resumen.campos
+        type: field-list
+        props:
+          items:
+            # Rótulo citado de summary-step.tsx:28 — repite el texto del
+            # encabezado de su paso, que vive en otro lugar del source.
+            - id: crear-incidente.resumen.campo
+              label: Resumen del incidente
+              text: >-
+                Qué está pasando, en una o dos frases, como lo sugiere el propio
+                campo.
+
+      - id: crear-incidente.resumen.automatico
+        type: callout
+        props:
+          # summary-step.tsx:35-39 muestra el aviso cuando el resumen llegó
+          # armado; el comentario del producto en :18 dice que se abandona en
+          # cuanto el operador lo edita.
+          variant: info
+          text: >-
+            El resumen puede llegar armado a partir de lo que ya completó, y en
+            ese caso el propio paso lo avisa. Es una propuesta: en cuanto lo
+            edita, deja de rearmarse y queda lo que usted escribió.
+
+  # --- Abrir el incidente -----------------------------------------------------
+  - id: crear-incidente.abrir
+    title: Abrir el incidente
+    children:
+      - id: crear-incidente.abrir.proposito
+        type: prose
+        props:
+          text: >-
+            Con los cuatro pasos completos en lo que corresponda, el formulario
+            abre el incidente y lo incorpora a la operación.
+
+      - id: crear-incidente.abrir.fig
+        type: figure
+        props:
+          caption: "Control de apertura al pie del formulario."
+          widthPercent: 90
+
+      - id: crear-incidente.abrir.procedimiento
+        type: procedure
+        props:
+          steps:
+            # Rótulo del control citado de create-incident-panel.tsx:297. El
+            # panel se titula "Crear Incidente" (:203) y el control dice "Crear
+            # incidente" — misma palabra, distinta mayúscula, las dos en
+            # pantalla.
+            - id: crear-incidente.abrir.paso.ubicacion
+              title: Confirme la ubicación en el mapa
+              text: >-
+                Arrastre el pin al lugar del incidente y confírmelo con la barra
+                de dirección. Mientras no lo confirme, el formulario no abre el
+                incidente.
+              layout: beside
+            - id: crear-incidente.abrir.paso.obligatorios
+              title: Complete el tipo, la prioridad y el resumen
+              text: >-
+                Son los tres datos que el formulario reclama, además de la
+                ubicación. El resto de los campos es opcional.
+              layout: beside
+            - id: crear-incidente.abrir.paso.crear
+              title: Haga clic en Crear incidente
+              text: >-
+                Al pie del formulario. Mientras la plataforma responde, el
+                control indica que la apertura está en curso.
+              layout: beside
+
+      - id: crear-incidente.abrir.faltantes
+        type: data-table
+        props:
+          # Avisos citados de `validateCreateIncidentForm`,
+          # domain/create-incident.ts:192, :195, :203 y :212. Al fallar el
+          # envío, el panel abre el paso que lo está bloqueando
+          # (create-incident-panel.tsx:175).
+          labelHeader: Aviso
+          descriptionHeader: Cuándo aparece
+          rows:
+            - id: crear-incidente.falta.tipo
+              label: Seleccione al menos un tipo de incidente
+              description: >-
+                No eligió ningún tipo en Información general.
+            - id: crear-incidente.falta.prioridad
+              label: Seleccione la prioridad
+              description: >-
+                No eligió prioridad en Información general.
+            - id: crear-incidente.falta.ubicacion
+              label: Confirme la ubicación en el mapa
+              description: >-
+                El pin sigue sin confirmar.
+            - id: crear-incidente.falta.resumen
+              label: Escriba el resumen del incidente
+              description: >-
+                El resumen quedó vacío.
+
+      - id: crear-incidente.abrir.bloqueo
+        type: callout
+        props:
+          variant: important
+          text: >-
+            Si falta alguno de esos datos, el formulario no abre el incidente y
+            **abre el paso que lo está bloqueando**, de modo que el campo
+            reclamado queda a la vista sin buscarlo.
+
+      - id: crear-incidente.abrir.resultado
+        type: prose
+        props:
+          # create-incident-panel.tsx:57 y :58 — la plataforma avisa el
+          # resultado por notificación; al crearse, el borrador se limpia
+          # (`clearDraft`, :79).
+          text: >-
+            Al abrirse, la plataforma avisa el resultado y el formulario queda
+            en blanco, listo para el siguiente incidente. El pin vuelve al
+            centro del mapa, otra vez sin confirmar.
