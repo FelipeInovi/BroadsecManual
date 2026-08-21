@@ -242,3 +242,137 @@ recipes:
   # Left pending rather than guessed at. A wrong interaction that happens to
   # satisfy `screenIs` would deliver the general step's picture into three slots
   # whose captions promise three different ones, and every count would agree.
+
+  # --- controls, one per slot, clipped to the control itself -------------------
+  #
+  # The selector for each comes from this manual's own `labels` citation: the slot
+  # id IS the item id IS the citation's `at`, so every control below is addressed
+  # by the string the manual quotes and `labels` checks against the source. Which
+  # ATTRIBUTE carries it differs per control — `title`, `placeholder`, or the text
+  # of a `<Label>` — and that is why each one names it rather than guessing.
+  #
+  # `module-completeness`: "A control the operator must press — always." So the
+  # clip is the control, not the panel around it.
+
+  # Home's review controls. `title` for the buttons, `placeholder` for the field.
+  - slot: home.revision.control.buscar
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    dataReady: input[placeholder="Buscar por ID, dir..."]
+    clip: input[placeholder="Buscar por ID, dir..."]
+    settleMs: 1500
+
+  - slot: home.revision.control.filtros
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    dataReady: button[title="Filtros"]
+    clip: button[title="Filtros"]
+    settleMs: 1500
+
+  # Both of these alternate their `title`; the citation names the state the manual
+  # documents, which is the one the control shows at rest.
+  - slot: home.revision.control.orden
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    dataReady: button[title="Más recientes primero"]
+    clip: button[title="Más recientes primero"]
+    settleMs: 1500
+
+  - slot: home.revision.control.teclado
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    dataReady: button[title="Mostrar teclado"]
+    clip: button[title="Mostrar teclado"]
+    settleMs: 1500
+
+  # Seatmap's layout-edit control. Present for this account, which is itself a
+  # fact worth noting: it is gated on `canManageSitemapLayout`.
+  - slot: seatmap.distribucion.editar
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: button[title="Editar distribución"]
+    clip: button[title="Editar distribución"]
+    settleMs: 2500
+
+  # Dashboard.
+  - slot: dashboard.historial.buscar.campo
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: input[placeholder="Buscar por tipo, queue o teléfono..."]
+    clip: input[placeholder="Buscar por tipo, queue o teléfono..."]
+    settleMs: 2500
+
+  # NOT captured: `dashboard.analitica.accion.limpiar`. The control lives in the
+  # analytics FILTERS panel (`analytics-filters-panel.tsx:1038`), which is a
+  # separate docked panel — opening the Analítica tab does not open it. Probed on
+  # the running app: with the tab open, nothing on screen contains "Limpiar" at
+  # all. Needs the step that opens that panel, which is not known yet.
+
+  # Fuerzas en Campo's list controls.
+  - slot: fuerzas-campo.agentes.control.buscar
+    view: forces-in-field
+    screenIs: h3::-p-text(Fuerzas en Campo)
+    dataReady: input[placeholder="Buscar agente..."]
+    clip: input[placeholder="Buscar agente..."]
+    settleMs: 2500
+
+  - slot: fuerzas-campo.agentes.control.filtros
+    view: forces-in-field
+    screenIs: h3::-p-text(Fuerzas en Campo)
+    dataReady: button[title="Filtros"]
+    clip: button[title="Filtros"]
+    settleMs: 2500
+
+  # Crear Incidente's first step is open on arrival, so its four fields need no
+  # click. `<Label>` text, not an attribute.
+  - slot: crear-incidente.general.campo.tipo
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: ::-p-text(Tipo de incidente)
+    clip: ::-p-text(Tipo de incidente)
+    # Climb to the pair. `Label` renders a `<span>`
+    # (`create-incident-fields.tsx:6-10`) and the field sits beside it inside a
+    # `div`, so clipping the match alone photographed the WORD "Tipo de incidente" and
+    # nothing else — a caption promising a control, answered by its own title.
+    # `closest("div")` cannot return the span, so it lands on the wrapper.
+    clipUp: div
+    settleMs: 2000
+
+  - slot: crear-incidente.general.campo.prioridad
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: ::-p-text(Prioridad)
+    clip: ::-p-text(Prioridad)
+    # Climb to the pair. `Label` renders a `<span>`
+    # (`create-incident-fields.tsx:6-10`) and the field sits beside it inside a
+    # `div`, so clipping the match alone photographed the WORD "Prioridad" and
+    # nothing else — a caption promising a control, answered by its own title.
+    # `closest("div")` cannot return the span, so it lands on the wrapper.
+    clipUp: div
+    settleMs: 2000
+
+  - slot: crear-incidente.general.campo.inicio
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: ::-p-text(Hora inicio)
+    clip: ::-p-text(Hora inicio)
+    # Climb to the pair. `Label` renders a `<span>`
+    # (`create-incident-fields.tsx:6-10`) and the field sits beside it inside a
+    # `div`, so clipping the match alone photographed the WORD "Hora inicio" and
+    # nothing else — a caption promising a control, answered by its own title.
+    # `closest("div")` cannot return the span, so it lands on the wrapper.
+    clipUp: div
+    settleMs: 2000
+
+  - slot: crear-incidente.general.campo.fin
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: ::-p-text(Hora fin)
+    clip: ::-p-text(Hora fin)
+    # Climb to the pair. `Label` renders a `<span>`
+    # (`create-incident-fields.tsx:6-10`) and the field sits beside it inside a
+    # `div`, so clipping the match alone photographed the WORD "Hora fin" and
+    # nothing else — a caption promising a control, answered by its own title.
+    # `closest("div")` cannot return the span, so it lands on the wrapper.
+    clipUp: div
+    settleMs: 2000

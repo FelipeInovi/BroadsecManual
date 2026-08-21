@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.6.3",
+  "contentVersion": "0.6.4",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -19,98 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 181,
-    "delivered": 44,
-    "pending": 137
+    "delivered": 56,
+    "pending": 125
   },
   "pending": [
-    {
-      "slot": "home.revision.control.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.control.buscar",
-          "blockType": "field-list",
-          "shows": "Buscar por ID, dir..."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.control.buscar.png",
-        "override": "<permission>/home.revision.control.buscar.png"
-      }
-    },
-    {
-      "slot": "home.revision.control.filtros",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.control.filtros",
-          "blockType": "field-list",
-          "shows": "Filtros"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.control.filtros.png",
-        "override": "<permission>/home.revision.control.filtros.png"
-      }
-    },
-    {
-      "slot": "home.revision.control.orden",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.control.orden",
-          "blockType": "field-list",
-          "shows": "Más recientes primero"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.control.orden.png",
-        "override": "<permission>/home.revision.control.orden.png"
-      }
-    },
-    {
-      "slot": "home.revision.control.teclado",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.control.teclado",
-          "blockType": "field-list",
-          "shows": "Mostrar teclado"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.control.teclado.png",
-        "override": "<permission>/home.revision.control.teclado.png"
-      }
-    },
     {
       "slot": "home.revision.abrir.ubicar",
       "neededBy": [
@@ -1148,28 +1060,6 @@
       }
     },
     {
-      "slot": "seatmap.distribucion.editar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.distribucion.editar",
-          "blockType": "field-list",
-          "shows": "Editar distribución"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.distribucion.editar.png",
-        "override": "<permission>/seatmap.distribucion.editar.png"
-      }
-    },
-    {
       "slot": "dashboard.calor.control",
       "neededBy": [
         "agencia-propia",
@@ -1189,28 +1079,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.calor.control.png",
         "override": "<permission>/dashboard.calor.control.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.buscar.campo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.buscar.campo",
-          "blockType": "field-list",
-          "shows": "Buscar por tipo, queue o teléfono..."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.buscar.campo.png",
-        "override": "<permission>/dashboard.historial.buscar.campo.png"
       }
     },
     {
@@ -2182,50 +2050,6 @@
       }
     },
     {
-      "slot": "fuerzas-campo.agentes.control.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.control.buscar",
-          "blockType": "field-list",
-          "shows": "Buscar agente..."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.control.buscar.png",
-        "override": "<permission>/fuerzas-campo.agentes.control.buscar.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.agentes.control.filtros",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.control.filtros",
-          "blockType": "field-list",
-          "shows": "Filtros"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.control.filtros.png",
-        "override": "<permission>/fuerzas-campo.agentes.control.filtros.png"
-      }
-    },
-    {
       "slot": "fuerzas-campo.agentes.detalle.fig",
       "neededBy": [
         "agencia-propia",
@@ -2622,94 +2446,6 @@
       }
     },
     {
-      "slot": "crear-incidente.general.campo.tipo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.general.campo.tipo",
-          "blockType": "field-list",
-          "shows": "Tipo de incidente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.general.campo.tipo.png",
-        "override": "<permission>/crear-incidente.general.campo.tipo.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.general.campo.prioridad",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.general.campo.prioridad",
-          "blockType": "field-list",
-          "shows": "Prioridad"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.general.campo.prioridad.png",
-        "override": "<permission>/crear-incidente.general.campo.prioridad.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.general.campo.inicio",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.general.campo.inicio",
-          "blockType": "field-list",
-          "shows": "Hora inicio"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.general.campo.inicio.png",
-        "override": "<permission>/crear-incidente.general.campo.inicio.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.general.campo.fin",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.general.campo.fin",
-          "blockType": "field-list",
-          "shows": "Hora fin"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.general.campo.fin.png",
-        "override": "<permission>/crear-incidente.general.campo.fin.png"
-      }
-    },
-    {
       "slot": "crear-incidente.general.campo.ubicacion",
       "neededBy": [
         "agencia-propia",
@@ -3068,6 +2804,74 @@
       ]
     },
     {
+      "slot": "home.revision.control.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.control.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar por ID, dir..."
+        }
+      ],
+      "files": [
+        "_common/home.revision.control.buscar.png"
+      ]
+    },
+    {
+      "slot": "home.revision.control.filtros",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.control.filtros",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/home.revision.control.filtros.png"
+      ]
+    },
+    {
+      "slot": "home.revision.control.orden",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.control.orden",
+          "blockType": "field-list",
+          "shows": "Más recientes primero"
+        }
+      ],
+      "files": [
+        "_common/home.revision.control.orden.png"
+      ]
+    },
+    {
+      "slot": "home.revision.control.teclado",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.control.teclado",
+          "blockType": "field-list",
+          "shows": "Mostrar teclado"
+        }
+      ],
+      "files": [
+        "_common/home.revision.control.teclado.png"
+      ]
+    },
+    {
       "slot": "home.agencias.fig",
       "neededBy": [
         "agencia-propia",
@@ -3421,6 +3225,23 @@
       ]
     },
     {
+      "slot": "seatmap.distribucion.editar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.editar",
+          "blockType": "field-list",
+          "shows": "Editar distribución"
+        }
+      ],
+      "files": [
+        "_common/seatmap.distribucion.editar.png"
+      ]
+    },
+    {
       "slot": "seatmap.indicadores.fig",
       "neededBy": [
         "agencia-propia",
@@ -3537,6 +3358,23 @@
       ],
       "files": [
         "_common/dashboard.historial.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.buscar.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.buscar.campo",
+          "blockType": "field-list",
+          "shows": "Buscar por tipo, queue o teléfono..."
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.buscar.campo.png"
       ]
     },
     {
@@ -3761,6 +3599,40 @@
       ]
     },
     {
+      "slot": "fuerzas-campo.agentes.control.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.control.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar agente..."
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.agentes.control.buscar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.agentes.control.filtros",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.control.filtros",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.agentes.control.filtros.png"
+      ]
+    },
+    {
       "slot": "fuerzas-campo.agentes.fuerza.todos",
       "neededBy": [
         "agencia-propia",
@@ -3809,6 +3681,74 @@
       ],
       "files": [
         "_common/crear-incidente.general.fig.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.general.campo.tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.tipo",
+          "blockType": "field-list",
+          "shows": "Tipo de incidente"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.general.campo.tipo.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.general.campo.prioridad",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.prioridad",
+          "blockType": "field-list",
+          "shows": "Prioridad"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.general.campo.prioridad.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.general.campo.inicio",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.inicio",
+          "blockType": "field-list",
+          "shows": "Hora inicio"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.general.campo.inicio.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.general.campo.fin",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.general.campo.fin",
+          "blockType": "field-list",
+          "shows": "Hora fin"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.general.campo.fin.png"
       ]
     }
   ]
