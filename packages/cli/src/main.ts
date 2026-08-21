@@ -29,6 +29,7 @@ import { themes, isThemeName, type Tokens } from "@broadsec-manual/tokens";
 import { printToPdf } from "./chrome.ts";
 import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract } from "./extract.ts";
+import { soleAxis } from "./axis.ts";
 import { pendingTable } from "./pending-table.ts";
 import { deploymentFor, parseEnvFile, parseRecipes, planCaptures } from "./capture.ts";
 
@@ -443,30 +444,12 @@ function requireAxisValue(target: BuildTarget, axis: string): string {
  * it build was to call a permission profile a deployment — on the cover, in the
  * filename and in the figure folders, in a document that goes to a client.
  *
- * DERIVED, not declared. One axis cannot be ambiguous, and every manual here has
- * exactly one, so nothing needs a new config key. Two or more is a shape this
- * pipeline has never had: it asks instead of guessing, because taking the first
- * key would make the output filename depend on the order the YAML was written in.
+ * The rule itself lives in `soleAxis` (`axis.ts`), which `extract` also uses:
+ * the map and the documents cannot be allowed to disagree about what a manual
+ * varies on.
  */
 export function primaryAxis(config: ManualConfig): string {
-  const names = Object.keys(config.axes);
-  const only = names[0];
-  if (names.length === 1 && only !== undefined) return only;
-
-  if (names.length === 0) {
-    throw new Error(
-      `manual.config.yaml declares no axes. One document is produced per target ` +
-        `and a target is an assignment of every axis, so there is nothing to ` +
-        `build — declare the axis this manual's content actually varies on.`,
-    );
-  }
-  throw new Error(
-    `manual.config.yaml declares ${names.length} axes (${names.join(", ")}) and ` +
-      `nothing says which one names the output. Conditioning handles any number ` +
-      `of axes, but one filename and one figure set need a single value. More ` +
-      `than one axis has never been needed here — raise it rather than working ` +
-      `around it.`,
-  );
+  return soleAxis(Object.keys(config.axes));
 }
 
 /** One target's output filename, with the axis token expanded by the axis's own name. */
@@ -967,16 +950,16 @@ export async function run(argv: readonly string[]): Promise<number> {
 
     if (command === "extract") {
       const { map, drift, outPath } = extract(process.cwd(), manualId);
-      const lowConfidence = map.tenantReferences.filter((r) => r.confidence === "low").length;
+      const lowConfidence = map.references.filter((r) => r.confidence === "low").length;
       console.log(
-        `  ${map.tenants.length} deployment(s), ${map.capabilities.length} capability flag(s), ` +
-          `${map.tenantReferences.length} deployment reference(s) in code` +
+        `  ${map.values.length} ${map.axis} value(s), ${map.capabilities.length} capability ` +
+          `flag(s), ${map.references.length} ${map.axis} reference(s) in code` +
           (lowConfidence > 0 ? `, ${lowConfidence} needing review` : ""),
       );
       const contested = map.capabilities.filter((c) => c.absentFrom !== undefined).length;
       if (contested > 0) {
         console.log(
-          `  ${contested} flag(s) are declared by some deployments and not others — ` +
+          `  ${contested} flag(s) are declared by some ${map.axis} values and not others — ` +
             `absent is NOT false, see \`absentFrom\``,
         );
       }

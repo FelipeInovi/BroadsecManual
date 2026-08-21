@@ -6,11 +6,12 @@ import {
   capabilityMatrix,
   findTenantReferences,
   parseTenantConfig,
-  reconcileTenants,
+  reconcileAxisValues,
+  type AxisReference,
   type CapabilityRow,
   type TenantConfig,
-  type TenantReference,
 } from "@broadsec-manual/extract";
+import { soleAxis } from "./axis.ts";
 
 /**
  * `extract` — read a source product and write the module map.
@@ -49,7 +50,7 @@ const registrySchema = z.object({
   ),
 });
 
-/** Source files worth scanning for a deployment comparison. */
+/** Source files worth scanning for an axis comparison. */
 const SCANNED = /\.(tsx?|jsx?)$/;
 
 function walkFiles(root: string, out: string[] = []): string[] {
@@ -62,31 +63,92 @@ function walkFiles(root: string, out: string[] = []): string[] {
   return out;
 }
 
-/** Every fact one extraction produced. */
+/**
+ * Every fact one extraction produced.
+ *
+ * The map NAMES the axis it describes. It used to assume tenant in its field
+ * names — `tenants`, `tenantReferences` — while the conditioning engine
+ * (invariant 3) and the CLI (`primaryAxis`) had already been made agnostic. That
+ * left the map as the last place asserting that a product's divergence is a
+ * deployment, which for a manual conditioned on permission profiles is the
+ * mislabelling invariant 3 exists to prevent: it reached the drift report, which
+ * is read by whoever decides what content gets tagged with.
+ */
 export interface ModuleMap {
   readonly source: string;
-  readonly tenants: ReadonlyArray<{ id: string; code: string; source: string }>;
+  /** The axis this map describes — `tenant`, `permission`, whatever varies. */
+  readonly axis: string;
+  /** The axis's values, as the product itself declares them. */
+  readonly values: ReadonlyArray<{ id: string; code: string; source: string }>;
   readonly capabilities: readonly CapabilityRow[];
-  readonly tenantReferences: readonly TenantReference[];
+  /** Every line of product code that decides along this axis. */
+  readonly references: readonly AxisReference[];
   /**
-   * Where the manual's declared deployments and the product's configs disagree.
+   * Where the manual's declared axis values and the product's configs disagree.
    * Absent when they match. Reported, never reconciled automatically.
    */
   readonly registryMismatch?: readonly string[];
+}
+
+/**
+ * A map read off disk.
+ *
+ * `axis` is optional here and required in `ModuleMap`, and that asymmetry is the
+ * point: a freshly built map always knows its axis, and a map written by an
+ * earlier version never recorded one. Typing both as the same thing would make
+ * the code claim to know something it read from a file that predates the field.
+ */
+export type PreviousMap = Omit<ModuleMap, "axis"> & { readonly axis?: string };
+
+/** The field names a map written before the axis was named used. */
+interface LegacyFields {
+  readonly tenants?: ModuleMap["values"];
+  readonly tenantReferences?: readonly AxisReference[];
+}
+
+/** A capability row from either shape. */
+type LegacyCapabilityRow = CapabilityRow & { readonly tenants?: CapabilityRow["values"] };
+
+/**
+ * Read a previous map whatever shape it was written in.
+ *
+ * Without this the rename IS the drift report: `broadlineavida`'s map on disk
+ * holds 7 values and 100 gates, and every one of them would read as removed and
+ * re-added. A report that fires on its own field rename is a report nobody reads
+ * the next time it fires for a reason — and the reason it fires for is content
+ * tagging that has silently gone wrong.
+ *
+ * `axis` is deliberately NOT defaulted. An absent axis is unknown, not `tenant`:
+ * filling it in would be inventing the one fact this whole change exists to stop
+ * being assumed. One regeneration re-establishes the baseline.
+ */
+export function normalizeMap(raw: PreviousMap): PreviousMap {
+  const legacy = raw as PreviousMap & LegacyFields;
+  return {
+    source: raw.source,
+    ...(raw.axis !== undefined ? { axis: raw.axis } : {}),
+    values: raw.values ?? legacy.tenants ?? [],
+    capabilities: (raw.capabilities ?? []).map((row) => {
+      const { tenants, ...rest } = row as LegacyCapabilityRow;
+      return { ...rest, values: row.values ?? tenants ?? {} };
+    }),
+    references: raw.references ?? legacy.tenantReferences ?? [],
+    ...(raw.registryMismatch !== undefined ? { registryMismatch: raw.registryMismatch } : {}),
+  };
 }
 
 const POLARITIES = ["positive", "negative", "mixed"] as const;
 type PolarityCounts = Record<(typeof POLARITIES)[number], number>;
 
 /**
- * Identity of a deployment gate: where it lives and what it decides — never its
+ * Identity of an axis gate: where it lives and what it decides — never its
  * line, never its text.
  *
  * Keying on position would report every gate below an added import, and every
  * rewrite that decides exactly the same thing. Both are noise, and a report that
  * fires on noise is a report nobody reads.
  */
-const gateKey = (r: TenantReference): string => `${r.file}|${r.codes.join(",")}|${r.kind}`;
+const gateKey = (r: AxisReference): string => `${r.file}|${r.codes.join(",")}|${r.kind}`;
 
 /** `AddObservation.tsx — MV (inline)` */
 function describeGate(key: string): string {
@@ -101,11 +163,9 @@ function summarise(counts: PolarityCounts): string {
     .join(", ");
 }
 
-function gates(m: ModuleMap): Map<string, PolarityCounts> {
+function gates(m: PreviousMap): Map<string, PolarityCounts> {
   const out = new Map<string, PolarityCounts>();
-  // `before` is JSON parsed off disk and may have been written by a version
-  // that predates this key.
-  for (const r of m.tenantReferences ?? []) {
+  for (const r of m.references) {
     const key = gateKey(r);
     const row = out.get(key) ?? { positive: 0, negative: 0, mixed: 0 };
     row[r.polarity] += 1;
@@ -118,22 +178,40 @@ function gates(m: ModuleMap): Map<string, PolarityCounts> {
  * Compare two maps and report what moved.
  *
  * This diff IS the drift report, and it is the reason to regenerate the map at
- * all: a capability that changed hands means tenant tagging in the content may
- * now be wrong, and nothing else in the pipeline can notice that.
+ * all: a capability that changed hands means tagging in the content may now be
+ * wrong, and nothing else in the pipeline can notice that.
  *
- * Gates are compared for the same reason and matter more often. Divergence in
- * this product is mostly element-level — inline comparisons scattered through
- * components — so a gate that flips polarity invalidates tagging already written
- * while every other stage of the pipeline succeeds.
+ * Gates are compared for the same reason and matter more often. Divergence is
+ * mostly element-level — inline comparisons scattered through components — so a
+ * gate that flips polarity invalidates tagging already written while every other
+ * stage of the pipeline succeeds.
+ *
+ * Every line names the axis. `deployment added: supervisor` at a manual
+ * conditioned on permissions is the same lie as printing that word on a cover.
  */
-export function diffMaps(before: ModuleMap, after: ModuleMap): readonly string[] {
+export function diffMaps(rawBefore: PreviousMap, after: ModuleMap): readonly string[] {
+  const before = normalizeMap(rawBefore);
   const out: string[] = [];
 
-  const ids = (m: ModuleMap) => new Set(m.tenants.map((t) => t.id));
-  for (const id of ids(after)) if (!ids(before).has(id)) out.push(`deployment added: ${id}`);
-  for (const id of ids(before)) if (!ids(after).has(id)) out.push(`deployment removed: ${id}`);
+  // A map repointed at a different axis is not a diff, it is a different
+  // question: every value and every gate below it means something else, so
+  // pairing them up would produce a page of changes describing nothing that
+  // happened. An absent axis is not a change — see `normalizeMap`.
+  if (before.axis !== undefined && before.axis !== after.axis) {
+    return [
+      `axis changed: ${before.axis} -> ${after.axis} — every value and gate below ` +
+        `it answers a different question, so nothing under it was compared. ` +
+        `Review the content's tagging against the new axis in full.`,
+    ];
+  }
 
-  const byFlag = (m: ModuleMap) => new Map(m.capabilities.map((c) => [c.flag, c]));
+  const axis = after.axis;
+
+  const ids = (m: PreviousMap | ModuleMap) => new Set(m.values.map((v) => v.id));
+  for (const id of ids(after)) if (!ids(before).has(id)) out.push(`${axis} added: ${id}`);
+  for (const id of ids(before)) if (!ids(after).has(id)) out.push(`${axis} removed: ${id}`);
+
+  const byFlag = (m: PreviousMap | ModuleMap) => new Map(m.capabilities.map((c) => [c.flag, c]));
   const b = byFlag(before);
   const a = byFlag(after);
   for (const [flag, row] of a) {
@@ -194,7 +272,7 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
   const manualDir = join(repoRoot, "manuals", manualId);
   const manualConfig = parseYaml(readFileSync(join(manualDir, "manual.config.yaml"), "utf8")) as {
     manual?: { source?: string };
-    axes?: { tenant?: { values?: Array<{ id?: string }> } };
+    axes?: Record<string, { values?: Array<{ id?: string }> }>;
   };
   const sourceId = manualConfig.manual?.source;
   if (!sourceId) {
@@ -223,12 +301,17 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
     );
   }
 
-  // --- tenants ------------------------------------------------------------
+  // --- the product's own registry of axis values ---------------------------
   //
-  // Refused rather than answered with an empty map. `tenants: []` is not the
+  // Refused rather than answered with an empty map. `values: []` is not the
   // absence of a claim, it IS a claim — that the product ships one deployment —
   // and content conditioned on it would be wrong in the direction nobody checks.
   // The honest outcome for a product this extractor cannot read is no map.
+  //
+  // This comes BEFORE the manual's axis is derived, deliberately: a manual
+  // documenting a product this extractor cannot read must hear that, not a
+  // complaint about its own axes. Its axes are fine; the extractor is the thing
+  // that does not fit.
   const configGlob = entry.extract.tenantConfigs;
   if (configGlob === undefined) {
     throw new Error(
@@ -253,6 +336,11 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
         `config file in the repository.`,
     );
   }
+
+  // Derived from the manual, through the same rule the build uses, so the map
+  // and the documents can never disagree about what this manual varies on.
+  const axis = soleAxis(Object.keys(manualConfig.axes ?? {}));
+
   const configs: TenantConfig[] = readdirSync(configDir)
     .filter((f) => f.endsWith(".config.ts"))
     .map((f) => parseTenantConfig(f, readFileSync(join(configDir, f), "utf8")))
@@ -261,10 +349,10 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
     throw new Error(`no \`*.config.ts\` found in ${configDir} — the tenant registry is empty.`);
   }
 
-  // --- deployment references ----------------------------------------------
+  // --- axis references in code ---------------------------------------------
   const codes = configs.map((c) => c.code);
   const scanRoots = [entry.extract.components, entry.extract.pages].map((p) => join(sourceRoot, p));
-  const references: TenantReference[] = [];
+  const references: AxisReference[] = [];
   for (const root of scanRoots) {
     for (const file of walkFiles(root)) {
       const rel = relative(sourceRoot, file).split(sep).join(posix.sep);
@@ -272,26 +360,27 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
     }
   }
 
-  const declared = (manualConfig.axes?.tenant?.values ?? [])
+  const declared = (manualConfig.axes?.[axis]?.values ?? [])
     .map((v) => v.id)
     .filter((id): id is string => typeof id === "string");
-  const mismatch = reconcileTenants(configs.map((c) => c.id), declared);
+  const mismatch = reconcileAxisValues(axis, configs.map((c) => c.id), declared);
 
   const map: ModuleMap = {
     source: sourceId,
-    tenants: configs.map((c) => ({
+    axis,
+    values: configs.map((c) => ({
       id: c.id,
       code: c.code,
       source: `${configGlob.slice(0, configGlob.lastIndexOf("/"))}/${c.source}`,
     })),
     capabilities: capabilityMatrix(configs),
-    tenantReferences: references,
+    references,
     ...(mismatch.length > 0 ? { registryMismatch: mismatch } : {}),
   };
 
   const outPath = join(manualDir, "knowledge", "module-map.json");
   const drift = existsSync(outPath)
-    ? diffMaps(JSON.parse(readFileSync(outPath, "utf8")) as ModuleMap, map)
+    ? diffMaps(JSON.parse(readFileSync(outPath, "utf8")) as PreviousMap, map)
     : [];
 
   mkdirSync(join(manualDir, "knowledge"), { recursive: true });

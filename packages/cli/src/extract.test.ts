@@ -2,10 +2,10 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import type { CapabilityRow, TenantReference } from "@broadsec-manual/extract";
-import { diffMaps, extract, type ModuleMap } from "./extract.ts";
+import type { AxisReference, CapabilityRow } from "@broadsec-manual/extract";
+import { diffMaps, extract, normalizeMap, type ModuleMap } from "./extract.ts";
 
-const ref = (over: Partial<TenantReference> = {}): TenantReference => ({
+const ref = (over: Partial<AxisReference> = {}): AxisReference => ({
   file: "src/render/components/AddObservation.tsx",
   line: 133,
   codes: ["MV"],
@@ -18,34 +18,49 @@ const ref = (over: Partial<TenantReference> = {}): TenantReference => ({
 
 const cap = (over: Partial<CapabilityRow> = {}): CapabilityRow => ({
   flag: "canSeeBoT",
-  tenants: { mv: { value: true, line: 12 } },
+  values: { mv: { value: true, line: 12 } },
   enabledFor: ["mv"],
   ...over,
 });
 
 const map = (over: Partial<ModuleMap> = {}): ModuleMap => ({
   source: "broadlineavida",
-  tenants: [{ id: "mv", code: "MV", source: "src/render/config/mv.config.ts:2" }],
+  axis: "tenant",
+  values: [{ id: "mv", code: "MV", source: "src/render/config/mv.config.ts:2" }],
   capabilities: [],
-  tenantReferences: [],
+  references: [],
   ...over,
 });
 
 const report = (before: ModuleMap, after: ModuleMap) => diffMaps(before, after).join("\n");
 
-describe("diffMaps — deployments and capabilities", () => {
-  it("reports a deployment the product gained", () => {
+describe("diffMaps — axis values and capabilities", () => {
+  it("reports a value the product gained", () => {
     const after = map({
-      tenants: [...map().tenants, { id: "med", code: "MED", source: "med.config.ts:2" }],
+      values: [...map().values, { id: "med", code: "MED", source: "med.config.ts:2" }],
     });
-    expect(report(map(), after)).toContain("deployment added: med");
+    expect(report(map(), after)).toContain("tenant added: med");
   });
 
-  it("reports a deployment the product lost", () => {
+  it("reports a value the product lost", () => {
     const before = map({
-      tenants: [...map().tenants, { id: "med", code: "MED", source: "med.config.ts:2" }],
+      values: [...map().values, { id: "med", code: "MED", source: "med.config.ts:2" }],
     });
-    expect(report(before, map())).toContain("deployment removed: med");
+    expect(report(before, map())).toContain("tenant removed: med");
+  });
+
+  // Invariant 3: the axis is a build axis, not a label. Calling a permission
+  // profile a "deployment" in the drift report is the same lie as printing it on
+  // a cover — the report is read by whoever decides what content is tagged with.
+  it("names the axis rather than assuming it is tenant", () => {
+    const before = map({ axis: "permission", values: [] });
+    const after = map({
+      axis: "permission",
+      values: [{ id: "todas-las-agencias", code: "*", source: "can-view-all-agencies.ts:8" }],
+    });
+    const out = report(before, after);
+    expect(out).toContain("permission added: todas-las-agencias");
+    expect(out).not.toContain("deployment");
   });
 
   it("reports a capability that changed hands, naming both sides", () => {
@@ -62,13 +77,30 @@ describe("diffMaps — deployments and capabilities", () => {
   });
 });
 
-describe("diffMaps — deployment gates", () => {
+// The map being repointed at a different axis is not a diff, it is a different
+// question. Every value and every gate below it means something else, so pairing
+// them up would produce a page of changes that describe nothing that happened.
+describe("diffMaps — the axis itself changing", () => {
+  it("reports the change and diffs nothing under it", () => {
+    const before = map({ axis: "tenant", references: [ref()] });
+    const after = map({
+      axis: "permission",
+      values: [{ id: "propia", code: "propia", source: "x.ts:1" }],
+      references: [],
+    });
+    const out = diffMaps(before, after);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toContain("axis changed: tenant -> permission");
+  });
+});
+
+describe("diffMaps — axis gates", () => {
   // The reason this comparison exists. Divergence in the product is mostly
-  // element-level: a gate that flips polarity silently invalidates tenant
-  // tagging already written, and no other stage of the pipeline can notice.
+  // element-level: a gate that flips polarity silently invalidates the tagging
+  // already written, and no other stage of the pipeline can notice.
   it("reports a gate that flipped polarity", () => {
-    const before = map({ tenantReferences: [ref({ polarity: "negative" })] });
-    const after = map({ tenantReferences: [ref({ polarity: "positive" })] });
+    const before = map({ references: [ref({ polarity: "negative" })] });
+    const after = map({ references: [ref({ polarity: "positive" })] });
     const out = report(before, after);
     expect(out).toContain("gating changed");
     expect(out).toContain("AddObservation.tsx");
@@ -78,7 +110,7 @@ describe("diffMaps — deployment gates", () => {
 
   it("reports a gate that appeared in a file that had none", () => {
     const after = map({
-      tenantReferences: [ref({ file: "src/render/pages/Dashboard/CallAI.tsx", codes: ["MED"] })],
+      references: [ref({ file: "src/render/pages/Dashboard/CallAI.tsx", codes: ["MED"] })],
     });
     const out = report(map(), after);
     expect(out).toContain("gating added");
@@ -87,7 +119,7 @@ describe("diffMaps — deployment gates", () => {
   });
 
   it("reports a gate that disappeared", () => {
-    const before = map({ tenantReferences: [ref()] });
+    const before = map({ references: [ref()] });
     expect(report(before, map())).toContain("gating removed");
   });
 
@@ -95,17 +127,17 @@ describe("diffMaps — deployment gates", () => {
   // Someone adding an import shifts every line below it; reporting that would
   // drown the drift this file exists to show.
   it("says nothing when a gate only moved down the file", () => {
-    const before = map({ tenantReferences: [ref({ line: 133 })] });
-    const after = map({ tenantReferences: [ref({ line: 134 })] });
+    const before = map({ references: [ref({ line: 133 })] });
+    const after = map({ references: [ref({ line: 134 })] });
     expect(diffMaps(before, after)).toEqual([]);
   });
 
   // Same decision, rewritten. The gate still names MV, still positively, still
   // inline — the manual's tagging is unaffected.
   it("says nothing when the line was reworded but decides the same thing", () => {
-    const before = map({ tenantReferences: [ref({ text: 'config.name === "MV"' })] });
+    const before = map({ references: [ref({ text: 'config.name === "MV"' })] });
     const after = map({
-      tenantReferences: [ref({ text: "useClosedReasonsList(config.name === \"MV\")", line: 180 })],
+      references: [ref({ text: 'useClosedReasonsList(config.name === "MV")', line: 180 })],
     });
     expect(diffMaps(before, after)).toEqual([]);
   });
@@ -113,19 +145,19 @@ describe("diffMaps — deployment gates", () => {
   // A second identical gate in the same file is a new gated place, not a
   // duplicate to fold away: the count is part of what changed.
   it("reports a second gate added beside an identical one", () => {
-    const before = map({ tenantReferences: [ref()] });
-    const after = map({ tenantReferences: [ref(), ref({ line: 918 })] });
+    const before = map({ references: [ref()] });
+    const after = map({ references: [ref(), ref({ line: 918 })] });
     const out = report(before, after);
     expect(out).toContain("gating changed");
     expect(out).toContain("now positive x2");
   });
 
   // Gates are told apart by what they decide, not only by where they live: two
-  // deployments gated in one file are two facts.
-  it("keeps gates in the same file apart when they name different deployments", () => {
-    const before = map({ tenantReferences: [ref({ codes: ["MV"] }), ref({ codes: ["MED"] })] });
+  // values gated in one file are two facts.
+  it("keeps gates in the same file apart when they name different values", () => {
+    const before = map({ references: [ref({ codes: ["MV"] }), ref({ codes: ["MED"] })] });
     const after = map({
-      tenantReferences: [ref({ codes: ["MV"] }), ref({ codes: ["MED"], polarity: "negative" })],
+      references: [ref({ codes: ["MV"] }), ref({ codes: ["MED"], polarity: "negative" })],
     });
     const out = report(before, after);
     expect(out).toContain("MED");
@@ -134,11 +166,69 @@ describe("diffMaps — deployment gates", () => {
   });
 
   it("tells a route gate apart from an inline comparison in the same file", () => {
-    const before = map({ tenantReferences: [ref({ kind: "route-gate" })] });
-    const after = map({ tenantReferences: [ref({ kind: "inline" })] });
+    const before = map({ references: [ref({ kind: "route-gate" })] });
+    const after = map({ references: [ref({ kind: "inline" })] });
     const out = report(before, after);
     expect(out).toContain("gating added");
     expect(out).toContain("gating removed");
+  });
+});
+
+// --- reading a map written before the axis had a name -----------------------
+//
+// `broadlineavida`'s map is on disk with `tenants` and `tenantReferences`. The
+// rename must not become a drift report: 7 values and 100 gates would all read
+// as removed-and-re-added, and a report that fires on its own field rename is a
+// report nobody reads the next time it fires for real.
+
+/** The shape written before the map named its axis — what is on disk today. */
+const legacy = (over: Record<string, unknown> = {}): ModuleMap =>
+  ({
+    source: "broadlineavida",
+    tenants: [{ id: "mv", code: "MV", source: "src/render/config/mv.config.ts:2" }],
+    capabilities: [],
+    tenantReferences: [],
+    ...over,
+  }) as unknown as ModuleMap;
+
+describe("normalizeMap — the previous map's shape", () => {
+  it("reads the old field names, so the rename alone reports nothing", () => {
+    const before = legacy({ tenantReferences: [ref()] });
+    expect(diffMaps(before, map({ references: [ref()] }))).toEqual([]);
+  });
+
+  // Asserted on `normalizeMap` rather than through `diffMaps`, because the
+  // capability diff only reads `enabledFor` — going through it would pass
+  // whether or not the inner field was normalised at all.
+  it("reads a capability row written with the old inner field name", () => {
+    const before = legacy({
+      capabilities: [
+        { flag: "canSeeBoT", tenants: { mv: { value: true, line: 12 } }, enabledFor: ["mv"] },
+      ],
+    });
+    const row = normalizeMap(before).capabilities[0];
+    expect(row?.values["mv"]?.value).toBe(true);
+    expect(row).not.toHaveProperty("tenants");
+  });
+
+  // The migration must not buy quiet at the price of the report's job.
+  it("still reports a real change read through the old shape", () => {
+    const before = legacy({ tenantReferences: [ref({ polarity: "negative" })] });
+    const out = report(before, map({ references: [ref({ polarity: "positive" })] }));
+    expect(out).toContain("was negative, now positive");
+  });
+
+  // An absent axis is unknown, not "tenant". Announcing a change we cannot
+  // substantiate would be inventing a fact, and one regeneration re-establishes
+  // the baseline anyway.
+  it("does not claim the axis changed when the previous map never recorded one", () => {
+    expect(diffMaps(legacy(), map())).toEqual([]);
+    expect(diffMaps(legacy(), map({ axis: "permission" }))).toEqual([]);
+  });
+
+  it("leaves a map already in the new shape alone", () => {
+    const already = map({ references: [ref()], capabilities: [cap()] });
+    expect(normalizeMap(already)).toEqual(already);
   });
 });
 
@@ -156,7 +246,7 @@ afterEach(() => {
 });
 
 /** A repository root with one registry entry and one manual documenting it. */
-const repoWith = (extractBlock: string): string => {
+const repoWith = (extractBlock: string, manualConfig = "manual:\n  source: producto\n"): string => {
   const root = mkdtempSync(join(tmpdir(), "broadsec-extract-"));
   roots.push(root);
   mkdirSync(join(root, "sources"), { recursive: true });
@@ -176,10 +266,7 @@ const repoWith = (extractBlock: string): string => {
       "",
     ].join("\n"),
   );
-  writeFileSync(
-    join(root, "manuals", "un-manual", "manual.config.yaml"),
-    "manual:\n  source: producto\n",
-  );
+  writeFileSync(join(root, "manuals", "un-manual", "manual.config.yaml"), manualConfig);
   return root;
 };
 
@@ -193,7 +280,9 @@ describe("extract, for a product with no tenant registry in its source", () => {
     // The schema used to require `tenantConfigs`, so the entry could not be
     // written without inventing a path — and an invented path is the one defect
     // this whole layer exists to prevent.
-    expect(() => extract(repoWith(noTenantConfigs), "un-manual")).not.toThrow(/invalid_type|Required/);
+    expect(() => extract(repoWith(noTenantConfigs), "un-manual")).not.toThrow(
+      /invalid_type|Required/,
+    );
   });
 
   it("says the extractor has no tenant registry to read", () => {
@@ -202,7 +291,7 @@ describe("extract, for a product with no tenant registry in its source", () => {
     );
   });
 
-  it("writes no map, because a map with no tenants would claim one deployment", () => {
+  it("writes no map, because a map with no values would claim one deployment", () => {
     const root = repoWith(noTenantConfigs);
     expect(() => extract(root, "un-manual")).toThrow();
     expect(existsSync(mapFile(root))).toBe(false);
@@ -210,6 +299,15 @@ describe("extract, for a product with no tenant registry in its source", () => {
 
   it("names the seam a product-specific extractor goes on", () => {
     expect(() => extract(repoWith(noTenantConfigs), "un-manual")).toThrow(/framework/);
+  });
+
+  // The product-shape verdict comes first. A manual documenting a product this
+  // extractor cannot read must hear that, not a complaint about its own axes —
+  // the axes are fine, the extractor is the thing that does not fit.
+  it("says so before it complains about the manual's axes", () => {
+    expect(() => extract(repoWith(noTenantConfigs), "un-manual")).toThrow(
+      /no tenant registry to read/,
+    );
   });
 });
 
@@ -221,5 +319,66 @@ describe("extract, when the declared tenant configs are not there", () => {
     const root = repoWith(missingDir);
     expect(() => extract(root, "un-manual")).toThrow(/src\/config/);
     expect(() => extract(root, "un-manual")).toThrow(/does not exist/);
+  });
+});
+
+// --- the map records the axis it describes ----------------------------------
+
+const extractBlock =
+  "      tenantConfigs: src/config/*.config.ts\n      components: src\n      pages: src";
+
+/** A repo whose product really has configs, so extraction runs to completion. */
+const workingRepo = (axes: string): string => {
+  const root = repoWith(extractBlock, `manual:\n  source: producto\n${axes}`);
+  const configDir = join(root, "producto", "src", "config");
+  mkdirSync(configDir, { recursive: true });
+  writeFileSync(join(configDir, "mv.config.ts"), 'export default {\n  name: "MV",\n  canSeeBoT: true,\n}\n');
+  writeFileSync(join(root, "producto", "src", "Panel.tsx"), 'if (config.name === "MV") show()\n');
+  return root;
+};
+
+const byTenant = "axes:\n  tenant:\n    values:\n      - id: mv\n";
+
+describe("extract — the map says which axis it describes", () => {
+  it("records the axis from the manual's own config", () => {
+    const { map: m } = extract(workingRepo(byTenant), "un-manual");
+    expect(m.axis).toBe("tenant");
+  });
+
+  it("records a non-tenant axis by its own name", () => {
+    const byPermission = "axes:\n  permission:\n    values:\n      - id: mv\n";
+    const { map: m } = extract(workingRepo(byPermission), "un-manual");
+    expect(m.axis).toBe("permission");
+  });
+
+  it("carries the axis values under `values`, not under a tenant-shaped key", () => {
+    const { map: m } = extract(workingRepo(byTenant), "un-manual");
+    expect(m.values.map((v) => v.id)).toEqual(["mv"]);
+    expect(m).not.toHaveProperty("tenants");
+    expect(m).not.toHaveProperty("tenantReferences");
+  });
+
+  it("carries the code references under `references`", () => {
+    const { map: m } = extract(workingRepo(byTenant), "un-manual");
+    expect(m.references.map((r) => r.text)).toContain('if (config.name === "MV") show()');
+  });
+
+  // The old code read `axes.tenant.values` literally, so a manual conditioned on
+  // anything else reconciled against an empty list and every value it declared
+  // was reported as having no config behind it.
+  it("reconciles against the axis the manual actually declares", () => {
+    const declared = "axes:\n  permission:\n    values:\n      - id: mv\n";
+    const { map: m } = extract(workingRepo(declared), "un-manual");
+    expect(m.registryMismatch).toBeUndefined();
+  });
+
+  it("names that axis when the two disagree", () => {
+    const declared = "axes:\n  permission:\n    values:\n      - id: fantasma\n";
+    const { map: m } = extract(workingRepo(declared), "un-manual");
+    expect((m.registryMismatch ?? []).join("\n")).toContain("axes.permission.values");
+  });
+
+  it("refuses a manual that declares no axis at all", () => {
+    expect(() => extract(workingRepo(""), "un-manual")).toThrow(/no axes/);
   });
 });

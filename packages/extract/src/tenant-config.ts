@@ -72,14 +72,21 @@ export function parseTenantConfig(fileName: string, source: string): TenantConfi
   return { id, code, source: `${fileName}:${codeLine}`, flags };
 }
 
-/** One capability across every deployment. */
+/**
+ * One capability across every axis value.
+ *
+ * Keyed by axis value id, not by "tenant": this row is part of the module map,
+ * and the map now records which axis it describes. A product whose values are
+ * permission profiles gets the same row shape, and calling the column `tenants`
+ * there would put a deployment word on a permission fact.
+ */
 export interface CapabilityRow {
   readonly flag: string;
-  /** Only the deployments that DECLARE it. */
-  readonly tenants: Readonly<Record<string, FlagFact>>;
-  /** Deployment ids whose config never mentions it. Absent when none. */
+  /** Only the axis values that DECLARE it. */
+  readonly values: Readonly<Record<string, FlagFact>>;
+  /** Axis value ids whose config never mentions it. Absent when none. */
   readonly absentFrom?: readonly string[];
-  /** Deployment ids where it is `true` — what content is tagged against. */
+  /** Axis value ids where it is `true` — what content is tagged against. */
   readonly enabledFor: readonly string[];
 }
 
@@ -97,7 +104,7 @@ export function capabilityMatrix(configs: readonly TenantConfig[]): readonly Cap
   const flags = [...new Set(configs.flatMap((c) => Object.keys(c.flags)))].sort();
 
   return flags.map((flag) => {
-    const tenants: Record<string, FlagFact> = {};
+    const values: Record<string, FlagFact> = {};
     const absentFrom: string[] = [];
     const enabledFor: string[] = [];
 
@@ -107,13 +114,13 @@ export function capabilityMatrix(configs: readonly TenantConfig[]): readonly Cap
         absentFrom.push(config.id);
         continue;
       }
-      tenants[config.id] = fact;
+      values[config.id] = fact;
       if (fact.value) enabledFor.push(config.id);
     }
 
     return {
       flag,
-      tenants,
+      values,
       ...(absentFrom.length > 0 ? { absentFrom } : {}),
       enabledFor,
     };

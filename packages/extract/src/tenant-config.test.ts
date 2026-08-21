@@ -61,14 +61,14 @@ describe("capabilityMatrix", () => {
         `\n};`,
     );
 
-  it("puts one row per flag and one column per tenant", () => {
+  it("puts one row per flag and one column per axis value", () => {
     const m = capabilityMatrix([
       withFlags("mv", "MV", { canSeeBoT: true }),
       withFlags("med", "MED", { canSeeBoT: false }),
     ]);
     const row = m.find((r) => r.flag === "canSeeBoT");
-    expect(row?.tenants["mv"]?.value).toBe(true);
-    expect(row?.tenants["med"]?.value).toBe(false);
+    expect(row?.values["mv"]?.value).toBe(true);
+    expect(row?.values["med"]?.value).toBe(false);
   });
 
   // The hazard this exists to surface: `med` declares 92 settings and `mv` 47,
@@ -80,7 +80,7 @@ describe("capabilityMatrix", () => {
       withFlags("med", "MED", {}),
     ]);
     const row = m.find((r) => r.flag === "canSeeBoT");
-    expect(row?.tenants["med"]).toBeUndefined();
+    expect(row?.values["med"]).toBeUndefined();
     expect(row?.absentFrom).toEqual(["med"]);
   });
 

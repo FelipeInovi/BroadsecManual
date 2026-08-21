@@ -18,10 +18,22 @@
 
 export type Polarity = "positive" | "negative" | "mixed";
 
-export interface TenantReference {
+/**
+ * One line of product code that decides along the manual's axis.
+ *
+ * The fields were always axis-neutral — a file, a line, the codes named on it,
+ * and what the line does with them. Only the NAME said tenant, and the map that
+ * carries these now records which axis it describes, so the name has to stop
+ * claiming an answer.
+ *
+ * This is the shared fact type. The FINDER is per product: `findTenantReferences`
+ * below knows `broadlineavida`'s shape, and a second product's finder is a new
+ * function returning this same type rather than a widening of that one.
+ */
+export interface AxisReference {
   readonly file: string;
   readonly line: number;
-  /** Declared deployment codes named on this line, in the order they appear. */
+  /** Declared axis value codes named on this line, in the order they appear. */
   readonly codes: readonly string[];
   readonly polarity: Polarity;
   /** `route-gate` is a routing prop; `inline` is a comparison inside a component. */
@@ -49,9 +61,9 @@ export function findTenantReferences(
   file: string,
   source: string,
   codes: readonly string[],
-): readonly TenantReference[] {
+): readonly AxisReference[] {
   const known = new Set(codes);
-  const out: TenantReference[] = [];
+  const out: AxisReference[] = [];
 
   source.split(/\r?\n/).forEach((raw, i) => {
     if (COMMENT.test(raw)) return;

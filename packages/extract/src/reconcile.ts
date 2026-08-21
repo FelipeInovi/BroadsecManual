@@ -1,22 +1,28 @@
 /**
- * Hold the manual's declared deployments against the product's own configs.
+ * Hold the manual's declared axis values against the product's own configs.
  *
- * The manual's `axes.tenant.values` is supposed to mirror the product's config
+ * The manual's `axes.<axis>.values` is supposed to mirror the product's config
  * directory. Nothing enforced that until now, and the two drift in both
  * directions for different reasons:
  *
  * - The product gains a config the manual has never heard of. Harmless-looking,
- *   and it is not: an undeclared deployment still lands in every capability row
- *   this extraction produces, so `canSeeBoT` reads as enabled for a development
+ *   and it is not: an undeclared value still lands in every capability row this
+ *   extraction produces, so `canSeeBoT` reads as enabled for a development
  *   config as if it were a client.
- * - The manual declares a deployment with no config behind it. Worse, and
- *   quieter: every build for it succeeds, every PDF is produced, and the
- *   conditioning has nothing real to condition against.
+ * - The manual declares a value with no config behind it. Worse, and quieter:
+ *   every build for it succeeds, every PDF is produced, and the conditioning has
+ *   nothing real to condition against.
  *
  * Reported, never fixed automatically. Which of the two is wrong is a judgement
  * about the product, not about this file.
+ *
+ * `axis` is a parameter rather than the literal `tenant` because the message's
+ * whole job is to send the reader to the key they have to fix. A manual
+ * conditioned on permissions was being told to look at `axes.tenant.values`,
+ * which is not a key in its file.
  */
-export function reconcileTenants(
+export function reconcileAxisValues(
+  axis: string,
   fromProduct: readonly string[],
   fromManual: readonly string[],
 ): readonly string[] {
@@ -28,7 +34,7 @@ export function reconcileTenants(
     if (!manual.has(id)) {
       out.push(
         `"${id}" has a config in the product but is not declared in the manual's ` +
-          `\`axes.tenant.values\` — it will appear in every capability row of this ` +
+          `\`axes.${axis}.values\` — it will appear in every capability row of this ` +
           `map. Declare it, or know why it is excluded.`,
       );
     }

@@ -23,6 +23,23 @@ extractor reports a product with one tenant, or none. That failure is silent:
 the map parses, the build succeeds, and the manual asserts that every deployment
 sees everything.
 
+## The map names its axis; this package's parsing does not assume one
+
+`ModuleMap` (`packages/cli/src/extract.ts`) carries `axis`, `values` and
+`references` — not `tenants` and `tenantReferences`. `tenant` is one named axis
+among possible others (invariant 3), and the map was the last place in the
+pipeline still asserting otherwise after `condition` and `primaryAxis` had been
+made agnostic.
+
+That is why `AxisReference` is named for the axis and not for tenants: its
+fields were always neutral — a file, a line, the codes named on it, what the line
+does with them — and only the name claimed an answer. `CapabilityRow.values` is
+keyed the same way, for the same reason.
+
+The FINDER stays per product. `findTenantReferences` knows `broadlineavida`'s
+shape (`ROUTE_GATE` is a literal `allowedProjects` regex); a second product's
+finder is a **new function returning the same type**, not a widening of that one.
+
 ## The seam that was anticipated and not built
 
 `sources/registry.yaml` declares `framework: react-vite-ts` per source. **No

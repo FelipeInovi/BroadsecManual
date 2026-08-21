@@ -171,10 +171,18 @@ export function knownTenants(repoRoot: string, sourceId: string): string[] {
     if (!existsSync(config) || !existsSync(map)) continue;
     const parsed = parseYaml(readFileSync(config, "utf8")) as { manual?: { source?: string } };
     if (parsed.manual?.source !== sourceId) continue;
+    // `values` is what a current map writes; `tenants` is what one written
+    // before the map named its axis wrote. Reading only the new name would make
+    // this return an empty list for every map not yet regenerated — and it
+    // returns an empty list legitimately too, so the regression would look like
+    // the honest answer and prompt the person for deployments the repo knows.
     const parsedMap = JSON.parse(readFileSync(map, "utf8")) as {
+      values?: readonly { id?: string }[];
       tenants?: readonly { id?: string }[];
     };
-    const ids = (parsedMap.tenants ?? []).map((t) => t.id).filter((id): id is string => Boolean(id));
+    const ids = (parsedMap.values ?? parsedMap.tenants ?? [])
+      .map((t) => t.id)
+      .filter((id): id is string => Boolean(id));
     if (ids.length > 0) return ids;
   }
   return [];

@@ -1,10 +1,10 @@
 ---
 name: source-extraction
-description: Extracts a module map from a Broadsec product repository into knowledge/module-map.json with file-and-line provenance for every fact. The command emits the tenant registry, the capability matrix, and every line of code that gates on a deployment; routes, screens and i18n labels are specified in this skill and not yet emitted. Use when onboarding a new source product, regenerating a module map, investigating how tenants differ in the product, or checking a manual for drift against the code it documents.
+description: Extracts a module map from a Broadsec product repository into knowledge/module-map.json with file-and-line provenance for every fact. The map names the axis it describes; the command emits that axis's values, the capability matrix, and every line of code that decides along it; routes, screens and i18n labels are specified in this skill and not yet emitted. Use when onboarding a new source product, regenerating a module map, investigating how a product's deployments or permission profiles differ, or checking a manual for drift against the code it documents.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Extracting a module map from a source product
@@ -16,14 +16,27 @@ first.
 
 ## What the map carries today
 
-`broadsec-manual extract <manual>` emits four keys, and only these:
+`broadsec-manual extract <manual>` emits five keys, and only these:
 
 | Key | Content |
 |---|---|
 | `source` | the source id, from the registry |
-| `tenants` | one row per deployment the product declares |
-| `capabilities` | flag → which deployments declare it, plus `absentFrom` |
-| `tenantReferences` | every line of code that compares against a deployment |
+| `axis` | which axis this map describes, derived from the manual's own config |
+| `values` | one row per axis value the product declares |
+| `capabilities` | flag → which values declare it, plus `absentFrom` |
+| `references` | every line of code that decides along that axis |
+
+**The map NAMES its axis; it does not assume tenant.** `tenant` is one named
+axis among possible others (invariant 3), and a manual conditioned on permission
+profiles gets `"axis": "permission"` with its own values under the same keys.
+Calling those values deployments — in the map, or in the drift report the map
+produces — is the mislabelling invariant 3 exists to prevent, and the drift
+report is read by whoever decides what content gets tagged with.
+
+A map written before the axis was named carries `tenants` and `tenantReferences`
+instead. `normalizeMap` (`packages/cli/src/extract.ts:123`) reads either, so the
+rename is not itself a drift report; an absent `axis` is left absent rather than
+defaulted to `tenant`, because that default is the assumption being removed.
 
 **Steps 3 and 5 below — routes and screens, UI labels — are specified here and
 not implemented.** Hand-adding them to the file is not a workaround: `extract`
@@ -162,32 +175,34 @@ it comes from steps 3 and 5, which the command does not emit — see "What the m
 carries today". The block is kept because it is the contract a new extractor is
 written against; deleting it would delete the specification.
 
-The keys are the contract; the values below are `broadlineavida`'s. `kind`,
-`i18nKey` and the tenant ids are that product's vocabulary — a product with no
-map layers has no `"kind": "map-layer"`, and one with no catalogue carries a
-literal label plus its source instead of an `i18nKey`.
+The keys are the contract; the values below are `broadlineavida`'s. `axis`,
+`kind`, `i18nKey` and the value ids are that product's vocabulary — a product
+conditioned on permissions has a different `axis`, one with no map layers has no
+`"kind": "map-layer"`, and one with no catalogue carries a literal label plus its
+source instead of an `i18nKey`.
 
 There is deliberately **no timestamp**: the map is regenerated constantly, and a
 clock would make every regeneration a diff, drowning the drift the file exists
-to show (`packages/cli/src/extract.ts:201`).
+to show (`packages/cli/src/extract.ts:385`).
 
 ```jsonc
 {
   "source": "broadlineavida",
-  "tenants": [{ "id": "mv", "code": "MV", "source": "src/…/mv.config.ts:2" }],
+  "axis": "tenant",
+  "values": [{ "id": "mv", "code": "MV", "source": "src/…/mv.config.ts:2" }],
   "modules": [
     {
       "id": "mapa",
       "screen": "…",
       "route": "/…",
-      "tenants": ["all"],
+      "values": ["all"],
       "source": "src/…/AppRoutes.tsx:120",
       "elements": [
         {
           "id": "mapa.capa.semaforos",
           "kind": "map-layer",
           "label": { "i18nKey": "map.layers.traffic_lights" },
-          "tenants": ["mv"],
+          "values": ["mv"],
           "source": "src/…/LayersMap.tsx:98",
           "confidence": "high",
         },
@@ -199,9 +214,9 @@ to show (`packages/cli/src/extract.ts:201`).
 
 ## Verify before handing off
 
-- Every tenant in the map traces to wherever this product enumerates
-  deployments — a config file in `broadlineavida`, whatever step 1 established
-  elsewhere.
+- Every value in the map traces to wherever this product enumerates them — a
+  config file in `broadlineavida`, whatever step 1 established elsewhere.
+- `axis` is the axis the manual actually declares, not `tenant` by habit.
 - No element claims `["all"]` while its source line shows a comparison.
 - Every `i18nKey` resolves in the catalogue; every quoted literal has a file and
   line.

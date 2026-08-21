@@ -235,6 +235,21 @@ describe("knownTenants", () => {
     expect(knownTenants(root, "alfa")).toEqual(["mv", "med"]);
   });
 
+  // The map now names its axis and carries the values under `values`. Reading
+  // only the old key would return an empty list for every regenerated map — and
+  // an empty list is a legitimate answer here, so the regression would look
+  // exactly like the honest one.
+  it("reads a map that names its axis", () => {
+    const root = repo();
+    mkdirSync(join(root, "manuals", "uno", "knowledge"), { recursive: true });
+    writeFileSync(join(root, "manuals", "uno", "manual.config.yaml"), "manual:\n  source: alfa\n");
+    writeFileSync(
+      join(root, "manuals", "uno", "knowledge", "module-map.json"),
+      JSON.stringify({ axis: "tenant", values: [{ id: "mv" }, { id: "med" }] }),
+    );
+    expect(knownTenants(root, "alfa")).toEqual(["mv", "med"]);
+  });
+
   it("is empty for an unmapped source — the tenant list is a finding, not a guess", () => {
     const root = repo();
     withManual(root, "uno", "alfa", ["mv"]);
