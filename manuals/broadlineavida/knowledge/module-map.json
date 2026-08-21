@@ -1,6 +1,7 @@
 {
   "source": "broadlineavida",
-  "tenants": [
+  "axis": "tenant",
+  "values": [
     {
       "id": "amva",
       "code": "AMVA",
@@ -40,7 +41,7 @@
   "capabilities": [
     {
       "flag": "Abandonado",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 629
@@ -60,7 +61,7 @@
     },
     {
       "flag": "BLIAS",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 686
@@ -80,7 +81,7 @@
     },
     {
       "flag": "Deceso",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 682
@@ -100,7 +101,7 @@
     },
     {
       "flag": "Explotado",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 648
@@ -120,7 +121,7 @@
     },
     {
       "flag": "Extraviado",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 649
@@ -140,7 +141,7 @@
     },
     {
       "flag": "Feminicidio",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 683
@@ -160,7 +161,7 @@
     },
     {
       "flag": "Homicidio",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 684
@@ -180,7 +181,7 @@
     },
     {
       "flag": "Intraurbano",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 653
@@ -200,7 +201,7 @@
     },
     {
       "flag": "Maltratado",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 654
@@ -220,7 +221,7 @@
     },
     {
       "flag": "Maltrato",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 655
@@ -240,7 +241,7 @@
     },
     {
       "flag": "Suicidio",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 685
@@ -260,7 +261,7 @@
     },
     {
       "flag": "Volcamiento",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 584
@@ -284,7 +285,7 @@
     },
     {
       "flag": "canAddIncidentsOrTasks",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 47
@@ -323,7 +324,7 @@
     },
     {
       "flag": "canCreateAgentsModule",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 54
@@ -361,7 +362,7 @@
     },
     {
       "flag": "canSeeBoT",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 48
@@ -399,7 +400,7 @@
     },
     {
       "flag": "canSeeForcesInField",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 49
@@ -437,7 +438,7 @@
     },
     {
       "flag": "canViewFilterCallType",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 19
@@ -473,7 +474,7 @@
     },
     {
       "flag": "canViewFilterCity",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 12
@@ -513,7 +514,7 @@
     },
     {
       "flag": "canViewFilterCommune",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 14
@@ -552,7 +553,7 @@
     },
     {
       "flag": "canViewFilterCompletionType",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 18
@@ -586,7 +587,7 @@
     },
     {
       "flag": "canViewFilterDepartment",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 11
@@ -626,7 +627,7 @@
     },
     {
       "flag": "canViewFilterNeighborhood",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 15
@@ -665,7 +666,7 @@
     },
     {
       "flag": "canViewFilterRegion",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 10
@@ -701,7 +702,7 @@
     },
     {
       "flag": "canViewFilterResponseForce",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 17
@@ -742,7 +743,7 @@
     },
     {
       "flag": "canViewFilterStation",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 16
@@ -778,7 +779,7 @@
     },
     {
       "flag": "canViewFilterUNP",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 9
@@ -814,7 +815,7 @@
     },
     {
       "flag": "canViewFilterZone",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 13
@@ -853,7 +854,7 @@
     },
     {
       "flag": "canViewTimeMetrics",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 20
@@ -889,7 +890,7 @@
     },
     {
       "flag": "enableVerifyFlow",
-      "tenants": {
+      "values": {
         "amva": {
           "value": false,
           "line": 21
@@ -926,7 +927,7 @@
     },
     {
       "flag": "noUbication",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 42
@@ -946,7 +947,7 @@
     },
     {
       "flag": "reportConfigForDemoLV",
-      "tenants": {
+      "values": {
         "demo": {
           "value": false,
           "line": 91
@@ -967,7 +968,7 @@
     },
     {
       "flag": "requireAtLeastOneCitySelected",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 23
@@ -997,7 +998,7 @@
     },
     {
       "flag": "typeIncidentsSiesm",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 26
@@ -1025,7 +1026,7 @@
     },
     {
       "flag": "ubication",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 41
@@ -1045,7 +1046,7 @@
     },
     {
       "flag": "useCreateUserFormWithAgency",
-      "tenants": {
+      "values": {
         "med": {
           "value": true,
           "line": 816
@@ -1065,7 +1066,7 @@
     },
     {
       "flag": "useFilterForOnlyOneCity",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 22
@@ -1091,7 +1092,7 @@
     },
     {
       "flag": "useFilterUbicationReport",
-      "tenants": {
+      "values": {
         "amva": {
           "value": true,
           "line": 25
@@ -1110,10 +1111,10 @@
       ]
     }
   ],
-  "tenantReferences": [
+  "references": [
     {
       "file": "src/render/components/AddObservation.tsx",
-      "line": 133,
+      "line": 134,
       "codes": [
         "ANT"
       ],
@@ -1124,7 +1125,7 @@
     },
     {
       "file": "src/render/components/AddObservation.tsx",
-      "line": 145,
+      "line": 146,
       "codes": [
         "AMVA"
       ],
@@ -1141,18 +1142,18 @@
       ],
       "polarity": "positive",
       "kind": "inline",
-      "text": "config.name === \"MV\"",
+      "text": "const { data: optionsPrev = [] } = useClosedReasonsList(config.name === \"MV\");",
       "confidence": "high"
     },
     {
       "file": "src/render/components/AddObservation.tsx",
-      "line": 192,
+      "line": 180,
       "codes": [
         "MV"
       ],
-      "polarity": "negative",
+      "polarity": "positive",
       "kind": "inline",
-      "text": "...(config.name !== \"MV\" ? baseOptions : []),",
+      "text": "config.name === \"MV\"",
       "confidence": "high"
     },
     {
@@ -1202,7 +1203,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 166,
+      "line": 167,
       "codes": [
         "MED"
       ],
@@ -1213,7 +1214,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 213,
+      "line": 214,
       "codes": [
         "MED"
       ],
@@ -1224,7 +1225,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 220,
+      "line": 221,
       "codes": [
         "MED"
       ],
@@ -1235,7 +1236,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 534,
+      "line": 535,
       "codes": [
         "MV"
       ],
@@ -1246,7 +1247,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 535,
+      "line": 536,
       "codes": [
         "AMVA"
       ],
@@ -1257,7 +1258,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 869,
+      "line": 870,
       "codes": [
         "DEMO"
       ],
@@ -1268,7 +1269,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 1148,
+      "line": 1149,
       "codes": [
         "MV"
       ],
@@ -1279,7 +1280,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 1217,
+      "line": 1218,
       "codes": [
         "MV"
       ],
@@ -1290,7 +1291,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 1503,
+      "line": 1504,
       "codes": [
         "DEMO"
       ],
@@ -1412,7 +1413,7 @@
     },
     {
       "file": "src/render/components/Header.tsx",
-      "line": 85,
+      "line": 86,
       "codes": [
         "MED"
       ],
@@ -1423,7 +1424,7 @@
     },
     {
       "file": "src/render/components/Header.tsx",
-      "line": 88,
+      "line": 89,
       "codes": [
         "MED"
       ],
@@ -1434,7 +1435,7 @@
     },
     {
       "file": "src/render/components/Header.tsx",
-      "line": 90,
+      "line": 91,
       "codes": [
         "MED"
       ],
@@ -1735,6 +1736,17 @@
     {
       "file": "src/render/pages/Dashboard/CallAI.tsx",
       "line": 632,
+      "codes": [
+        "MED"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "config.name === \"MED\" && agency === \"Social\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/pages/Dashboard/CallAI.tsx",
+      "line": 918,
       "codes": [
         "MED"
       ],
