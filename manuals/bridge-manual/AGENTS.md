@@ -13,22 +13,21 @@ both.
 
 Settled by survey, not by guessing. The numbers are the point:
 
-| Convention | Slots | Can an asset file answer it |
+| Convention | Slots | Can extraction answer it |
 |---|---|---|
-| `icon` (icon-table rows) | 39 | Sometimes — this is the only shape a file comes in |
-| `figure` (figure, field-list, procedure) | 142 | **No.** Needs the app running against real data |
+| `icon` (icon-table rows) | 33 | **Yes, and it is now exhausted** — 30 delivered, 3 genuinely cannot be |
+| `figure` (figure, field-list, procedure) | 148 | **No.** Needs the app running against real data |
 
-Of the 39, **seven were delivered and 32 cannot be.** The reason is one fact
-about the product: it draws almost every control with `lucide-react`, which ships
-no SVG files at all. That disqualifies the four Home case actions, five of the six
-map tools, the three Seatmap status rows, all eight CCTV PTZ buttons, the four
-Fuerzas en Campo panel icons, and both `Todos` force filters.
+So every image still pending is a capture. There is nothing left in the product
+repository that this manual is asking for.
 
-**Do not re-derive this.** If a future slot looks like an icon, check whether its
-control renders an imported asset or a lucide component before opening anything
-else.
+Sharing collapsed the twelve force-filter rows into six slots, so the icon
+convention is **33 slots, of which 30 were delivered and 3 cannot be.** The
+`icon` convention is exhausted. Everything still pending is `figure`.
 
 ### What was delivered
+
+**Seven as shipped files:**
 
 - **The six force filters**, as ONE shared slot each (`fuerza.salud`,
   `fuerza.bomberos`, `fuerza.policia`, `fuerza.transito`,
@@ -38,6 +37,29 @@ else.
   copies of one file. That is what collapsed the manifest from 187 slots to 181.
 - **The street-view toggle** (`home.herramientas.control.street-view`), from its
   own id.
+
+**Twenty-three emitted from module geometry**, not copied, because this product
+draws nearly every control from a component rather than a file:
+
+- **Eighteen from `lucide-react`**, whose `dist/esm/icons/<name>.js` holds the
+  unminified `__iconNode` and the ISC licence. The component names the icon, so
+  the join is the library's own identity. Each file records the library, its
+  version, its licence, where the icon was seen used, and the recolouring.
+- **Five from Bridge360's own inline SVG components** in `cctv-ptz-core.tsx` —
+  the four PTZ chevrons and the preset-home glyph.
+
+All twenty-three are recoloured to `#0F766E` (Bridge's `accentDark`, the same
+colour the row label uses), because `stroke="currentColor"` resolves to black
+inside `<img src="…svg">`. Contrast measured: 5.47:1 on white rows, 4.99:1 on the
+alternating tone.
+
+### The three that cannot be
+
+- `bot.cctv.ptz.zoom-mas` and `zoom-menos` — the control is a fragment: the
+  magnifier SVG **plus** a `<span>` holding `+` or `-` in the app's font
+  (`cctv-ptz-core.tsx:244`, `:263`). The SVG alone is three quarters of what the
+  operator sees, and composing the character back in is a design act.
+- `bot.cctv.ptz.diagonales` — its label names four controls at once.
 
 ## Traps this manual hit, and will hit again
 

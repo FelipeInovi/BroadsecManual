@@ -4,7 +4,7 @@ description: Fills a manual's pending image slots from the product's own asset f
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
-  version: "2.0"
+  version: "2.1"
 ---
 
 # Taking images from the product
@@ -98,7 +98,7 @@ loaded as an image?"
 | Static asset the app ships | **Yes** | A real file, reachable through the join |
 | SVG drawn as the product's own component | Usually **no** | The geometry is here, the colour is not: these carry framework classes because they sit on a coloured control. Extracted standalone the glyph turns black, or a white stroke renders invisible. Deliverable only with a deliberate recolouring, which is a design decision |
 | Icon from a library that ships SVG files | **Yes, via the base package** | A React wrapper usually holds no files while its dependency ships the real SVGs. Copy the file, do not parse the wrapper. Check the licence, and recolour — see below |
-| Icon from a library that ships only JS | Not as a file | Extractable solely by parsing path data out of a module |
+| Icon from a library that ships only JS | **Yes, by reading the module** | See below — the geometry is in the module the app imports, and that is better provenance than a second package |
 | Icon resolved from a remote API at runtime | **No** | Nothing on disk to take |
 | Native control of an embedded third party (maps, street view, 3D, zoom) | **No** | Drawn by their SDK at runtime. Nothing exists in the repository to take |
 | A screen, a panel, a populated list | **No** | Needs the app running against real data. This is what the capture team is for |
@@ -108,6 +108,60 @@ answers, and a product that draws its own icons as files changes them entirely.
 
 Expect a mixed verdict inside ONE table of the manual, and **judge per row, never
 per section.** Two rows on the same page routinely land on opposite sides.
+
+### A JS-only icon library: read the module, do not install a second package
+
+This used to be filed as "cannot". It is not, and the reason matters: a library
+that ships no SVG still ships the **geometry**, in the module the application
+imports. That is the strongest provenance available — better than a sibling
+package, which is a different artifact at a possibly different version.
+
+Measured on `lucide-react`: `dist/esm/icons/<name>.js` is one unminified file per
+icon, holding the licence and the node array the component renders.
+
+```js
+/** @license lucide-react v1.3.0 - ISC */
+const __iconNode = [
+  ["path", { d: "m5 12 7-7 7 7", key: "hav0vg" }],
+  ["path", { d: "M12 19V5", key: "x0mq9r" }]
+];
+const ArrowUp = createLucideIcon("arrow-up", __iconNode);
+```
+
+The join is level 1: **the component names the icon.** `<ArrowUp />` and
+`arrow-up.js` are the same identity stated by the library, not two filenames that
+look alike. Emit an SVG from `__iconNode` plus the library's own
+`defaultAttributes.js` for the wrapper, and recolour it — see the next section,
+which applies here in full. Record the library, its version, its licence and the
+component you saw the icon used in.
+
+Two things to check before trusting the name, both of which have bitten:
+
+- **The array may be on one line or several.** A single-element icon inlines it.
+  A reader that assumes the multi-line shape silently finds nothing for exactly
+  the simplest glyphs.
+- **The component may not import from the library at all.** Follow the import
+  even when the JSX name matches a library icon perfectly. Bridge360's PTZ bar
+  renders `<ArrowUp />` imported from its OWN `cctv-ptz-core.tsx`, where the glyph
+  is a chevron — `<polyline points="18 15 12 9 6 15" />` — not lucide's shafted
+  arrow. Delivering lucide's would have shown the reader a different control and
+  passed every count in the manifest.
+
+**Do not install a package to obtain glyphs.** A second package is a second
+version, and the product's own module is right there. Never add a dependency to
+the source repository, which is read-only.
+
+### A glyph composed of more than an SVG cannot be taken
+
+Bridge360's zoom controls are a fragment: the magnifier SVG **and** a `<span>`
+holding `+` or `-` in the app's own font. Extracting the SVG delivers three
+quarters of what the operator sees, and composing the character back in is a
+design act, not an extraction. Leave those pending.
+
+Same verdict, different shape, for a manual row whose label names SEVERAL
+controls at once — "Arriba izquierda, arriba derecha, abajo izquierda y abajo
+derecha". One of the four glyphs fills the slot and shows a quarter of the
+caption.
 
 ### Sort by CONVENTION first — it answers most of the question in one query
 
@@ -148,9 +202,15 @@ record two things IN the file:
   styled today. If that column ever changes tone, these icons disappear and the
   comment is the only thing that will explain why.
 
-Verify by looking at the rendered page at real size, not zoomed. This is the one
-failure mode a manifest cannot catch: the slot is filled, the count is right, and
-the reader still cannot see the control.
+This is the one failure mode a manifest cannot catch: the slot is filled, the
+count is right, and the reader still cannot see the control.
+
+Verify it by **computing the contrast** of the stroke against the cell's own
+background token — both of them, if the table alternates row colours. A number
+settles it where a glance does not: "almost legible" is exactly the state a
+glance approves and a reader cannot use. Anything at or above roughly 4.5:1 is
+safe for a glyph at table size. Looking at the rendered page at real size is
+still worth doing, but it confirms the number rather than replacing it.
 
 A photographic asset (`.webp`, `.png` screenshots of controls) needs none of
 this — it carries its own pixels.

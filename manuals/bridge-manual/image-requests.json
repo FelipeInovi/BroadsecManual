@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.6.0",
+  "contentVersion": "0.6.2",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 181,
-    "delivered": 7,
-    "pending": 174
+    "delivered": 30,
+    "pending": 151
   },
   "pending": [
     {
@@ -398,94 +398,6 @@
       }
     },
     {
-      "slot": "home.caso.accion.centrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.accion.centrar",
-          "blockType": "icon-table",
-          "shows": "Centrar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.accion.centrar.png",
-        "override": "<permission>/home.caso.accion.centrar.png"
-      }
-    },
-    {
-      "slot": "home.caso.accion.archivar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.accion.archivar",
-          "blockType": "icon-table",
-          "shows": "Archivar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.accion.archivar.png",
-        "override": "<permission>/home.caso.accion.archivar.png"
-      }
-    },
-    {
-      "slot": "home.caso.accion.llamar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.accion.llamar",
-          "blockType": "icon-table",
-          "shows": "Llamar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.accion.llamar.png",
-        "override": "<permission>/home.caso.accion.llamar.png"
-      }
-    },
-    {
-      "slot": "home.caso.accion.libro",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.accion.libro",
-          "blockType": "icon-table",
-          "shows": "Libro de caso"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.accion.libro.png",
-        "override": "<permission>/home.caso.accion.libro.png"
-      }
-    },
-    {
       "slot": "home.caso.volver.ubicar",
       "neededBy": [
         "agencia-propia",
@@ -750,116 +662,6 @@
       }
     },
     {
-      "slot": "home.herramientas.control.centrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.control.centrar",
-          "blockType": "icon-table",
-          "shows": "Centrar en el incidente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.control.centrar.png",
-        "override": "<permission>/home.herramientas.control.centrar.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.control.integraciones",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.control.integraciones",
-          "blockType": "icon-table",
-          "shows": "Capas de integración"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.control.integraciones.png",
-        "override": "<permission>/home.herramientas.control.integraciones.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.control.acercar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.control.acercar",
-          "blockType": "icon-table",
-          "shows": "Acercar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.control.acercar.png",
-        "override": "<permission>/home.herramientas.control.acercar.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.control.alejar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.control.alejar",
-          "blockType": "icon-table",
-          "shows": "Alejar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.control.alejar.png",
-        "override": "<permission>/home.herramientas.control.alejar.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.control.base",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.control.base",
-          "blockType": "icon-table",
-          "shows": "Base del mapa"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.control.base.png",
-        "override": "<permission>/home.herramientas.control.base.png"
-      }
-    },
-    {
       "slot": "llamada.fig",
       "neededBy": [
         "agencia-propia",
@@ -989,28 +791,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.fig.png",
         "override": "<permission>/llamada.fuerzas.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.todos",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.todos",
-          "blockType": "icon-table",
-          "shows": "Todos"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.todos.png",
-        "override": "<permission>/llamada.fuerzas.filtro.todos.png"
       }
     },
     {
@@ -1495,72 +1275,6 @@
       "deliverTo": {
         "shared": "_common/seatmap.indicadores.fig.png",
         "override": "<permission>/seatmap.indicadores.fig.png"
-      }
-    },
-    {
-      "slot": "seatmap.indicadores.estado.disponibles",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.estado.disponibles",
-          "blockType": "icon-table",
-          "shows": "Disponibles"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.estado.disponibles.png",
-        "override": "<permission>/seatmap.indicadores.estado.disponibles.png"
-      }
-    },
-    {
-      "slot": "seatmap.indicadores.estado.en-llamada",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.estado.en-llamada",
-          "blockType": "icon-table",
-          "shows": "En llamada"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.estado.en-llamada.png",
-        "override": "<permission>/seatmap.indicadores.estado.en-llamada.png"
-      }
-    },
-    {
-      "slot": "seatmap.indicadores.estado.no-disponibles",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.estado.no-disponibles",
-          "blockType": "icon-table",
-          "shows": "No disponibles"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.estado.no-disponibles.png",
-        "override": "<permission>/seatmap.indicadores.estado.no-disponibles.png"
       }
     },
     {
@@ -2312,94 +2026,6 @@
       }
     },
     {
-      "slot": "bot.cctv.ptz.tilt-arriba",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.tilt-arriba",
-          "blockType": "icon-table",
-          "shows": "Tilt arriba"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.tilt-arriba.png",
-        "override": "<permission>/bot.cctv.ptz.tilt-arriba.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.ptz.tilt-abajo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.tilt-abajo",
-          "blockType": "icon-table",
-          "shows": "Tilt abajo"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.tilt-abajo.png",
-        "override": "<permission>/bot.cctv.ptz.tilt-abajo.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.ptz.pan-izquierda",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.pan-izquierda",
-          "blockType": "icon-table",
-          "shows": "Pan izquierda"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.pan-izquierda.png",
-        "override": "<permission>/bot.cctv.ptz.pan-izquierda.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.ptz.pan-derecha",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.pan-derecha",
-          "blockType": "icon-table",
-          "shows": "Pan derecha"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.pan-derecha.png",
-        "override": "<permission>/bot.cctv.ptz.pan-derecha.png"
-      }
-    },
-    {
       "slot": "bot.cctv.ptz.diagonales",
       "neededBy": [
         "agencia-propia",
@@ -2463,28 +2089,6 @@
       "deliverTo": {
         "shared": "_common/bot.cctv.ptz.zoom-menos.png",
         "override": "<permission>/bot.cctv.ptz.zoom-menos.png"
-      }
-    },
-    {
-      "slot": "bot.cctv.ptz.home",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.cctv.ptz.home",
-          "blockType": "icon-table",
-          "shows": "Preset home"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.cctv.ptz.home.png",
-        "override": "<permission>/bot.cctv.ptz.home.png"
       }
     },
     {
@@ -2818,94 +2422,6 @@
       }
     },
     {
-      "slot": "fuerzas-campo.panel.agentes",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.panel.agentes",
-          "blockType": "icon-table",
-          "shows": "Fuerzas en Campo"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.panel.agentes.png",
-        "override": "<permission>/fuerzas-campo.panel.agentes.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.panel.asignacion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.panel.asignacion",
-          "blockType": "icon-table",
-          "shows": "Asignación de Incidentes"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.panel.asignacion.png",
-        "override": "<permission>/fuerzas-campo.panel.asignacion.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.panel.turnos",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.panel.turnos",
-          "blockType": "icon-table",
-          "shows": "Turnos"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.panel.turnos.png",
-        "override": "<permission>/fuerzas-campo.panel.turnos.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.panel.tarea",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.panel.tarea",
-          "blockType": "icon-table",
-          "shows": "Orden de Tarea"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.panel.tarea.png",
-        "override": "<permission>/fuerzas-campo.panel.tarea.png"
-      }
-    },
-    {
       "slot": "fuerzas-campo.agentes.fig",
       "neededBy": [
         "agencia-propia",
@@ -2969,28 +2485,6 @@
       "deliverTo": {
         "shared": "_common/fuerzas-campo.agentes.control.filtros.png",
         "override": "<permission>/fuerzas-campo.agentes.control.filtros.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.agentes.fuerza.todos",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.fuerza.todos",
-          "blockType": "icon-table",
-          "shows": "Todos"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.fuerza.todos.png",
-        "override": "<permission>/fuerzas-campo.agentes.fuerza.todos.png"
       }
     },
     {
@@ -3846,6 +3340,159 @@
   ],
   "delivered": [
     {
+      "slot": "home.caso.accion.centrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.accion.centrar",
+          "blockType": "icon-table",
+          "shows": "Centrar"
+        }
+      ],
+      "files": [
+        "_common/home/caso/accion/centrar.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.accion.archivar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.accion.archivar",
+          "blockType": "icon-table",
+          "shows": "Archivar"
+        }
+      ],
+      "files": [
+        "_common/home/caso/accion/archivar.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.accion.llamar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.accion.llamar",
+          "blockType": "icon-table",
+          "shows": "Llamar"
+        }
+      ],
+      "files": [
+        "_common/home/caso/accion/llamar.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.accion.libro",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.accion.libro",
+          "blockType": "icon-table",
+          "shows": "Libro de caso"
+        }
+      ],
+      "files": [
+        "_common/home/caso/accion/libro.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.control.centrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.control.centrar",
+          "blockType": "icon-table",
+          "shows": "Centrar en el incidente"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/control/centrar.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.control.integraciones",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.control.integraciones",
+          "blockType": "icon-table",
+          "shows": "Capas de integración"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/control/integraciones.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.control.acercar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.control.acercar",
+          "blockType": "icon-table",
+          "shows": "Acercar"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/control/acercar.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.control.alejar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.control.alejar",
+          "blockType": "icon-table",
+          "shows": "Alejar"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/control/alejar.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.control.base",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.control.base",
+          "blockType": "icon-table",
+          "shows": "Base del mapa"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/control/base.svg"
+      ]
+    },
+    {
       "slot": "home.herramientas.control.street-view",
       "neededBy": [
         "agencia-propia",
@@ -3860,6 +3507,23 @@
       ],
       "files": [
         "_common/home/herramientas/control/street-view.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.todos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.todos",
+          "blockType": "icon-table",
+          "shows": "Todos"
+        }
+      ],
+      "files": [
+        "_common/llamada/fuerzas/filtro/todos.svg"
       ]
     },
     {
@@ -3992,6 +3656,227 @@
       ],
       "files": [
         "_common/fuerza/gaula.webp"
+      ]
+    },
+    {
+      "slot": "seatmap.indicadores.estado.disponibles",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.disponibles",
+          "blockType": "icon-table",
+          "shows": "Disponibles"
+        }
+      ],
+      "files": [
+        "_common/seatmap/indicadores/estado/disponibles.svg"
+      ]
+    },
+    {
+      "slot": "seatmap.indicadores.estado.en-llamada",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.en-llamada",
+          "blockType": "icon-table",
+          "shows": "En llamada"
+        }
+      ],
+      "files": [
+        "_common/seatmap/indicadores/estado/en-llamada.svg"
+      ]
+    },
+    {
+      "slot": "seatmap.indicadores.estado.no-disponibles",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.estado.no-disponibles",
+          "blockType": "icon-table",
+          "shows": "No disponibles"
+        }
+      ],
+      "files": [
+        "_common/seatmap/indicadores/estado/no-disponibles.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.tilt-arriba",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.tilt-arriba",
+          "blockType": "icon-table",
+          "shows": "Tilt arriba"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/tilt-arriba.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.tilt-abajo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.tilt-abajo",
+          "blockType": "icon-table",
+          "shows": "Tilt abajo"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/tilt-abajo.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.pan-izquierda",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.pan-izquierda",
+          "blockType": "icon-table",
+          "shows": "Pan izquierda"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/pan-izquierda.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.pan-derecha",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.pan-derecha",
+          "blockType": "icon-table",
+          "shows": "Pan derecha"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/pan-derecha.svg"
+      ]
+    },
+    {
+      "slot": "bot.cctv.ptz.home",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.cctv.ptz.home",
+          "blockType": "icon-table",
+          "shows": "Preset home"
+        }
+      ],
+      "files": [
+        "_common/bot/cctv/ptz/home.svg"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.panel.agentes",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.agentes",
+          "blockType": "icon-table",
+          "shows": "Fuerzas en Campo"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo/panel/agentes.svg"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.panel.asignacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.asignacion",
+          "blockType": "icon-table",
+          "shows": "Asignación de Incidentes"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo/panel/asignacion.svg"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.panel.turnos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.turnos",
+          "blockType": "icon-table",
+          "shows": "Turnos"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo/panel/turnos.svg"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.panel.tarea",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.panel.tarea",
+          "blockType": "icon-table",
+          "shows": "Orden de Tarea"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo/panel/tarea.svg"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.agentes.fuerza.todos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.fuerza.todos",
+          "blockType": "icon-table",
+          "shows": "Todos"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo/agentes/fuerza/todos.svg"
       ]
     }
   ]

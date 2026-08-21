@@ -162,15 +162,17 @@ sources:
         layers, phonebook, pins, Resources, sitemap, task-icons.
 
         The mix is not the point; the SHAPE of the UI is. This product draws
-        almost every control with `lucide-react` components, so a rich asset
-        folder sits beside a UI whose controls are not files. Of the 39
-        icon-convention slots the manual asked for, seven were deliverable.
+        almost every control with `lucide-react` components rather than with
+        files, so a rich asset folder sits beside a UI whose controls are not in
+        it. Of the 33 icon-convention slots the manual asked for, 30 were
+        delivered: 7 as shipped files, 23 emitted from module geometry.
       libraries:
-        # Only cjs/ and esm/ JS bundles — `find` returns ZERO .svg files, and no
-        # `lucide-static` is installed. So every lucide glyph in this product is
-        # extractable only by parsing path data out of a module, which the skill
-        # rules out. This single fact disqualified 32 of the 39 icon slots.
-        "lucide-react": not-as-a-file
+        # Only cjs/ and esm/ JS bundles — ZERO .svg files, and no `lucide-static`
+        # installed. But the geometry IS here: `dist/esm/icons/<name>.js` is one
+        # unminified file per icon holding its `__iconNode` and its ISC licence,
+        # and the component names the icon, so the join is level 1. Emitted, not
+        # copied. See the skill's "A JS-only icon library" section.
+        "lucide-react": yes-by-reading-the-module
       joins: |
         Strongest first, matching the skill's hierarchy:
 
@@ -186,6 +188,25 @@ sources:
            assets imported by name, each used in one identifiable control.
            `street_view_layer.png` reaches the street-view toggle at :274,
            beside `alt="streetViewOutside"`. Level 3.
+        4. `lucide-react` — the component NAMES the icon, so `<Archive />` and
+           `dist/esm/icons/archive.js` are the same identity stated by the
+           library. Level 1, and the module is the very one the app imports.
+      ownGlyphs: |
+        `components/panels/dashboard/bridge-of-things/cctv-ptz-core.tsx` draws
+        eleven glyphs as its OWN inline SVG components, and this is the trap that
+        nearly cost a wrong delivery: the file exports `ArrowUp`, `ArrowDown`,
+        `ArrowLeft`, `ArrowRight` — and they are CHEVRONS
+        (`<polyline points="18 15 12 9 6 15" />`, :111), not lucide's shafted
+        arrow. The PTZ bar imports them from HERE, not from the library, while
+        naming them exactly as lucide names its own.
+
+        So: follow the import even when the JSX name matches a library icon
+        perfectly. Deliverable with recolouring — the arrows (:111, :125, :139,
+        :153) and `HomeIcon` (:228) were.
+
+        NOT deliverable: `ZoomInIcon` (:244) and `ZoomOutIcon` (:263) are
+        fragments — the magnifier SVG plus a `<span>` holding `+` or `-` in the
+        app's font. Extracting the SVG gives three quarters of the control.
       filenameHazards: |
         The `phonebook/` names describe the AGENT, not the filter: `medical_agent`
         for "Salud", `traffic_agent` for "Tránsito", `civil_defense` for "Defensa

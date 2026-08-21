@@ -346,9 +346,16 @@ raise them:
    workflow depth, which satisfies `module-completeness`, but PMV alone has
    eighteen components and CCTV's mosaic, PTZ and preset machinery runs to some
    two thousand lines. A scope decision, not a defect.
-3. **The 187 image slots.** Every one is pending; not a single figure has been
-   delivered. The manual reads as finished text over placeholders, and that is
-   the largest single thing standing between it and a document a client can use.
+3. **The images: 30 of 181 delivered, and extraction is EXHAUSTED.** Every icon
+   the product renders from a file or from module geometry has been taken — see
+   `AGENTS.md` in this folder for what was delivered, what could not be, and why.
+   The 151 still pending are all `figure` convention: screens, panels and
+   populated lists that need the app running against real data. **That is the
+   capture team's work and nothing in the source repository can shorten it.**
+
+   The manual still reads as finished text over placeholders on most pages, and
+   that remains the largest single thing between it and a document a client can
+   use. What changed is that the part a machine could do is done.
 
 The three checks, all of which have now caught something real:
 
