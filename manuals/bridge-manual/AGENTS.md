@@ -21,9 +21,11 @@ Settled by survey, not by guessing. The numbers are the point:
 So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
 
-Since then the capture side has run too. At v0.6.7 the manual stands at **70 of
-163 delivered** and **Bridge of Things has none left** — every image that section
-asks for is in the repository. See "What is still pending" below.
+Since then the capture side has run, twice over. The manual stands at **129 of
+163 delivered**, and four sections ask for nothing more: **Bridge of Things**,
+**Crear Incidente**, **Seatmap** (bar one figure) and the shared force filters.
+See "What is still pending" below — and trust that table over this paragraph if
+they ever disagree, because a count goes stale and a reason does not.
 
 Sharing collapsed the twelve force-filter rows into six slots, so the icon
 convention is **33 slots, of which 30 were delivered and 3 cannot be.** The
@@ -213,11 +215,44 @@ factor.
 
 ### What is still pending, and what each needs
 
+Thirty-four, and **not one of them is "an interaction not yet found"** any more.
+That row used to hold nine slots and every one of them was a selector — see the
+section after this table. What is left blocks on data, on an account, or on the
+world outside the product.
+
 | Blocked on | Slots |
 |---|---|
-| A call in progress | every `llamada.*`, plus `home.caso.fig` and `home.libro.fig` |
-| A second account without `canViewAllAgencies` | any figure showing a permission-conditioned control — `seatmap.fig` is already one |
-| An interaction not yet found | the three `crear-incidente` step figures (their header click does not open the step); `dashboard.analitica.accion.limpiar` (its filters panel does not open with the tab); Fuerzas en Campo's three inactive panels |
+| A call in progress | the twenty-two `llamada.*` |
+| **Shift data in the environment** | `fuerzas-campo.turnos.fig` AND the six `fuerzas-campo.tarea.*` — ONE condition, seven slots |
+| A second account without `canViewAllAgencies` | `seatmap.fig` |
+| More than one call in the review list | `home.revision.abrir.ubicar` |
+| A call that HAS an associated case | `home.revision.corregir.tipo` |
+| Nothing inside the product can answer it | `dashboard.historial.exportar.guardar` |
+
+Three of those rows deserve their reason spelled out, because each looks like
+something else:
+
+- **The seven shift slots are one problem, not two.** `openTaskDraft`
+  (shift-row.tsx:58-68) seeds the task form from `shift.id`, `shift.agentId`,
+  `shift.startTime` and `shift.endTime` and only then activates the panel. No
+  shift row, no form. Every agent tried returns "Sin turnos encontrados", which
+  is the same gap that holds `turnos.fig`. "Orden de Tarea is not in the panel
+  bar" was true and was never the reason.
+- **`corregir.tipo` is gated, not missing.** The type field is
+  `editable={isEditing && canEditType}` with `canEditType = item.matchId != null`
+  (calls-review-card.tsx:98, :379). With edit mode ON and a call that has no
+  case, there is no combobox and no select anywhere on screen.
+- **`exportar.guardar` is the OS save dialog**, outside the webview. It is the
+  same class as the deleted "Suéltela" step: a caption no image inside this
+  product can ever answer. It is a candidate for the authoring-defect treatment
+  below, not for a recipe.
+
+**Not blocked, but not self-contained either:** the six `crear-incidente` step
+slots ARE delivered. Their recipes need the general step filled first — an
+incident type, a priority and a CONFIRMED address — and confirming an address
+means typing, which `steps` cannot do (`click`, `drag`, `hover` only). They were
+shot against a form filled by hand. A `type` step in the recipe vocabulary is the
+one thing that would close this.
 
 **Bridge of Things is COMPLETE.** Its last three blockers turned out not to be
 capture problems at all — see below. PMV's and PRT's slots went away with their
@@ -225,9 +260,14 @@ content at v0.6.6, so do not go looking for a way to photograph those two.
 
 ### Twice, an unfillable slot was an AUTHORING defect
 
-This is the most useful thing on this page. Three slots sat in the blocked table
-above as though the harness were short a feature. Two of them were the content
-being wrong, and the third was the content being lazy:
+This section and the next one are the two most useful on this page, and they are
+opposite halves of one habit: when a slot will not fill, the cause is almost never
+a missing harness feature. Here it was the CONTENT; next door it was the SELECTOR.
+Check both before writing "blocked".
+
+Three slots sat in the blocked table above as though the harness were short a
+feature. Two of them were the content being wrong, and the third was the content
+being lazy:
 
 | Was | Diagnosis | Fix |
 |---|---|---|
@@ -243,6 +283,59 @@ So when a slot cannot be filled, ask what the CONTENT promised before asking wha
 the harness lacks. A gesture, a state that does not survive a still frame, a label
 naming several controls: each is a caption no image can ever answer, and no amount
 of recipe will fix it.
+
+### Five times, an unfillable slot was the ATTRIBUTE
+
+Read this before believing any "blocked" line on this page. Nine slots sat in the
+table above under "an interaction not yet found". **All nine came free, and not
+one of them needed a harness feature.** Every single case was the same shape: the
+right control was on screen the whole time, addressed the wrong way.
+
+| Control | Where its name actually lives | How it hid |
+|---|---|---|
+| `Asignar incidente` | `aria-label` on BOTH a `<span role="button">` (agent rows, agent-row.tsx:101) and a `<button>` (case rows, assign-incident-action.tsx:113) | the bare selector matched **forty** elements across two panels; only the TAG separates them, and the section cites the `<button>` |
+| `Filtros` (Analítica) | **plain text**, no `title`, no `aria-label` (analytics-filters-panel.tsx:824) | invisible to every probe that lists controls by attribute — which is why "its filters panel does not open with the tab" stood for so long |
+| `Guardar` (libro del caso) | `title`, while its two sibling TABS are text | `::-p-text(Guardar)` matched nothing |
+| `Seleccionar todos` | `aria-label` | written down as `title` |
+| `TextField` wrapper | a `<label>`, not a `<div>` (create-incident-fields.tsx:38) | `closest("div")` sails past it and returns the box holding BOTH fields, so `nombre` and `telefono` came back identical |
+
+**The root cause was the tool, not the product.** The probe used for all of these
+printed `title`, `placeholder` and `aria-label` into one column, so the note taken
+from it could not say which one carried the name. Any probe written here must
+print WHICH attribute it found, or it will manufacture this bug again.
+
+Two more traps from the same runs, both of which produce files rather than errors:
+
+- **A `disabled` control swallows its click in silence.** It bit three times: the
+  first case row's assign button (`item.matchId == null || blockReason != null`),
+  Crear Incidente's locked step headers, and `Seleccionar todos`. The run reports
+  `ok` and photographs the wrong state. When a click seems to do nothing, check
+  `disabled` before changing the selector.
+- **An incoming call dims the WHOLE application** and the run still reports `ok`.
+  Two figures came back as blurred rectangles. `verify` runs once at attach, not
+  per shot, so a call arriving mid-run is never noticed — though it WOULD be
+  caught if it ran per shot, because the top bar loses the `Agencia:` span the
+  verify selector keys on. The tell is `::-p-text(LLAMADA ENTRANTE)`. Standing
+  instruction from the owner: let the call finish, then carry on. Never reload
+  while one is ringing.
+
+### A wide figure is not an illegible figure, it is in the wrong column
+
+`seatmap.distribucion.encabezado` was held on legibility and then delivered
+without touching its recipe. The band is 1275x46 — a centred agency name over a
+rule. `layout: beside` gives a figure 38% of the 628pt content column
+(`.pair__figure`, css-bridge.ts:414), so `contain` scaled it to **0.19** and the
+name landed near 2px. The ROW now declares `layout: below` with
+`widthPercent: 100`: the full text column, scale **0.49**.
+
+That is not a lowered bar, and the number that proves it comes from what already
+ships: `crear-incidente.general.campo.tipo` renders at 0.59 over a 10px caption —
+the same ~6px on the page. `widthPercent` is required, because `below` alone caps
+at 70% (`figure.figure--item img`, css-bridge.ts:404) and falls back to 0.35.
+
+**So measure the scale, not the ratio, and measure it against delivered figures
+rather than against arithmetic.** And before ruling a figure unfillable on
+legibility, check whether its row is asking for the wrong column.
 
 ### A live video mosaic needs the right cameras, not a longer settle
 
