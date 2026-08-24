@@ -889,3 +889,134 @@ recipes:
     dataReady: button[title="Volver a la vista anterior"]
     clip: button[title="Volver a la vista anterior"]
     settleMs: 2000
+
+  # --- Fuerzas en Campo: the panels that start inactive ------------------------
+  #
+  # This view opens with only its own list. `assign-incident`, `shifts` and
+  # `create-task` are all `initiallyInactive` (forces-in-field.tsx:68, :82, :93),
+  # which is what "Fuerzas en Campo opens with only its own list" in the header
+  # of this file already recorded — this block is the way in.
+  #
+  # The panel bar carries TWO of the three: a lucide `siren` for Asignación de
+  # Incidentes and a `calendar-clock` for Turnos. `create-task` ("Orden de
+  # Tarea", icon `ClipboardCheck`) is NOT in the bar, so its six slots are not
+  # reachable this way and are not in this block.
+  #
+  # ORDER MATTERS, as in the keypad block, and for a sharper reason: the bar's
+  # buttons TOGGLE. Running the first recipe against an already-open panel would
+  # CLOSE it, and every gate after would fail. The block assumes the view's
+  # initial state, which `capture` gets by clicking in from another view.
+
+  - slot: fuerzas-campo.asignacion.fig
+    view: forces-in-field
+    steps:
+      - click: div[class*="bottom-24"] button:has(svg.lucide-siren)
+      # The agent click belongs to this shot, not to convenience. The panel
+      # opens EMPTY — "Seleccioná un agente en Fuerzas en Campo para asignarle un
+      # incidente" — and the caption promises "un caso por fila", which does not
+      # exist until an agent is selected.
+      #
+      # Named rather than positional, the same way the CCTV mosaic names its
+      # three cameras: the roster is alphabetical and this is its first entry.
+      - click: button::-p-text(Miguel Agudelo)
+    screenIs: h3::-p-text(Asignación de Incidentes)
+    # A case row's own control, not the panel heading: the heading is there while
+    # the panel still shows its empty-state sentence.
+    #
+    # `button`, and the tag is load-bearing. TWO different controls carry the
+    # accessible name "Asignar incidente": a `<span role="button">` on every
+    # AGENT row (agent-row.tsx:101) and this `<button>` on every CASE row
+    # (assign-incident-action.tsx:113). The manual cites the second (:115). A
+    # bare `[aria-label=...]` matches forty elements across two panels and would
+    # have delivered a faultless picture of the wrong control.
+    dataReady: button[aria-label="Asignar incidente"]
+    clip: h3::-p-text(Asignación de Incidentes)
+    clipUp: div.panel
+    settleMs: 3000
+
+  # Selecting an agent EXPANDS its row in place rather than opening a card
+  # elsewhere: the row goes from 64px to 162px and gains `Intendencia` and
+  # `Información General` — the inventory and the general data the caption names.
+  - slot: fuerzas-campo.agentes.detalle.fig
+    view: forces-in-field
+    steps:
+      # Both sections arrive COLLAPSED. The caption promises "sus datos
+      # generales y su inventario", and two headers with chevrons beside them do
+      # not answer that — the first shot was faultless pixels and half a
+      # promise. Expanding takes the card from 428x162 to 428x380.
+      #
+      # The agent itself is NOT clicked here: the recipe above already selected
+      # it, and clicking the row again would collapse it.
+      - click: button::-p-text(Intendencia)
+      - click: button::-p-text(Información General)
+    screenIs: h3::-p-text(Fuerzas en Campo)
+    dataReady: ::-p-text(Información General)
+    clip: button::-p-text(Miguel Agudelo)
+    clipUp: div[class*="rounded-lg"]
+    settleMs: 2500
+
+  # "Seleccione el agente en la lista" — the roster with one row expanded, which
+  # is what the step ends on.
+  - slot: fuerzas-campo.asignacion.paso.agente
+    view: forces-in-field
+    screenIs: h3::-p-text(Fuerzas en Campo)
+    dataReady: ::-p-text(Información General)
+    clip: input[placeholder="Buscar agente..."]
+    clipUp: div.panel
+    settleMs: 2500
+
+  # The case row's assign control, in its `idle` phase. Every case row carries
+  # one and the clip takes the first; they are the same control.
+  #
+  # `button`, not `span` — see the note on the gate above. This is the control
+  # the section cites (assign-incident-action.tsx:115), and it is the one whose
+  # three phases the content describes.
+  - slot: fuerzas-campo.asignacion.control.pedir
+    view: forces-in-field
+    screenIs: h3::-p-text(Asignación de Incidentes)
+    dataReady: button[aria-label="Asignar incidente"]
+    clip: button[aria-label="Asignar incidente"]
+    settleMs: 2500
+
+  - slot: fuerzas-campo.asignacion.paso.pedir
+    view: forces-in-field
+    screenIs: h3::-p-text(Asignación de Incidentes)
+    dataReady: button[aria-label="Asignar incidente"]
+    clip: button[aria-label="Asignar incidente"]
+    settleMs: 2500
+
+  # Turnos' two header controls. The panel needs NO bar click of its own:
+  # selecting an agent opens it, which the recipe above already did. Clicking the
+  # `calendar-clock` here would TOGGLE it shut — that was walked and confirmed.
+  #
+  # `turnos.fig` is NOT in this block. Its caption is "Columna de turnos acotada
+  # al agente seleccionado", and every agent tried — Miguel Agudelo, Angélica
+  # Álvarez, Mateo Álvarez, Diego Arango — comes back "Sin turnos encontrados".
+  # An empty column photographs as a claim about the operation, the same reason
+  # `fuerzas-campo.fig` gates on a roster row. It needs an agent that HAS shifts,
+  # which is a data condition and not a recipe.
+  #
+  # The two controls below render regardless of whether any shift comes back,
+  # which is why they are takeable and the figure is not.
+
+  - slot: fuerzas-campo.turnos.control.buscar
+    view: forces-in-field
+    screenIs: h3::-p-text(Turnos)
+    dataReady: input[placeholder="Buscar turno..."]
+    clip: input[placeholder="Buscar turno..."]
+    settleMs: 2500
+
+  # SCOPED, and it has to be. With Turnos open there are TWO `button[title=
+  # "Filtros"]` on screen — the agent roster's and this one — and a bare
+  # selector takes whichever the DOM orders first. The container is the shifts
+  # toolbar, `div.flex.items-center.gap-1.5.px-2.pt-2` (shifts-search.tsx:63).
+  #
+  # Worth knowing for the already-delivered `fuerzas-campo.agentes.control.filtros`
+  # above: it uses the bare selector and was shot while Turnos was CLOSED, so it
+  # was unambiguous then and would not be now.
+  - slot: fuerzas-campo.turnos.control.filtros
+    view: forces-in-field
+    screenIs: h3::-p-text(Turnos)
+    dataReady: div[class*="pt-2"][class*="gap-1.5"] button[title="Filtros"]
+    clip: div[class*="pt-2"][class*="gap-1.5"] button[title="Filtros"]
+    settleMs: 2500

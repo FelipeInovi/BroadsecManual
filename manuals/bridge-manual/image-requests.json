@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 87,
-    "pending": 76
+    "delivered": 94,
+    "pending": 69
   },
   "pending": [
     {
@@ -1060,72 +1060,6 @@
       }
     },
     {
-      "slot": "fuerzas-campo.agentes.detalle.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.agentes.detalle.fig",
-          "blockType": "figure",
-          "shows": "Ficha de un agente seleccionado, con sus datos generales y su inventario."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.agentes.detalle.fig.png",
-        "override": "<permission>/fuerzas-campo.agentes.detalle.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.asignacion.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.asignacion.fig",
-          "blockType": "figure",
-          "shows": "Banda de asignación de incidentes al pie del mapa, con un caso por fila."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.asignacion.fig.png",
-        "override": "<permission>/fuerzas-campo.asignacion.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.asignacion.control.pedir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.asignacion.control.pedir",
-          "blockType": "field-list",
-          "shows": "Asignar incidente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.asignacion.control.pedir.png",
-        "override": "<permission>/fuerzas-campo.asignacion.control.pedir.png"
-      }
-    },
-    {
       "slot": "fuerzas-campo.asignacion.control.confirmar",
       "neededBy": [
         "agencia-propia",
@@ -1170,50 +1104,6 @@
       }
     },
     {
-      "slot": "fuerzas-campo.asignacion.paso.agente",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.asignacion.paso.agente",
-          "blockType": "procedure",
-          "shows": "Seleccione el agente en la lista"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.asignacion.paso.agente.png",
-        "override": "<permission>/fuerzas-campo.asignacion.paso.agente.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.asignacion.paso.pedir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.asignacion.paso.pedir",
-          "blockType": "procedure",
-          "shows": "Haga clic en Asignar incidente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.asignacion.paso.pedir.png",
-        "override": "<permission>/fuerzas-campo.asignacion.paso.pedir.png"
-      }
-    },
-    {
       "slot": "fuerzas-campo.asignacion.paso.confirmar",
       "neededBy": [
         "agencia-propia",
@@ -1255,50 +1145,6 @@
       "deliverTo": {
         "shared": "_common/fuerzas-campo.turnos.fig.png",
         "override": "<permission>/fuerzas-campo.turnos.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.turnos.control.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.turnos.control.buscar",
-          "blockType": "field-list",
-          "shows": "Buscar turno..."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.turnos.control.buscar.png",
-        "override": "<permission>/fuerzas-campo.turnos.control.buscar.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.turnos.control.filtros",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.turnos.control.filtros",
-          "blockType": "field-list",
-          "shows": "Filtros"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.turnos.control.filtros.png",
-        "override": "<permission>/fuerzas-campo.turnos.control.filtros.png"
       }
     },
     {
@@ -3032,6 +2878,125 @@
       ],
       "files": [
         "_common/fuerzas-campo/agentes/fuerza/todos.svg"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.agentes.detalle.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.agentes.detalle.fig",
+          "blockType": "figure",
+          "shows": "Ficha de un agente seleccionado, con sus datos generales y su inventario."
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.agentes.detalle.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.fig",
+          "blockType": "figure",
+          "shows": "Banda de asignación de incidentes al pie del mapa, con un caso por fila."
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.asignacion.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.control.pedir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.control.pedir",
+          "blockType": "field-list",
+          "shows": "Asignar incidente"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.asignacion.control.pedir.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.paso.agente",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.paso.agente",
+          "blockType": "procedure",
+          "shows": "Seleccione el agente en la lista"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.asignacion.paso.agente.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.paso.pedir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.paso.pedir",
+          "blockType": "procedure",
+          "shows": "Haga clic en Asignar incidente"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.asignacion.paso.pedir.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.turnos.control.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.turnos.control.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar turno..."
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.turnos.control.buscar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.turnos.control.filtros",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.turnos.control.filtros",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.turnos.control.filtros.png"
       ]
     },
     {
