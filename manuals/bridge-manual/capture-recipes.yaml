@@ -708,3 +708,100 @@ recipes:
     dataReady: table tbody tr
     clip: table
     settleMs: 2500
+
+  # Seatmap's three distribution elements, and the one procedure step that is a
+  # clip rather than an interaction.
+
+  # HELD, not missing. This recipe is correct and its shot was rejected on
+  # LEGIBILITY, measured against what this manual already accepts rather than
+  # against arithmetic — which is the check AGENTS.md demands.
+  #
+  # `layout: beside` gives a figure 38% of the content width (`.pair__figure`,
+  # css-bridge.ts:414): a 244x152 box. The header band is 1275x46, so `contain`
+  # scales it by 0.19 and the agency name lands at roughly 2px tall. Every
+  # `beside` figure already delivered here scales between 0.60 and 1.13, the most
+  # extreme being `fuerzas-campo.agentes.control.buscar` at 0.62.
+  #
+  # There is no tighter clip that helps: the band's own content is a centred name
+  # over a full-width rule, and the name alone is one word. What settles it is a
+  # decision about the row — not another selector.
+  # - slot: seatmap.distribucion.encabezado
+  #   view: sitemap
+  #   screenIs: ::-p-text(Tiempo de espera más larga)
+  #   dataReady: div[class*="mb-6"][class*="items-center"][class*="px-2"]
+  #   clip: div[class*="mb-6"][class*="items-center"][class*="px-2"]
+  #   settleMs: 3000
+
+  # The zone grid alone — the plan without the header above it, which is the
+  # element this row names. `transition-opacity` is what distinguishes it from
+  # the wrappers around it; checked to match once on this view.
+  - slot: seatmap.distribucion.zonas
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: ::-p-text(Recepcion01)
+    clip: div[class*="shrink-0"][class*="transition-opacity"]
+    settleMs: 3000
+
+  # The agency tab bar. Conditioned content — `when: permission:
+  # [todas-las-agencias]`, gated on `canViewAll` at sitemap-view.tsx:137 — so
+  # this delivers under the value's own folder, not `_common`. The account this
+  # attaches to holds the permission, which is why the bar is on screen at all.
+  #
+  # The tab LIST, not the band around it: the band is 1307x82 and mostly empty,
+  # while the list is 545x50 and holds all four tabs with the current one
+  # highlighted, which is what the row describes.
+  - slot: seatmap.distribucion.agencias
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: button::-p-text(Bomberos)
+    clip: button::-p-text(Bomberos)
+    clipUp: div[class*="inline-flex"][class*="rounded-lg"]
+    settleMs: 3000
+
+  # "Ubique el selector de agencias" — the same frame as the row above, which is
+  # correct: the step's whole content is finding that bar. The two steps after it
+  # (`seleccionar`, `verificar`) need a tab CLICKED and are not in this batch.
+  - slot: seatmap.distribucion.cambiar-agencia.abrir
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: button::-p-text(Bomberos)
+    clip: button::-p-text(Bomberos)
+    clipUp: div[class*="inline-flex"][class*="rounded-lg"]
+    settleMs: 3000
+
+  # Fuerzas en Campo's agent list. The caption promises three things — the list,
+  # its search box AND the force-filter row — so the clip is the whole panel
+  # rather than the scrolling column: the two controls live in the panel header,
+  # above the list.
+  - slot: fuerzas-campo.agentes.fig
+    view: forces-in-field
+    screenIs: h3::-p-text(Fuerzas en Campo)
+    # An agent ROW, not the search box: the panel paints its header and controls
+    # before the roster query lands, so gating on the input would photograph an
+    # empty list — a claim about the operation rather than a figure.
+    dataReady: div.panel button[class*="w-full"][class*="rounded-lg"]
+    clip: input[placeholder="Buscar agente..."]
+    clipUp: div.panel
+    settleMs: 3000
+
+  # Crear Incidente's fifth field, same shape as the four already delivered:
+  # `<Label>` renders a span, so the clip climbs to the label-and-field pair.
+  - slot: crear-incidente.general.campo.ubicacion
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: ::-p-text(Ubicación)
+    clip: ::-p-text(Ubicación)
+    clipUp: div
+    settleMs: 2000
+
+  # "Control de apertura al pie del formulario" — the button, NOT the foot band
+  # around it. The band is 448x53 and holds `Crear incidente` beside `Limpiar`,
+  # and `Limpiar` is documented nowhere in this section: framing it would show
+  # the reader a control the manual never explains. Same rule that re-clipped
+  # `seatmap.distribucion.fig` — do not frame what the content does not name.
+  - slot: crear-incidente.abrir.fig
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: button::-p-text(Crear incidente)
+    clip: button::-p-text(Crear incidente)
+    settleMs: 2000
