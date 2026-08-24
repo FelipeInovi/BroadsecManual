@@ -1028,17 +1028,27 @@ recipes:
   # ORDER MATTERS: `abrir` opens the dialog and `cerrar` reads it. Running
   # `abrir` while the dialog is already up would click a row behind a modal.
 
-  # The FIFTH row, and the row choice is the whole point. Row 1 opens on an
-  # event whose TRANSCRIPCIÓN panel carries a citizen's call verbatim; this one
-  # reads "Sin transcripción". See the figure-data rule in ESTADO.md — the
-  # dialog is documentable, a caller's words are not.
+  # The THIRD row, chosen for COMPLETENESS. The caption promises "todo lo
+  # registrado de ese evento", and the rows differ in what they actually hold —
+  # surveyed by opening the first six in turn:
+  #
+  #   566  transcript yes  attributes no
+  #   565  yes  yes
+  #   564  yes  yes   <- this one: Accidente de Tránsito, with a street address
+  #   563  yes  yes
+  #   562  no   yes
+  #   561  yes  yes
+  #
+  # 566 was the first pick and renders "Sin datos del evento" in the attributes
+  # panel, so it answered two thirds of its own caption. 564 fills both panels
+  # and is the representative case.
   #
   # Same shape as the CCTV mosaic naming three cameras: when the product's data
   # decides whether a shot is usable, the recipe picks the data.
   - slot: dashboard.historial.detalle.abrir
     view: dashboard
     steps:
-      - click: table tbody tr:nth-child(5)
+      - click: table tbody tr:nth-child(3)
     # The dialog's own heading, which is also the manual's claim: "un cuadro
     # titulado **Evento** seguido del identificador" — it reads `EVENTO 566`.
     screenIs: '[role="dialog"] h2'

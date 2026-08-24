@@ -106,53 +106,45 @@ state.
   query, which for a product with no extractor does not exist. Until it does, an
   entry is closed by a person.
 
-- **Qué datos reales puede llevar una figura.** Decisión delegada por el dueño
-  ("establécelos tú") una vez que las capturas empezaron a traer datos de
-  personas. La regla operativa es una sola línea:
+- **Qué datos reales puede llevar una figura: SIN restricción de contenido.**
+  Decisión del dueño, tomada en dos tiempos y registrada así porque el recorrido
+  importa más que el resultado.
 
-  > Una figura puede mostrar el producto funcionando con datos reales, pero
-  > nunca el CONTENIDO de la comunicación de un ciudadano — transcripción, chat
-  > o grabación.
+  La pregunta apareció sola cuando las capturas empezaron a traer datos de
+  personas: `dashboard.historial.detalle.abrir` abrió un evento cuyo panel de
+  transcripción traía la llamada entera de un robo de documentos, y la auditoría
+  nombraba a dos personas con teléfono. El dueño delegó el criterio
+  ("establécelos tú"), y se fijó uno que prohibía el contenido de la comunicación
+  de un ciudadano — transcripción, chat o grabación — dejando pasar los
+  metadatos operativos.
 
-  El razonamiento, porque la regla sin él se erosiona sola. El manual es un PDF:
-  viaja por correo, se imprime, se deja en carpetas compartidas, y no tiene el
-  control de acceso que sí tiene la consola. Todo lo legible en una figura queda
-  divulgado a quien reciba el archivo. Contra eso hay que pesar que un manual de
-  consola de despacho *tiene* que mostrar la consola poblada: una tabla de
-  eventos vacía no enseña a usar la tabla de eventos.
+  **El dueño revocó esa regla de forma explícita: el contenido de una
+  comunicación SÍ puede mostrarse.** Es su producto, su cliente y su marco legal,
+  y la decisión es suya. No queda ninguna restricción de contenido sobre lo que
+  una figura puede mostrar.
 
-  La línea queda entonces en el borde más filoso y no en el más cómodo. Los
-  metadatos operativos — tipos de incidente, horarios, duraciones, direcciones,
-  teléfonos, nombres de agentes — ya están a la vista de cualquier operador que
-  use el producto, que es exactamente quien lee este manual. El contenido de una
-  llamada no es lo mismo: es la sustancia de la emergencia de una persona
-  identificable, no hace ninguna falta para explicar un control, y una vez en el
-  PDF queda copiable para siempre.
+  Lo que sigue siendo cierto, y por eso queda anotado como consecuencia y no como
+  prohibición: un manual es un PDF. Viaja por correo, se imprime, queda en
+  carpetas compartidas, y no lleva el control de acceso que sí tiene la consola.
+  Todo lo legible en una figura queda divulgado a quien reciba el archivo. Si
+  alguna vez hace falta acotar eso, lo que se necesita es una capacidad de
+  tachado en el arnés de captura — decisión y trabajo del dueño del pipeline, no
+  de esta cancha.
 
-  **Es aplicable hoy, y eso fue verificado antes de escribirla.**
-  `dashboard.historial.detalle.abrir` salió primero sobre un evento cuyo panel de
-  transcripción traía la llamada entera de un robo de documentos. La quinta fila
-  de la tabla abre un evento que dice "Sin transcripción", así que la receta
-  elige esa fila — el mismo movimiento que hace el mosaico de CCTV al nombrar sus
-  tres cámaras. Una regla que no se puede aplicar no es una regla.
-
-  **Lo que esta regla NO cubre, y por qué no lo cubre.** La versión fuerte sería
-  prohibir además cualquier identificador que llegue a una persona del público:
-  el teléfono del llamante, la dirección exacta del hecho. Esa versión no es
-  aplicable con el arnés actual — habría que tachar regiones de la imagen, y eso
-  es una capacidad del pipeline que no existe. Las figuras ya entregadas
-  (`dashboard.historial.fig`, `detalle.ubicar`, `detalle.abrir`,
-  `fuerzas-campo.asignacion.fig`) llevan teléfonos y direcciones reales. Adoptar
-  la versión fuerte sin la máquina para cumplirla dejaría a Dashboard sin
-  documentar.
-
-  **Qué la resuelve:** una capacidad de tachado en el arnés de captura, decidida
-  y construida por el dueño del pipeline. Hasta entonces rige la regla de arriba,
-  que es la que sí se sostiene sola.
+  **Lo que la regla dejó como método útil, y sobrevive a su revocación:** elegir
+  la FILA de la que se fotografía. Mientras la regla rigió, la receta buscaba la
+  fila que escondiera menos; sin la regla, busca la que muestre más — que es lo
+  que la caption pedía desde el principio ("todo lo registrado de ese evento").
+  Las seis primeras filas del historial se abrieron una por una para ver qué
+  traía cada cuadro: 566 tiene transcripción y no atributos, 562 al revés, y 564
+  — Accidente de Tránsito, con dirección — llena los dos. La receta elige esa.
+  El mismo movimiento que hace el mosaico de CCTV al nombrar sus tres cámaras:
+  cuando los datos del producto deciden si una toma sirve, la receta elige los
+  datos.
 
   Consecuencia para lo que viene: `llamada.transcripcion.fig` y
-  `llamada.chat.fig` están pendientes y caen de lleno bajo esta regla. Ninguna de
-  las dos se puede fotografiar sobre una llamada real de un ciudadano.
+  `llamada.chat.fig` no tienen impedimento de contenido. Siguen pendientes por lo
+  único que las bloquea de verdad, que es necesitar una llamada en curso.
 
 ## Ruled out
 
