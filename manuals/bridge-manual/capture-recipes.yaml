@@ -1020,3 +1020,35 @@ recipes:
     dataReady: div[class*="pt-2"][class*="gap-1.5"] button[title="Filtros"]
     clip: div[class*="pt-2"][class*="gap-1.5"] button[title="Filtros"]
     settleMs: 2500
+
+  # Dashboard's event detail. One reversible click opens the dialog and its own
+  # close control shuts it; the step's text says as much ("la tabla queda como
+  # estaba").
+  #
+  # ORDER MATTERS: `abrir` opens the dialog and `cerrar` reads it. Running
+  # `abrir` while the dialog is already up would click a row behind a modal.
+
+  - slot: dashboard.historial.detalle.abrir
+    view: dashboard
+    steps:
+      - click: table tbody tr
+    # The dialog's own heading, which is also the manual's claim: "un cuadro
+    # titulado **Evento** seguido del identificador" — it reads `EVENTO 566`.
+    screenIs: '[role="dialog"] h2'
+    dataReady: '[role="dialog"] h2'
+    clip: '[role="dialog"]'
+    settleMs: 2500
+
+  # This one carries its OWN click, unlike the second recipe in every other
+  # block here. The harness reaches each shot by clicking the rail, and that
+  # dismisses the modal — the first attempt failed on `[role="dialog"] h2`
+  # with the dialog already gone. A modal is not panel state and does not
+  # survive navigation.
+  - slot: dashboard.historial.detalle.cerrar
+    view: dashboard
+    steps:
+      - click: table tbody tr
+    screenIs: '[role="dialog"] h2'
+    dataReady: '[data-slot="dialog-close"]'
+    clip: '[data-slot="dialog-close"]'
+    settleMs: 2000

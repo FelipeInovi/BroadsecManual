@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 94,
-    "pending": 69
+    "delivered": 96,
+    "pending": 67
   },
   "pending": [
     {
@@ -903,50 +903,6 @@
       "deliverTo": {
         "shared": "_common/seatmap.distribucion.encabezado.png",
         "override": "<permission>/seatmap.distribucion.encabezado.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.detalle.abrir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.detalle.abrir",
-          "blockType": "procedure",
-          "shows": "Haga clic en la fila"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.detalle.abrir.png",
-        "override": "<permission>/dashboard.historial.detalle.abrir.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.detalle.cerrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.detalle.cerrar",
-          "blockType": "procedure",
-          "shows": "Cierre el cuadro"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.detalle.cerrar.png",
-        "override": "<permission>/dashboard.historial.detalle.cerrar.png"
       }
     },
     {
@@ -2334,6 +2290,40 @@
       ],
       "files": [
         "_common/dashboard.historial.detalle.ubicar.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.detalle.abrir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.detalle.abrir",
+          "blockType": "procedure",
+          "shows": "Haga clic en la fila"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.detalle.abrir.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.detalle.cerrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.detalle.cerrar",
+          "blockType": "procedure",
+          "shows": "Cierre el cuadro"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.detalle.cerrar.png"
       ]
     },
     {
