@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 83,
-    "pending": 80
+    "delivered": 87,
+    "pending": 76
   },
   "pending": [
     {
@@ -373,94 +373,6 @@
       "deliverTo": {
         "shared": "_common/home.libro.registrar.guardar.png",
         "override": "<permission>/home.libro.registrar.guardar.png"
-      }
-    },
-    {
-      "slot": "home.teclado.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.teclado.fig",
-          "blockType": "figure",
-          "shows": "Teclado telefónico en la columna izquierda, en lugar de la lista de llamadas."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.teclado.fig.png",
-        "override": "<permission>/home.teclado.fig.png"
-      }
-    },
-    {
-      "slot": "home.teclado.llamar.abrir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.teclado.llamar.abrir",
-          "blockType": "procedure",
-          "shows": "Haga clic en Mostrar teclado"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.teclado.llamar.abrir.png",
-        "override": "<permission>/home.teclado.llamar.abrir.png"
-      }
-    },
-    {
-      "slot": "home.teclado.llamar.marcar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.teclado.llamar.marcar",
-          "blockType": "procedure",
-          "shows": "Marque el número"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.teclado.llamar.marcar.png",
-        "override": "<permission>/home.teclado.llamar.marcar.png"
-      }
-    },
-    {
-      "slot": "home.teclado.llamar.volver",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.teclado.llamar.volver",
-          "blockType": "procedure",
-          "shows": "Vuelva a la lista"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.teclado.llamar.volver.png",
-        "override": "<permission>/home.teclado.llamar.volver.png"
       }
     },
     {
@@ -1985,6 +1897,74 @@
       ],
       "files": [
         "_common/home/caso/accion/libro.svg"
+      ]
+    },
+    {
+      "slot": "home.teclado.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.teclado.fig",
+          "blockType": "figure",
+          "shows": "Teclado telefónico en la columna izquierda, en lugar de la lista de llamadas."
+        }
+      ],
+      "files": [
+        "_common/home.teclado.fig.png"
+      ]
+    },
+    {
+      "slot": "home.teclado.llamar.abrir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.teclado.llamar.abrir",
+          "blockType": "procedure",
+          "shows": "Haga clic en Mostrar teclado"
+        }
+      ],
+      "files": [
+        "_common/home.teclado.llamar.abrir.png"
+      ]
+    },
+    {
+      "slot": "home.teclado.llamar.marcar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.teclado.llamar.marcar",
+          "blockType": "procedure",
+          "shows": "Marque el número"
+        }
+      ],
+      "files": [
+        "_common/home.teclado.llamar.marcar.png"
+      ]
+    },
+    {
+      "slot": "home.teclado.llamar.volver",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.teclado.llamar.volver",
+          "blockType": "procedure",
+          "shows": "Vuelva a la lista"
+        }
+      ],
+      "files": [
+        "_common/home.teclado.llamar.volver.png"
       ]
     },
     {

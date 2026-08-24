@@ -835,3 +835,57 @@ recipes:
     dataReady: div[class*="bottom-24"] button
     clip: div[class*="bottom-24"] button
     settleMs: 2500
+
+  # --- Home's phone keypad: one reversible click ------------------------------
+  #
+  # `Mostrar teclado` swaps the review panel for the keypad, and the keypad's own
+  # `Volver a la vista anterior` swaps it back. The round trip was walked before
+  # writing this: the list came back intact.
+  #
+  # ORDER MATTERS in this block. `llamar.abrir` photographs the control that
+  # OPENS the keypad, and that control exists ONLY while the keypad is closed —
+  # `CallsReviewSearch` is mounted from calls-review-panel.tsx:204 alone, and
+  # opening the keypad deactivates that panel. So it is shot first, and only the
+  # recipe after it carries the click; the last two run with the keypad already
+  # open. Running this block out of order fails loudly rather than quietly, which
+  # is what `screenIs` is for.
+
+  - slot: home.teclado.llamar.abrir
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    dataReady: button[title="Mostrar teclado"]
+    clip: button[title="Mostrar teclado"]
+    settleMs: 2000
+
+  - slot: home.teclado.fig
+    view: home
+    steps:
+      - click: button[title="Mostrar teclado"]
+    # NOT Home's usual tell. Opening the keypad unmounts the review panel, so
+    # `Revisión de llamadas` is gone by the time the gates run; the keypad's own
+    # return control is the state this shot is about.
+    screenIs: button[title="Volver a la vista anterior"]
+    dataReady: input[placeholder*="Número"]
+    # Through the return control rather than `div.panel` directly: Home shows
+    # three panels and the bare selector would take whichever the DOM happens to
+    # order first.
+    clip: button[title="Volver a la vista anterior"]
+    clipUp: div.panel
+    settleMs: 2500
+
+  - slot: home.teclado.llamar.marcar
+    view: home
+    screenIs: button[title="Volver a la vista anterior"]
+    dataReady: input[placeholder*="Número"]
+    # The field AND the pad. The step says "componer el número", which is both —
+    # the `grid-cols-3` inside is the digits without the field they fill.
+    clip: input[placeholder*="Número"]
+    clipUp: div[class*="pt-0"][class*="flex-col"]
+    settleMs: 2000
+
+  - slot: home.teclado.llamar.volver
+    view: home
+    screenIs: button[title="Volver a la vista anterior"]
+    dataReady: button[title="Volver a la vista anterior"]
+    clip: button[title="Volver a la vista anterior"]
+    settleMs: 2000
