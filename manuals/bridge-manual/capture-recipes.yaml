@@ -1120,3 +1120,150 @@ recipes:
     dataReady: button[aria-label="Confirmar"]
     clip: button[aria-label="Confirmar"]
     settleMs: 2500
+
+  # --- Home with a case open --------------------------------------------------
+  #
+  # One click on the review card opens the case, and `Volver a la lista de
+  # incidentes` closes it. The click has ONE persistent effect worth knowing:
+  # `handleSelectCase` calls `markRead(item.id)` (calls-review-panel.tsx:80),
+  # which is the product's real "someone reviewed this" signal. It is NOT a
+  # backend write — the store's own comment says no backend read flag exists for
+  # this endpoint — it is a zustand store persisted to `localStorage` under
+  # `bridge-calls-review-read` (use-calls-review-read-store.ts). Local, cosmetic,
+  # and restorable by clearing that key.
+  #
+  # Consequence for authoring: the opened card loses its **Prioridad** badge, so
+  # do not expect one in these frames.
+  #
+  # ORDER MATTERS. The first recipe opens the case; the rest read it. A case
+  # selection is app state and survives the rail click the harness navigates
+  # with, unlike a modal.
+
+  - slot: home.caso.fig
+    view: home
+    steps:
+      - click: div[role="button"][class*="rounded-2xl"]
+    # The one control that exists ONLY with a case open, which makes it the
+    # cheapest proof the click landed.
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: button[title="Volver a la lista de incidentes"]
+    settleMs: 3000
+
+  # "La lista deja a la vista únicamente esa tarjeta" — the PANEL, so the frame
+  # shows the list reduced to one card rather than the card alone.
+  - slot: home.revision.abrir.seleccionar
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: div[role="button"][class*="rounded-2xl"]
+    clip: h3::-p-text(Revisión de llamadas)
+    clipUp: div.panel
+    settleMs: 2500
+
+  # "Confirme el tipo de incidente, la dirección y el teléfono en la tarjeta que
+  # quedó a la vista" — the CARD, because the step names what is on it.
+  - slot: home.revision.abrir.verificar
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: div[role="button"][class*="rounded-2xl"]
+    clip: div[role="button"][class*="rounded-2xl"]
+    settleMs: 2500
+
+  # The pencil on the open card. Clipped, never pressed — the steps after it
+  # (`direccion`, `tipo`, `guardar`) write to a real case.
+  - slot: home.revision.corregir.editar
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: button[title="Editar"]
+    clip: button[title="Editar"]
+    settleMs: 2500
+
+  # "Mientras hay un caso abierto, la barra no ofrece la búsqueda ni los filtros:
+  # en su lugar aparece el control de retorno." The step is ABOUT the bar's
+  # changed contents, so the clip is the bar and not the button in it.
+  - slot: home.caso.volver.ubicar
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: button[title="Volver a la lista de incidentes"]
+    clip: button[title="Volver a la lista de incidentes"]
+    clipUp: div[class*="flex"][class*="gap"]
+    settleMs: 2500
+
+  - slot: home.caso.volver.control
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: button[title="Volver a la lista de incidentes"]
+    clip: button[title="Volver a la lista de incidentes"]
+    settleMs: 2500
+
+  # One per agency in the AGENCIAS panel; the clip takes the first. Never
+  # pressed: the row's own text says the control derives the case and then reads
+  # **Agencia transferida**, which is a real transfer of a real case.
+  - slot: home.caso.agencias.transferir.control
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: button::-p-text(Transferir agencia)
+    clip: button::-p-text(Transferir agencia)
+    settleMs: 2500
+
+  # --- The case book, in the bottom band --------------------------------------
+  #
+  # Opened from ACCIONES on the right column. The control TOGGLES its own label:
+  # `Abrir libro del caso` while closed, `Cerrar libro del caso` while open, both
+  # on `aria-label` and NOT on `title`. So `registrar.abrir` must be shot first,
+  # while the book is still closed — the same ordering rule as the keypad block,
+  # for the same reason.
+  #
+  # These all need the case open, which the block above leaves in place: a case
+  # selection is app state and survives the rail click between shots.
+
+  - slot: home.libro.registrar.abrir
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: button[aria-label="Abrir libro del caso"]
+    clip: button[aria-label="Abrir libro del caso"]
+    settleMs: 2500
+
+  # "Libro del caso abierto en la banda inferior, en la ficha de notas" — the
+  # panel opens on NOTAS already, so no tab click is needed. Clipped through the
+  # textarea rather than by taking `div.panel` bare: Home shows six panels with a
+  # case open and the bare selector takes whichever the DOM orders first.
+  - slot: home.libro.fig
+    view: home
+    steps:
+      - click: button[aria-label="Abrir libro del caso"]
+    screenIs: button[aria-label="Cerrar libro del caso"]
+    dataReady: textarea
+    clip: textarea
+    clipUp: div.panel
+    settleMs: 2500
+
+  - slot: home.libro.registrar.notas
+    view: home
+    screenIs: button[aria-label="Cerrar libro del caso"]
+    dataReady: textarea
+    clip: textarea
+    settleMs: 2500
+
+  # "Diríjase a la ficha Libro del caso" — the TAB, not the panel. The step is
+  # about moving between the book's two tabs, and the panel is already
+  # `home.libro.fig`.
+  - slot: home.libro.registrar.informe
+    view: home
+    screenIs: button[aria-label="Cerrar libro del caso"]
+    dataReady: button::-p-text(Libro del caso)
+    clip: button::-p-text(Libro del caso)
+    settleMs: 2500
+
+  # Clipped, never pressed: this writes the report onto a real case.
+  #
+  # `title`, and it took a failed round to find out. This panel labels its
+  # controls three different ways — the open/close toggle on `aria-label`, the
+  # two tabs as TEXT, and this one on `title`. Never assume which; the probe
+  # prints all three into one field and that is exactly how the wrong one gets
+  # written down.
+  - slot: home.libro.registrar.guardar
+    view: home
+    screenIs: button[aria-label="Cerrar libro del caso"]
+    dataReady: button[title="Guardar"]
+    clip: button[title="Guardar"]
+    settleMs: 2500
