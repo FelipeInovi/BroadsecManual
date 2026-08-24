@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 81,
-    "pending": 82
+    "delivered": 83,
+    "pending": 80
   },
   "pending": [
     {
@@ -994,28 +994,6 @@
       }
     },
     {
-      "slot": "dashboard.calor.control",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.calor.control",
-          "blockType": "field-list",
-          "shows": "Mapa de calor"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.calor.control.png",
-        "override": "<permission>/dashboard.calor.control.png"
-      }
-    },
-    {
       "slot": "dashboard.historial.detalle.abrir",
       "neededBy": [
         "agencia-propia",
@@ -1079,28 +1057,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.historial.exportar.marcar.png",
         "override": "<permission>/dashboard.historial.exportar.marcar.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.exportar.formato",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.exportar.formato",
-          "blockType": "procedure",
-          "shows": "Haga clic en CSV o en Excel"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.exportar.formato.png",
-        "override": "<permission>/dashboard.historial.exportar.formato.png"
       }
     },
     {
@@ -2453,6 +2409,23 @@
       ]
     },
     {
+      "slot": "dashboard.calor.control",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.calor.control",
+          "blockType": "field-list",
+          "shows": "Mapa de calor"
+        }
+      ],
+      "files": [
+        "_common/dashboard.calor.control.png"
+      ]
+    },
+    {
       "slot": "dashboard.historial.fig",
       "neededBy": [
         "agencia-propia",
@@ -2535,6 +2508,23 @@
       ],
       "files": [
         "_common/dashboard.historial.detalle.ubicar.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.exportar.formato",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.exportar.formato",
+          "blockType": "procedure",
+          "shows": "Haga clic en CSV o en Excel"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.exportar.formato.png"
       ]
     },
     {

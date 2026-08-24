@@ -805,3 +805,33 @@ recipes:
     dataReady: button::-p-text(Crear incidente)
     clip: button::-p-text(Crear incidente)
     settleMs: 2000
+
+  # "Haga clic en CSV o en Excel" — a step naming two controls, and the product
+  # wraps exactly those two: `div.ml-auto.flex.items-center.gap-1`
+  # (events-history-toolbar.tsx:121). 144x32 with both buttons in frame. Third
+  # instance of the same judgement in this file — clip the wrapper when one
+  # exists, split the row only when each control has its own box.
+  - slot: dashboard.historial.exportar.formato
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: button::-p-text(CSV)
+    clip: button::-p-text(CSV)
+    clipUp: div[class*="ml-auto"][class*="gap-1"]
+    settleMs: 2500
+
+  # The heat-map toggle. The row says it plainly — "se controla desde la barra de
+  # paneles" — so this is the ToolKitPanel, the same portalled bar as
+  # `bot.abrir.barra`, at `div[class*="bottom-24"]`. On Dashboard that bar holds
+  # ONE button: a lucide `flame`, teal and active, because the row also says the
+  # map arrives switched on.
+  #
+  # No `img[alt]` here, unlike Bridge of Things: BoT's three panel icons are
+  # files under `assets/bot_status_icons/`, while this one is drawn by a
+  # component. So the bar is addressed by its container and the button by being
+  # the only one in it.
+  - slot: dashboard.calor.control
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: div[class*="bottom-24"] button
+    clip: div[class*="bottom-24"] button
+    settleMs: 2500
