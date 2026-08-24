@@ -538,6 +538,13 @@ interface LoadedManual {
   readonly labels: readonly LabelCitation[];
   readonly targets: readonly BuildTarget[];
   readonly figuresDir: string;
+  /**
+   * The manual's own brand mark as a data URI, or undefined if it ships none.
+   *
+   * Read here rather than in the renderer, and inlined rather than linked,
+   * because the cover cannot fall back to a placeholder the way a figure can.
+   */
+  readonly coverMark: string | undefined;
 }
 
 /**
@@ -575,7 +582,26 @@ function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): Lo
     labels,
     targets,
     figuresDir: join(manualDir, "assets", "figures"),
+    coverMark: readCoverMark(manualDir),
   };
+}
+
+/**
+ * The brand mark a manual ships, base64'd for inlining, or undefined.
+ *
+ * By convention, not configuration: `assets/brand/mark.png` under the manual.
+ * A manual that has none keeps the drawn fallback in the renderer, which is why
+ * this is allowed to be absent instead of being an error — Broadsec's document
+ * is already delivered and ships no such file.
+ *
+ * PNG only, deliberately. The one mark this exists for has no vector source
+ * anywhere in the product, and accepting several formats would invite guessing
+ * at which one a cover should prefer.
+ */
+function readCoverMark(manualDir: string): string | undefined {
+  const file = join(manualDir, "assets", "brand", "mark.png");
+  if (!existsSync(file)) return undefined;
+  return `data:image/png;base64,${readFileSync(file).toString("base64")}`;
 }
 
 /**
@@ -852,7 +878,10 @@ async function build(
   wantPendingTable: boolean,
   wantDocx: boolean,
 ): Promise<void> {
-  const { config, doc, warnings, pending, targets, figuresDir } = loadManual(manualDir, filters);
+  const { config, doc, warnings, pending, targets, figuresDir, coverMark } = loadManual(
+    manualDir,
+    filters,
+  );
   const outDir = join(manualDir, config.output.dir);
   mkdirSync(outDir, { recursive: true });
 
@@ -885,6 +914,10 @@ async function build(
       ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${config.manual.contentVersion}  |  NO DISTRIBUIR`
       : `${brand}  |  ${config.manual.title}  |  v${config.manual.contentVersion}`;
     const cover = {
+      // The mark rides on the DRAFT cover too. A draft is for the person taking
+      // captures, and a cover that looks like the real one is how they can tell
+      // the build is the right build.
+      ...(coverMark !== undefined ? { mark: coverMark } : {}),
       brand: draft ? "BORRADOR INTERNO" : brand,
       title: config.manual.title,
       version: config.manual.contentVersion,

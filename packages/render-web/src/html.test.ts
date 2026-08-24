@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { BlockNode, ManualNode, ResolvedImage, ResolvedManual } from "@broadsec-manual/blocks";
+import { themes } from "@broadsec-manual/tokens";
 import { renderHtml, type RenderOptions } from "./html.ts";
 
 const PENDING: ResolvedImage = {
@@ -175,5 +176,50 @@ describe("image slots the renderer was not given", () => {
     const html = body(render([block("s.p", "prose", { text: "Sin ilustración." })], [], PENDING, true));
     expect(html).not.toContain("_pending.svg");
     expect(html).not.toContain("shot");
+  });
+});
+
+/**
+ * The cover mark, which is the one image on the page that may never be a
+ * placeholder. Both branches are pinned because they fail in opposite ways: a
+ * missing fallback leaves the lockup empty, and a mark that is linked rather
+ * than inlined can arrive late or not at all.
+ */
+describe("cover mark", () => {
+  const coverOf = (mark?: string): string =>
+    renderHtml(manual([]), {
+      header: "BRIDGE360  |  T  |  v0.1.0",
+      slots: new Map(),
+      images: () => DELIVERED,
+      figures: new Map(),
+      theme: themes.bridge,
+      cover: {
+        brand: "BRIDGE360",
+        title: "T",
+        version: "0.1.0",
+        lede: "L",
+        meta: "M",
+        ...(mark === undefined ? {} : { mark }),
+      },
+    });
+
+  it("inlines the real mark as given, so the cover needs nothing resolved", () => {
+    const html = coverOf("data:image/png;base64,AAAB");
+    expect(html).toContain('<img class="cover__mark" src="data:image/png;base64,AAAB"');
+    // The drawn approximation must be GONE, not merely covered by the real one.
+    expect(html).not.toContain("<svg class=\"cover__mark\"");
+  });
+
+  it("falls back to the drawn mark when the manual ships none", () => {
+    const html = coverOf();
+    expect(html).toContain('<svg class="cover__mark"');
+    expect(html).not.toContain('<img class="cover__mark"');
+  });
+
+  it("still puts a mark in the lockup either way", () => {
+    for (const html of [coverOf("data:image/png;base64,AAAB"), coverOf()]) {
+      expect(html).toContain('class="cover__lockup"');
+      expect(html).toMatch(/class="cover__mark"/);
+    }
   });
 });

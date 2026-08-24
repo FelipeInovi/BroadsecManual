@@ -18,6 +18,14 @@ export interface CoverData {
   readonly version: string;
   readonly lede: string;
   readonly meta: string;
+  /**
+   * The brand mark as a data URI, or absent.
+   *
+   * A URI and not a path, because the cover must not depend on an asset
+   * resolving — see `coverMark`. Reading the file is the CLI's job; the renderer
+   * stays unable to touch a disk.
+   */
+  readonly mark?: string;
 }
 
 export interface RenderOptions {
@@ -393,19 +401,29 @@ function renderNode(
 }
 
 /**
- * The Bridge mark, inline.
+ * The brand mark on the cover, inline either way.
  *
- * Inline rather than an <img>: the cover must render before any asset resolves,
- * and a brand mark that arrives late — or not at all — is the one image on the
- * page nobody would forgive being a placeholder.
+ * Inline rather than a file reference: the cover must render before any asset
+ * resolves, and a brand mark that arrives late — or not at all — is the one
+ * image on the page nobody would forgive being a placeholder. A figure that
+ * cannot be found falls back to `_pending.svg`, which is the right answer for a
+ * figure and an unthinkable one for a cover.
+ *
+ * `mark` is the product's REAL mark, already read off disk and base64'd by the
+ * CLI, so the bytes ship inside the document. The drawn shape below is the
+ * fallback for a manual that carries no such file — and it is an APPROXIMATION,
+ * which is the whole reason a real mark wins whenever there is one: this one was
+ * a suspension bridge drawn to resemble the logo, and the logo is not that.
  */
-const bridgeMark = (accent: string): string =>
-  `<svg class="cover__mark" viewBox="0 0 100 100" fill="none" stroke="${accent}"` +
-  ` stroke-width="3.4" stroke-linecap="round" aria-hidden="true">` +
-  `<circle cx="50" cy="50" r="44"/><path d="M14 62h72"/><path d="M14 54h72"/>` +
-  `<path d="M30 54V30M70 54V30"/>` +
-  `<path d="M14 46c10-16 26-16 36-16s26 0 36 16" stroke-width="2.6"/>` +
-  `<path d="M30 30l20 16 20-16" stroke-width="2.2"/></svg>`;
+const coverMark = (accent: string, mark: string | undefined): string =>
+  mark !== undefined
+    ? `<img class="cover__mark" src="${esc(mark)}" alt="" aria-hidden="true">`
+    : `<svg class="cover__mark" viewBox="0 0 100 100" fill="none" stroke="${accent}"` +
+      ` stroke-width="3.4" stroke-linecap="round" aria-hidden="true">` +
+      `<circle cx="50" cy="50" r="44"/><path d="M14 62h72"/><path d="M14 54h72"/>` +
+      `<path d="M30 54V30M70 54V30"/>` +
+      `<path d="M14 46c10-16 26-16 36-16s26 0 36 16" stroke-width="2.6"/>` +
+      `<path d="M30 30l20 16 20-16" stroke-width="2.2"/></svg>`;
 
 /**
  * The stylesheet a brand renders with.
@@ -458,7 +476,7 @@ function renderCover(c: CoverData, t: Tokens, headerLine: string): string {
     t.cover.style === "mark"
       ? [
           `<div class="cover__lockup">`,
-          bridgeMark(t.cover.accent),
+          coverMark(t.cover.accent, c.mark),
           `<span class="cover__wordmark">${esc(c.brand)}</span>`,
           `</div>`,
           `<div class="cover__stack">`,

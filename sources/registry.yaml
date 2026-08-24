@@ -230,3 +230,26 @@ sources:
         Per the skill, that gap is in the CONTENT, not the extraction: writing
         that subsection is authoring work with its own decisions. Recorded in
         `manuals/bridge-manual/AGENTS.md`.
+
+      brandMark: |
+        The mark the product shows beside the BRIDGE360 wordmark is
+        `src/assets/icon_Inovisec.png` — a teal ring holding two node shapes,
+        rendered twice in the top strip by `StaticLogo`
+        (`components/layout/dashboard-grid.tsx:70`, mounted at
+        `dashboard-shell.tsx:39` and `:45`).
+
+        **There is NO vector source anywhere in the repository.** Searched: no
+        SVG whose name mentions logo, brand, mark or bridge; `public/` holds only
+        Vite's and Tauri's own. So a cover carries a raster or an approximation.
+
+        The largest copy of that same mark is `src-tauri/icons/icon.png` at
+        512x512 — the Tauri app icon. That is the one to take: at the cover's
+        40pt it works out to 921 dpi, where the 99x99 in `src/assets` would be
+        178. Copied to `manuals/bridge-manual/assets/brand/mark.png`.
+
+        Two OTHER logo files exist and are not this mark. `logo_bridge.webp`
+        (540x540) and `logo_bridge_login.png` are a suspension bridge over a grid
+        of screens; the login and 2FA screens use the second
+        (`auth/.../login.tsx:14`, `TwoFactorVerifyScreen.tsx:6`) and nothing
+        references the first. The manual cover drew an approximation of THAT
+        motif until v0.6.7, which is why it looked nothing like the product.
