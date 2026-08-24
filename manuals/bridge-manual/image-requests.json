@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 96,
-    "pending": 67
+    "delivered": 99,
+    "pending": 64
   },
   "pending": [
     {
@@ -1013,72 +1013,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.analitica.accion.limpiar.png",
         "override": "<permission>/dashboard.analitica.accion.limpiar.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.asignacion.control.confirmar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.asignacion.control.confirmar",
-          "blockType": "field-list",
-          "shows": "Confirmar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.asignacion.control.confirmar.png",
-        "override": "<permission>/fuerzas-campo.asignacion.control.confirmar.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.asignacion.control.cancelar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.asignacion.control.cancelar",
-          "blockType": "field-list",
-          "shows": "Cancelar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.asignacion.control.cancelar.png",
-        "override": "<permission>/fuerzas-campo.asignacion.control.cancelar.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.asignacion.paso.confirmar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.asignacion.paso.confirmar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Confirmar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.asignacion.paso.confirmar.png",
-        "override": "<permission>/fuerzas-campo.asignacion.paso.confirmar.png"
       }
     },
     {
@@ -2922,6 +2856,40 @@
       ]
     },
     {
+      "slot": "fuerzas-campo.asignacion.control.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.control.confirmar",
+          "blockType": "field-list",
+          "shows": "Confirmar"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.asignacion.control.confirmar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.control.cancelar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.control.cancelar",
+          "blockType": "field-list",
+          "shows": "Cancelar"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.asignacion.control.cancelar.png"
+      ]
+    },
+    {
       "slot": "fuerzas-campo.asignacion.paso.agente",
       "neededBy": [
         "agencia-propia",
@@ -2953,6 +2921,23 @@
       ],
       "files": [
         "_common/fuerzas-campo.asignacion.paso.pedir.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.asignacion.paso.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.asignacion.paso.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Confirmar"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.asignacion.paso.confirmar.png"
       ]
     },
     {
