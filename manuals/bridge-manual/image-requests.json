@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 111,
-    "pending": 52
+    "delivered": 122,
+    "pending": 41
   },
   "pending": [
     {
@@ -46,28 +46,6 @@
       }
     },
     {
-      "slot": "home.revision.corregir.direccion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.corregir.direccion",
-          "blockType": "procedure",
-          "shows": "Corrija la dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.corregir.direccion.png",
-        "override": "<permission>/home.revision.corregir.direccion.png"
-      }
-    },
-    {
       "slot": "home.revision.corregir.tipo",
       "neededBy": [
         "agencia-propia",
@@ -87,28 +65,6 @@
       "deliverTo": {
         "shared": "_common/home.revision.corregir.tipo.png",
         "override": "<permission>/home.revision.corregir.tipo.png"
-      }
-    },
-    {
-      "slot": "home.revision.corregir.guardar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.corregir.guardar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Guardar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.corregir.guardar.png",
-        "override": "<permission>/home.revision.corregir.guardar.png"
       }
     },
     {
@@ -642,28 +598,6 @@
       }
     },
     {
-      "slot": "dashboard.historial.exportar.marcar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.exportar.marcar",
-          "blockType": "procedure",
-          "shows": "Marque las filas que necesita"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.exportar.marcar.png",
-        "override": "<permission>/dashboard.historial.exportar.marcar.png"
-      }
-    },
-    {
       "slot": "dashboard.historial.exportar.guardar",
       "neededBy": [
         "agencia-propia",
@@ -683,72 +617,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.historial.exportar.guardar.png",
         "override": "<permission>/dashboard.historial.exportar.guardar.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.filtros.horario.rango",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.filtros.horario.rango",
-          "blockType": "field-list",
-          "shows": "Intervalo horario"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.filtros.horario.rango.png",
-        "override": "<permission>/dashboard.analitica.filtros.horario.rango.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.accion.actualizar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.accion.actualizar",
-          "blockType": "field-list",
-          "shows": "Actualizar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.accion.actualizar.png",
-        "override": "<permission>/dashboard.analitica.accion.actualizar.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.accion.limpiar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.accion.limpiar",
-          "blockType": "field-list",
-          "shows": "Limpiar filtros"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.accion.limpiar.png",
-        "override": "<permission>/dashboard.analitica.accion.limpiar.png"
       }
     },
     {
@@ -1058,112 +926,6 @@
         "shared": "_common/crear-incidente.resumen.campo.png",
         "override": "<permission>/crear-incidente.resumen.campo.png"
       }
-    },
-    {
-      "slot": "crear-incidente.abrir.paso.ubicacion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.abrir.paso.ubicacion",
-          "blockType": "procedure",
-          "shows": "Confirme la ubicación en el mapa"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.abrir.paso.ubicacion.png",
-        "override": "<permission>/crear-incidente.abrir.paso.ubicacion.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.abrir.paso.obligatorios",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.abrir.paso.obligatorios",
-          "blockType": "procedure",
-          "shows": "Complete el tipo, la prioridad y el resumen"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.abrir.paso.obligatorios.png",
-        "override": "<permission>/crear-incidente.abrir.paso.obligatorios.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.abrir.paso.crear",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.abrir.paso.crear",
-          "blockType": "procedure",
-          "shows": "Haga clic en Crear incidente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.abrir.paso.crear.png",
-        "override": "<permission>/crear-incidente.abrir.paso.crear.png"
-      }
-    },
-    {
-      "slot": "seatmap.distribucion.cambiar-agencia.seleccionar",
-      "neededBy": [
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.distribucion.cambiar-agencia.seleccionar",
-          "blockType": "procedure",
-          "shows": "Seleccione la agencia"
-        }
-      ],
-      "pendingFor": [
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.distribucion.cambiar-agencia.seleccionar.png",
-        "override": "<permission>/seatmap.distribucion.cambiar-agencia.seleccionar.png"
-      }
-    },
-    {
-      "slot": "seatmap.distribucion.cambiar-agencia.verificar",
-      "neededBy": [
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.distribucion.cambiar-agencia.verificar",
-          "blockType": "procedure",
-          "shows": "Verifique el encabezado"
-        }
-      ],
-      "pendingFor": [
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.distribucion.cambiar-agencia.verificar.png",
-        "override": "<permission>/seatmap.distribucion.cambiar-agencia.verificar.png"
-      }
     }
   ],
   "delivered": [
@@ -1318,6 +1080,40 @@
       ],
       "files": [
         "_common/home.revision.corregir.editar.png"
+      ]
+    },
+    {
+      "slot": "home.revision.corregir.direccion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.corregir.direccion",
+          "blockType": "procedure",
+          "shows": "Corrija la dirección"
+        }
+      ],
+      "files": [
+        "_common/home.revision.corregir.direccion.png"
+      ]
+    },
+    {
+      "slot": "home.revision.corregir.guardar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.corregir.guardar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Guardar"
+        }
+      ],
+      "files": [
+        "_common/home.revision.corregir.guardar.png"
       ]
     },
     {
@@ -2201,6 +1997,23 @@
       ]
     },
     {
+      "slot": "dashboard.historial.exportar.marcar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.exportar.marcar",
+          "blockType": "procedure",
+          "shows": "Marque las filas que necesita"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.exportar.marcar.png"
+      ]
+    },
+    {
       "slot": "dashboard.historial.exportar.formato",
       "neededBy": [
         "agencia-propia",
@@ -2232,6 +2045,57 @@
       ],
       "files": [
         "_common/dashboard.analitica.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.filtros.horario.rango",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.filtros.horario.rango",
+          "blockType": "field-list",
+          "shows": "Intervalo horario"
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.filtros.horario.rango.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.accion.actualizar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.accion.actualizar",
+          "blockType": "field-list",
+          "shows": "Actualizar"
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.accion.actualizar.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.accion.limpiar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.accion.limpiar",
+          "blockType": "field-list",
+          "shows": "Limpiar filtros"
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.accion.limpiar.png"
       ]
     },
     {
@@ -3051,6 +2915,57 @@
       ]
     },
     {
+      "slot": "crear-incidente.abrir.paso.ubicacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.abrir.paso.ubicacion",
+          "blockType": "procedure",
+          "shows": "Confirme la ubicación en el mapa"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.abrir.paso.ubicacion.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.abrir.paso.obligatorios",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.abrir.paso.obligatorios",
+          "blockType": "procedure",
+          "shows": "Complete el tipo, la prioridad y el resumen"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.abrir.paso.obligatorios.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.abrir.paso.crear",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.abrir.paso.crear",
+          "blockType": "procedure",
+          "shows": "Haga clic en Crear incidente"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.abrir.paso.crear.png"
+      ]
+    },
+    {
       "slot": "seatmap.distribucion.agencias",
       "neededBy": [
         "todas-las-agencias"
@@ -3080,6 +2995,38 @@
       ],
       "files": [
         "_common/seatmap.distribucion.cambiar-agencia.abrir.png"
+      ]
+    },
+    {
+      "slot": "seatmap.distribucion.cambiar-agencia.seleccionar",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.cambiar-agencia.seleccionar",
+          "blockType": "procedure",
+          "shows": "Seleccione la agencia"
+        }
+      ],
+      "files": [
+        "_common/seatmap.distribucion.cambiar-agencia.seleccionar.png"
+      ]
+    },
+    {
+      "slot": "seatmap.distribucion.cambiar-agencia.verificar",
+      "neededBy": [
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.cambiar-agencia.verificar",
+          "blockType": "procedure",
+          "shows": "Verifique el encabezado"
+        }
+      ],
+      "files": [
+        "_common/seatmap.distribucion.cambiar-agencia.verificar.png"
       ]
     }
   ]

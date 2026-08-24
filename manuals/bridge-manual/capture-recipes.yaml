@@ -1267,3 +1267,185 @@ recipes:
     dataReady: button[title="Guardar"]
     clip: button[title="Guardar"]
     settleMs: 2500
+
+  # Crear Incidente's opening procedure. All three are clips on the step the
+  # panel arrives with open; none of them fills the form.
+
+  # "Arrastre el pin al lugar del incidente y confírmelo con la barra de
+  # dirección" — the BAR, which is where the confirmation happens and which
+  # carries the coordinates the pin currently sits on.
+  - slot: crear-incidente.abrir.paso.ubicacion
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: button[title="Editar dirección"]
+    clip: button[title="Editar dirección"]
+    clipUp: div[class*="rounded"]
+    settleMs: 2500
+
+  # "Son los tres datos que el formulario reclama, además de la ubicación" — the
+  # EXPANDED step, not the whole panel. `border-[#00BEB7]` is what
+  # `incident-step.tsx:42` gives the open step and only the open step, which
+  # makes it the one handle that distinguishes the four.
+  - slot: crear-incidente.abrir.paso.obligatorios
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: div[class*="border-[#00BEB7]"]
+    clip: div[class*="border-[#00BEB7]"]
+    settleMs: 2500
+
+  - slot: crear-incidente.abrir.paso.crear
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: button::-p-text(Crear incidente)
+    clip: button::-p-text(Crear incidente)
+    settleMs: 2500
+
+  # Switching agency in Seatmap. Conditioned content — the whole procedure is
+  # `when: permission: [todas-las-agencias]` — and the attached account holds the
+  # permission, which is why the tab bar is on screen at all.
+  #
+  # ORDER MATTERS: the first shot switches to Bomberos and the second reads the
+  # result. Both leave the view on Bomberos rather than Recepción Central; a
+  # later run of `seatmap.distribucion.fig` or `.zonas` expects the own agency,
+  # so this block belongs after them in the file, which it is.
+
+  - slot: seatmap.distribucion.cambiar-agencia.seleccionar
+    view: sitemap
+    steps:
+      - click: button::-p-text(Bomberos)
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: button::-p-text(Bomberos)
+    # The tab LIST, so the frame shows the chosen tab highlighted against the
+    # others — "la pestaña seleccionada queda resaltada" is the whole step.
+    clip: button::-p-text(Bomberos)
+    clipUp: div[class*="inline-flex"][class*="rounded-lg"]
+    settleMs: 3000
+
+  # "Confirme en el encabezado que la planta corresponde a la agencia elegida.
+  # La planta, los indicadores y el monitor se actualizan juntos" — so the frame
+  # is the REGION, header and plan together, not the header band alone.
+  #
+  # That is also the honest way past the legibility floor that holds
+  # `seatmap.distribucion.encabezado`: the band alone is 1275x46 and scales to
+  # 0.19 in a `beside` box, while this region is 1307x551 and reads. The step's
+  # own text names the plan, so the wider clip answers it better rather than
+  # merely bigger.
+  - slot: seatmap.distribucion.cambiar-agencia.verificar
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: div[class*="mb-6"][class*="items-center"][class*="px-2"]
+    clip: div[class*="mb-6"][class*="items-center"][class*="px-2"]
+    clipUp: div[class*="p-4"][class*="flex-col"][class*="relative"]
+    settleMs: 3000
+
+  # Correcting an open case. `corregir.editar` above photographs the pencil with
+  # edit mode OFF, so these two come after it and the first one turns it on.
+  # Nothing here presses Guardar: that writes to a real case.
+  #
+  # `home.revision.corregir.tipo` is NOT in this block and cannot be. The type
+  # field is `editable={isEditing && canEditType}` and
+  # `canEditType = item.matchId != null` (calls-review-card.tsx:98, :379) — the
+  # call in this list has no associated case, so no type control renders at all.
+  # Confirmed on the running app: with edit mode on there is no combobox and no
+  # select anywhere. A data condition, not a recipe.
+
+  - slot: home.revision.corregir.direccion
+    view: home
+    steps:
+      - click: button[title="Editar"]
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: input[placeholder="Buscar dirección…"]
+    clip: input[placeholder="Buscar dirección…"]
+    settleMs: 2500
+
+  - slot: home.revision.corregir.guardar
+    view: home
+    screenIs: button[title="Volver a la lista de incidentes"]
+    dataReady: button[title="Guardar"]
+    clip: button[title="Guardar"]
+    settleMs: 2500
+
+  # --- Dashboard's Analítica tab ----------------------------------------------
+  #
+  # AGENTS.md carried these as blocked: "its filters panel does not open with the
+  # tab". True, and the reason was never the tab. The filters are a POPOVER whose
+  # trigger is a plain `<button>` reading `Filtros` with NO title and NO
+  # aria-label (analytics-filters-panel.tsx:824). Every earlier probe listed
+  # controls by attribute, so the trigger was invisible to all of them while
+  # sitting in plain sight on the toolbar.
+  #
+  # Third time this session that a "cannot" turned out to be a selector: after
+  # `Asignar incidente` (span vs button) and `Guardar` (title vs text).
+  #
+  # Each recipe carries BOTH clicks. The tab is a tab and re-clicking it is
+  # harmless, but the popover is dismissed by the rail click the harness
+  # navigates with — the same lesson as the event-detail dialog.
+
+  - slot: dashboard.analitica.accion.actualizar
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+    screenIs: button[title="Actualizar"]
+    dataReady: button[title="Actualizar"]
+    clip: button[title="Actualizar"]
+    settleMs: 2500
+
+  # The FIELD, not its label. Climbing from the label lands on the wrapper that
+  # holds the caption and both hour selects (260x50); climbing from a select
+  # lands on that select alone, because `closest` stops at the nearer
+  # `flex-col gap-1`.
+  - slot: dashboard.analitica.filtros.horario.rango
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Filtros)
+    screenIs: button::-p-text(Limpiar filtros)
+    dataReady: ::-p-text(Intervalo horario)
+    clip: ::-p-text(Intervalo horario)
+    clipUp: div[class*="flex-col"][class*="gap-1"]
+    settleMs: 2500
+
+  - slot: dashboard.analitica.accion.limpiar
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Filtros)
+    screenIs: button::-p-text(Limpiar filtros)
+    dataReady: button::-p-text(Limpiar filtros)
+    clip: button::-p-text(Limpiar filtros)
+    settleMs: 2500
+
+  # "Cada fila lleva una casilla al comienzo, y la del encabezado marca todas las
+  # de la página." So the frame is the TABLE with its boxes ticked, which is what
+  # the header checkbox produces in one click. The toolbar counter the step also
+  # mentions sits at the far right of a 1798px strip and cannot share a legible
+  # frame with the boxes — it stays in the prose.
+  #
+  # The tab click is needed because the previous block leaves Dashboard on
+  # Analítica.
+  - slot: dashboard.historial.exportar.marcar
+    view: dashboard
+    steps:
+      - click: button::-p-text(Historial de Eventos)
+      # `aria-label`, not `title`. Fourth attribute mix-up of the session.
+      - click: button[aria-label="Seleccionar todos"]
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: table tbody tr
+    clip: table
+    settleMs: 2500
+
+  # --- Orden de Tarea: not a route problem, the same data gap ------------------
+  #
+  # The six `fuerzas-campo.tarea.*` slots have no recipe, and this is the reason
+  # rather than an omission. `create-task` is `initiallyInactive` and absent from
+  # the panel bar, which earlier notes recorded as "reached from elsewhere". The
+  # elsewhere is a SHIFT ROW: `openTaskDraft` (shift-row.tsx:58-68) seeds the
+  # draft from `shift.id`, `shift.agentId`, `shift.startTime` and `shift.endTime`
+  # and only then calls `setPanelActive("create-task", true)`.
+  #
+  # So the form cannot exist without a shift to open it from, and every agent
+  # tried comes back "Sin turnos encontrados" — the very gap that already holds
+  # `fuerzas-campo.turnos.fig`. One data condition blocks seven slots, not two
+  # separate problems.
+  #
+  # What settles it: shift data in the environment being captured against.
