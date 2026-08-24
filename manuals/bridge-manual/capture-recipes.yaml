@@ -607,3 +607,104 @@ recipes:
     # on the step in `sections/05-bridge-of-things.yaml`.
     clip: div.grid.h-full.w-full
     settleMs: 28000
+
+  # --- the no-interaction batch -----------------------------------------------
+  #
+  # Every recipe below is a rail click and a clip. Nothing here stages a call,
+  # opens a panel or changes a control's state, which is what makes them safe to
+  # run against somebody's signed-in window without asking first.
+
+  # The map tools column. Its buttons carry no title, no aria-label and no text
+  # — see ESTADO's note on why those six names are the manual describing a
+  # function rather than quoting a rótulo — so the clip enters through the one
+  # class they share and climbs to the column that holds them.
+  #
+  # `div[class*="rounded-2xl"][class*="shadow-lg"]` was checked to match ONCE on
+  # this view. The panel shell also carries `liquid-glass`, which is why the clip
+  # is `button[class*=…]` and not the bare class: the bare class would have
+  # clipped the review panel and passed every count.
+  - slot: home.herramientas.fig
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    dataReady: div[class*="rounded-2xl"][class*="shadow-lg"]
+    clip: button[class*="liquid-glass"]
+    clipUp: div[class*="rounded-2xl"][class*="shadow-lg"]
+    settleMs: 2500
+
+  # "Ubique la llamada en la lista" — the LIST, not the panel. The panel is
+  # already `home.revision.fig`; what this step promises is the scrolling column
+  # of cards with the Prioridad badge on them, which is the container below.
+  - slot: home.revision.abrir.ubicar
+    view: home
+    screenIs: h3::-p-text(Revisión de llamadas)
+    # A card, not the panel header's "1 caso": the header paints before the
+    # query lands, and a list photographed empty is a claim about the operation.
+    dataReady: div[class*="cursor-pointer"][class*="rounded-2xl"]
+    clip: div[class*="custom-scrollbar"][class*="overflow-y-auto"]
+    settleMs: 2500
+
+  # Seatmap's distribution region: the agency header AND the zone grid in one
+  # frame, which is what "Planta de la agencia con los puestos agrupados por
+  # zona" promises. The clip enters at the header and climbs — Seatmap's regions
+  # are not `div.panel`, which is already recorded for the other two Seatmap
+  # figures.
+  #
+  # `p-4`, NOT the `rounded-[23px]` container one level further up. That one is
+  # 82px taller because it also holds `SitemapAgencyTabs`, and those tabs are
+  # gated on `canViewAll` (sitemap-view.tsx:137) — the manual conditions them as
+  # `seatmap.distribucion.agencias`, `when: permission: [todas-las-agencias]`.
+  # This figure is NOT conditioned and delivers to `_common`, so the wider clip
+  # put a `todas-las-agencias` control inside the `agencia-propia` PDF: a reader
+  # without the permission would see a selector the manual never explains and
+  # that their platform never mounts.
+  #
+  # The general rule this is an instance of: an unconditioned figure must not
+  # frame a conditioned control. A capture cannot know that — only the content
+  # can, so check the section's `when`s before choosing how wide to clip.
+  - slot: seatmap.distribucion.fig
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    # A workstation, not the header: the header renders from the agency name and
+    # is on screen before the workstation query lands.
+    dataReady: ::-p-text(Recepcion01)
+    clip: div[class*="mb-6"][class*="items-center"][class*="px-2"]
+    clipUp: div[class*="p-4"][class*="flex-col"][class*="relative"]
+    settleMs: 3000
+
+  # Dashboard's pagination, at the foot of Historial de Eventos.
+  - slot: dashboard.historial.paginacion.indicador
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: table tbody tr
+    # The span itself, 85x16. Small, but it IS the control, and the smallest
+    # already accepted here is 12x16 (`bot.cctv.presets.guardar`).
+    clip: span::-p-text(Página)
+    settleMs: 2500
+
+  # "Anterior y Siguiente" — a row naming TWO controls, which is the shape that
+  # turned out to be an authoring defect for CCTV's diagonals. It is NOT one
+  # here, and the difference is worth recording: the product wraps both buttons
+  # in one `div.flex.items-center.gap-2` (events-history-panel.tsx:334), so a
+  # single clip shows both, exactly as the label reads. That is the same verdict
+  # `bot.cctv.presets.volver` reached — split only when each control has its own
+  # box, never merely because the label names two.
+  #
+  # NOT the whole pagination strip: that is 1798x28, and letterboxed into the
+  # 320/200 figure box it renders as a 5px sliver. The wrapper is 203x28.
+  - slot: dashboard.historial.paginacion.mover
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: table tbody tr
+    clip: button::-p-text(Anterior)
+    clipUp: div[class*="gap-2"][class*="items-center"]
+    settleMs: 2500
+
+  # "Ubique el evento en la tabla" — the table with rows in it. The step is
+  # about finding a row, so the figure has to show rows rather than the panel
+  # chrome that `dashboard.historial.fig` already carries.
+  - slot: dashboard.historial.detalle.ubicar
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: table tbody tr
+    clip: table
+    settleMs: 2500

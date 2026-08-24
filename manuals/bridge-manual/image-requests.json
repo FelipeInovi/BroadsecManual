@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.6.6",
+  "contentVersion": "0.6.8",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 70,
-    "pending": 93
+    "delivered": 75,
+    "pending": 88
   },
   "pending": [
     {
@@ -461,28 +461,6 @@
       "deliverTo": {
         "shared": "_common/home.teclado.llamar.volver.png",
         "override": "<permission>/home.teclado.llamar.volver.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.fig",
-          "blockType": "figure",
-          "shows": "Columna de herramientas apoyada sobre el mapa."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.fig.png",
-        "override": "<permission>/home.herramientas.fig.png"
       }
     },
     {
@@ -994,28 +972,6 @@
       ]
     },
     {
-      "slot": "seatmap.distribucion.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.distribucion.fig",
-          "blockType": "figure",
-          "shows": "Planta de la agencia con los puestos agrupados por zona."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.distribucion.fig.png",
-        "override": "<permission>/seatmap.distribucion.fig.png"
-      }
-    },
-    {
       "slot": "seatmap.distribucion.encabezado",
       "neededBy": [
         "agencia-propia",
@@ -1079,72 +1035,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.calor.control.png",
         "override": "<permission>/dashboard.calor.control.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.paginacion.indicador",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.paginacion.indicador",
-          "blockType": "field-list",
-          "shows": "Página"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.paginacion.indicador.png",
-        "override": "<permission>/dashboard.historial.paginacion.indicador.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.paginacion.mover",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.paginacion.mover",
-          "blockType": "field-list",
-          "shows": "Anterior y Siguiente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.paginacion.mover.png",
-        "override": "<permission>/dashboard.historial.paginacion.mover.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.detalle.ubicar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.detalle.ubicar",
-          "blockType": "procedure",
-          "shows": "Ubique el evento en la tabla"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.detalle.ubicar.png",
-        "override": "<permission>/dashboard.historial.detalle.ubicar.png"
       }
     },
     {
@@ -2270,6 +2160,23 @@
       ]
     },
     {
+      "slot": "home.herramientas.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.fig",
+          "blockType": "figure",
+          "shows": "Columna de herramientas apoyada sobre el mapa."
+        }
+      ],
+      "files": [
+        "_common/home.herramientas.fig.png"
+      ]
+    },
+    {
       "slot": "home.herramientas.control.centrar",
       "neededBy": [
         "agencia-propia",
@@ -2521,6 +2428,23 @@
       ]
     },
     {
+      "slot": "seatmap.distribucion.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.fig",
+          "blockType": "figure",
+          "shows": "Planta de la agencia con los puestos agrupados por zona."
+        }
+      ],
+      "files": [
+        "_common/seatmap.distribucion.fig.png"
+      ]
+    },
+    {
       "slot": "seatmap.distribucion.editar",
       "neededBy": [
         "agencia-propia",
@@ -2671,6 +2595,57 @@
       ],
       "files": [
         "_common/dashboard.historial.buscar.campo.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.paginacion.indicador",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.paginacion.indicador",
+          "blockType": "field-list",
+          "shows": "Página"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.paginacion.indicador.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.paginacion.mover",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.paginacion.mover",
+          "blockType": "field-list",
+          "shows": "Anterior y Siguiente"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.paginacion.mover.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.detalle.ubicar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.detalle.ubicar",
+          "blockType": "procedure",
+          "shows": "Ubique el evento en la tabla"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.detalle.ubicar.png"
       ]
     },
     {
