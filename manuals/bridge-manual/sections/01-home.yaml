@@ -320,13 +320,19 @@ children:
               layout: beside
 
             - id: home.revision.control.teclado
-              # title alterna en :226 entre "Mostrar teclado" y "Ocultar
-              # teclado".
+              # El `title` de :226 es el ternario
+              # `keypadActive ? "Ocultar teclado" : "Mostrar teclado"`, y la
+              # rama verdadera NO es alcanzable. `CallsReviewSearch` se monta
+              # únicamente desde calls-review-panel.tsx:204, y abrir el teclado
+              # desactiva ese panel: home-view.tsx:453-457 recorre el camino
+              # inverso, reactivando `calls-review` al cerrar el teclado.
+              # Comprobado contra la app: con el teclado abierto no hay ningún
+              # control con ese título en pantalla. Leer lo que el código HACE,
+              # no las dos ramas de un ternario.
               label: Mostrar teclado
               text: >-
                 Reemplaza la lista por el teclado telefónico en la misma
-                columna. Al alternarlo, el control pasa a ofrecer **Ocultar
-                teclado** y devuelve la lista a su lugar.
+                columna. La lista vuelve a su lugar desde el propio teclado.
               layout: beside
 
       - id: home.revision.avisos
@@ -1014,9 +1020,13 @@ children:
 
             - id: home.teclado.llamar.volver
               title: Vuelva a la lista
+              # Un solo control, y es el único que existe en este estado. El
+              # paso nombraba también **Ocultar teclado**, que con el teclado
+              # abierto no está en pantalla — ver la nota en
+              # `home.revision.control.teclado`.
               text: >-
-                Use **Volver a la vista anterior** o **Ocultar teclado**. La
-                revisión de llamadas recupera la columna izquierda.
+                Use **Volver a la vista anterior**. La revisión de llamadas
+                recupera la columna izquierda.
               layout: beside
 
       - id: home.teclado.aviso
