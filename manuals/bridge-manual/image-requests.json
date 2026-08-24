@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 128,
-    "pending": 35
+    "delivered": 129,
+    "pending": 34
   },
   "pending": [
     {
@@ -574,28 +574,6 @@
       "files": [
         "todas-las-agencias/seatmap.fig.png"
       ]
-    },
-    {
-      "slot": "seatmap.distribucion.encabezado",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.distribucion.encabezado",
-          "blockType": "field-list",
-          "shows": "Encabezado de la agencia"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.distribucion.encabezado.png",
-        "override": "<permission>/seatmap.distribucion.encabezado.png"
-      }
     },
     {
       "slot": "dashboard.historial.exportar.guardar",
@@ -1590,6 +1568,23 @@
       ],
       "files": [
         "_common/seatmap.distribucion.fig.png"
+      ]
+    },
+    {
+      "slot": "seatmap.distribucion.encabezado",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.distribucion.encabezado",
+          "blockType": "field-list",
+          "shows": "Encabezado de la agencia"
+        }
+      ],
+      "files": [
+        "_common/seatmap.distribucion.encabezado.png"
       ]
     },
     {

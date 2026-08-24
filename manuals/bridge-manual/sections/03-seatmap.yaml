@@ -140,14 +140,30 @@ children:
         props:
           items:
             - id: seatmap.distribucion.encabezado
-              # sitemap-agency-header.tsx, mounted at sitemap-view.tsx:126 with
+              # sitemap-agency-header.tsx, mounted at sitemap-view.tsx:126 con
               # `agencyName={selectedAgency?.name}`.
+              #
+              # `below` y no `beside`, y el ancho declarado: este encabezado es
+              # una franja de 1275x46 — un nombre centrado sobre una regla — y la
+              # columna de `beside` mide 239px (38% de los 628 de contenido),
+              # así que `contain` lo achicaba a escala 0.19 y el nombre salía a
+              # unos 2px. En la columna de texto completa la escala es 0.49, que
+              # es donde ya rendean las figuras aceptadas de este manual:
+              # `crear-incidente.general.campo.tipo` sale a 0.59 sobre una fuente
+              # de 10px, o sea los mismos ~6px en la página.
+              #
+              # `widthPercent` es obligatorio acá: `below` sin él tope al 70%
+              # (`figure.figure--item img`, css-bridge.ts:404) y volvería a 0.35.
+              #
+              # La lección general: una franja muy apaisada no es una figura
+              # imposible, es una figura que no entra en la columna angosta.
               label: Encabezado de la agencia
               text: >-
                 Indica de qué agencia es la planta que se está mostrando. Es la
                 referencia para confirmar que está consultando la sala correcta
                 antes de interpretar cualquier indicador.
-              layout: beside
+              layout: below
+              widthPercent: 100
 
             - id: seatmap.distribucion.zonas
               # sitemap-zone-grid.tsx, mounted at sitemap-view.tsx:127-133.

@@ -712,25 +712,28 @@ recipes:
   # Seatmap's three distribution elements, and the one procedure step that is a
   # clip rather than an interaction.
 
-  # HELD, not missing. This recipe is correct and its shot was rejected on
-  # LEGIBILITY, measured against what this manual already accepts rather than
-  # against arithmetic — which is the check AGENTS.md demands.
+  # WAS HELD on legibility, now taken — and the recipe never changed. What
+  # changed is the row that asks for it.
   #
-  # `layout: beside` gives a figure 38% of the content width (`.pair__figure`,
-  # css-bridge.ts:414): a 244x152 box. The header band is 1275x46, so `contain`
-  # scales it by 0.19 and the agency name lands at roughly 2px tall. Every
-  # `beside` figure already delivered here scales between 0.60 and 1.13, the most
-  # extreme being `fuerzas-campo.agentes.control.buscar` at 0.62.
+  # The band is 1275x46: a centred agency name over a rule. `layout: beside`
+  # gives a figure 38% of the 628pt content column (`.pair__figure`,
+  # css-bridge.ts:414) — 239px — so `contain` scaled it by 0.19 and the name
+  # landed near 2px. The row now declares `layout: below` with
+  # `widthPercent: 100`, which is the full text column and a scale of 0.49.
   #
-  # There is no tighter clip that helps: the band's own content is a centred name
-  # over a full-width rule, and the name alone is one word. What settles it is a
-  # decision about the row — not another selector.
-  # - slot: seatmap.distribucion.encabezado
-  #   view: sitemap
-  #   screenIs: ::-p-text(Tiempo de espera más larga)
-  #   dataReady: div[class*="mb-6"][class*="items-center"][class*="px-2"]
-  #   clip: div[class*="mb-6"][class*="items-center"][class*="px-2"]
-  #   settleMs: 3000
+  # That is not a lowered bar. `crear-incidente.general.campo.tipo`, delivered
+  # and accepted, renders at 0.59 over a 10px caption — the same ~6px on the
+  # page. The band was never an impossible figure; it was a wide figure in a
+  # narrow column, and the fix belonged to the CONTENT rather than to the clip.
+  #
+  # Worth carrying: before ruling a figure unfillable on legibility, check
+  # whether its ROW is asking for the wrong column.
+  - slot: seatmap.distribucion.encabezado
+    view: sitemap
+    screenIs: ::-p-text(Tiempo de espera más larga)
+    dataReady: div[class*="mb-6"][class*="items-center"][class*="px-2"]
+    clip: div[class*="mb-6"][class*="items-center"][class*="px-2"]
+    settleMs: 3000
 
   # The zone grid alone — the plan without the header above it, which is the
   # element this row names. `transition-opacity` is what distinguishes it from
