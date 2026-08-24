@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 163,
-    "delivered": 122,
-    "pending": 41
+    "delivered": 128,
+    "pending": 35
   },
   "pending": [
     {
@@ -793,138 +793,6 @@
       "deliverTo": {
         "shared": "_common/fuerzas-campo.tarea.paso.crear.png",
         "override": "<permission>/fuerzas-campo.tarea.paso.crear.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.reportante.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.reportante.fig",
-          "blockType": "figure",
-          "shows": "Paso de datos del reportante, con el nombre y el teléfono."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.reportante.fig.png",
-        "override": "<permission>/crear-incidente.reportante.fig.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.reportante.campo.nombre",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.reportante.campo.nombre",
-          "blockType": "field-list",
-          "shows": "Nombre del reportante"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.reportante.campo.nombre.png",
-        "override": "<permission>/crear-incidente.reportante.campo.nombre.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.reportante.campo.telefono",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.reportante.campo.telefono",
-          "blockType": "field-list",
-          "shows": "Teléfono"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.reportante.campo.telefono.png",
-        "override": "<permission>/crear-incidente.reportante.campo.telefono.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.detalles.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.detalles.fig",
-          "blockType": "figure",
-          "shows": "Paso de detalles del incidente, con los campos de personas, armas, vehículos y sustancias."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.detalles.fig.png",
-        "override": "<permission>/crear-incidente.detalles.fig.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.resumen.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.resumen.fig",
-          "blockType": "figure",
-          "shows": "Paso del resumen, con el relato del incidente."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.resumen.fig.png",
-        "override": "<permission>/crear-incidente.resumen.fig.png"
-      }
-    },
-    {
-      "slot": "crear-incidente.resumen.campo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "crear-incidente.resumen.campo",
-          "blockType": "field-list",
-          "shows": "Resumen del incidente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/crear-incidente.resumen.campo.png",
-        "override": "<permission>/crear-incidente.resumen.campo.png"
       }
     }
   ],
@@ -2895,6 +2763,108 @@
       ],
       "files": [
         "_common/crear-incidente.general.campo.ubicacion.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.reportante.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.reportante.fig",
+          "blockType": "figure",
+          "shows": "Paso de datos del reportante, con el nombre y el teléfono."
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.reportante.fig.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.reportante.campo.nombre",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.reportante.campo.nombre",
+          "blockType": "field-list",
+          "shows": "Nombre del reportante"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.reportante.campo.nombre.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.reportante.campo.telefono",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.reportante.campo.telefono",
+          "blockType": "field-list",
+          "shows": "Teléfono"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.reportante.campo.telefono.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.detalles.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.detalles.fig",
+          "blockType": "figure",
+          "shows": "Paso de detalles del incidente, con los campos de personas, armas, vehículos y sustancias."
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.detalles.fig.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.resumen.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.resumen.fig",
+          "blockType": "figure",
+          "shows": "Paso del resumen, con el relato del incidente."
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.resumen.fig.png"
+      ]
+    },
+    {
+      "slot": "crear-incidente.resumen.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "crear-incidente.resumen.campo",
+          "blockType": "field-list",
+          "shows": "Resumen del incidente"
+        }
+      ],
+      "files": [
+        "_common/crear-incidente.resumen.campo.png"
       ]
     },
     {

@@ -1449,3 +1449,96 @@ recipes:
   # separate problems.
   #
   # What settles it: shift data in the environment being captured against.
+
+  # --- Crear Incidente's steps 2 to 4 -----------------------------------------
+  #
+  # PRECONDITION THIS FILE CANNOT EXPRESS. All three are `locked={!generalComplete}`
+  # (create-incident-panel.tsx:241, :259, :270), and `generalComplete` needs an
+  # incident type, a priority AND a confirmed address —
+  # `!form.address.trim() || !form.location || !form.locationConfirmed`
+  # (create-incident.ts:202). Confirming the address means typing into the
+  # location bar's search and picking a suggestion, and `steps` has only `click`,
+  # `drag` and `hover`.
+  #
+  # A locked header swallows its click in silence, exactly like the first case
+  # row's assign control — so without the fill these recipes do not fail, they
+  # photograph the wrong thing.
+  #
+  # `div[class*="border-[#00BEB7]"]` is the OPEN step and only the open step
+  # (incident-step.tsx:42), so one selector serves all three figures.
+  # `clipUp: label` and not `div`: `TextField` wraps its caption and input in a
+  # `<label>` (create-incident-fields.tsx:38), and `closest("div")` sails past it
+  # to the container holding BOTH fields.
+
+  - slot: crear-incidente.reportante.fig
+    view: create-incident
+    steps:
+      - click: button::-p-text(Datos del reportante)
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: input[placeholder="Anónimo si no se identifica"]
+    clip: div[class*="border-[#00BEB7]"]
+    settleMs: 2000
+
+  - slot: crear-incidente.reportante.campo.nombre
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: input[placeholder="Anónimo si no se identifica"]
+    clip: input[placeholder="Anónimo si no se identifica"]
+    clipUp: label
+    settleMs: 2000
+
+  - slot: crear-incidente.reportante.campo.telefono
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: input[placeholder="Opcional"]
+    clip: input[placeholder="Opcional"]
+    clipUp: label
+    settleMs: 2000
+
+  - slot: crear-incidente.detalles.fig
+    view: create-incident
+    steps:
+      - click: button::-p-text(Detalles del incidente)
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: div[class*="border-[#00BEB7]"]
+    clip: div[class*="border-[#00BEB7]"]
+    settleMs: 2000
+
+  - slot: crear-incidente.resumen.fig
+    view: create-incident
+    steps:
+      - click: button::-p-text(Resumen del incidente)
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: textarea
+    clip: div[class*="border-[#00BEB7]"]
+    settleMs: 2000
+
+  - slot: crear-incidente.resumen.campo
+    view: create-incident
+    screenIs: h3::-p-text(Crear Incidente)
+    dataReady: textarea
+    clip: textarea
+    clipUp: label
+    settleMs: 2000
+
+  # HOW THE SIX ABOVE WERE ACTUALLY TAKEN, and the mechanism that let them work.
+  #
+  # The form is local component state and a round trip to another view WIPES it —
+  # `nav home` then `nav create-incident` came back with every field empty and
+  # the three steps locked again. But a rail click onto the view the window is
+  # ALREADY on does not remount the panel, so a run of consecutive
+  # `view: create-incident` recipes keeps whatever the form holds.
+  #
+  # That is why this block runs green from a `--only` of its own six slots after
+  # the form is filled by hand, and why in a FULL run it would not: the recipes
+  # before it sit on other views, so the harness arrives here with an empty form,
+  # the locked headers swallow their clicks, and six figures come back showing
+  # step 1.
+  #
+  # The fill, for whoever repeats it: pick an incident type, collapse that
+  # dropdown, pick a priority, click `Editar dirección`, type into
+  # `Buscar dirección…`, click a suggestion, click `Aceptar dirección`. Then
+  # `Limpiar` afterwards — this is a live console.
+  #
+  # What would make them self-contained is ONE thing: a `type` step in the
+  # recipe vocabulary. Everything else in that sequence is already a `click`.
