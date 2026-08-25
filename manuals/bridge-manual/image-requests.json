@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 162,
-    "delivered": 143,
-    "pending": 19
+    "delivered": 150,
+    "pending": 12
   },
   "pending": [
     {
@@ -288,160 +288,6 @@
       "files": [
         "todas-las-agencias/seatmap.fig.png"
       ]
-    },
-    {
-      "slot": "fuerzas-campo.tarea.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.tarea.fig",
-          "blockType": "figure",
-          "shows": "Formulario de orden de tarea, con la acción, el horario y las instrucciones."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.tarea.fig.png",
-        "override": "<permission>/fuerzas-campo.tarea.fig.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.tarea.campo.accion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.tarea.campo.accion",
-          "blockType": "field-list",
-          "shows": "Acción"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.tarea.campo.accion.png",
-        "override": "<permission>/fuerzas-campo.tarea.campo.accion.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.tarea.campo.inicio",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.tarea.campo.inicio",
-          "blockType": "field-list",
-          "shows": "Hora inicio"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.tarea.campo.inicio.png",
-        "override": "<permission>/fuerzas-campo.tarea.campo.inicio.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.tarea.campo.fin",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.tarea.campo.fin",
-          "blockType": "field-list",
-          "shows": "Hora fin"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.tarea.campo.fin.png",
-        "override": "<permission>/fuerzas-campo.tarea.campo.fin.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.tarea.campo.instrucciones",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.tarea.campo.instrucciones",
-          "blockType": "field-list",
-          "shows": "Instrucciones"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.tarea.campo.instrucciones.png",
-        "override": "<permission>/fuerzas-campo.tarea.campo.instrucciones.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.tarea.paso.completar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.tarea.paso.completar",
-          "blockType": "procedure",
-          "shows": "Complete la acción y el horario"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.tarea.paso.completar.png",
-        "override": "<permission>/fuerzas-campo.tarea.paso.completar.png"
-      }
-    },
-    {
-      "slot": "fuerzas-campo.tarea.paso.crear",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.tarea.paso.crear",
-          "blockType": "procedure",
-          "shows": "Haga clic en Crear tarea"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.tarea.paso.crear.png",
-        "override": "<permission>/fuerzas-campo.tarea.paso.crear.png"
-      }
     }
   ],
   "delivered": [
@@ -2547,6 +2393,125 @@
       ],
       "files": [
         "_common/fuerzas-campo.turnos.control.filtros.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.tarea.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.fig",
+          "blockType": "figure",
+          "shows": "Formulario de orden de tarea, con la acción, el horario y las instrucciones."
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.tarea.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.accion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.accion",
+          "blockType": "field-list",
+          "shows": "Acción"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.tarea.campo.accion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.inicio",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.inicio",
+          "blockType": "field-list",
+          "shows": "Hora inicio"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.tarea.campo.inicio.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.fin",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.fin",
+          "blockType": "field-list",
+          "shows": "Hora fin"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.tarea.campo.fin.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.tarea.campo.instrucciones",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.campo.instrucciones",
+          "blockType": "field-list",
+          "shows": "Instrucciones"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.tarea.campo.instrucciones.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.tarea.paso.completar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.paso.completar",
+          "blockType": "procedure",
+          "shows": "Complete la acción y el horario"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.tarea.paso.completar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.tarea.paso.crear",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.tarea.paso.crear",
+          "blockType": "procedure",
+          "shows": "Haga clic en Crear tarea"
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.tarea.paso.crear.png"
       ]
     },
     {

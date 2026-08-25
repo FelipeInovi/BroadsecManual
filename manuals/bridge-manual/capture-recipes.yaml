@@ -1740,3 +1740,52 @@ recipes:
   # succeeds, so nothing reports it. The probe now records `dpr` per state and
   # the cropper multiplies by it. Earlier states carry no `dpr` and were taken
   # at 1, which their png dimensions confirm.
+
+  # --- Orden de Tarea: seven slots, and four ways a crop goes wrong ----------
+  #
+  # All seven `fuerzas-campo.tarea.*` DELIVERED, which closes the
+  # `fuerzas-campo` module. The owner authorised driving the window directly —
+  # click and type, not only read — so this run clicked `Crear tarea` on an
+  # ONGOING shift and photographed the form it opened.
+  #
+  # WHAT IS STILL REFUSED, and it is a judgement rather than a missing
+  # permission: nothing that SUBMITS. `Crear tarea` the button, `Despachar`,
+  # `Enviar a la agencia` — each is photographed, never pressed, because the
+  # consequence lands outside this machine.
+  #
+  # EVERY CLICK PROBES FIRST, and it earned its keep twice in one run:
+  #   * `[title="Expandir panel"]` matched THREE panels. The step refused rather
+  #     than expanding a stranger. Clicking by coordinate then resolves the point
+  #     with elementFromPoint and compares the element's own name to what the
+  #     caller expected — a drifted coordinate refuses instead of acting.
+  #   * A coordinate taken from a box's ORIGIN rather than its centre landed on
+  #     the parent and came back unnamed. Boxes are `@x,y w×h`; aim at
+  #     `x + w/2, y + h/2`.
+  #
+  # DOCKED, NOT EXPANDED, and the numbers decide it. `Expandir panel` makes the
+  # form full width: a field crop comes out 1749x75, roughly 23:1. These items
+  # are `layout: beside`, which is 38% of a 628pt column, so that scales to
+  # 0.14 — worse than `seatmap.distribucion.encabezado`, the figure this manual
+  # already had to rescue for exactly this. Docked, the same field is 408x75 and
+  # scales to 0.65. Expanded is the wrong source for anything `beside`.
+  #
+  # TWO CONTAMINANTS THAT ONLY SHOW WHEN YOU LOOK AT THE CROP:
+  #   * The pointer left over a control photographs its HOVER state. The first
+  #     `tarea.fig` carried a RED close button, which in a manual reads as an
+  #     error the product is not reporting. Park the pointer before shooting.
+  #   * Something decorative sits in the bottom-right corner of this desktop and
+  #     overlaps whatever is under it. It ate `HORA FIN` in the first attempt.
+  #     Move the panel out of that corner — closing a sibling panel let this one
+  #     take the column and rise clear of it.
+  #
+  # HOVER READS A TOOLTIP, and this is the technique for every unlabelled
+  # control in the panel bar. Those toggles carry no `title` and no `aria-label`
+  # — only a tooltip, which mounts on hover. Parking the pointer on one and
+  # reading the page text returned `Turnos — Inactivo`. That is how the open
+  # question of whether the operator ever sees the word `Cámaras`, or only
+  # `CCTV`, gets settled during the next call.
+  #
+  # PAGE COUNT MOVED, 61/62 -> 60/61. Not a defect: these figures are more
+  # compact than the pending placeholders they replaced. Recorded because the
+  # count had been steady across every earlier delivery and a silent change
+  # would read as one.
