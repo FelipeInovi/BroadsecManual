@@ -22,7 +22,7 @@ So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
 
 Since then the capture side has run, twice over. The manual stands at **129 of
-163 delivered**, and four sections ask for nothing more: **Bridge of Things**,
+162 delivered**, and four sections ask for nothing more: **Bridge of Things**,
 **Crear Incidente**, **Seatmap** (bar one figure) and the shared force filters.
 See "What is still pending" below — and trust that table over this paragraph if
 they ever disagree, because a count goes stale and a reason does not.
@@ -215,24 +215,24 @@ factor.
 
 ### What is still pending, and what each needs
 
-Thirty-four, and **not one of them is "an interaction not yet found"** any more.
-That row used to hold nine slots and every one of them was a selector — see the
-section after this table. What is left blocks on data, on an account, or on the
-world outside the product.
+Thirty-three, and **not one of them is "an interaction not yet found"** any
+more. That row used to hold nine slots and every one of them was a selector —
+see the section after this table. What is left blocks on data or on an account.
+Nothing left blocks on the harness, and nothing left blocks on the world outside
+the product: the one slot that did was an authoring defect and is gone.
 
 | Blocked on | Slots |
 |---|---|
 | A call in progress | the twenty-two `llamada.*` |
-| **Shift data in the environment** | `fuerzas-campo.turnos.fig` AND the six `fuerzas-campo.tarea.*` — ONE condition, seven slots |
+| **Shift data in the environment** | `fuerzas-campo.turnos.fig` AND the seven `fuerzas-campo.tarea.*` — ONE condition, eight slots |
 | A second account without `canViewAllAgencies` | `seatmap.fig` |
 | More than one call in the review list | `home.revision.abrir.ubicar` |
 | A call that HAS an associated case | `home.revision.corregir.tipo` |
-| Nothing inside the product can answer it | `dashboard.historial.exportar.guardar` |
 
-Three of those rows deserve their reason spelled out, because each looks like
+Two of those rows deserve their reason spelled out, because each looks like
 something else:
 
-- **The seven shift slots are one problem, not two.** `openTaskDraft`
+- **The eight shift slots are one problem, not two.** `openTaskDraft`
   (shift-row.tsx:58-68) seeds the task form from `shift.id`, `shift.agentId`,
   `shift.startTime` and `shift.endTime` and only then activates the panel. No
   shift row, no form. Every agent tried returns "Sin turnos encontrados", which
@@ -242,10 +242,6 @@ something else:
   `editable={isEditing && canEditType}` with `canEditType = item.matchId != null`
   (calls-review-card.tsx:98, :379). With edit mode ON and a call that has no
   case, there is no combobox and no select anywhere on screen.
-- **`exportar.guardar` is the OS save dialog**, outside the webview. It is the
-  same class as the deleted "Suéltela" step: a caption no image inside this
-  product can ever answer. It is a candidate for the authoring-defect treatment
-  below, not for a recipe.
 
 **Not blocked, but not self-contained either:** the six `crear-incidente` step
 slots ARE delivered. Their recipes need the general step filled first — an
@@ -258,31 +254,33 @@ one thing that would close this.
 capture problems at all — see below. PMV's and PRT's slots went away with their
 content at v0.6.6, so do not go looking for a way to photograph those two.
 
-### Twice, an unfillable slot was an AUTHORING defect
+### Three times, an unfillable slot was an AUTHORING defect
 
 This section and the next one are the two most useful on this page, and they are
 opposite halves of one habit: when a slot will not fill, the cause is almost never
 a missing harness feature. Here it was the CONTENT; next door it was the SELECTOR.
 Check both before writing "blocked".
 
-Three slots sat in the blocked table above as though the harness were short a
-feature. Two of them were the content being wrong, and the third was the content
-being lazy:
+Four slots sat in the blocked table above as though the harness were short a
+feature. Two of them were the content being wrong, the third was the content
+being lazy, and the fourth pointed at a window this product does not own:
 
 | Was | Diagnosis | Fix |
 |---|---|---|
 | `bot.cctv.camaras.arrastrar` + `.soltar` | Three numbered steps for one action, the third of which was "Suéltela" — a step whose entire content is releasing the mouse. BOTH slots could only ever have photographed a gesture | Merged into one step whose image is the mosaic: the cells, filled and streaming, which is the state the step's text ends on |
 | `bot.cctv.ptz.diagonales` | ONE icon row whose label named four controls at once, so no glyph and no clip could answer it | Split into four rows. Each diagonal has its own `title` in the product AND its own glyph component, so all four are now delivered and all four are cited |
+| `dashboard.historial.exportar.guardar` | A third export step, "Guarde el archivo", whose subject is the OS save dialog. It is outside the webview, so CDP cannot see it and no recipe ever could — the caption asked this product for a window it does not own | Merged into the format step, which now closes on the downloaded file. Same shape as "Suéltela": the OUTCOME of an action written up as an action of its own |
 
-**The tell was already in the file.** That row was the single exception in this
-section's `labels` list, excluded because "no single line says it". An uncitable
-label is not a citation problem — it is the row telling you it describes more
-than one thing. Splitting it removed the exception instead of documenting it.
+**The tell was already in the file.** The `ptz.diagonales` row was the single
+exception in that section's `labels` list, excluded because "no single line says
+it". An uncitable label is not a citation problem — it is the row telling you it
+describes more than one thing. Splitting it removed the exception instead of
+documenting it.
 
 So when a slot cannot be filled, ask what the CONTENT promised before asking what
 the harness lacks. A gesture, a state that does not survive a still frame, a label
-naming several controls: each is a caption no image can ever answer, and no amount
-of recipe will fix it.
+naming several controls, a window this product does not own: each is a caption no
+image can ever answer, and no amount of recipe will fix it.
 
 ### Five times, an unfillable slot was the ATTRIBUTE
 

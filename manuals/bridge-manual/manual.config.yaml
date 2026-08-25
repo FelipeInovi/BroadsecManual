@@ -20,7 +20,7 @@ manual:
   # SemVer of the manual content. 0.x while this is a pipeline spike, so a new
   # module bumps the minor rather than the major: the major stays at 0
   # deliberately. Bridge of Things is the fifth module.
-  contentVersion: 0.6.8
+  contentVersion: 0.6.9
   language: es
   register: neutral-formal
   # Palette and type from Bridge360's own theme. Already in packages/tokens —

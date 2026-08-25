@@ -351,6 +351,14 @@ children:
           # Controles citados de events-history-toolbar.tsx:140 y :155; la
           # cuenta de filas marcadas, de :124; las casillas, de
           # events-history-columns.tsx:29 y :37.
+          #
+          # DOS pasos, y el segundo cierra sobre el archivo ya descargado a
+          # propósito. Hubo un tercero, `Guarde el archivo`, cuyo asunto era el
+          # diálogo de guardado del sistema operativo: fuera del webview, y por
+          # lo tanto un texto que le pedía una imagen a algo que este producto
+          # no muestra — misma clase que el paso `Suéltela` de CCTV. No lo
+          # restituya: el resultado de la exportación es el desenlace del paso
+          # del formato, no un paso propio.
           lead: >-
             Para llevarse el historial a una planilla:
           steps:
@@ -366,15 +374,9 @@ children:
               title: Haga clic en CSV o en Excel
               text: >-
                 La exportación se prepara y el control queda a la espera
-                mientras se genera el archivo.
-              layout: beside
-
-            - id: dashboard.historial.exportar.guardar
-              title: Guarde el archivo
-              text: >-
-                El archivo se descarga con el nombre que la plataforma le
-                asigna. La tabla no cambia: la exportación no altera lo que
-                está viendo.
+                mientras se genera el archivo. El archivo se descarga con el
+                nombre que la plataforma le asigna, y la tabla no cambia: la
+                exportación no altera lo que está viendo.
               layout: beside
 
   # --- Analítica -------------------------------------------------------------

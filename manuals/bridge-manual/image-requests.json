@@ -1,6 +1,6 @@
 {
   "manual": "bridge-manual",
-  "contentVersion": "0.6.8",
+  "contentVersion": "0.6.9",
   "convention": {
     "resolution": [
       "<permission>/<slot path>.<ext> — an image made for that one permission profile",
@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 163,
+    "total": 162,
     "delivered": 129,
-    "pending": 34
+    "pending": 33
   },
   "pending": [
     {
@@ -574,28 +574,6 @@
       "files": [
         "todas-las-agencias/seatmap.fig.png"
       ]
-    },
-    {
-      "slot": "dashboard.historial.exportar.guardar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.exportar.guardar",
-          "blockType": "procedure",
-          "shows": "Guarde el archivo"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.exportar.guardar.png",
-        "override": "<permission>/dashboard.historial.exportar.guardar.png"
-      }
     },
     {
       "slot": "fuerzas-campo.turnos.fig",
