@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 162,
-    "delivered": 142,
-    "pending": 20
+    "delivered": 143,
+    "pending": 19
   },
   "pending": [
     {
@@ -288,28 +288,6 @@
       "files": [
         "todas-las-agencias/seatmap.fig.png"
       ]
-    },
-    {
-      "slot": "fuerzas-campo.turnos.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas-campo.turnos.fig",
-          "blockType": "figure",
-          "shows": "Columna de turnos acotada al agente seleccionado."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas-campo.turnos.fig.png",
-        "override": "<permission>/fuerzas-campo.turnos.fig.png"
-      }
     },
     {
       "slot": "fuerzas-campo.tarea.fig",
@@ -2518,6 +2496,23 @@
       ],
       "files": [
         "_common/fuerzas-campo.asignacion.paso.confirmar.png"
+      ]
+    },
+    {
+      "slot": "fuerzas-campo.turnos.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas-campo.turnos.fig",
+          "blockType": "figure",
+          "shows": "Columna de turnos acotada al agente seleccionado."
+        }
+      ],
+      "files": [
+        "_common/fuerzas-campo.turnos.fig.png"
       ]
     },
     {

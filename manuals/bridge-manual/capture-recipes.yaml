@@ -1698,3 +1698,45 @@ recipes:
   #     `Cancelar edición` and `Copiar dirección`, but NOT `Aceptar dirección`.
   #     It almost certainly needs a suggestion to have been picked from the
   #     search field first. Typing is the one thing a recipe still cannot do.
+
+  # --- Fuerzas en Campo: the shift block was never one condition -------------
+  #
+  # `fuerzas-campo.turnos.fig` is DELIVERED. The seven `fuerzas-campo.tarea.*`
+  # are NOT, and the reason recorded until now was wrong in a way that matters.
+  #
+  # THE OLD NOTE said: "no shift row, no form", one condition holding eight
+  # slots. It is TWO conditions, and they are satisfied differently.
+  #
+  # 1. THE LIST WAS NEVER EMPTY — the QUESTION was narrow. `fetchShiftsList`
+  #    defaults to `defaultDateRange()`, which is
+  #    `[today 00:00, tomorrow 23:59]` (shifts-api.adapter.ts:71-76). "Sin
+  #    turnos encontrados" means nothing is scheduled in those two days, not
+  #    that the deployment has no shifts. The filters popover carries a
+  #    react-day-picker range; widening it backwards produced a shift on the
+  #    first try. Worse, the earlier attempt tried agent after agent, and a
+  #    focused agent ADDS `agent_id` to the same query — narrowing an already
+  #    narrow window.
+  #
+  # 2. A FINISHED SHIFT STILL GIVES NO FORM. `shift-row.tsx` renders the
+  #    `aria-label="Crear tarea"` control inside `{status !== "finished" && …}`,
+  #    with the product's own comment: "A finished shift can no longer be given
+  #    work." The shift the widened range found is `Finalizado`, so the control
+  #    is not merely disabled — it does not exist. `getShiftStatus` returns
+  #    `ongoing`, `finished` or `future`, and BOTH of the other two render it.
+  #
+  # So the seven task slots need a shift that is ongoing or scheduled ahead:
+  # widen the range FORWARD, not back, and pick any row not badged `Finalizado`.
+  #
+  # For `turnos.fig` the caption asks for the column "acotada al agente
+  # seleccionado", so an agent must be focused — the panel then states it in as
+  # many words, `Turnos del agente seleccionado`. Focusing narrows the query, so
+  # focus the agent who OWNS the shift the range found, or the column empties.
+  #
+  # A SCALE TRAP THAT WOULD HAVE RUINED EVERY CROP AFTER IT.
+  # `getBoundingClientRect` speaks CSS pixels; a screenshot is device pixels.
+  # The operator moved to a smaller screen mid-session and `devicePixelRatio`
+  # went to 1.5: viewport 1280x650, png 1920x975. Every box then needs scaling
+  # by that ratio or the crop lands somewhere else entirely — and the shot still
+  # succeeds, so nothing reports it. The probe now records `dpr` per state and
+  # the cropper multiplies by it. Earlier states carry no `dpr` and were taken
+  # at 1, which their png dimensions confirm.
