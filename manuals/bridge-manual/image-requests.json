@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 162,
-    "delivered": 136,
-    "pending": 26
+    "delivered": 142,
+    "pending": 20
   },
   "pending": [
     {
@@ -244,72 +244,6 @@
       }
     },
     {
-      "slot": "llamada.mapa.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.fig",
-          "blockType": "figure",
-          "shows": "Mapa del incidente con la barra de ubicación y la bitácora del caso apoyadas sobre él."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.fig.png",
-        "override": "<permission>/llamada.mapa.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.mapa.ubicacion.editar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.ubicacion.editar",
-          "blockType": "field-list",
-          "shows": "Editar dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.ubicacion.editar.png",
-        "override": "<permission>/llamada.mapa.ubicacion.editar.png"
-      }
-    },
-    {
-      "slot": "llamada.mapa.ubicacion.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.ubicacion.buscar",
-          "blockType": "field-list",
-          "shows": "Buscar dirección…"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.ubicacion.buscar.png",
-        "override": "<permission>/llamada.mapa.ubicacion.buscar.png"
-      }
-    },
-    {
       "slot": "llamada.mapa.ubicacion.aceptar",
       "neededBy": [
         "agencia-propia",
@@ -329,72 +263,6 @@
       "deliverTo": {
         "shared": "_common/llamada.mapa.ubicacion.aceptar.png",
         "override": "<permission>/llamada.mapa.ubicacion.aceptar.png"
-      }
-    },
-    {
-      "slot": "llamada.mapa.ubicacion.copiar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.ubicacion.copiar",
-          "blockType": "field-list",
-          "shows": "Copiar dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.ubicacion.copiar.png",
-        "override": "<permission>/llamada.mapa.ubicacion.copiar.png"
-      }
-    },
-    {
-      "slot": "llamada.mapa.ubicacion.street-view",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.ubicacion.street-view",
-          "blockType": "field-list",
-          "shows": "Abrir Street View"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.ubicacion.street-view.png",
-        "override": "<permission>/llamada.mapa.ubicacion.street-view.png"
-      }
-    },
-    {
-      "slot": "llamada.mapa.bitacora.comentar.campo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.bitacora.comentar.campo",
-          "blockType": "field-list",
-          "shows": "Agregar comentario…"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.bitacora.comentar.campo.png",
-        "override": "<permission>/llamada.mapa.bitacora.comentar.campo.png"
       }
     },
     {
@@ -1409,6 +1277,108 @@
       ],
       "files": [
         "_common/fuerza/gaula.webp"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.fig",
+          "blockType": "figure",
+          "shows": "Mapa del incidente con la barra de ubicación y la bitácora del caso apoyadas sobre él."
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.editar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.editar",
+          "blockType": "field-list",
+          "shows": "Editar dirección"
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.ubicacion.editar.png"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar dirección…"
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.ubicacion.buscar.png"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.copiar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.copiar",
+          "blockType": "field-list",
+          "shows": "Copiar dirección"
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.ubicacion.copiar.png"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.street-view",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.street-view",
+          "blockType": "field-list",
+          "shows": "Abrir Street View"
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.ubicacion.street-view.png"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.bitacora.comentar.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.bitacora.comentar.campo",
+          "blockType": "field-list",
+          "shows": "Agregar comentario…"
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.bitacora.comentar.campo.png"
       ]
     },
     {

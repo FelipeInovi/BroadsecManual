@@ -1648,3 +1648,53 @@ recipes:
   #   the forces panel — never opened, so `llamada.fuerzas.*` were never on
   #     screen, dispatch steps included
   #   the chat panel — never opened
+
+  # --- second call run: the map block, and what a bare icon is allowed to be --
+  #
+  # DELIVERED from one guided call: `llamada.mapa.fig`,
+  # `llamada.mapa.bitacora.comentar.campo` and four of the five
+  # `llamada.mapa.ubicacion.*`. Same method as the blocks above — a read-only
+  # watcher saving viewport plus control boxes on every change of screen shape,
+  # crops computed offline.
+  #
+  # THE HIT-TEST FIX PAID FOR ITSELF. In the first run
+  # `.bitacora.comentar.campo` cropped to MAP, because the probe called an
+  # element visible when its rect had size. The watcher now asks
+  # `elementFromPoint` at each element's own centre and keeps it only when the
+  # browser hit-tests that element or a descendant. Same slot, same method, real
+  # field this time.
+  #
+  # A BARE ICON IS NOT THE DEFECT. Two `.ubicacion.*` crops were rejected in the
+  # first run as "a naked pencil". That reasoning was wrong: the delivered
+  # `bot.cctv.presets.guardar` is a 12x16 bare glyph, and this manual's own
+  # precedent is that a control whose NAME lives in `title` is photographed as
+  # the glyph, while a control with a VISIBLE label is photographed with it —
+  # `crear-incidente.general.campo.tipo` carries its `TIPO DE INCIDENTE`. The
+  # actual defect was padding: 18px pulled the neighbouring icon into frame, and
+  # the bar spaces these 34px apart. At pad 4 each glyph sits alone and reads.
+  #
+  # THE STREET VIEW TRAP. `alt="streetViewOutside"` is on the MAP's pegman
+  # control, at the far right of the map, and it is NOT this slot. The manual's
+  # `.ubicacion.street-view` is cited from incident-location-bar.tsx and is the
+  # THUMBNAIL inside the location bar itself — `title="Abrir Street View"`,
+  # 112x64, which matches the manual's label exactly. Two controls, one word,
+  # opposite ends of the screen.
+  #
+  # HELD BACK, OWNER'S CALL: `llamada.chat.fig` and `llamada.video.fig`. Both
+  # framed their captions, and both carried an identifiable face — the chat in a
+  # shared photo, the video in the feed. Retake with the caller's camera and any
+  # shared image pointed at something that is not a person.
+  #
+  # NEVER REACHED, in two calls now:
+  #   `llamada.fuerzas.*` (5) — the Fuerzas de Respuesta panel has not once
+  #     appeared. It is `initiallyInactive` and comes up when there are RESOURCES
+  #     for the incident, which follows a confirmed location. `Realizar despacho`
+  #     sits at the end of the `Flujo de la llamada` bar; `Confirmar ubicación`
+  #     is earlier in the same bar and is what feeds it.
+  #   `llamada.camaras.fig` — the CCTV panel appeared once, empty, and not at all
+  #     in the second run. Same dependency: it wants a location with cameras
+  #     near it.
+  #   `llamada.mapa.ubicacion.aceptar` — edit mode renders `Buscar dirección…`,
+  #     `Cancelar edición` and `Copiar dirección`, but NOT `Aceptar dirección`.
+  #     It almost certainly needs a suggestion to have been picked from the
+  #     search field first. Typing is the one thing a recipe still cannot do.
