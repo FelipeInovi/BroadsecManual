@@ -1592,3 +1592,53 @@ recipes:
   # of this manual, which come from `incident-location-bar.tsx` — the bar over
   # the map, present only during a call. The capitalisation is the tell: the
   # manual cites `Editar dirección`, the panel renders `Editar Dirección`.
+
+  # --- the call figures: shot from saved frames, not by this harness ----------
+  #
+  # `llamada.fig`, `llamada.transcripcion.fig`, `llamada.video.fig` and
+  # `llamada.banda.fig` are DELIVERED, and like the `cierre` block above they
+  # have no recipe, for the same reason plus two more: during a call `verify`
+  # has no `Agencia:` to find (top-bar.tsx:254 renders OperatorBadge only when
+  # `!hasActiveCall`) and the rail grows to seven, which trips the length guard
+  # (capture-run.ts:352). Confirmed by watching four calls.
+  #
+  # HOW THEY WERE TAKEN: a read-only watcher sampled the window twice a second
+  # through a live call and saved, on every change of screen SHAPE, the whole
+  # viewport PLUS every control box measured at that same instant. Crops were
+  # computed offline against the frame their boxes came from. No click, no
+  # keystroke, no navigation — and, importantly, no coordination: the operator
+  # ran the call at their own pace.
+  #
+  # FIVE WERE REJECTED, and each rejection is a fact worth keeping:
+  #
+  # `llamada.camaras.fig`      The CCTV panel was OPEN but EMPTY — skeleton bars,
+  #                            no cameras. The caption promises "las cámaras
+  #                            próximas al incidente". Correct pixels, false
+  #                            promise. Needs a call whose location actually
+  #                            resolves nearby cameras.
+  # `llamada.mapa.fig`         The map painted only its left portion; the rest
+  #                            came back black, and the bitácora the caption
+  #                            names was not on screen. Retake with the map
+  #                            settled AND the case log open.
+  # `.ubicacion.editar`        A 60x60 crop of a bare pencil. That screen holds
+  # `.ubicacion.copiar`        several pencils and several copy glyphs, so a
+  #                            context-free icon cannot say which. These two need
+  #                            a clip wide enough to include the address line
+  #                            they sit on.
+  # `.bitacora.comentar.campo` The crop came back as MAP. The state file gave the
+  #                            input a box at 458,421 and nothing was painted
+  #                            there.
+  #
+  # THE LESSON FROM THAT LAST ONE, because it will bite again: the probe treated
+  # an element as visible when its rect had width and height. That is not
+  # visibility. An element can hold a box while painting nothing — occluded,
+  # transparent, or clipped by an ancestor. Any probe used for cropping MUST
+  # also check that the point is actually the element the browser hit-tests
+  # there, or its boxes will produce confident crops of the wrong pixels.
+  #
+  # STILL MISSING FROM A CALL, and what each needs:
+  #   the location bar in EDIT mode — `Buscar dirección…`, `Aceptar dirección`
+  #     (only `Editar dirección` and `Copiar dirección` render in read mode)
+  #   the forces panel — never opened, so `llamada.fuerzas.*` were never on
+  #     screen, dispatch steps included
+  #   the chat panel — never opened
