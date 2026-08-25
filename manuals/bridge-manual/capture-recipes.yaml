@@ -1545,3 +1545,50 @@ recipes:
   #
   # What would make them self-contained is ONE thing: a `type` step in the
   # recipe vocabulary. Everything else in that sequence is already a `click`.
+
+  # --- the four `llamada.cierre.*` slots: shot, but NOT by this harness --------
+  #
+  # These four are DELIVERED and there is deliberately no recipe above for them,
+  # because `capture` cannot reach the screen they live on. Recorded here so the
+  # next person can repeat the shot, and so nobody writes a recipe that would
+  # abort.
+  #
+  # WHY THE HARNESS CANNOT: the wrap-up screen is the CALL view, and `navigate()`
+  # always calls `enterView`, which clicks a rail position. The Llamada rail
+  # button only renders while `isCallActive` (icon-sidebar.tsx:114) — and in the
+  # wrap-up the call has ENDED, so the button is gone and the view is
+  # unaddressable. There is no `view:` value that reaches it.
+  #
+  # WHY IT DID NOT NEED TO: the application is already there. `onCallEnded` with
+  # a report keeps `activeView` on `call` (dashboard.tsx:142) and the wrap-up
+  # holds it — observed still holding twelve minutes after the call ended. So the
+  # shot is a screenshot with NO navigation: attach, clip, done.
+  #
+  # The other two blockers are OFF in the wrap-up, which is what makes this
+  # window usable at all: the rail is back to 6 (so the length guard passes) and
+  # `Agencia:` is back in the top bar (so `verify` passes). Both were confirmed
+  # by watching four calls. It is ONLY the missing navigation that stops
+  # `capture` here.
+  #
+  # HOW TO REPEAT: answer a call, end it, and while the wrap-up bar still reads
+  # `Trabajo post-llamada`, attach read-only and clip these four:
+  #
+  #   llamada.cierre.fig                 whole viewport, no clip
+  #   llamada.cierre.enviar.completar    the foot band, `LLAMADA FINALIZADA` +
+  #                                      `Complete el libro del caso antes de
+  #                                      enviarlo` — the step's text names that
+  #                                      band, so the band IS the figure
+  #   llamada.cierre.enviar.guardar      button[title="Guardar"] in the case-book
+  #                                      panel, padded
+  #   llamada.cierre.enviar.confirmar    button holding `Enviar a la agencia`
+  #
+  # ONE step away from being a real recipe: a recipe that declares NO navigation
+  # — shoot the view the window is already on. That single addition turns this
+  # comment into four ordinary entries above.
+  #
+  # AND A TRAP, because it nearly cost a wrong delivery: the wrap-up DOES show
+  # `Editar Ubicación del Incidente` and `Editar Dirección`, in the right-hand
+  # Detalles del Caso panel. They are NOT the `llamada.mapa.ubicacion.*` controls
+  # of this manual, which come from `incident-location-bar.tsx` — the bar over
+  # the map, present only during a call. The capitalisation is the tell: the
+  # manual cites `Editar dirección`, the panel renders `Editar Dirección`.

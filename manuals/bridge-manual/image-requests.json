@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 162,
-    "delivered": 129,
-    "pending": 33
+    "delivered": 133,
+    "pending": 29
   },
   "pending": [
     {
@@ -461,94 +461,6 @@
       "deliverTo": {
         "shared": "_common/llamada.banda.fig.png",
         "override": "<permission>/llamada.banda.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.cierre.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.cierre.fig",
-          "blockType": "figure",
-          "shows": "Vista de cierre: el libro del caso y el análisis en primer plano, y la barra de envío al pie."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.cierre.fig.png",
-        "override": "<permission>/llamada.cierre.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.cierre.enviar.completar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.cierre.enviar.completar",
-          "blockType": "procedure",
-          "shows": "Complete el libro del caso"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.cierre.enviar.completar.png",
-        "override": "<permission>/llamada.cierre.enviar.completar.png"
-      }
-    },
-    {
-      "slot": "llamada.cierre.enviar.guardar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.cierre.enviar.guardar",
-          "blockType": "procedure",
-          "shows": "Guarde el informe"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.cierre.enviar.guardar.png",
-        "override": "<permission>/llamada.cierre.enviar.guardar.png"
-      }
-    },
-    {
-      "slot": "llamada.cierre.enviar.confirmar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.cierre.enviar.confirmar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Enviar a la agencia"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.cierre.enviar.confirmar.png",
-        "override": "<permission>/llamada.cierre.enviar.confirmar.png"
       }
     },
     {
@@ -1529,6 +1441,74 @@
       ],
       "files": [
         "_common/fuerza/gaula.webp"
+      ]
+    },
+    {
+      "slot": "llamada.cierre.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.fig",
+          "blockType": "figure",
+          "shows": "Vista de cierre: el libro del caso y el análisis en primer plano, y la barra de envío al pie."
+        }
+      ],
+      "files": [
+        "_common/llamada.cierre.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.cierre.enviar.completar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.enviar.completar",
+          "blockType": "procedure",
+          "shows": "Complete el libro del caso"
+        }
+      ],
+      "files": [
+        "_common/llamada.cierre.enviar.completar.png"
+      ]
+    },
+    {
+      "slot": "llamada.cierre.enviar.guardar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.enviar.guardar",
+          "blockType": "procedure",
+          "shows": "Guarde el informe"
+        }
+      ],
+      "files": [
+        "_common/llamada.cierre.enviar.guardar.png"
+      ]
+    },
+    {
+      "slot": "llamada.cierre.enviar.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.cierre.enviar.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Enviar a la agencia"
+        }
+      ],
+      "files": [
+        "_common/llamada.cierre.enviar.confirmar.png"
       ]
     },
     {
