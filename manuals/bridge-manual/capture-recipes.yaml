@@ -1595,8 +1595,8 @@ recipes:
 
   # --- the call figures: shot from saved frames, not by this harness ----------
   #
-  # `llamada.fig`, `llamada.transcripcion.fig`, `llamada.video.fig` and
-  # `llamada.banda.fig` are DELIVERED, and like the `cierre` block above they
+  # `llamada.fig`, `llamada.transcripcion.fig` and `llamada.banda.fig` are
+  # DELIVERED, and like the `cierre` block above they
   # have no recipe, for the same reason plus two more: during a call `verify`
   # has no `Agencia:` to find (top-bar.tsx:254 renders OperatorBadge only when
   # `!hasActiveCall`) and the rail grows to seven, which trips the length guard
@@ -1609,8 +1609,14 @@ recipes:
   # keystroke, no navigation — and, importantly, no coordination: the operator
   # ran the call at their own pace.
   #
-  # FIVE WERE REJECTED, and each rejection is a fact worth keeping:
+  # SIX WERE HELD BACK, and each reason is a fact worth keeping:
   #
+  # `llamada.video.fig`        Framed its caption exactly — the feed with the
+  #                            caller's progress stamped at its foot. Held back
+  #                            by the OWNER, not by a defect: it showed an
+  #                            identifiable face and this manual is
+  #                            client-facing. Retake with the caller video
+  #                            pointed away from anyone.
   # `llamada.camaras.fig`      The CCTV panel was OPEN but EMPTY — skeleton bars,
   #                            no cameras. The caption promises "las cámaras
   #                            próximas al incidente". Correct pixels, false

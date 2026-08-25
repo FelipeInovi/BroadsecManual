@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 162,
-    "delivered": 137,
-    "pending": 25
+    "delivered": 136,
+    "pending": 26
   },
   "pending": [
     {
@@ -65,6 +65,28 @@
       "deliverTo": {
         "shared": "_common/home.revision.corregir.tipo.png",
         "override": "<permission>/home.revision.corregir.tipo.png"
+      }
+    },
+    {
+      "slot": "llamada.video.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.video.fig",
+          "blockType": "figure",
+          "shows": "Panel de video en vivo con el avance del llamante al pie."
+        }
+      ],
+      "pendingFor": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "deliverTo": {
+        "shared": "_common/llamada.video.fig.png",
+        "override": "<permission>/llamada.video.fig.png"
       }
     },
     {
@@ -1238,23 +1260,6 @@
       ],
       "files": [
         "_common/llamada.transcripcion.fig.png"
-      ]
-    },
-    {
-      "slot": "llamada.video.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.video.fig",
-          "blockType": "figure",
-          "shows": "Panel de video en vivo con el avance del llamante al pie."
-        }
-      ],
-      "files": [
-        "_common/llamada.video.fig.png"
       ]
     },
     {
