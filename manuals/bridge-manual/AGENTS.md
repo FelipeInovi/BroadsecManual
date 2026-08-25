@@ -21,9 +21,10 @@ Settled by survey, not by guessing. The numbers are the point:
 So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
 
-Since then the capture side has run, twice over. The manual stands at **129 of
-162 delivered**, and four sections ask for nothing more: **Bridge of Things**,
-**Crear Incidente**, **Seatmap** (bar one figure) and the shared force filters.
+Since then the capture side has run, many times over. The manual stands at
+**152 of 162 delivered**, and six sections ask for nothing more: **Home**,
+**Fuerzas en Campo**, **Bridge of Things**, **Crear Incidente**, **Seatmap**
+(bar one figure) and the shared force filters.
 See "What is still pending" below — and trust that table over this paragraph if
 they ever disagree, because a count goes stale and a reason does not.
 
@@ -215,33 +216,53 @@ factor.
 
 ### What is still pending, and what each needs
 
-Thirty-three, and **not one of them is "an interaction not yet found"** any
-more. That row used to hold nine slots and every one of them was a selector —
-see the section after this table. What is left blocks on data or on an account.
-Nothing left blocks on the harness, and nothing left blocks on the world outside
-the product: the one slot that did was an authoring defect and is gone.
+Ten, and **not one of them is "an interaction not yet found"** any more. That
+row used to hold nine slots and every one of them was a selector — see the
+section after this table. What is left blocks on data, on an account, or on the
+owner's own decision. Nothing left blocks on the harness, and nothing left
+blocks on the world outside the product: the one slot that did was an authoring
+defect and is gone.
 
 | Blocked on | Slots |
 |---|---|
-| A call in progress | the twenty-two `llamada.*` |
-| **Shift data in the environment** | `fuerzas-campo.turnos.fig` AND the seven `fuerzas-campo.tarea.*` — ONE condition, eight slots |
+| A call in progress | `llamada.camaras.fig`, the five `llamada.fuerzas.*` and `llamada.mapa.ubicacion.aceptar` — seven |
 | A second account without `canViewAllAgencies` | `seatmap.fig` |
-| More than one call in the review list | `home.revision.abrir.ubicar` |
-| A call that HAS an associated case | `home.revision.corregir.tipo` |
+| **The owner held them back** | `llamada.chat.fig` and `llamada.video.fig` |
 
-Two of those rows deserve their reason spelled out, because each looks like
-something else:
+**Home and Fuerzas en Campo are COMPLETE.** Both closed the same way, and it is
+worth knowing how, because in each case the file said "blocked" and the truth
+was "nobody had produced the data yet":
 
-- **The eight shift slots are one problem, not two.** `openTaskDraft`
-  (shift-row.tsx:58-68) seeds the task form from `shift.id`, `shift.agentId`,
-  `shift.startTime` and `shift.endTime` and only then activates the panel. No
-  shift row, no form. Every agent tried returns "Sin turnos encontrados", which
-  is the same gap that holds `turnos.fig`. "Orden de Tarea is not in the panel
-  bar" was true and was never the reason.
-- **`corregir.tipo` is gated, not missing.** The type field is
-  `editable={isEditing && canEditType}` with `canEditType = item.matchId != null`
-  (calls-review-card.tsx:98, :379). With edit mode ON and a call that has no
-  case, there is no combobox and no select anywhere on screen.
+- The four shift slots' condition was never "no shift exists". `fetchShiftsList`
+  asks for `[today, tomorrow]` by default, so "Sin turnos encontrados" means
+  nothing is scheduled in those two days. Widening the filters' date range found
+  one immediately. And a FINISHED shift still gives no task form —
+  `shift-row.tsx` renders `Crear tarea` inside `{status !== "finished" && …}`,
+  so the range has to reach a shift that is ongoing or ahead.
+- `home.revision.abrir.ubicar` had a working recipe the whole time. It wanted
+  more than one call in the review list; the session's own test calls put five
+  there and the recipe shot it clean on the first run.
+- `corregir.tipo` was correctly diagnosed as gated on
+  `canEditType = item.matchId != null` (calls-review-card.tsx:98, :379). Those
+  same test calls produced cases — rows badged `Abierto` and `En Despacho` — and
+  on one of those the type chip becomes a picker.
+
+**What the seven call slots each need, because two calls have now missed
+them.** The Fuerzas de Respuesta panel is `initiallyInactive` and appears when
+there are RESOURCES for the incident, and resources are searched from a
+CONFIRMED location — so `Confirmar ubicación` must be pressed BEFORE
+`Realizar despacho`; both sit in the `Flujo de la llamada` bar. The CCTV panel
+has the same dependency and, on the one occasion it opened, it opened EMPTY: a
+caption promising nearby cameras needs a location that actually resolves some.
+`.ubicacion.aceptar` renders only once a suggestion has been picked out of
+`Buscar dirección…`, which means typing.
+
+**Two slots are not blocked at all: the owner held them.**
+`llamada.chat.fig` and `llamada.video.fig` both framed their captions exactly,
+and both carried an identifiable face. They are pending until a retake with the
+caller's camera, and any image shared into the chat, pointed at something that
+is not a person. Do not re-deliver the existing frames believing they were near
+misses.
 
 **Not blocked, but not self-contained either:** the six `crear-incidente` step
 slots ARE delivered. Their recipes need the general step filled first — an

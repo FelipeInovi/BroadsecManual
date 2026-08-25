@@ -19,54 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 162,
-    "delivered": 150,
-    "pending": 12
+    "delivered": 152,
+    "pending": 10
   },
   "pending": [
-    {
-      "slot": "home.revision.abrir.ubicar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.abrir.ubicar",
-          "blockType": "procedure",
-          "shows": "Ubique la llamada en la lista"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.abrir.ubicar.png",
-        "override": "<permission>/home.revision.abrir.ubicar.png"
-      }
-    },
-    {
-      "slot": "home.revision.corregir.tipo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.corregir.tipo",
-          "blockType": "procedure",
-          "shows": "Corrija el tipo de incidente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.corregir.tipo.png",
-        "override": "<permission>/home.revision.corregir.tipo.png"
-      }
-    },
     {
       "slot": "llamada.video.fig",
       "neededBy": [
@@ -394,6 +350,23 @@
       ]
     },
     {
+      "slot": "home.revision.abrir.ubicar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.abrir.ubicar",
+          "blockType": "procedure",
+          "shows": "Ubique la llamada en la lista"
+        }
+      ],
+      "files": [
+        "_common/home.revision.abrir.ubicar.png"
+      ]
+    },
+    {
       "slot": "home.revision.abrir.seleccionar",
       "neededBy": [
         "agencia-propia",
@@ -459,6 +432,23 @@
       ],
       "files": [
         "_common/home.revision.corregir.direccion.png"
+      ]
+    },
+    {
+      "slot": "home.revision.corregir.tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.corregir.tipo",
+          "blockType": "procedure",
+          "shows": "Corrija el tipo de incidente"
+        }
+      ],
+      "files": [
+        "_common/home.revision.corregir.tipo.png"
       ]
     },
     {

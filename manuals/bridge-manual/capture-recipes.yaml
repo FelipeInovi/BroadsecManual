@@ -1789,3 +1789,39 @@ recipes:
   # compact than the pending placeholders they replaced. Recorded because the
   # count had been steady across every earlier delivery and a silent change
   # would read as one.
+
+  # --- Home closed, and its recipe had been right the whole time --------------
+  #
+  # `home.revision.abrir.ubicar` and `home.revision.corregir.tipo` DELIVERED, so
+  # the Home module is complete. Neither needed a new recipe or a harness
+  # feature; both needed DATA that this session's own test calls produced.
+  #
+  # `abrir.ubicar` ran through the real `capture` command — the recipe written
+  # long ago, untouched. With no call active the harness has everything it wants:
+  # the rail is 6, `Agencia:` is in the top bar, and `view: home` is a position.
+  # It only ever wanted more than one call in the review list. There are five.
+  #
+  # SCREEN WIDTH IS A CAPTURE PRECONDITION, and it cost three attempts. At a
+  # 1280px viewport the review cards overflow their own scroll container and the
+  # crop cuts the PRIORIDAD badge — which is the ONE thing that step's text
+  # names. At 1920px the same recipe frames five cards with every badge intact.
+  # Nothing in the recipe changed.
+  #
+  # AND `Aumentar tamaño del panel` DOES NOT WIDEN THE PANEL. It zooms the
+  # panel's CONTENT, so pressing it to fix a horizontal cut makes the cut worse —
+  # fewer cards, more overflow. `Disminuir` is what makes content fit a narrow
+  # panel. Both were tried in that order, wrongly, before the screen was changed.
+  #
+  # `corregir.tipo` was diagnosed correctly before and stayed blocked for the
+  # right reason: `editable={isEditing && canEditType}` with
+  # `canEditType = item.matchId != null`. What changed is that the test calls
+  # left rows badged `Abierto` and `En Despacho` — calls WITH a case. Open one,
+  # press `Editar` (a `title`, not text: `s.text.includes("Editar")` is false),
+  # and the type chip gains a teal ring.
+  #
+  # The figure shows the picker OPEN, not the chip alone. The step reads "haga
+  # clic en el tipo … y elija el que corresponde", and a chip by itself does not
+  # look like something you click. One reversible click on the chip opens the
+  # search field, the type list and the `1 tipo seleccionado` footer, which is
+  # the whole sentence in one frame. Nothing was selected; `Cancelar` put the
+  # card back.
