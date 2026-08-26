@@ -248,14 +248,37 @@ was "nobody had produced the data yet":
   on one of those the type chip becomes a picker.
 
 **What the seven call slots each need, because two calls have now missed
-them.** The Fuerzas de Respuesta panel is `initiallyInactive` and appears when
-there are RESOURCES for the incident, and resources are searched from a
-CONFIRMED location — so `Confirmar ubicación` must be pressed BEFORE
-`Realizar despacho`; both sit in the `Flujo de la llamada` bar. The CCTV panel
-has the same dependency and, on the one occasion it opened, it opened EMPTY: a
-caption promising nearby cameras needs a location that actually resolves some.
-`.ubicacion.aceptar` renders only once a suggestion has been picked out of
-`Buscar dirección…`, which means typing.
+them.** `Confirmar ubicación` must be pressed BEFORE `Realizar despacho`. Both
+sit in the `Flujo de la llamada` bar, and that is the order the PRODUCT itself
+declares: `store/step-config.ts:30` lists the bar as `Identificar tipo` ->
+`Confirmar ubicación` -> `Enviar enlace de video` -> `Revisar sistemas
+periféricos` -> `Realizar despacho`. Location is step 2 and dispatch is step 5.
+Two calls went straight to dispatch and the Fuerzas de Respuesta panel had
+nothing in it either time.
+
+**A panel marked `initiallyInactive` does not appear on its own — the operator
+opens it, and WHEN they open it is the whole question.** An earlier reading of
+this file said the Fuerzas panel "appears when there are resources", and that is
+not what the code does. `initiallyInactive` only keeps a panel out of the
+INITIAL active set (`use-panel-layout.ts:356`); `setDockedPanels` docks it all
+the same (`use-docked-panels-store.ts:112`), so its toggle sits in the panel bar
+from the first frame. What needs the confirmed location is the panel's CONTENT.
+Open Fuerzas or CCTV before confirming and they open EMPTY — which is exactly
+what happened to CCTV on the one occasion it opened. A caption promising nearby
+cameras needs a location that actually resolves some, so wait for real
+thumbnails before believing the panel.
+
+And the panel store is `persist`ed, so panels left open in an earlier run are
+still open now. An empty Fuerzas panel on screen at minute zero is evidence of
+nothing.
+
+**`llamada.mapa.ubicacion.aceptar` is the green check titled `Aceptar
+dirección`**, and it renders only under `isEditing && selectedPlace`
+(`incident-location-bar.tsx:216`). `selectedPlace` is filled by clicking one of
+the predictions the search field offers, so TYPING ALONE IS NOT ENOUGH: an
+address has to be typed into `Buscar dirección…` AND a suggestion chosen off the
+list. Beside it sits `Descartar dirección`, the red X, which backs the candidate
+out without moving the case's real address.
 
 **Two slots are not blocked at all: the owner held them.**
 `llamada.chat.fig` and `llamada.video.fig` both framed their captions exactly,
