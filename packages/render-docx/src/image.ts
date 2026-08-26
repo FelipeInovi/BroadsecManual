@@ -60,15 +60,47 @@ const scaled = (asset: DocxAsset, widthPt: number): Box => {
  *
  * Treating the second like the first inflates every icon in the manual to 70% of
  * the column, which looks like a resolution problem and is not one.
+ *
+ * AND IT MUST FIT ON THE PAGE. Both rules above speak only about width, and the
+ * height then followed the image's own proportions with nothing bounding it —
+ * so a tall screenshot scaled to the column came out taller than the sheet it
+ * was printed on. `maxHeightPt` is the last word: whichever edge binds first
+ * wins, and the aspect ratio survives either way, exactly as `fitIcon` already
+ * does for a table icon.
+ *
+ * The browser never needed this because a figure there is bounded by CSS — the
+ * bridge theme pins every one to a 320:200 box. Word has no equivalent, which
+ * is why the same content is correct in the PDF and oversized in the .docx.
  */
 export function fitFigure(
   asset: DocxAsset,
   containerPt: number,
   widthPercent: number | undefined,
   itemCap: number,
+  maxHeightPt: number,
 ): Box {
-  if (widthPercent !== undefined) return scaled(asset, containerPt * (widthPercent / 100));
-  return scaled(asset, Math.min(toPt(asset.widthPx), containerPt * itemCap));
+  const widthPt =
+    widthPercent !== undefined
+      ? containerPt * (widthPercent / 100)
+      : Math.min(toPt(asset.widthPx), containerPt * itemCap);
+  return capHeight(scaled(asset, widthPt), maxHeightPt);
+}
+
+/**
+ * Shrink a box, proportionally, until it is no taller than the page allows.
+ *
+ * Never enlarges: a figure that already fits is left exactly as the width rules
+ * sized it, so this changes nothing for the images that were always fine.
+ */
+function capHeight(box: Box, maxHeightPt: number): Box {
+  // A `Box` is already in 96-DPI pixels — `scaled` put it there. The cap
+  // arrives in points, so it is the cap that converts; scaling the box must NOT
+  // run through `px96` again, or every figure grows by a third and the numbers
+  // still look plausible.
+  const maxHeightPx = px96(maxHeightPt);
+  if (maxHeightPx <= 0 || box.height <= maxHeightPx) return box;
+  const scale = maxHeightPx / box.height;
+  return { width: box.width * scale, height: box.height * scale };
 }
 
 /**

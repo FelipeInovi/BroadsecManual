@@ -34,6 +34,15 @@ export const A4 = { widthPt: 595.276, heightPt: 841.89 } as const;
 export interface Layout {
   /** The text column: A4 less the left and right page margins. */
   readonly contentWidthPt: number;
+  /**
+   * The text BLOCK: A4 less the top and bottom page margins.
+   *
+   * Word puts the running header and footer inside those margins, so this is
+   * the whole height a flowing paragraph — or a picture — has to live in.
+   * Nothing bounded a figure vertically before this existed, and a tall
+   * screenshot scaled to the full column width came out taller than the page.
+   */
+  readonly contentHeightPt: number;
   readonly marginTopPt: number;
   readonly marginBottomPt: number;
   readonly marginXPt: number;
@@ -44,10 +53,13 @@ export function layout(t: Tokens): Layout {
     throw new Error(`render-docx only knows A4 page geometry, got "${t.page.size}"`);
   }
   const marginXPt = pt(t.page.marginX);
+  const marginTopPt = pt(t.page.marginTop);
+  const marginBottomPt = pt(t.page.marginBottom);
   return {
     contentWidthPt: A4.widthPt - marginXPt * 2,
-    marginTopPt: pt(t.page.marginTop),
-    marginBottomPt: pt(t.page.marginBottom),
+    contentHeightPt: A4.heightPt - marginTopPt - marginBottomPt,
+    marginTopPt,
+    marginBottomPt,
     marginXPt,
   };
 }

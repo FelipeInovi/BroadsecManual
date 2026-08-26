@@ -187,6 +187,26 @@ function imageParagraph(
  * `containerPt` is the column the image sits in: the text column normally, the
  * narrower figure column when a block asked for its text and image side by side.
  */
+/**
+ * How tall a figure's IMAGE may be: the page's text block, less what the
+ * caption under it needs.
+ *
+ * The caption is reserved for rather than measured, because measuring it means
+ * knowing where Word will break the line. Two lines is the allowance — most
+ * captions are one, a long one wraps to two — plus the space above and below.
+ *
+ * Reserving it is the difference between a figure that fits and a figure whose
+ * caption is pushed alone onto the next page. `imageParagraph` keeps the two
+ * together (`break-inside: avoid`), so a picture that fills the page exactly
+ * would send BOTH to the next one and leave the current page blank.
+ */
+function figureRoomPt(ctx: Ctx): number {
+  // A face's `size` is in half-points and docx spacing is in twentieths.
+  const captionLinePt = (ctx.f.figCaption.size / 2) * 1.4;
+  const spacingPt = (ctx.m.spaceXs + ctx.m.spaceMd) / 20;
+  return ctx.l.contentHeightPt - captionLinePt * 2 - spacingPt;
+}
+
 function figure(
   id: NodeId,
   caption: string,
@@ -196,7 +216,7 @@ function figure(
 ): readonly Paragraph[] {
   const asset = assetFor(id, ctx);
   if (asset === undefined) return [];
-  const size = fitFigure(asset, containerPt, widthPercent, ctx.m.itemFigureCap);
+  const size = fitFigure(asset, containerPt, widthPercent, ctx.m.itemFigureCap, figureRoomPt(ctx));
   const n = ctx.figures.get(id);
   const label = n === undefined ? "" : `Figura ${n}. `;
   return [
