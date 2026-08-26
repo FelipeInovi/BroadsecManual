@@ -29,7 +29,7 @@ manual cambia, pero **lo que usted escriba se conserva** al regenerar la tabla.
 node packages/cli/src/main.ts build bridge-manual --draft
 ```
 
-Produce `output/manual-operador-bridge-<permiso>-v0.0.1-BORRADOR.pdf`. Es el
+Produce `output/manual-operador-bridge-<permiso>-v1.0.0-BORRADOR.pdf`. Es el
 mismo manual, con una diferencia: **debajo de cada imagen pendiente imprime el
 nombre exacto del archivo**. El PDF del cliente no lo lleva a propósito, porque
 una ruta de nuestro repositorio no va en un documento que recibe un cliente.

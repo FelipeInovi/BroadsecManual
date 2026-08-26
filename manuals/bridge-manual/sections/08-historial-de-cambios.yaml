@@ -8,7 +8,7 @@
 #    the product's words. Nothing below is quoted from Bridge360 — a version
 #    number is not a label, and the column headers are this manual's own. A
 #    citation here would send `broadsec-manual labels bridge-manual` looking for
-#    `0.0.1` in the product repository.
+#    `1.0.0` in the product repository.
 #
 #  - **No overview figure, and none is missing either.** `module-completeness`
 #    opens every module with a screenshot of the whole screen. There is no
@@ -16,13 +16,23 @@
 #    module about the manual.
 #
 #  - **It must sort LAST.** `08-` puts it after `07-create-incident.yaml`, and
-#    the build enforces the outcome (`assertChangeLogIsLast`, cli/src/main.ts).
+#    the build enforces the outcome (`assertChangeLog`, cli/src/main.ts).
 #    A ninth module goes in as `08-…` renamed, never appended after this one.
 #
-# THE VERSION IN THE TABLE IS NOT `contentVersion`. The config says 0.6.9, which
-# counted internal work under the rule that has since been withdrawn. 0.0.1 is
-# what the CLIENT receives, and it is the first time they receive anything.
-# See ESTADO.md for the open question about which of the two the cover prints.
+# THE VERSION IN THE TABLE IS NOT `contentVersion`. The config still says 0.6.9,
+# which counted internal work under the rule that has since been withdrawn. The
+# row below is what the CLIENT receives, and the cover and filename are derived
+# from it (`deliveredVersion`, cli/src/main.ts).
+#
+# WHY 1.0.0 AND NOT 0.0.1, which is what this row said first. Under the rule in
+# `manuals/AGENTS.md` a new module is a MAJOR and a patch is "a step tweak, a
+# wording or typo fix" — so `0.0.1` claims this manual, which carries eight
+# modules, contains one corrected sentence. It is not reachable from our own
+# rules. And `0.x` in SemVer does not mean "first delivery", it means initial
+# development where anything may change without notice; this manual's structure
+# and numbering are stable, and eight pending images make it INCOMPLETE, not
+# UNSTABLE. 1.0.0 is what SemVer reserves for exactly this: the first delivery
+# defines the contract every later one is measured against.
 
 id: historial-cambios
 title: Historial de cambios
@@ -45,8 +55,8 @@ children:
       dateHeader: Fecha
       descriptionHeader: Descripción de cambios
       rows:
-        - id: historial.tabla.0-0-1
-          version: 0.0.1
+        - id: historial.tabla.1-0-0
+          version: 1.0.0
           date: 2026-08-26
           description: >-
             Primera entrega del manual de operador de Bridge360. Documenta los
