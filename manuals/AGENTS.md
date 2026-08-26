@@ -161,6 +161,29 @@ When it does move, SemVer still applies:
 - **minor** — new functionality documented inside an existing module
 - **patch** — a step tweak, a wording or typo fix
 
+### Where the printed version comes from
+
+**The change log is the source of truth, not `manual.config.yaml`.** The cover,
+the running header and the PDF's own FILENAME all print the highest row of that
+target's change log — `deliveredVersion` in `packages/cli/src/main.ts`.
+
+It has to work that way, because the delivered version is **per target** and
+`contentVersion` is one scalar per manual. `broadlineavida` proves it: `mv`
+received 1.5.0 and `med` stopped at 1.4.7, so they build as
+`manual-operador-mv-v1.5.0.pdf` and `manual-operador-med-v1.4.7.pdf` off the
+same config. No single field can say that.
+
+Two consequences worth holding on to:
+
+- **`contentVersion` is now only a FALLBACK**, used by manuals that have no
+  change log at all (`_catalog`, `bridge-primera-entrega`). Editing it in a
+  manual that has one changes nothing on the page. To move a delivered version
+  you add a row — which is the authorisation made visible.
+- **Change log rows must ASCEND**, and the build enforces it. The version is
+  read from the highest row and the reader reads the last one; ascending order
+  is what keeps those the same fact, so the cover always matches the bottom of
+  the table.
+
 ### The change log is written by hand, and that is deliberate
 
 This file used to say changelogs are generated from git history because

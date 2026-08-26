@@ -14,10 +14,12 @@ manual:
   source: broadlineavida
   title: Catálogo de estructuras
   product: Broadsec SIMM
-  # THE OWNER AUTHORISES EVERY CHANGE TO THIS NUMBER. Do not edit it because a
-  # change felt significant; a version marks a DELIVERY to the client, not work
-  # done internally. See `manuals/AGENTS.md`, "Versioning". The manual's final
-  # module carries the row that explains each bump to the reader.
+  # THE FALLBACK ONLY. A manual that carries a change log prints the highest row
+  # of that log instead of this field (`deliveredVersion`, cli/src/main.ts);
+  # this manual has none, so this is what its cover and filename use.
+  #
+  # THE OWNER AUTHORISES EVERY CHANGE TO IT. A version marks a DELIVERY to the
+  # client, never work done internally. See `manuals/AGENTS.md`, "Versioning".
   contentVersion: 0.1.0
   language: es
   register: neutral-formal

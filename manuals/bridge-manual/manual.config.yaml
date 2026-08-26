@@ -20,10 +20,13 @@ manual:
   # SemVer of the manual content. 0.x while this is a pipeline spike, so a new
   # module bumps the minor rather than the major: the major stays at 0
   # deliberately. Bridge of Things is the fifth module.
-  # THE OWNER AUTHORISES EVERY CHANGE TO THIS NUMBER. Do not edit it because a
-  # change felt significant; a version marks a DELIVERY to the client, not work
-  # done internally. See `manuals/AGENTS.md`, "Versioning". The manual's final
-  # module carries the row that explains each bump to the reader.
+  # NOT WHAT THE MANUAL PRINTS, and not what names its PDF. Both come from the
+  # highest row of this manual's change log, per target — see `deliveredVersion`
+  # in packages/cli/src/main.ts. Editing this field changes nothing on the page.
+  #
+  # To move a delivered version, ADD A ROW to the final module. That is the
+  # owner's authorisation made visible, and it is the only thing that moves it.
+  # See `manuals/AGENTS.md`, "Versioning".
   contentVersion: 0.6.9
   language: es
   register: neutral-formal

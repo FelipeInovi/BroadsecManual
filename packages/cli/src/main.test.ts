@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ManualNode } from "@broadsec-manual/blocks";
 import {
-  assertChangeLogIsLast,
+  assertChangeLog,
+  deliveredVersion,
   axisValueName,
   draftFilename,
   formatCliError,
@@ -332,7 +333,7 @@ describe("outputFilename", () => {
       axes: { permission: { values: [{ id: "todas", name: "Todas" }] } },
       output: { dir: "output", filename: "manual-{permission}-v{contentVersion}.pdf" },
     };
-    expect(outputFilename(config, { permission: "todas" })).toBe("manual-todas-v0.1.0.pdf");
+    expect(outputFilename(config, { permission: "todas" }, "0.1.0")).toBe("manual-todas-v0.1.0.pdf");
   });
 
   it("keeps expanding `{tenant}` for the manual that already ships", () => {
@@ -340,7 +341,7 @@ describe("outputFilename", () => {
       ...baseConfig,
       output: { dir: "output", filename: "manual-operador-{tenant}-v{contentVersion}.pdf" },
     };
-    expect(outputFilename(config, { tenant: "mv" })).toBe("manual-operador-mv-v0.1.0.pdf");
+    expect(outputFilename(config, { tenant: "mv" }, "0.1.0")).toBe("manual-operador-mv-v0.1.0.pdf");
   });
 });
 
@@ -383,7 +384,7 @@ describe("run", () => {
   });
 });
 
-describe("assertChangeLogIsLast", () => {
+describe("assertChangeLog", () => {
   const block = (type: string): ManualNode => ({
     kind: "block",
     id: `b.${type}`,
@@ -404,11 +405,11 @@ describe("assertChangeLogIsLast", () => {
     Array.from({ length: n }, (_, i) => `0${i + 1}-section.yaml`);
 
   it("passes a manual with no change log at all", () => {
-    expect(() => assertChangeLogIsLast([prose, prose], files(2))).not.toThrow();
+    expect(() => assertChangeLog([prose, prose], files(2))).not.toThrow();
   });
 
   it("passes when the change log is the final section", () => {
-    expect(() => assertChangeLogIsLast([prose, prose, log], files(3))).not.toThrow();
+    expect(() => assertChangeLog([prose, prose, log], files(3))).not.toThrow();
   });
 
   /**
@@ -418,21 +419,90 @@ describe("assertChangeLogIsLast", () => {
    * log. Nothing else in the build would notice.
    */
   it("rejects a change log that something else follows, and names what follows it", () => {
-    expect(() => assertChangeLogIsLast([log, prose], files(2))).toThrow(
+    expect(() => assertChangeLog([log, prose], files(2))).toThrow(
       /FINAL module.*02-section\.yaml/s,
     );
   });
 
   it("rejects two change logs, because two delivery histories cannot both be current", () => {
-    expect(() => assertChangeLogIsLast([log, prose, log], files(3))).toThrow(
-      /2 sections carry/,
+    expect(() => assertChangeLog([log, prose, log], files(3))).toThrow(
+      /2 `change-log` blocks/,
     );
+  });
+
+  it("rejects rows that do not ascend, so the cover matches the table's last row", () => {
+    const backwards: ManualNode = {
+      kind: "section",
+      id: "s.log",
+      title: [{ kind: "text", value: "s.log" }],
+      children: [
+        {
+          kind: "block",
+          id: "b.log",
+          type: "change-log",
+          props: {
+            rows: [
+              { id: "r1", version: "1.5.0" },
+              { id: "r2", version: "1.4.7" },
+            ],
+          },
+        },
+      ],
+    };
+    expect(() => assertChangeLog([prose, backwards], files(2))).toThrow(/must ASCEND/);
   });
 
   /** The block sits inside a subsection in real content, never at section root. */
   it("finds a change log nested below the top level", () => {
     const nested = section("s.top", [section("s.sub", [block("change-log")])]);
-    expect(() => assertChangeLogIsLast([prose, nested], files(2))).not.toThrow();
-    expect(() => assertChangeLogIsLast([nested, prose], files(2))).toThrow(/FINAL module/);
+    expect(() => assertChangeLog([prose, nested], files(2))).not.toThrow();
+    expect(() => assertChangeLog([nested, prose], files(2))).toThrow(/FINAL module/);
+  });
+});
+
+describe("deliveredVersion", () => {
+  const logWith = (...versions: string[]): ManualNode => ({
+    kind: "section",
+    id: "s.log",
+    title: [{ kind: "text", value: "Historial" }],
+    children: [
+      {
+        kind: "block",
+        id: "b.log",
+        type: "change-log",
+        props: { rows: versions.map((version, i) => ({ id: `r${i}`, version })) },
+      },
+    ],
+  });
+
+  it("falls back to the config field when the manual has no change log", () => {
+    const plain: ManualNode = {
+      kind: "section",
+      id: "s",
+      title: [{ kind: "text", value: "s" }],
+      children: [{ kind: "block", id: "b", type: "prose", props: { text: "x" } }],
+    };
+    expect(deliveredVersion([plain], "0.6.9")).toBe("0.6.9");
+  });
+
+  it("takes the highest row, not the config field", () => {
+    expect(deliveredVersion([logWith("1.4.7", "1.5.0")], "0.1.0")).toBe("1.5.0");
+  });
+
+  /**
+   * The case the whole derivation exists for. Rows carry their own selectors,
+   * so an ASSEMBLED med manual holds only 1.4.7 while mv holds both — and each
+   * cover prints what that target actually received. One `contentVersion`
+   * scalar could never say this.
+   */
+  it("reports what one target received, once its rows have been conditioned away", () => {
+    expect(deliveredVersion([logWith("1.4.7")], "0.1.0")).toBe("1.4.7");
+    expect(deliveredVersion([logWith("1.4.7", "1.5.0")], "0.1.0")).toBe("1.5.0");
+  });
+
+  /** String comparison puts 1.9.0 above 1.10.0. Numeric comparison does not. */
+  it("compares version parts numerically", () => {
+    expect(deliveredVersion([logWith("1.9.0", "1.10.0")], "0.0.0")).toBe("1.10.0");
+    expect(deliveredVersion([logWith("0.0.1")], "0.6.9")).toBe("0.0.1");
   });
 });

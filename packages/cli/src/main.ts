@@ -6,6 +6,7 @@ import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 import { catalog } from "@broadsec-manual/blocks";
 import type {
+  BlockNode,
   BuildTarget,
   ManualDocument,
   ManualNode,
@@ -174,7 +175,7 @@ function loadDocument(
     }
     ids.add(entry.id);
   }
-  assertChangeLogIsLast(children, files);
+  assertChangeLog(children, files);
   return {
     doc: {
       manualId: config.manual.id,
@@ -187,45 +188,75 @@ function loadDocument(
   };
 }
 
+/** Every `change-log` block in a tree, with the top-level section holding it. */
+function changeLogsIn(children: readonly ManualNode[]): Map<number, BlockNode[]> {
+  const found = new Map<number, BlockNode[]>();
+  const walk = (node: ManualNode, into: BlockNode[]): void => {
+    if (node.kind === "block") {
+      if (node.type === "change-log") into.push(node);
+      return;
+    }
+    for (const child of node.children ?? []) walk(child, into);
+  };
+  children.forEach((node, i) => {
+    const blocks: BlockNode[] = [];
+    walk(node, blocks);
+    if (blocks.length > 0) found.set(i, blocks);
+  });
+  return found;
+}
+
+/** `1.10.0` sorts above `1.9.0`, which a string comparison gets backwards. */
+function compareVersions(a: string, b: string): number {
+  const pa = a.split(".").map(Number);
+  const pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++) {
+    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (diff !== 0) return diff;
+  }
+  return 0;
+}
+
 /**
- * The change log ends the manual, and there is exactly one of it.
+ * The change log ends the manual, there is exactly one of it, and its rows
+ * climb.
  *
- * Enforced rather than written down, because both halves fail SILENTLY. A
- * second change log renders two delivery histories that disagree, and the
- * reader has no way to tell which is current. A change log that is not last
- * ends up mid-document once someone adds `09-…` after `08-…` — sections load in
- * filename order, so the ordering is decided by a filename nobody thinks about
- * while choosing one.
+ * Enforced rather than written down, because every one of these fails SILENTLY
+ * and would ship:
  *
- * Neither would fail a build, break a test, or look wrong in a diff. They would
- * ship.
+ *  - A second change log renders two delivery histories that disagree, and the
+ *    reader has no way to tell which is current.
+ *  - A change log that is not last drifts mid-document once someone adds a
+ *    section sorting after it. Sections load in FILENAME order, so the position
+ *    is decided while naming a file, not while thinking about the change log.
+ *  - Rows out of order print a history that reads backwards. Worse since the
+ *    delivered version is now DERIVED from this table: ascending order is what
+ *    makes "the newest version" and "the last row the reader sees" the same
+ *    fact, so the number on the cover matches the bottom of the table.
  */
-export function assertChangeLogIsLast(
+export function assertChangeLog(
   children: readonly ManualNode[],
   files: readonly string[],
 ): void {
-  const holds = (node: ManualNode): boolean =>
-    node.kind === "block"
-      ? node.type === "change-log"
-      : (node.children ?? []).some(holds);
-
-  const carriers = children.flatMap((node, i) => (holds(node) ? [i] : []));
-  if (carriers.length === 0) return;
+  const carriers = changeLogsIn(children);
+  if (carriers.size === 0) return;
 
   const named = (i: number): string => files[i] ?? `section ${i + 1}`;
+  const indices = [...carriers.keys()];
+  const blocks = [...carriers.values()].flat();
 
-  if (carriers.length > 1) {
+  if (blocks.length > 1) {
     throw new ContentError(
-      named(carriers[0] as number),
+      named(indices[0] as number),
       "change-log",
-      `${carriers.length} sections carry a \`change-log\` block ` +
-        `(${carriers.map(named).join(", ")}). A manual has ONE delivery history. ` +
+      `${blocks.length} \`change-log\` blocks across ${indices.length} section(s) ` +
+        `(${indices.map(named).join(", ")}). A manual has ONE delivery history. ` +
         `Two of them render as two answers to "which version is this", and the ` +
         `reader cannot tell which one to believe.`,
     );
   }
 
-  const at = carriers[0] as number;
+  const at = indices[0] as number;
   if (at !== children.length - 1) {
     throw new ContentError(
       named(at),
@@ -236,6 +267,48 @@ export function assertChangeLogIsLast(
         `rename this one to sort last rather than moving the block.`,
     );
   }
+
+  // `?? []` on purpose. The schema guarantees `rows` for content that loaded,
+  // but a guard that throws TypeError instead of ContentError on a malformed
+  // tree reports a bug in itself rather than the defect it was asked to catch.
+  const rows = ((blocks[0] as BlockNode).props["rows"] ?? []) as ReadonlyArray<
+    Record<string, unknown>
+  >;
+  for (let i = 1; i < rows.length; i++) {
+    const previous = String(rows[i - 1]?.["version"]);
+    const current = String(rows[i]?.["version"]);
+    if (compareVersions(current, previous) <= 0) {
+      throw new ContentError(
+        named(at),
+        String(rows[i]?.["id"] ?? "change-log"),
+        `version ${current} follows ${previous}, but the rows must ASCEND. The ` +
+          `delivered version is read from the highest row, and the reader reads ` +
+          `the last one — those are only the same fact while the table climbs.`,
+      );
+    }
+  }
+}
+
+/**
+ * The version this target was DELIVERED at: the highest row of its change log.
+ *
+ * Read from the ASSEMBLED manual, after conditioning, which is the whole point.
+ * `contentVersion` is one scalar per manual and cannot say that `mv` received
+ * 1.5.0 while `med` stopped at 1.4.7 — but the rows carry their own selectors,
+ * so once a target is assembled its table already holds only what that target
+ * received. The bottom of that table is what its cover should print.
+ *
+ * Falls back to the config field for a manual with no change log at all, so
+ * `_catalog` and `bridge-primera-entrega` keep building unchanged.
+ */
+export function deliveredVersion(children: readonly ManualNode[], fallback: string): string {
+  const blocks = [...changeLogsIn(children).values()].flat();
+  const rows = blocks.flatMap(
+    (b) => b.props["rows"] as ReadonlyArray<Record<string, unknown>>,
+  );
+  const versions = rows.map((r) => String(r["version"]));
+  if (versions.length === 0) return fallback;
+  return versions.reduce((best, v) => (compareVersions(v, best) > 0 ? v : best));
 }
 
 /** One deployment's resolved slots, as the export consumes them. */
@@ -540,12 +613,24 @@ export function primaryAxis(config: ManualConfig): string {
   return soleAxis(Object.keys(config.axes));
 }
 
-/** One target's output filename, with the axis token expanded by the axis's own name. */
-export function outputFilename(config: ManualConfig, target: BuildTarget): string {
+/**
+ * One target's output filename, with the axis token expanded by the axis's own
+ * name.
+ *
+ * `{contentVersion}` expands to the version DELIVERED to this target, which is
+ * the highest row of its change log — not `manual.contentVersion`, which is one
+ * scalar per manual and cannot differ between `mv` and `med`. The token keeps
+ * its name because four config files spell it; what it resolves to changed.
+ */
+export function outputFilename(
+  config: ManualConfig,
+  target: BuildTarget,
+  version: string,
+): string {
   const axis = primaryAxis(config);
   return config.output.filename
     .replace(`{${axis}}`, requireAxisValue(target, axis))
-    .replace("{contentVersion}", config.manual.contentVersion);
+    .replace("{contentVersion}", version);
 }
 
 /**
@@ -947,7 +1032,10 @@ async function build(
     const manual = assemble(doc, target, catalog);
     const axis = primaryAxis(config);
     const tenant = requireAxisValue(target, axis);
-    const rendered = outputFilename(config, target);
+    // Derived from the ASSEMBLED manual, so each target reports the version it
+    // actually received. See `deliveredVersion`.
+    const version = deliveredVersion(manual.children, config.manual.contentVersion);
+    const rendered = outputFilename(config, target, version);
     const name = draft ? draftFilename(rendered) : rendered;
 
     const { entries, slots, images, uses } = resolveTargetImages(manual, figuresDir, tenant);
@@ -963,8 +1051,8 @@ async function build(
     // Composed once and handed to every renderer, so the Word deliverable and
     // the PDF cannot disagree about what the document is called.
     const headerLine = draft
-      ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${config.manual.contentVersion}  |  NO DISTRIBUIR`
-      : `${brand}  |  ${config.manual.title}  |  v${config.manual.contentVersion}`;
+      ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${version}  |  NO DISTRIBUIR`
+      : `${brand}  |  ${config.manual.title}  |  v${version}`;
     const cover = {
       // The mark rides on the DRAFT cover too. A draft is for the person taking
       // captures, and a cover that looks like the real one is how they can tell
@@ -972,7 +1060,7 @@ async function build(
       ...(coverMark !== undefined ? { mark: coverMark } : {}),
       brand: draft ? "BORRADOR INTERNO" : brand,
       title: config.manual.title,
-      version: config.manual.contentVersion,
+      version,
       lede: draft
         ? "Borrador para la toma de capturas. Cada imagen pendiente lleva debajo la ruta y el nombre exactos con los que debe entregarse el archivo. Guárdela tal cual, sin cambiar mayúsculas ni extensión. No distribuir."
         : (config.manual.lede ??

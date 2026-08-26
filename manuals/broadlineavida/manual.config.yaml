@@ -12,10 +12,13 @@ manual:
   title: Manual de operador
   product: Broadsec SIMM
   # SemVer of the manual content.
-  # THE OWNER AUTHORISES EVERY CHANGE TO THIS NUMBER. Do not edit it because a
-  # change felt significant; a version marks a DELIVERY to the client, not work
-  # done internally. See `manuals/AGENTS.md`, "Versioning". The manual's final
-  # module carries the row that explains each bump to the reader.
+  # NOT WHAT THE MANUAL PRINTS, and not what names its PDF. Both come from the
+  # highest row of this manual's change log, per target — see `deliveredVersion`
+  # in packages/cli/src/main.ts. Editing this field changes nothing on the page.
+  #
+  # To move a delivered version, ADD A ROW to the final module. That is the
+  # owner's authorisation made visible, and it is the only thing that moves it.
+  # See `manuals/AGENTS.md`, "Versioning".
   contentVersion: 0.1.0
   language: es
   register: neutral-formal

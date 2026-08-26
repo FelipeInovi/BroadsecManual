@@ -21,7 +21,13 @@ import type { BlockDefinition } from "../definition.ts";
  */
 export const changeLogRow = z.object({
   id: z.string().min(1),
-  version: z.string().min(1),
+  version: z
+    .string()
+    .regex(
+      /^\d+\.\d+\.\d+$/,
+      "version must be MAJOR.MINOR.PATCH — the delivered version is derived by " +
+        "comparing these numerically, and a free-form string cannot be ordered",
+    ),
   date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "date must be ISO YYYY-MM-DD"),
