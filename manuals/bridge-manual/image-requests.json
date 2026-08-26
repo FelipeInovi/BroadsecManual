@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 162,
-    "delivered": 152,
-    "pending": 10
+    "delivered": 153,
+    "pending": 9
   },
   "pending": [
     {
@@ -197,28 +197,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.despachar.confirmar.png",
         "override": "<permission>/llamada.fuerzas.despachar.confirmar.png"
-      }
-    },
-    {
-      "slot": "llamada.mapa.ubicacion.aceptar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.ubicacion.aceptar",
-          "blockType": "field-list",
-          "shows": "Aceptar dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.ubicacion.aceptar.png",
-        "override": "<permission>/llamada.mapa.ubicacion.aceptar.png"
       }
     },
     {
@@ -1142,6 +1120,23 @@
       ],
       "files": [
         "_common/llamada.mapa.ubicacion.buscar.png"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.ubicacion.aceptar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.ubicacion.aceptar",
+          "blockType": "field-list",
+          "shows": "Aceptar dirección"
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.ubicacion.aceptar.png"
       ]
     },
     {

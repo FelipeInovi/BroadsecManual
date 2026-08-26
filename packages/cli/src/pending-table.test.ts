@@ -184,3 +184,45 @@ describe("the rendered markdown", () => {
     expect(md).toContain("Alta \\| Baja");
   });
 });
+
+describe("what the reviewer is asked to write", () => {
+  const rows = [use("a", "Vista")];
+
+  it("asks for an extraction from the legacy PDF by default", () => {
+    const md = pendingTable(rows, new Set(["a"]), []).markdown;
+    expect(md).toContain("Manual_Broadsec_v5.pdf");
+  });
+
+  /**
+   * A manual written against a running product has nothing to extract FROM.
+   * Printing the default sentence over its table sends whoever fills it to a
+   * document describing a different product entirely.
+   */
+  it("prints the manual's own sentence when it declares one", () => {
+    const md = pendingTable(
+      rows,
+      new Set(["a"]),
+      [],
+      "",
+      "Indique dónde se llega a esa pantalla en Bridge360.",
+    ).markdown;
+    expect(md).toContain("Indique dónde se llega a esa pantalla en Bridge360.");
+    expect(md).not.toContain("Manual_Broadsec_v5.pdf");
+  });
+
+  /**
+   * The heading is neutral so it stays true of both kinds of manual, and the
+   * carry-over must not be keyed on it: tables written under the old heading
+   * are already on disk with answers in them.
+   */
+  it("recovers instructions from a table written under the old heading", () => {
+    const old = [
+      "| Imagen | Pág. | Instrucción de extracción |",
+      "| --- | --- | --- |",
+      "| `a` — Vista | 4 | Recortar la figura 3.2 |",
+    ].join("\n");
+    const md = pendingTable(rows, new Set(["a"]), [{ slot: "a", page: 9 }], old).markdown;
+    expect(md).toContain("Cómo obtenerla");
+    expect(md).toContain("Recortar la figura 3.2");
+  });
+});

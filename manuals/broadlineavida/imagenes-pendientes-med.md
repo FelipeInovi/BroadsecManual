@@ -5,5 +5,5 @@ Complete la tercera columna con la instrucción de extracción desde `Manual_Bro
 
 Los números de página valen para la última construcción del manual. Regenere la tabla (`build --pending-table`) después de cambiar contenido: las instrucciones ya escritas se conservan.
 
-| Imagen | Pág. | Instrucción de extracción |
+| Imagen | Pág. | Cómo obtenerla |
 | --- | --- | --- |

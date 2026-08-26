@@ -36,7 +36,7 @@ import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
-import { pendingTable } from "./pending-table.ts";
+import { DEFAULT_PENDING_INSTRUCTION, pendingTable } from "./pending-table.ts";
 import {
   deploymentFor,
   isAttachTarget,
@@ -116,6 +116,13 @@ export const manualConfigSchema = z
         filename: z.string().min(1),
       })
       .passthrough(),
+    /** Per-manual wording for the image-review table. See `pending-table.ts`. */
+    images: z
+      .object({
+        pendingInstruction: z.string().min(1).optional(),
+      })
+      .passthrough()
+      .optional(),
   })
   .passthrough()
   .superRefine((config, ctx) => {
@@ -1119,6 +1126,10 @@ async function build(
         new Set(entries.filter((e) => e.state === "pending").map((e) => e.slot)),
         placements,
         existsSync(tablePath) ? readFileSync(tablePath, "utf8") : "",
+        // Declared per manual: extraction and capture are different questions,
+        // and the wrong one sends the reviewer to a document about another
+        // product. See `DEFAULT_PENDING_INSTRUCTION`.
+        config.images?.pendingInstruction ?? DEFAULT_PENDING_INSTRUCTION,
       );
       writeFileSync(tablePath, table.markdown, "utf8");
       const kept = table.carriedOver > 0 ? `, ${table.carriedOver} instruction(s) kept` : "";

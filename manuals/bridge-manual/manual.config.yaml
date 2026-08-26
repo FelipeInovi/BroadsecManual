@@ -79,6 +79,22 @@ targets:
   - { permission: agencia-propia }
   - { permission: todas-las-agencias }
 
+# Wording for `imagenes-pendientes-<permission>.md`, the sheet the capture area
+# works from.
+#
+# The default sentence points the reviewer at `Manual_Broadsec_v5.pdf`, which is
+# broadlineavida's legacy source and describes a DIFFERENT PRODUCT. Nothing this
+# manual still needs can be extracted from a document: every pending slot here is
+# a screenshot of Bridge360 running. See AGENTS.md, "Which slots turned out
+# deliverable" — the icon convention is exhausted and everything left is a
+# capture.
+images:
+  pendingInstruction: >-
+    Complete la tercera columna indicando dónde se llega a esa pantalla en
+    Bridge360 y qué debe estar en curso para que se vea así. Trabaje siempre
+    sobre esta tabla: una imagen que no figura acá ya fue entregada y volver a
+    capturarla es trabajo perdido.
+
 output:
   dir: output
   # `{permission}` is the axis's own name, and that is what the CLI expands:

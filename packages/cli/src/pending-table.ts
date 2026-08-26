@@ -16,6 +16,19 @@ export interface PendingRow {
   readonly pages: readonly number[];
 }
 
+/**
+ * What the reviewer is being asked to write in the third column.
+ *
+ * NOT a constant, because the answer differs by how the manual was made. One
+ * imported from a legacy document is answered by EXTRACTION — a page of the old
+ * PDF. One written against a running product is answered by CAPTURE — where on
+ * screen to find it. Printing the first sentence over a manual of the second
+ * kind sends whoever fills the table to a document that does not describe their
+ * product.
+ */
+export const DEFAULT_PENDING_INSTRUCTION =
+  "Complete la tercera columna con la instrucción de extracción desde `Manual_Broadsec_v5.pdf`.";
+
 export interface PendingImageTable {
   readonly rows: readonly PendingRow[];
   readonly markdown: string;
@@ -72,6 +85,7 @@ export function pendingTable(
   pending: ReadonlySet<string>,
   placements: readonly SlotPlacement[],
   previous = "",
+  instruction: string = DEFAULT_PENDING_INSTRUCTION,
 ): PendingImageTable {
   const answered = previousInstructions(previous);
   const pagesBySlot = new Map<string, Set<number>>();
@@ -103,13 +117,17 @@ export function pendingTable(
     "# Imágenes pendientes",
     "",
     `${rows.length} imágenes pendientes, en el orden en que aparecen en el manual.`,
-    "Complete la tercera columna con la instrucción de extracción desde `Manual_Broadsec_v5.pdf`.",
+    instruction,
     "",
     "Los números de página valen para la última construcción del manual. Regenere la tabla" +
       " (`build --pending-table`) después de cambiar contenido: las instrucciones ya escritas" +
       " se conservan.",
     "",
-    "| Imagen | Pág. | Instrucción de extracción |",
+    // "Cómo obtenerla" rather than "Instrucción de extracción": the column is
+    // answered by extraction in an imported manual and by capture in one
+    // written against a running product, and one heading has to be true of
+    // both. The sentence above it is where the manual says which.
+    "| Imagen | Pág. | Cómo obtenerla |",
     "| --- | --- | --- |",
     ...rows.map((r) => {
       const shows = r.shows ? ` — ${cell(r.shows)}` : "";
