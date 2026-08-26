@@ -96,11 +96,12 @@ restate them, because a rule stated twice is a rule that drifts.
 | `source-extraction` | Getting facts out of the product |
 | `source-assets` | Taking images from the product's own asset files |
 
-One more exists and is **not** part of that set, because it applies only when a
+Two more exist and are **not** part of that set, because they apply only when a
 condition holds:
 
 | Skill | Read it only when |
 |---|---|
+| `delivery-summary` | A version is being promoted to an official delivery and its change-log row has no description yet. The wizard invokes it and says which of its two modes applies; it is never read while authoring content, because it writes about the manual rather than about the product. |
 | `manual-import` | The product ships a legacy manual that has to be migrated. A manual built from the product directly never needs it, and Broadsec's own import is long done — so this is the cold path, and its detail has not been audited the way the five above have. Treat what it says beyond the seven step headings as unverified. |
 
 ## Authoring rules
