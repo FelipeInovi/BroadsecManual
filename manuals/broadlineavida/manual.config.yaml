@@ -11,7 +11,11 @@ manual:
   source: broadlineavida
   title: Manual de operador
   product: Broadsec SIMM
-  # SemVer of the manual content. Bumped on every content change.
+  # SemVer of the manual content.
+  # THE OWNER AUTHORISES EVERY CHANGE TO THIS NUMBER. Do not edit it because a
+  # change felt significant; a version marks a DELIVERY to the client, not work
+  # done internally. See `manuals/AGENTS.md`, "Versioning". The manual's final
+  # module carries the row that explains each bump to the reader.
   contentVersion: 0.1.0
   language: es
   register: neutral-formal

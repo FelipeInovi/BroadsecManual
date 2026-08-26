@@ -130,12 +130,55 @@ filename is `7-1-3.png` breaks the moment a tenant does not see module 7.
 
 ## Versioning
 
-The manual carries its own SemVer in `manual.config.yaml`:
+**The version is not yours to move. The owner authorises every bump, and says
+so explicitly.**
+
+This rule replaced the opposite one, so read it carefully if you remember the
+old: this file used to say *"a content change bumps the version"*, and that is
+exactly the behaviour being removed. An agent that corrected a figure, reworded
+a paragraph or fixed a typo would raise `contentVersion` on its way past, and
+the number came to mean "how much work happened here" — which is a fact about
+us, not about the reader.
+
+**A version marks a DELIVERY.** It moves when something reaches the client, and
+not before. Internal work — a corrected figure, a rewritten section, a repaired
+`AGENTS.md`, an entire module built over a week — moves nothing on its own. Ten
+sessions of work and no delivery is ten sessions at the same version, and that
+is correct, not an oversight.
+
+So:
+
+- **Never edit `contentVersion` on your own initiative.** Not to be tidy, not
+  because the change felt big, not because the last one was long ago.
+- Authorisation is the owner saying so, in the conversation, about this change.
+  Silence is not authorisation. Neither is a large diff.
+- When you believe a delivery has happened, **say so and stop.** Propose the
+  number and what its row should read; let the owner decide.
+
+When it does move, SemVer still applies:
 
 - **major** — a new module, or a restructure
 - **minor** — new functionality documented inside an existing module
 - **patch** — a step tweak, a wording or typo fix
 
-A content change bumps the version. The changelog is generated from git history
-plus that version, not maintained by hand — hand-maintained changelogs drift,
-and this one used to.
+### The change log is written by hand, and that is deliberate
+
+This file used to say changelogs are generated from git history because
+hand-maintained ones drift. That still holds — **for a log of commits**, which
+is what that sentence was about.
+
+The `change-log` block is a different object. It is the manual's DELIVERY
+history: a handful of rows, one per version the client received, each carrying a
+sentence the client can read. Git history cannot produce that, because git does
+not know which commits were delivered — only the owner does, which is the same
+fact that makes the authorisation rule necessary.
+
+Every manual ends with it:
+
+- It lives in the manual's **final module**, always, and there is exactly one
+  per manual. The build enforces both.
+- It is the **only** module that opens with no figure. Everything else in
+  `module-completeness` still applies; that one rule does not reach a module
+  about the manual rather than about a screen.
+- Its rows condition per target, so one manual's two tenants can hold different
+  delivery histories. A version delivered to one and not the other is normal.

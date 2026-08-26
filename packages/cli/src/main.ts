@@ -174,6 +174,7 @@ function loadDocument(
     }
     ids.add(entry.id);
   }
+  assertChangeLogIsLast(children, files);
   return {
     doc: {
       manualId: config.manual.id,
@@ -184,6 +185,57 @@ function loadDocument(
     pending,
     labels,
   };
+}
+
+/**
+ * The change log ends the manual, and there is exactly one of it.
+ *
+ * Enforced rather than written down, because both halves fail SILENTLY. A
+ * second change log renders two delivery histories that disagree, and the
+ * reader has no way to tell which is current. A change log that is not last
+ * ends up mid-document once someone adds `09-…` after `08-…` — sections load in
+ * filename order, so the ordering is decided by a filename nobody thinks about
+ * while choosing one.
+ *
+ * Neither would fail a build, break a test, or look wrong in a diff. They would
+ * ship.
+ */
+export function assertChangeLogIsLast(
+  children: readonly ManualNode[],
+  files: readonly string[],
+): void {
+  const holds = (node: ManualNode): boolean =>
+    node.kind === "block"
+      ? node.type === "change-log"
+      : (node.children ?? []).some(holds);
+
+  const carriers = children.flatMap((node, i) => (holds(node) ? [i] : []));
+  if (carriers.length === 0) return;
+
+  const named = (i: number): string => files[i] ?? `section ${i + 1}`;
+
+  if (carriers.length > 1) {
+    throw new ContentError(
+      named(carriers[0] as number),
+      "change-log",
+      `${carriers.length} sections carry a \`change-log\` block ` +
+        `(${carriers.map(named).join(", ")}). A manual has ONE delivery history. ` +
+        `Two of them render as two answers to "which version is this", and the ` +
+        `reader cannot tell which one to believe.`,
+    );
+  }
+
+  const at = carriers[0] as number;
+  if (at !== children.length - 1) {
+    throw new ContentError(
+      named(at),
+      "change-log",
+      `the \`change-log\` block is in section ${at + 1} of ${children.length}, ` +
+        `but it must be the manual's FINAL module — it is currently followed by ` +
+        `${files.slice(at + 1).join(", ")}. Sections load in filename order, so ` +
+        `rename this one to sort last rather than moving the block.`,
+    );
+  }
 }
 
 /** One deployment's resolved slots, as the export consumes them. */

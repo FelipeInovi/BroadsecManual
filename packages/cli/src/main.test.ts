@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
+import type { ManualNode } from "@broadsec-manual/blocks";
 import {
+  assertChangeLogIsLast,
   axisValueName,
   draftFilename,
   formatCliError,
@@ -378,5 +380,59 @@ describe("run", () => {
     } finally {
       errorSpy.mockRestore();
     }
+  });
+});
+
+describe("assertChangeLogIsLast", () => {
+  const block = (type: string): ManualNode => ({
+    kind: "block",
+    id: `b.${type}`,
+    type,
+    props: {},
+  });
+
+  const section = (id: string, children: readonly ManualNode[]): ManualNode => ({
+    kind: "section",
+    id,
+    title: [{ kind: "text", value: id }],
+    children,
+  });
+
+  const prose = section("s.prose", [block("prose")]);
+  const log = section("s.log", [block("change-log")]);
+  const files = (n: number): string[] =>
+    Array.from({ length: n }, (_, i) => `0${i + 1}-section.yaml`);
+
+  it("passes a manual with no change log at all", () => {
+    expect(() => assertChangeLogIsLast([prose, prose], files(2))).not.toThrow();
+  });
+
+  it("passes when the change log is the final section", () => {
+    expect(() => assertChangeLogIsLast([prose, prose, log], files(3))).not.toThrow();
+  });
+
+  /**
+   * The failure this exists for. Sections load in filename order, so a change
+   * log stops being last the moment someone adds a section that sorts after it
+   * — a decision made while naming a file, not while thinking about the change
+   * log. Nothing else in the build would notice.
+   */
+  it("rejects a change log that something else follows, and names what follows it", () => {
+    expect(() => assertChangeLogIsLast([log, prose], files(2))).toThrow(
+      /FINAL module.*02-section\.yaml/s,
+    );
+  });
+
+  it("rejects two change logs, because two delivery histories cannot both be current", () => {
+    expect(() => assertChangeLogIsLast([log, prose, log], files(3))).toThrow(
+      /2 sections carry/,
+    );
+  });
+
+  /** The block sits inside a subsection in real content, never at section root. */
+  it("finds a change log nested below the top level", () => {
+    const nested = section("s.top", [section("s.sub", [block("change-log")])]);
+    expect(() => assertChangeLogIsLast([prose, nested], files(2))).not.toThrow();
+    expect(() => assertChangeLogIsLast([nested, prose], files(2))).toThrow(/FINAL module/);
   });
 });
