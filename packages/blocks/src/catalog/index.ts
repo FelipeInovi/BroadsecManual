@@ -8,6 +8,7 @@ import { detailHeader } from "./detail-header.ts";
 import { fieldList } from "./field-list.ts";
 import { procedure } from "./procedure.ts";
 import { termList } from "./term-list.ts";
+import { changeLog } from "./change-log.ts";
 
 export * from "./prose.ts";
 export * from "./icon-table.ts";
@@ -18,6 +19,7 @@ export * from "./detail-header.ts";
 export * from "./field-list.ts";
 export * from "./procedure.ts";
 export * from "./term-list.ts";
+export * from "./change-log.ts";
 
 /** The catalogue every manual is written against — see README.md. */
 export const catalog: BlockCatalog = new Map(
@@ -31,5 +33,6 @@ export const catalog: BlockCatalog = new Map(
     procedure,
     iconTable,
     dataTable,
+    changeLog,
   ].map((b) => [b.type, b as never]),
 );

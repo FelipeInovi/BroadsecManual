@@ -354,6 +354,29 @@ td.tbl__label {
 }
 table.tbl--data-table td.tbl__label { color: ${t.dataTable.labelColor}; }
 
+/*
+ * The change log borrows the data table's palette rather than declaring its
+ * own. It is a reference table like any other, and a delivery history in its
+ * own colours would read as a different kind of object than it is.
+ *
+ * The two value columns are pinned. Left to auto layout a version cell sizes to
+ * whatever string it holds, so the column moves between manuals and between
+ * builds of the same manual — and this is the last table in the document, where
+ * a shifting column is the last thing the reader sees.
+ */
+table.tbl--change-log thead th {
+  background: ${t.dataTable.headBackground};
+  color: ${t.dataTable.headColor};
+}
+table.tbl--change-log tbody tr:nth-child(even) { background: ${t.dataTable.rowAltBackground}; }
+table.tbl--change-log td.tbl__version {
+  width: 62pt;
+  color: ${t.dataTable.labelColor};
+  font-weight: bold;
+  white-space: nowrap;
+}
+table.tbl--change-log td.tbl__date { width: 72pt; white-space: nowrap; }
+
 .callout {
   padding: 8pt 12pt;
   margin: ${t.space.md} 0;

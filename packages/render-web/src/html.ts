@@ -7,6 +7,7 @@ import type {
   ResolvedManual,
   SectionNode,
 } from "@broadsec-manual/blocks";
+import { formatChangeLogDate } from "@broadsec-manual/blocks";
 import { tokens } from "@broadsec-manual/tokens";
 import type { Tokens } from "@broadsec-manual/tokens";
 import { stylesheet } from "./css.ts";
@@ -246,6 +247,38 @@ function renderTable(node: BlockNode, o: RenderOptions): string {
   ].join("");
 }
 
+/**
+ * The manual's delivery history. Three fixed columns, no icons, no numbering.
+ *
+ * `description` goes through `inlineMarkup` like every other authored sentence,
+ * so a delivery note can emphasise a module name. `version` and the date do
+ * not: they are values, and markup in a version cell would be a typo rendered
+ * as intent.
+ */
+function renderChangeLog(node: BlockNode): string {
+  const rows = node.props["rows"] as ReadonlyArray<Record<string, unknown>>;
+
+  const body = rows
+    .map((r) =>
+      [
+        `<tr>`,
+        `<td class="tbl__version">${esc(String(r["version"]))}</td>`,
+        `<td class="tbl__date">${esc(formatChangeLogDate(String(r["date"])))}</td>`,
+        `<td>${inlineMarkup(String(r["description"]))}</td>`,
+        `</tr>`,
+      ].join(""),
+    )
+    .join("");
+
+  return [
+    `<table class="tbl tbl--change-log"><thead><tr>`,
+    `<th>${esc(String(node.props["versionHeader"]))}</th>`,
+    `<th>${esc(String(node.props["dateHeader"]))}</th>`,
+    `<th>${esc(String(node.props["descriptionHeader"]))}</th>`,
+    `</tr></thead><tbody>${body}</tbody></table>`,
+  ].join("");
+}
+
 function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: RenderOptions): string {
   switch (node.type) {
     // Carries no image: an illustrated paragraph is a paragraph followed by a
@@ -343,6 +376,13 @@ function renderBlock(node: BlockNode, numbers: ReadonlyMap<NodeId, string>, o: R
     case "icon-table":
     case "data-table":
       return renderTable(node, o);
+
+    // NOT folded into `renderTable`. That function already carries two block
+    // types through three booleans; a third whose columns mean something else
+    // entirely would be the fourth switch, and the point where nobody can read
+    // it. The change log's columns are fixed at three and never vary.
+    case "change-log":
+      return renderChangeLog(node);
 
     default:
       // A block type with no renderer is a broken block, not a silent skip.

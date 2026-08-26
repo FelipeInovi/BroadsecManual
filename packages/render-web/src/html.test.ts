@@ -223,3 +223,62 @@ describe("cover mark", () => {
     }
   });
 });
+
+describe("change log — the manual's own delivery history", () => {
+  const changeLog = [
+    block("s.changes", "change-log", {
+      versionHeader: "Versión",
+      dateHeader: "Fecha",
+      descriptionHeader: "Descripción de cambios",
+      rows: [
+        { id: "s.changes.r1", version: "1.4.7", date: "2026-02-28", description: "Entrega previa." },
+        { id: "s.changes.r2", version: "1.5.0", date: "2026-08-26", description: "Módulo **BoT**." },
+      ],
+    }),
+  ];
+
+  const html = (): string => render(changeLog, [], PENDING);
+
+  it("carries its own table class, not the data table's", () => {
+    expect(body(html())).toContain('class="tbl tbl--change-log"');
+    expect(body(html())).not.toContain("tbl--data-table");
+  });
+
+  it("prints the three declared headers", () => {
+    const text = visible(html());
+    expect(text).toContain("Versión");
+    expect(text).toContain("Fecha");
+    expect(text).toContain("Descripción de cambios");
+  });
+
+  /**
+   * Dates are stored ISO and printed day-first. Asserting the ISO form is
+   * ABSENT is the half that matters: a renderer that skipped formatting would
+   * still contain the day, month and year in some order, so a looser assertion
+   * would pass on `2026-02-28` printed raw into a client-facing document.
+   */
+  it("prints dates day-first and never leaks the ISO source form", () => {
+    const text = visible(html());
+    expect(text).toContain("28/02/2026");
+    expect(text).toContain("26/08/2026");
+    expect(body(html())).not.toContain("2026-02-28");
+    expect(body(html())).not.toContain("2026-08-26");
+  });
+
+  /**
+   * The description is an authored sentence and takes inline markup like any
+   * other; the version and the date are VALUES and must not. Markup in a
+   * version cell would be a typo rendered as intent.
+   */
+  it("marks up the description but leaves version and date literal", () => {
+    expect(body(html())).toContain("<strong>BoT</strong>");
+    expect(body(html())).toContain('<td class="tbl__version">1.5.0</td>');
+    expect(body(html())).toContain('<td class="tbl__date">26/08/2026</td>');
+  });
+
+  /** No numbering, no figure: this is the one block that is about the manual. */
+  it("emits no figure and no item numbers", () => {
+    expect(body(html())).not.toContain("<figure");
+    expect(body(html())).not.toContain("tbl__icon");
+  });
+});

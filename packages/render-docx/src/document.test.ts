@@ -76,6 +76,15 @@ const blocks: readonly BlockNode[] = [
       { label: "Cerrado", description: "Finalizado." },
     ],
   }),
+  block("b.changes", "change-log", {
+    versionHeader: "Versión",
+    dateHeader: "Fecha",
+    descriptionHeader: "Descripción de cambios",
+    rows: [
+      { id: "b.changes.r1", version: "1.4.7", date: "2026-02-28", description: "Entrega previa." },
+      { id: "b.changes.r2", version: "1.5.0", date: "2026-08-26", description: "Módulo nuevo." },
+    ],
+  }),
 ];
 
 const manual: ResolvedManual = {
@@ -150,6 +159,21 @@ describe("renderDocx", () => {
     expect(xml).toContain("Pantalla principal");
     expect(xml).toContain("Función");
     expect(xml).toContain("Significado");
+    expect(xml).toContain("Descripción de cambios");
+  });
+
+  /**
+   * The date is stored ISO and printed day-first. Asserting the ISO string is
+   * ABSENT is the half that matters: a renderer that forgot to format would
+   * still contain the day, the month and the year, and a looser assertion would
+   * pass on `2026-02-28` printed raw into a client-facing document.
+   */
+  it("prints change-log dates day-first, never the ISO source form", async () => {
+    const xml = await documentXml();
+    expect(xml).toContain("28/02/2026");
+    expect(xml).toContain("26/08/2026");
+    expect(xml).not.toContain("2026-02-28");
+    expect(xml).not.toContain("2026-08-26");
   });
 
   it("throws on a block type it has no renderer for", async () => {

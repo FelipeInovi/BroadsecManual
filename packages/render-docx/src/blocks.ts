@@ -14,6 +14,7 @@ import {
   WidthType,
 } from "docx";
 import type { BlockNode, ManualNode, NodeId, SectionNode } from "@broadsec-manual/blocks";
+import { formatChangeLogDate } from "@broadsec-manual/blocks";
 import type { Tokens } from "@broadsec-manual/tokens";
 import { eighths, twips } from "./measure.ts";
 import { fitFigure, fitIcon, type Box, type DocxAsset, type DocxAssetResolver } from "./image.ts";
@@ -519,6 +520,105 @@ function table(node: BlockNode, ctx: Ctx): readonly (Paragraph | Table)[] {
   ];
 }
 
+/**
+ * The manual's delivery history, as a three-column table.
+ *
+ * Column widths are fixed like `table`'s, and for a sharper reason here: the
+ * two value columns hold short strings, so Word's autofit would collapse them
+ * to the width of their longest entry and the layout would change the first
+ * time a version number grows a digit.
+ *
+ * Zebra, head fill and rule all come from the data-table palette, the same
+ * borrowing render-web does — one delivery history should not look like a
+ * different species of table than the reference tables above it.
+ */
+function changeLog(node: BlockNode, ctx: Ctx): readonly (Paragraph | Table)[] {
+  const rows = node.props["rows"] as ReadonlyArray<Record<string, unknown>>;
+
+  const versionPt = 62;
+  const datePt = 72;
+  const descriptionPt = ctx.l.contentWidthPt - versionPt - datePt;
+  const widths = [versionPt, datePt, descriptionPt];
+
+  const cellMargins = {
+    top: ctx.m.cellPad.vertical,
+    bottom: ctx.m.cellPad.vertical,
+    left: ctx.m.cellPad.horizontal,
+    right: ctx.m.cellPad.horizontal,
+  };
+
+  const headCell = (text: string, widthPt: number): TableCell =>
+    new TableCell({
+      width: { size: twips(`${widthPt}pt`), type: WidthType.DXA },
+      shading: { type: CLEAR, fill: ctx.p.dataTableHeadFill, color: "auto" },
+      margins: cellMargins,
+      children: [
+        new Paragraph({ spacing: { after: 0 }, children: [run(text, ctx.f.tableHead)] }),
+      ],
+    });
+
+  const bodyCell = (
+    children: readonly Paragraph[],
+    widthPt: number,
+    fill: string | undefined,
+  ): TableCell =>
+    new TableCell({
+      width: { size: twips(`${widthPt}pt`), type: WidthType.DXA },
+      ...(fill === undefined ? {} : { shading: { type: CLEAR, fill, color: "auto" } }),
+      margins: cellMargins,
+      verticalAlign: VerticalAlign.TOP,
+      borders: {
+        top: NO_BORDER,
+        left: NO_BORDER,
+        right: NO_BORDER,
+        bottom: { style: BorderStyle.SINGLE, size: eighths("0.5pt"), color: ctx.p.tableRule },
+      },
+      children: [...children],
+    });
+
+  const header = new TableRow({
+    tableHeader: true,
+    children: [
+      headCell(String(node.props["versionHeader"]), versionPt),
+      headCell(String(node.props["dateHeader"]), datePt),
+      headCell(String(node.props["descriptionHeader"]), descriptionPt),
+    ],
+  });
+
+  const body = rows.map((r, i) => {
+    // Matches `tr:nth-child(even)` counting within the body, as `table` does.
+    const fill = (i + 1) % 2 === 0 ? ctx.p.dataTableAltFill : undefined;
+    const line = (text: string, font: Parameters<typeof run>[1]): readonly Paragraph[] => [
+      new Paragraph({ spacing: { after: 0 }, children: [run(text, font)] }),
+    ];
+    return new TableRow({
+      children: [
+        bodyCell(line(String(r["version"]), ctx.f.tableLabel), versionPt, fill),
+        bodyCell(line(formatChangeLogDate(String(r["date"])), ctx.f.tableCell), datePt, fill),
+        bodyCell(
+          [
+            new Paragraph({
+              spacing: { after: 0, line: ctx.m.proseLine, lineRule: LineRuleType.AUTO },
+              children: [...runs(String(r["description"]), ctx.f.tableCell, ctx.f.strong)],
+            }),
+          ],
+          descriptionPt,
+          fill,
+        ),
+      ],
+    });
+  });
+
+  return [
+    new Table({
+      width: { size: twips(`${ctx.l.contentWidthPt}pt`), type: WidthType.DXA },
+      columnWidths: widths.map((w) => twips(`${w}pt`)),
+      rows: [header, ...body],
+    }),
+    spacer(ctx.m.spaceMd),
+  ];
+}
+
 /** The icon cell's image, capped by the stylesheet at 26pt — 24pt while pending. */
 function icon(id: NodeId, ctx: Ctx): readonly Paragraph[] {
   const asset = assetFor(id, ctx);
@@ -578,6 +678,12 @@ export function renderBlock(node: BlockNode, ctx: Ctx): readonly (Paragraph | Ta
     case "icon-table":
     case "data-table":
       return table(node, ctx);
+
+    // Its own builder, matching render-web's split and for the same reason:
+    // `table` already carries two types through a set of booleans, and the
+    // change log's three columns mean something else entirely.
+    case "change-log":
+      return changeLog(node, ctx);
 
     default:
       // A block type with no renderer is a broken block, not a silent skip —

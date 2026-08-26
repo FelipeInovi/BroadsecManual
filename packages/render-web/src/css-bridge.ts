@@ -376,6 +376,28 @@ td.tbl__icon--pending img { max-width: 24pt; max-height: 24pt; opacity: 0.75; }
 table.tbl--data th { background: ${t.dataTable.headBackground}; }
 table.tbl--data tr:nth-child(even) td { background: ${t.dataTable.rowAltBackground}; }
 
+/*
+ * The change log, in this theme's idiom: the zebra is painted on the CELLS
+ * here, not on the row, because the table.tbl td rule above sets a cell
+ * background and a row-level fill would lose to it.
+ *
+ * No backticks in this comment, deliberately. The whole sheet is one template
+ * literal, so a backtick quoting a selector ends the string and the file stops
+ * parsing — which is exactly how this comment was written the first time.
+ *
+ * Value columns pinned for the same reason as in the default sheet — this is
+ * the document's last table and its columns should not move between builds.
+ */
+table.tbl--change-log th { background: ${t.dataTable.headBackground}; }
+table.tbl--change-log tr:nth-child(even) td { background: ${t.dataTable.rowAltBackground}; }
+table.tbl--change-log td.tbl__version {
+  width: 62pt;
+  color: ${t.table.labelColor};
+  font-weight: bold;
+  white-space: nowrap;
+}
+table.tbl--change-log td.tbl__date { width: 72pt; white-space: nowrap; }
+
 figure { margin: ${t.space.sm} 0 ${t.space.md}; text-align: center; break-inside: avoid; }
 
 /*
