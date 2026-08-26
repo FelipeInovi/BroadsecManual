@@ -17,6 +17,8 @@ import {
   validateManualId,
   type ManualState,
   type WizardAnswers,
+  assembleDeliveryPrompt,
+  versionsInOutput,
 } from "./wizard.ts";
 
 const answers = (over: Partial<WizardAnswers> = {}): WizardAnswers => ({
@@ -711,5 +713,56 @@ describe("the creation prompt hands off to the continuation prompt", () => {
     ]) {
       expect(text).toContain("manuals/AGENTS.md");
     }
+  });
+});
+
+describe("what output/ offers for delivery", () => {
+  /**
+   * A draft carries internal slot paths, and a `-NO-ENTREGADO` build is by
+   * definition not the delivered document. Offering either in a list of things
+   * to hand a client is offering a mistake.
+   */
+  it("excludes drafts and superseded builds", () => {
+    const names = versionsInOutput([
+      "m-mv-v1.5.0.pdf",
+      "m-mv-v1.5.0-BORRADOR.pdf",
+      "m-mv-v1.4.0-NO-ENTREGADO.pdf",
+    ]);
+    expect(names).toContain("1.5.0");
+  });
+
+  it("reads every version present, newest first", () => {
+    expect(versionsInOutput(["m-v1.9.0.pdf", "m-v1.10.0.pdf", "m-v1.9.0.docx"])).toEqual([
+      "1.10.0",
+      "1.9.0",
+    ]);
+  });
+
+  it("ignores a filename carrying no version", () => {
+    expect(versionsInOutput(["notas.pdf"])).toEqual([]);
+  });
+});
+
+describe("assembleDeliveryPrompt", () => {
+  it("anchors a later delivery on the previous one's commit", () => {
+    const p = assembleDeliveryPrompt("bridge-manual", "summarise-since", "1.1.0", "8a0ab58");
+    expect(p).toContain("git log 8a0ab58..HEAD");
+    expect(p).toContain("delivery-summary");
+  });
+
+  /**
+   * A first delivery has nothing to diff against, so asking for "what changed"
+   * would invite an answer invented to fit the question.
+   */
+  it("asks a first delivery to describe what the manual covers, not what changed", () => {
+    const p = assembleDeliveryPrompt("bridge-manual", "summarise-first", "1.0.0", null);
+    expect(p).toContain("CUBRE");
+    expect(p).not.toContain("git log");
+  });
+
+  it("says the archiving and the stamping are already done", () => {
+    const p = assembleDeliveryPrompt("m", "summarise-first", "1.0.0", null);
+    expect(p).toContain("deliveries/m/");
+    expect(p).toContain("Falta la descripción");
   });
 });

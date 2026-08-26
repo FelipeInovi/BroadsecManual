@@ -22,6 +22,7 @@ import { delimiter, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { parse as parseYaml } from "yaml";
 import { themes } from "@broadsec-manual/tokens";
+import { classifyDelivery, readChangeLogRows } from "./delivery-state.ts";
 
 /**
  * Agent CLIs this wizard can hand the prompt to.
@@ -705,7 +706,18 @@ export async function runWizard(repoRoot: string): Promise<number> {
                 `estado del disco y propone el próximo paso.`,
               value: "continue" as const,
             },
+            {
+              label: "Versionar un manual para entrega oficial",
+              detail:
+                `Archiva el PDF y el Word en deliveries/, sella la prueba de qué recibió ` +
+                `el cliente, y si hace falta pide a un agente el resumen de la fila.`,
+              value: "deliver" as const,
+            },
           ]);
+
+    if (action === "deliver") {
+      return await deliveryFlow(rl, repoRoot, started);
+    }
 
     if (action === "continue") {
       // Every manual is offered, including the ones missing a source or a map.
@@ -925,4 +937,176 @@ async function handOff(
       child.on("exit", (code) => done(code ?? 0));
     });
   }
+}
+
+/**
+ * What `output/` holds for one manual, as filenames the wizard can show.
+ *
+ * DRAFTS AND SUPERSEDED BUILDS ARE EXCLUDED. Only a final build can become an
+ * official delivery — a draft carries internal slot paths, and a
+ * `-NO-ENTREGADO` build is by definition not the delivered document. Offering
+ * either in a list of things to hand a client is offering a mistake.
+ */
+export function builtDeliverables(manualDir: string): readonly string[] {
+  const out = join(manualDir, "output");
+  if (!existsSync(out)) return [];
+  return readdirSync(out)
+    .filter((f) => /\.(pdf|docx)$/.test(f))
+    .filter((f) => !/-BORRADOR|-NO-ENTREGADO/.test(f))
+    .sort();
+}
+
+/** Every version those filenames carry, newest first. */
+export function versionsInOutput(names: readonly string[]): readonly string[] {
+  const found = new Set<string>();
+  for (const n of names) {
+    const m = /-v(\d+\.\d+\.\d+)\./.exec(n);
+    if (m?.[1]) found.add(m[1]);
+  }
+  return [...found].sort((a, b) => {
+    const pa = a.split(".").map(Number);
+    const pb = b.split(".").map(Number);
+    for (let i = 0; i < 3; i++) {
+      const d = (pb[i] ?? 0) - (pa[i] ?? 0);
+      if (d !== 0) return d;
+    }
+    return 0;
+  });
+}
+
+/**
+ * What to ask an agent for, once the deterministic half has run.
+ *
+ * The two modes differ in their INPUT and their framing, never in their
+ * standards — which is why they name one skill rather than two. A first
+ * delivery has nothing to diff against and describes what the manual covers; a
+ * later one is read from the previous delivery's own commit forward.
+ */
+export function assembleDeliveryPrompt(
+  manualId: string,
+  kind: "summarise-first" | "summarise-since",
+  version: string,
+  since: string | null,
+): string {
+  const head =
+    kind === "summarise-since"
+      ? [
+          `Escribí la fila ${version} del Historial de cambios de \`${manualId}\`.`,
+          ``,
+          `Lo entregado por última vez salió del commit \`${since}\`. Lo que cambió`,
+          `desde entonces está en \`git log ${since}..HEAD\`.`,
+        ]
+      : [
+          `Escribí la PRIMERA fila del Historial de cambios de \`${manualId}\`,`,
+          `versión ${version}.`,
+          ``,
+          `No hay entrega anterior, así que no hay diff que tomar: la fila describe`,
+          `lo que este manual CUBRE, no lo que cambió.`,
+        ];
+
+  return [
+    ...head,
+    ``,
+    `Cargá la skill \`delivery-summary\` y seguila. Es la que dice qué le importa`,
+    `a un cliente y qué es ruido nuestro.`,
+    ``,
+    `Los archivos ya están archivados en \`deliveries/${manualId}/\` y la prueba`,
+    `quedó sellada. Falta la descripción, y sólo eso.`,
+  ].join("\n");
+}
+
+/**
+ * Promote a built manual to an official delivery.
+ *
+ * The deterministic half runs as the CLI's own `deliver` command, spawned
+ * rather than imported: `main.ts` imports this file, so calling back into it
+ * would be a cycle. Spawning also means the wizard and a plain terminal run
+ * exactly the same code, which is the only way the two can be trusted to agree.
+ */
+async function deliveryFlow(
+  rl: ReturnType<typeof createInterface>,
+  repoRoot: string,
+  manuals: readonly ManualState[],
+): Promise<number> {
+  const picked = await select(
+    rl,
+    "¿Cuál manual?",
+    manuals.map((m) => ({ label: `${m.id}  ${dim(m.title)}`, value: m })),
+  );
+  const manualDir = join(repoRoot, "manuals", picked.id);
+
+  const built = builtDeliverables(manualDir);
+  if (built.length === 0) {
+    ui(dim(`   No hay nada final en output/ de ${picked.id}.`));
+    ui(dim(`   Construilo primero:  broadsec-manual build ${picked.id} --docx`));
+    ui("");
+    return 1;
+  }
+
+  ui(bold("Lo que hay construido y listo para entregar"));
+  ui("");
+  for (const f of built) ui(`   ${dim("·")} ${f}`);
+  ui("");
+
+  const versions = versionsInOutput(built);
+  const version =
+    versions.length === 1
+      ? (versions[0] as string)
+      : await select(
+          rl,
+          "¿Qué versión se entrega?",
+          versions.map((v) => ({
+            label: v,
+            detail: built.filter((f) => f.includes(`-v${v}.`)).join("  "),
+            value: v,
+          })),
+        );
+
+  const state = classifyDelivery(readChangeLogRows(manualDir), version);
+  if (state.kind === "already-delivered") {
+    ui(dim(`   ${version} ya fue entregada. Una entrega es un hecho: publicar cambios`));
+    ui(dim(`   necesita una versión nueva, no reescribir ésta.`));
+    ui("");
+    return 1;
+  }
+  if (state.kind === "not-the-newest") {
+    ui(dim(`   ${version} está por debajo de ${state.newest}, la fila más alta de la tabla.`));
+    ui(dim(`   Lo que hay en output/ se construyó del contenido actual, así que NO es`));
+    ui(dim(`   esa versión: archivarlo con ese nombre guardaría el documento equivocado.`));
+    ui("");
+    return 1;
+  }
+
+  // --- the deterministic half, as the CLI's own command --------------------
+  const code = await new Promise<number>((done) => {
+    const child = spawn(
+      process.execPath,
+      [join(repoRoot, "packages", "cli", "src", "main.ts"), "deliver", picked.id, "--version", version],
+      { cwd: repoRoot, stdio: "inherit" },
+    );
+    child.on("close", (c) => done(c ?? 1));
+  });
+  if (code !== 0) return code;
+
+  if (state.kind === "stamp") {
+    ui("");
+    ui(dim(`   La fila ${version} ya estaba escrita, así que no hace falta ningún agente.`));
+    ui("");
+    return 0;
+  }
+
+  ui("");
+  ui(dim(`   Falta la descripción de la fila, y eso es criterio: qué cambió PARA EL LECTOR.`));
+  ui("");
+  return await handOff(
+    rl,
+    repoRoot,
+    `.broadsec-manual/entrega-${picked.id}-v${version}.md`,
+    assembleDeliveryPrompt(
+      picked.id,
+      state.kind,
+      version,
+      state.kind === "summarise-since" ? state.since : null,
+    ),
+  );
 }

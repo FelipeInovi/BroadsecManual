@@ -36,6 +36,7 @@ import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
 import { headCommit, isDirty, isExactly } from "./git.ts";
 import { archive, planDelivery, stampFile } from "./deliver.ts";
+import { changeLogSectionFile } from "./delivery-state.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
 import { DEFAULT_PENDING_INSTRUCTION, pendingTable } from "./pending-table.ts";
@@ -1058,24 +1059,6 @@ async function buildDocx(
     vendor,
   });
   writeFileSync(docxPath, docx);
-}
-
-/**
- * The section file holding this manual's change log.
- *
- * Found by reading the files rather than by naming one: the change log must
- * sort last (`assertChangeLog`), and hardcoding `08-` here would break the
- * moment a manual has a different number of modules — which broadlineavida
- * already does at `13-`.
- */
-export function changeLogSectionFile(manualDir: string): string | null {
-  const dir = join(manualDir, "sections");
-  for (const f of readdirSync(dir).filter((x) => x.endsWith(".yaml")).sort()) {
-    if (/^\s*type:\s*change-log\s*$/m.test(readFileSync(join(dir, f), "utf8"))) {
-      return join(dir, f);
-    }
-  }
-  return null;
 }
 
 /**
