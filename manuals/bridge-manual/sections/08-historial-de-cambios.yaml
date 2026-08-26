@@ -1,0 +1,54 @@
+# Historial de cambios — the manual's own delivery history.
+#
+# THIS SECTION IS NOT ABOUT THE PRODUCT, and that is what makes it different
+# from every other file in this directory:
+#
+#  - **No `labels` block, and none is missing.** Every other section here cites
+#    the source file and line each quoted UI label came from, because those are
+#    the product's words. Nothing below is quoted from Bridge360 — a version
+#    number is not a label, and the column headers are this manual's own. A
+#    citation here would send `broadsec-manual labels bridge-manual` looking for
+#    `0.0.1` in the product repository.
+#
+#  - **No overview figure, and none is missing either.** `module-completeness`
+#    opens every module with a screenshot of the whole screen. There is no
+#    screen. See `manuals/AGENTS.md`, "Versioning" — that rule does not reach a
+#    module about the manual.
+#
+#  - **It must sort LAST.** `08-` puts it after `07-create-incident.yaml`, and
+#    the build enforces the outcome (`assertChangeLogIsLast`, cli/src/main.ts).
+#    A ninth module goes in as `08-…` renamed, never appended after this one.
+#
+# THE VERSION IN THE TABLE IS NOT `contentVersion`. The config says 0.6.9, which
+# counted internal work under the rule that has since been withdrawn. 0.0.1 is
+# what the CLIENT receives, and it is the first time they receive anything.
+# See ESTADO.md for the open question about which of the two the cover prints.
+
+id: historial-cambios
+title: Historial de cambios
+subtitle: Versiones entregadas de este manual
+
+children:
+  - id: historial.proposito
+    type: prose
+    props:
+      text: >-
+        Esta tabla registra cada versión de este manual entregada al cliente,
+        con su fecha y un resumen de lo que esa entrega incorporó. Permite
+        confirmar que el ejemplar en uso es el vigente y, cuando no lo es,
+        identificar qué cambió desde entonces.
+
+  - id: historial.tabla
+    type: change-log
+    props:
+      versionHeader: Versión
+      dateHeader: Fecha
+      descriptionHeader: Descripción de cambios
+      rows:
+        - id: historial.tabla.0-0-1
+          version: 0.0.1
+          date: 2026-08-26
+          description: >-
+            Primera entrega del manual de operador de Bridge360. Documenta los
+            módulos Home, Llamada, Seatmap, Dashboard, Bridge of Things,
+            Fuerzas en Campo y Crear Incidente.
