@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import type { ManualNode } from "@broadsec-manual/blocks";
 import {
   assertChangeLog,
+  deliveryProofFor,
+  undeliveredFilename,
   deliveredVersion,
   axisValueName,
   draftFilename,
@@ -504,5 +506,78 @@ describe("deliveredVersion", () => {
   it("compares version parts numerically", () => {
     expect(deliveredVersion([logWith("1.9.0", "1.10.0")], "0.0.0")).toBe("1.10.0");
     expect(deliveredVersion([logWith("0.0.1")], "0.6.9")).toBe("0.0.1");
+  });
+});
+
+describe("undeliveredFilename", () => {
+  it("marks the build so it cannot be mistaken for the delivered file", () => {
+    expect(undeliveredFilename("manual-operador-mv-v1.0.0.pdf")).toBe(
+      "manual-operador-mv-v1.0.0-NO-ENTREGADO.pdf",
+    );
+  });
+
+  it("composes with the draft marker rather than fighting it", () => {
+    expect(draftFilename(undeliveredFilename("m-v1.0.0.pdf"))).toBe(
+      "m-v1.0.0-NO-ENTREGADO-BORRADOR.pdf",
+    );
+  });
+});
+
+describe("deliveryProofFor", () => {
+  const SHA_A = "a".repeat(64);
+  const SHA_B = "b".repeat(64);
+
+  const log = (rows: readonly Record<string, unknown>[]): ManualNode => ({
+    kind: "section",
+    id: "s.log",
+    title: [{ kind: "text", value: "Historial" }],
+    children: [{ kind: "block", id: "b.log", type: "change-log", props: { rows } }],
+  });
+
+  const delivered = log([
+    { id: "r1", version: "1.0.0", delivered: { commit: "a9f780e", files: { mv: SHA_A } } },
+    { id: "r2", version: "1.1.0", delivered: { commit: "cd40d46", files: { mv: SHA_B, med: SHA_A } } },
+  ]);
+
+  it("finds the proof for one version and one target", () => {
+    expect(deliveryProofFor([delivered], "1.0.0", "mv")).toEqual({
+      commit: "a9f780e",
+      sha: SHA_A,
+    });
+  });
+
+  /**
+   * The distinction the whole guard rests on. A version handed to `mv` and not
+   * to `med` is the normal case, so "this version was delivered" is never a
+   * fact about the manual — only ever about a target.
+   */
+  it("returns nothing for a target that version was never handed to", () => {
+    expect(deliveryProofFor([delivered], "1.0.0", "med")).toBeUndefined();
+    expect(deliveryProofFor([delivered], "1.1.0", "med")).toBeDefined();
+  });
+
+  it("returns nothing for a row that carries no proof", () => {
+    const undelivered = log([{ id: "r1", version: "2.0.0" }]);
+    expect(deliveryProofFor([undelivered], "2.0.0", "mv")).toBeUndefined();
+  });
+
+  it("returns nothing when the manual has no change log at all", () => {
+    const plain: ManualNode = {
+      kind: "section",
+      id: "s",
+      title: [{ kind: "text", value: "s" }],
+      children: [{ kind: "block", id: "b", type: "prose", props: { text: "x" } }],
+    };
+    expect(deliveryProofFor([plain], "1.0.0", "mv")).toBeUndefined();
+  });
+
+  /** A half-written proof must not read as a delivery. */
+  it("ignores a proof missing its commit or its hash", () => {
+    const broken = log([
+      { id: "r1", version: "3.0.0", delivered: { files: { mv: SHA_A } } },
+      { id: "r2", version: "3.1.0", delivered: { commit: "a9f780e", files: {} } },
+    ]);
+    expect(deliveryProofFor([broken], "3.0.0", "mv")).toBeUndefined();
+    expect(deliveryProofFor([broken], "3.1.0", "mv")).toBeUndefined();
   });
 });

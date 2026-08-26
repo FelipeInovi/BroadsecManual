@@ -34,6 +34,7 @@ import { printToPdf } from "./chrome.ts";
 import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
+import { isExactly } from "./git.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
 import { DEFAULT_PENDING_INSTRUCTION, pendingTable } from "./pending-table.ts";
@@ -308,6 +309,49 @@ export function assertChangeLog(
  * Falls back to the config field for a manual with no change log at all, so
  * `_catalog` and `bridge-primera-entrega` keep building unchanged.
  */
+/**
+ * Mark a build that is NOT the delivered document it would otherwise be named
+ * after.
+ *
+ * `…-v1.0.0.pdf` -> `…-v1.0.0-NO-ENTREGADO.pdf`, the same shape `draftFilename`
+ * uses and for the same reason: two files that differ only in their contents
+ * are two files nobody can tell apart in a folder listing.
+ */
+export function undeliveredFilename(name: string): string {
+  const dot = name.lastIndexOf(".");
+  return dot <= 0
+    ? `${name}-NO-ENTREGADO`
+    : `${name.slice(0, dot)}-NO-ENTREGADO${name.slice(dot)}`;
+}
+
+/**
+ * The proof recorded for one target at one version, if that version was
+ * delivered to it.
+ *
+ * Per TARGET, not per version: a row can have been handed to `mv` and not to
+ * `med`, so a version being delivered somewhere says nothing about here.
+ */
+export function deliveryProofFor(
+  children: readonly ManualNode[],
+  version: string,
+  axisValue: string,
+): { commit: string; sha: string } | undefined {
+  for (const block of [...changeLogsIn(children).values()].flat()) {
+    const rows = (block.props["rows"] ?? []) as ReadonlyArray<Record<string, unknown>>;
+    for (const row of rows) {
+      if (String(row["version"]) !== version) continue;
+      const proof = row["delivered"] as
+        | { commit?: unknown; files?: Record<string, unknown> }
+        | undefined;
+      const sha = proof?.files?.[axisValue];
+      if (typeof proof?.commit === "string" && typeof sha === "string") {
+        return { commit: proof.commit, sha };
+      }
+    }
+  }
+  return undefined;
+}
+
 export function deliveredVersion(children: readonly ManualNode[], fallback: string): string {
   const blocks = [...changeLogsIn(children).values()].flat();
   const rows = blocks.flatMap(
@@ -1043,7 +1087,31 @@ async function build(
     // actually received. See `deliveredVersion`.
     const version = deliveredVersion(manual.children, config.manual.contentVersion);
     const rendered = outputFilename(config, target, version);
-    const name = draft ? draftFilename(rendered) : rendered;
+
+    // A DELIVERED VERSION IS A FACT, and this build may no longer be it.
+    //
+    // The guard renames rather than refuses, on purpose. Refusing would make
+    // the repository unbuildable the day after a delivery: the highest row
+    // stays delivered while work continues, so every build would fail and the
+    // lock would close with the operator inside. What must never be reused is
+    // the NAME — a file called v1.0.0 whose bytes are not the ones the client
+    // holds is a lie that no later check can catch.
+    //
+    // `isExactly` returns null when git cannot answer. That is not treated as
+    // "safe": an unanswerable question is marked, because a guard that
+    // silently stops guarding is worse than none.
+    const proof = deliveryProofFor(manual.children, version, tenant);
+    const stillTheDelivered = proof === undefined ? true : isExactly(manualDir, proof.commit);
+    const superseded = proof !== undefined && stillTheDelivered !== true;
+    if (superseded) {
+      console.log(
+        `  ${version} ya fue entregada${stillTheDelivered === null ? " (git no responde, se marca por las dudas)" : ""}` +
+          ` — esta construcción se marca NO-ENTREGADO para no pisar el archivo del cliente.`,
+      );
+    }
+
+    const base = superseded ? undeliveredFilename(rendered) : rendered;
+    const name = draft ? draftFilename(base) : base;
 
     const { entries, slots, images, uses } = resolveTargetImages(manual, figuresDir, tenant);
 
