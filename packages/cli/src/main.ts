@@ -34,7 +34,8 @@ import { printToPdf } from "./chrome.ts";
 import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
-import { isExactly } from "./git.ts";
+import { headCommit, isDirty, isExactly } from "./git.ts";
+import { archive, planDelivery, stampFile } from "./deliver.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
 import { DEFAULT_PENDING_INSTRUCTION, pendingTable } from "./pending-table.ts";
@@ -1059,6 +1060,149 @@ async function buildDocx(
   writeFileSync(docxPath, docx);
 }
 
+/**
+ * The section file holding this manual's change log.
+ *
+ * Found by reading the files rather than by naming one: the change log must
+ * sort last (`assertChangeLog`), and hardcoding `08-` here would break the
+ * moment a manual has a different number of modules — which broadlineavida
+ * already does at `13-`.
+ */
+export function changeLogSectionFile(manualDir: string): string | null {
+  const dir = join(manualDir, "sections");
+  for (const f of readdirSync(dir).filter((x) => x.endsWith(".yaml")).sort()) {
+    if (/^\s*type:\s*change-log\s*$/m.test(readFileSync(join(dir, f), "utf8"))) {
+      return join(dir, f);
+    }
+  }
+  return null;
+}
+
+/**
+ * Promote what is in `output/` to an official delivery.
+ *
+ * REFUSES ON A DIRTY TREE, first and before anything else. The proof records
+ * the commit the files were built from; with uncommitted changes that commit
+ * does not describe the bytes being archived, and the record would be wrong
+ * from the moment it was written. A wrong proof is worse than none, because it
+ * looks like authority.
+ *
+ * Only ever STAMPS a row that already declares the version. When none does, it
+ * archives, says so, and stops — writing that row means summarising what
+ * changed for the reader, which is judgement, and this command has none.
+ */
+async function deliverManual(
+  manualDir: string,
+  filters: ReadonlyMap<string, string>,
+  args: readonly string[],
+): Promise<number> {
+  const { config, doc, targets } = loadManual(manualDir, filters);
+  const axis = primaryAxis(config);
+  const outDir = join(manualDir, config.output.dir);
+  const repoRoot = resolve(process.cwd());
+
+  const dirty = isDirty(repoRoot);
+  if (dirty !== false) {
+    const why = dirty === null ? " (o git no responde)" : "";
+    console.error(
+      [
+        ``,
+        `el árbol tiene cambios sin commitear${why}.`,
+        `  La prueba de entrega guarda el commit del que salieron los archivos. Con`,
+        `  cambios sin commitear ese commit no describe lo que se archivaría, y una`,
+        `  prueba equivocada es peor que ninguna: parece autoridad.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+  const commit = headCommit(repoRoot);
+  if (commit === null) {
+    console.error("\nno se puede leer el commit de HEAD, y sin él la entrega no queda anclada.");
+    return 1;
+  }
+
+  const at = args.indexOf("--version");
+  const asked = at === -1 ? undefined : args[at + 1];
+
+  // One expected name per target, built from the same template the build used —
+  // so a draft or a superseded build is never even a candidate.
+  const expected = new Map<string, readonly string[]>();
+  let version: string | undefined = asked;
+  for (const target of targets) {
+    const value = requireAxisValue(target, axis);
+    const assembled = assemble(doc, target, catalog);
+    const targetVersion =
+      asked ?? deliveredVersion(assembled.children, config.manual.contentVersion);
+    version ??= targetVersion;
+
+    if (deliveryProofFor(assembled.children, targetVersion, value) !== undefined) {
+      console.error(
+        [
+          ``,
+          `${value} ya tiene la versión ${targetVersion} entregada. Una entrega es un hecho:`,
+          `  para publicar cambios hace falta una versión nueva, no reescribir ésta.`,
+        ].join("\n"),
+      );
+      return 1;
+    }
+
+    const pdf = outputFilename(config, target, targetVersion);
+    expected.set(value, [pdf, pdf.replace(/\.pdf$/, ".docx")]);
+  }
+  if (version === undefined) {
+    console.error("\nno hay targets que entregar con los filtros dados.");
+    return 1;
+  }
+
+  const { plan, missing } = planDelivery(outDir, version, expected);
+  if (missing.length > 0) {
+    console.error(
+      [
+        ``,
+        `faltan en output/ los archivos de ${missing.join(", ")} para la versión ${version}.`,
+        `  Construya primero: broadsec-manual build ${basename(manualDir)} --docx`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+
+  const { copied, refused } = archive(join(repoRoot, "deliveries"), config.manual.id, plan);
+  for (const name of copied) {
+    console.log(`  archivado -> deliveries/${config.manual.id}/${name}`);
+  }
+  if (refused.length > 0) {
+    console.error(
+      [
+        ``,
+        `${refused.length} archivo(s) ya estaban archivados y NO se pisaron: ${refused.join(", ")}.`,
+        `  Un archivo ahí es uno que un cliente recibió, y la prueba del repositorio`,
+        `  habla de esos bytes exactos.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+
+  const sectionFile = changeLogSectionFile(manualDir);
+  const stamped =
+    sectionFile !== null && stampFile(sectionFile, version, { commit, files: plan });
+  if (!stamped) {
+    console.log(
+      [
+        ``,
+        `  archivado, pero NINGUNA fila declara la versión ${version}.`,
+        `  Falta escribirla, y eso es resumir qué cambió para el lector: criterio,`,
+        `  no cálculo. Corra el asistente para que un agente la redacte.`,
+      ].join("\n"),
+    );
+    return 0;
+  }
+
+  console.log(
+    `  sellada la fila ${version} en ${basename(sectionFile as string)} (commit ${commit.slice(0, 7)})`,
+  );
+  return 0;
+}
+
 async function build(
   manualDir: string,
   filters: ReadonlyMap<string, string>,
@@ -1282,11 +1426,13 @@ export async function run(argv: readonly string[]): Promise<number> {
       command !== "awaiting" &&
       command !== "labels" &&
       command !== "extract" &&
+      command !== "deliver" &&
       command !== "capture") ||
     !manualId
   ) {
     console.error(
       `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table] [--docx]\n` +
+        `       broadsec-manual deliver <manual> ${axisFlags} [--version <x.y.z>]\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual labels <manual>\n` +
@@ -1295,6 +1441,12 @@ export async function run(argv: readonly string[]): Promise<number> {
         `  capture  shoot pending figures off the running product, per\n` +
         `           manuals/<manual>/capture-recipes.yaml. Needs the login in the\n` +
         `           environment variables that file NAMES — never in the file.\n` +
+        `  deliver  promote what is in output/ to an official delivery: copy the PDF\n` +
+        `           and Word file into deliveries/<manual>/, and stamp the change\n` +
+        `           log row with the commit and the SHA-256 of each file handed\n` +
+        `           over. Refuses on a dirty tree — the recorded commit would not\n` +
+        `           describe the archived bytes — and never overwrites a file\n` +
+        `           already archived. Drafts are excluded by construction.\n` +
         `  --draft  internal build: prints the filename every pending image must\n` +
         `           be delivered under. Never distribute a draft to a client.\n` +
         `  --pending-table\n` +
@@ -1389,6 +1541,11 @@ ${drift.length} change(s) since the previous map:`);
       // Reports, never blocks: what a renamed label should now say is a
       // judgement about the product, not something this command decides.
       return 0;
+    }
+
+    if (command === "deliver") {
+      console.log(`entregando ${manualId}${label ? ` (${label})` : ""}`);
+      return deliverManual(manualDir, filters, rest);
     }
 
     if (command === "awaiting") {
