@@ -125,11 +125,26 @@ export function stampProof(
   if (at === -1) return null;
 
   const indent = (lines[at] ?? "").match(/^\s*/)?.[0] ?? "          ";
+  // Grouped by target, then by filename. A target receives a SET — the PDF and
+  // the Word file — and the first version of this wrote one line per FILE under
+  // the target's own key. The two collided, YAML kept the last, and the PDF's
+  // hash vanished without a word. Grouping is what makes the collision
+  // impossible rather than merely unlikely.
+  const byTarget = new Map<string, DeliverableFile[]>();
+  for (const f of proof.files) {
+    const bucket = byTarget.get(f.axisValue);
+    if (bucket) bucket.push(f);
+    else byTarget.set(f.axisValue, [f]);
+  }
+
   const block = [
     `${indent}delivered:`,
     `${indent}  commit: ${proof.commit}`,
     `${indent}  files:`,
-    ...proof.files.map((f) => `${indent}    ${f.axisValue}: ${f.sha}`),
+    ...[...byTarget.entries()].flatMap(([axisValue, files]) => [
+      `${indent}    ${axisValue}:`,
+      ...files.map((f) => `${indent}      ${basename(f.path)}: ${f.sha}`),
+    ]),
   ];
 
   // After the row's `date:` when there is one, so the human-facing fields stay

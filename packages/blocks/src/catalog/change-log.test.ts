@@ -135,7 +135,10 @@ describe("delivery proof — the state is the evidence, not a flag", () => {
         ...row,
         delivered: {
           commit: "a9f780e",
-          files: { "agencia-propia": SHA, "todas-las-agencias": SHA },
+          files: {
+            "agencia-propia": { "m-ap.pdf": SHA, "m-ap.docx": SHA },
+            "todas-las-agencias": { "m-tla.pdf": SHA },
+          },
         },
       }),
     );
@@ -155,7 +158,7 @@ describe("delivery proof — the state is the evidence, not a flag", () => {
   ])("rejects %s as a hash — %s", (hash) => {
     expect(() =>
       changeLogProps.parse(
-        props({ ...row, delivered: { commit: "a9f780e", files: { mv: hash } } }),
+        props({ ...row, delivered: { commit: "a9f780e", files: { mv: { "m.pdf": hash } } } }),
       ),
     ).toThrow();
   });
@@ -169,7 +172,7 @@ describe("delivery proof — the state is the evidence, not a flag", () => {
   /** The anchor for "what changed since the last delivery". It has to be real. */
   it("rejects a commit that is not a git SHA", () => {
     expect(() =>
-      changeLogProps.parse(props({ ...row, delivered: { commit: "HEAD", files: { mv: SHA } } })),
+      changeLogProps.parse(props({ ...row, delivered: { commit: "HEAD", files: { mv: { "m.pdf": SHA } } } })),
     ).toThrow();
   });
 });

@@ -15,9 +15,17 @@ import type { BlockDefinition } from "../definition.ts";
  * since the last delivery" has no starting point and has to be remembered; with
  * it, the answer is `git log <commit>..HEAD` and there is nothing to remember.
  *
- * `files` is keyed by AXIS VALUE, because a delivery is per target: one round
- * can hand `mv` version 1.5.0 and `med` version 1.4.7 on the same day, and a
- * single hash could not describe that.
+ * `files` is AXIS VALUE -> FILENAME -> hash, and both levels are load-bearing.
+ *
+ * By axis value, because a delivery is per target: one round can hand `mv`
+ * version 1.5.0 and `med` version 1.4.7 on the same day.
+ *
+ * By filename UNDER it, because a target receives a SET — the PDF and the Word
+ * file, and one day perhaps more. The first version of this schema had one hash
+ * per target, and the two artefacts collided on the same YAML key: duplicates
+ * collapse silently, last one wins, and the PDF's hash was simply gone. Nothing
+ * downstream could have caught it, because by the time the schema sees the
+ * document the parser has already discarded the loser.
  *
  * The bytes themselves live in `deliveries/`, outside git — see its README for
  * why. This is the part that survives forever.
@@ -25,14 +33,21 @@ import type { BlockDefinition } from "../definition.ts";
 export const deliveryProof = z.object({
   /** The commit the delivered files were built from. Short or full SHA. */
   commit: z.string().regex(/^[0-9a-f]{7,40}$/, "commit must be a hex git SHA"),
-  /** Axis value -> SHA-256 of the file that target received. */
+  /** Axis value -> the files that target received, by name, each with its hash. */
   files: z
     .record(
       z.string().min(1),
-      z.string().regex(/^[0-9a-f]{64}$/, "must be a SHA-256, 64 hex characters"),
+      z
+        .record(
+          z.string().min(1),
+          z.string().regex(/^[0-9a-f]{64}$/, "must be a SHA-256, 64 hex characters"),
+        )
+        .refine((f) => Object.keys(f).length > 0, {
+          message: "a target with no files proves nothing — record one hash per file",
+        }),
     )
     .refine((f) => Object.keys(f).length > 0, {
-      message: "a delivery with no files proves nothing — record one hash per target",
+      message: "a delivery with no targets proves nothing",
     }),
 });
 

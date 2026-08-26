@@ -126,8 +126,8 @@ children:
   const proof = {
     commit: "8a0ab58",
     files: [
-      { axisValue: "agencia-propia", path: "x", sha: "a".repeat(64) },
-      { axisValue: "todas-las-agencias", path: "y", sha: "b".repeat(64) },
+      { axisValue: "agencia-propia", path: "out/ap.pdf", sha: "a".repeat(64) },
+      { axisValue: "todas-las-agencias", path: "out/tla.pdf", sha: "b".repeat(64) },
     ],
   };
 
@@ -135,8 +135,10 @@ children:
     const out = stampProof(SECTION, "1.0.0", proof) as string;
     expect(out).toContain("          delivered:");
     expect(out).toContain("            commit: 8a0ab58");
-    expect(out).toContain(`              agencia-propia: ${"a".repeat(64)}`);
-    expect(out).toContain(`              todas-las-agencias: ${"b".repeat(64)}`);
+    expect(out).toContain("            agencia-propia:");
+    expect(out).toContain(`              ap.pdf: ${"a".repeat(64)}`);
+    expect(out).toContain("            todas-las-agencias:");
+    expect(out).toContain(`              tla.pdf: ${"b".repeat(64)}`);
   });
 
   it("puts it after the date, leaving the human-facing fields together", () => {
@@ -168,5 +170,55 @@ children:
   it("does not confuse 1.0.0 with 1.0.01 or 11.0.0", () => {
     const odd = SECTION.replace("version: 1.0.0", "version: 11.0.0");
     expect(stampProof(odd, "1.0.0", proof)).toBeNull();
+  });
+});
+
+/**
+ * The defect a real run found. A target receives a SET — the PDF and the Word
+ * file — and the first version of `stampProof` wrote one line per FILE under
+ * the target's own key. The two collided on the same YAML key, duplicates
+ * collapse silently with the last one winning, and the PDF's hash was simply
+ * gone. Nothing downstream could have caught it: by the time the schema sees
+ * the document, the parser has already discarded the loser.
+ */
+describe("stampProof with more than one file per target", () => {
+  const SECTION = [
+    "        - id: historial.tabla.1-0-0",
+    "          version: 1.0.0",
+    "          date: 2026-08-26",
+    "          description: Primera entrega.",
+    "",
+  ].join("\n");
+
+  const two = {
+    commit: "f485b0d",
+    files: [
+      { axisValue: "agencia-propia", path: "out/m-ap-v1.0.0.pdf", sha: "a".repeat(64) },
+      { axisValue: "agencia-propia", path: "out/m-ap-v1.0.0.docx", sha: "b".repeat(64) },
+      { axisValue: "todas-las-agencias", path: "out/m-tla-v1.0.0.pdf", sha: "c".repeat(64) },
+      { axisValue: "todas-las-agencias", path: "out/m-tla-v1.0.0.docx", sha: "d".repeat(64) },
+    ],
+  };
+
+  it("groups by target and keys each file by its own name", () => {
+    const out = stampProof(SECTION, "1.0.0", two) as string;
+    expect(out).toContain("            agencia-propia:");
+    expect(out).toContain(`              m-ap-v1.0.0.pdf: ${"a".repeat(64)}`);
+    expect(out).toContain(`              m-ap-v1.0.0.docx: ${"b".repeat(64)}`);
+    expect(out).toContain("            todas-las-agencias:");
+  });
+
+  it("writes each target's key exactly once", () => {
+    const out = stampProof(SECTION, "1.0.0", two) as string;
+    const count = (needle: string): number =>
+      out.split("\n").filter((l) => l.trim().startsWith(needle)).length;
+    expect(count("agencia-propia:")).toBe(1);
+    expect(count("todas-las-agencias:")).toBe(1);
+  });
+
+  /** Every hash must survive. Losing one is the whole failure. */
+  it("keeps all four hashes", () => {
+    const out = stampProof(SECTION, "1.0.0", two) as string;
+    for (const c of ["a", "b", "c", "d"]) expect(out).toContain(c.repeat(64));
   });
 });

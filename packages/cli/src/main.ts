@@ -337,7 +337,7 @@ export function deliveryProofFor(
   children: readonly ManualNode[],
   version: string,
   axisValue: string,
-): { commit: string; sha: string } | undefined {
+): { commit: string; files: Readonly<Record<string, string>> } | undefined {
   for (const block of [...changeLogsIn(children).values()].flat()) {
     const rows = (block.props["rows"] ?? []) as ReadonlyArray<Record<string, unknown>>;
     for (const row of rows) {
@@ -345,9 +345,17 @@ export function deliveryProofFor(
       const proof = row["delivered"] as
         | { commit?: unknown; files?: Record<string, unknown> }
         | undefined;
-      const sha = proof?.files?.[axisValue];
-      if (typeof proof?.commit === "string" && typeof sha === "string") {
-        return { commit: proof.commit, sha };
+      const forTarget = proof?.files?.[axisValue];
+      // A target's entry is a map of filename to hash, and an EMPTY one is not
+      // a delivery: it would say "handed over, nothing handed" and the guard
+      // would treat it as history.
+      if (
+        typeof proof?.commit === "string" &&
+        forTarget !== null &&
+        typeof forTarget === "object" &&
+        Object.keys(forTarget).length > 0
+      ) {
+        return { commit: proof.commit, files: forTarget as Record<string, string> };
       }
     }
   }

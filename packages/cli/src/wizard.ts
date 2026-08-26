@@ -1028,10 +1028,24 @@ async function deliveryFlow(
   repoRoot: string,
   manuals: readonly ManualState[],
 ): Promise<number> {
+  // Named for the DECISION, not for the noun. The continuation flow also asks
+  // "¿Cuál manual?", and two identical questions doing different things read as
+  // one question the operator has already answered.
   const picked = await select(
     rl,
-    "¿Cuál manual?",
-    manuals.map((m) => ({ label: `${m.id}  ${dim(m.title)}`, value: m })),
+    "Paso 1 — ¿qué manual se entrega?",
+    manuals.map((m) => {
+      const built = builtDeliverables(join(repoRoot, "manuals", m.id));
+      const versions = versionsInOutput(built);
+      return {
+        label: `${m.id}  ${dim(m.title)}`,
+        detail:
+          built.length === 0
+            ? "sin nada construido en output/ — no hay qué entregar"
+            : `construido: ${versions.join(", ")}  (${built.length} archivo(s))`,
+        value: m,
+      };
+    }),
   );
   const manualDir = join(repoRoot, "manuals", picked.id);
 
@@ -1048,19 +1062,21 @@ async function deliveryFlow(
   for (const f of built) ui(`   ${dim("·")} ${f}`);
   ui("");
 
+  // ALWAYS ASKED, even when there is only one candidate. The first version of
+  // this skipped the question in that case, to save a keystroke — and the
+  // version is the one thing the owner authorises. Skipping the confirmation on
+  // the single most consequential and least reversible action in the pipeline,
+  // to save one key, is exactly backwards: the keystroke IS the authorisation.
   const versions = versionsInOutput(built);
-  const version =
-    versions.length === 1
-      ? (versions[0] as string)
-      : await select(
-          rl,
-          "¿Qué versión se entrega?",
-          versions.map((v) => ({
-            label: v,
-            detail: built.filter((f) => f.includes(`-v${v}.`)).join("  "),
-            value: v,
-          })),
-        );
+  const version = await select(
+    rl,
+    "Paso 2 — ¿qué versión se entrega oficialmente?",
+    versions.map((v) => ({
+      label: `v${v}`,
+      detail: built.filter((f) => f.includes(`-v${v}.`)).join("  "),
+      value: v,
+    })),
+  );
 
   const state = classifyDelivery(readChangeLogRows(manualDir), version);
   if (state.kind === "already-delivered") {
@@ -1075,6 +1091,35 @@ async function deliveryFlow(
     ui(dim(`   esa versión: archivarlo con ese nombre guardaría el documento equivocado.`));
     ui("");
     return 1;
+  }
+
+  // --- the last chance to stop ---------------------------------------------
+  //
+  // Everything after this point is meant to be permanent: the archive refuses
+  // to be overwritten and the row becomes history. A flow that reaches an
+  // irreversible act without ever saying what it is about to do has asked the
+  // operator to trust it, which is not the same as having their consent.
+  ui(bold(`Paso 3 — esto es lo que va a pasar`));
+  ui("");
+  ui(`   Se archivan en ${accent(`deliveries/${picked.id}/`)}, para no borrarse nunca:`);
+  for (const f of built.filter((f) => f.includes(`-v${version}.`))) ui(`      ${dim("·")} ${f}`);
+  ui("");
+  ui(
+    state.kind === "stamp"
+      ? `   Se sella la fila ${accent(version)}, que ya está escrita.`
+      : `   Se sella la fila ${accent(version)} y después un agente escribe su descripción.`,
+  );
+  ui("");
+  ui(dim(`   Una vez archivado no se pisa, y la fila pasa a ser historia.`));
+  ui("");
+  const go = await select(rl, "¿Entregamos?", [
+    { label: "No, todavía no", value: false },
+    { label: `Sí, entregar ${picked.id} v${version}`, value: true },
+  ]);
+  if (!go) {
+    ui(dim("   No se tocó nada."));
+    ui("");
+    return 0;
   }
 
   // --- the deterministic half, as the CLI's own command --------------------

@@ -535,14 +535,14 @@ describe("deliveryProofFor", () => {
   });
 
   const delivered = log([
-    { id: "r1", version: "1.0.0", delivered: { commit: "a9f780e", files: { mv: SHA_A } } },
-    { id: "r2", version: "1.1.0", delivered: { commit: "cd40d46", files: { mv: SHA_B, med: SHA_A } } },
+    { id: "r1", version: "1.0.0", delivered: { commit: "a9f780e", files: { mv: { "m-mv.pdf": SHA_A } } } },
+    { id: "r2", version: "1.1.0", delivered: { commit: "cd40d46", files: { mv: { "m-mv.pdf": SHA_B }, med: { "m-med.pdf": SHA_A } } } },
   ]);
 
   it("finds the proof for one version and one target", () => {
     expect(deliveryProofFor([delivered], "1.0.0", "mv")).toEqual({
       commit: "a9f780e",
-      sha: SHA_A,
+      files: { "m-mv.pdf": SHA_A },
     });
   });
 
@@ -574,7 +574,7 @@ describe("deliveryProofFor", () => {
   /** A half-written proof must not read as a delivery. */
   it("ignores a proof missing its commit or its hash", () => {
     const broken = log([
-      { id: "r1", version: "3.0.0", delivered: { files: { mv: SHA_A } } },
+      { id: "r1", version: "3.0.0", delivered: { files: { mv: { "m.pdf": SHA_A } } } },
       { id: "r2", version: "3.1.0", delivered: { commit: "a9f780e", files: {} } },
     ]);
     expect(deliveryProofFor([broken], "3.0.0", "mv")).toBeUndefined();
