@@ -105,3 +105,71 @@ describe("formatChangeLogDate", () => {
     expect(formatChangeLogDate("2026-12-31")).toBe("31/12/2026");
   });
 });
+
+describe("delivery proof — the state is the evidence, not a flag", () => {
+  const SHA = "f5eafb8dd59764899e79bbae5753f58a2b018e8780856102ed89fd7842b8a99a";
+  const row = {
+    id: "cl.1",
+    version: "1.0.0",
+    date: "2026-08-26",
+    description: "Primera entrega.",
+  };
+  const props = (r: Record<string, unknown>) => ({
+    versionHeader: "Versión",
+    dateHeader: "Fecha",
+    descriptionHeader: "Descripción de cambios",
+    rows: [r],
+  });
+
+  /**
+   * A row with no proof is a version declared but not handed over. That is the
+   * normal state of every row in this repository right now, so it must parse.
+   */
+  it("accepts a row with no proof — declared, not yet delivered", () => {
+    expect(() => changeLogProps.parse(props(row))).not.toThrow();
+  });
+
+  it("accepts a row carrying the commit and one hash per target", () => {
+    const parsed = changeLogProps.parse(
+      props({
+        ...row,
+        delivered: {
+          commit: "a9f780e",
+          files: { "agencia-propia": SHA, "todas-las-agencias": SHA },
+        },
+      }),
+    );
+    expect(Object.keys(parsed.rows[0]?.delivered?.files ?? {})).toHaveLength(2);
+  });
+
+  /**
+   * A truncated or mistyped hash proves nothing but looks like it does, which
+   * is worse than an absent one — it would pass a glance and fail a comparison
+   * years later, when nobody can tell whether the file or the record is wrong.
+   */
+  it.each([
+    ["f5eafb8d", "truncated"],
+    [`${SHA}00`, "too long"],
+    [SHA.toUpperCase(), "upper case, so a comparison against a lower-case digest fails"],
+    ["z".repeat(64), "right length, not hex"],
+  ])("rejects %s as a hash — %s", (hash) => {
+    expect(() =>
+      changeLogProps.parse(
+        props({ ...row, delivered: { commit: "a9f780e", files: { mv: hash } } }),
+      ),
+    ).toThrow();
+  });
+
+  it("rejects a proof with no files, which proves nothing", () => {
+    expect(() =>
+      changeLogProps.parse(props({ ...row, delivered: { commit: "a9f780e", files: {} } })),
+    ).toThrow();
+  });
+
+  /** The anchor for "what changed since the last delivery". It has to be real. */
+  it("rejects a commit that is not a git SHA", () => {
+    expect(() =>
+      changeLogProps.parse(props({ ...row, delivered: { commit: "HEAD", files: { mv: SHA } } })),
+    ).toThrow();
+  });
+});

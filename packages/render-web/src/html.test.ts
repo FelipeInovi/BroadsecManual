@@ -282,3 +282,44 @@ describe("change log — the manual's own delivery history", () => {
     expect(body(html())).not.toContain("tbl__icon");
   });
 });
+
+/**
+ * `delivered` is EVIDENCE, not content. It exists so the repository can prove
+ * which file a client received; the client's own document must show no sign of
+ * it. A page carrying a 64-character digest beside a version number would be
+ * absurd, and nothing else in the pipeline would notice.
+ */
+describe("delivery proof never reaches the page", () => {
+  const SHA = "f5eafb8dd59764899e79bbae5753f58a2b018e8780856102ed89fd7842b8a99a";
+
+  const withProof = [
+    block("s.changes", "change-log", {
+      versionHeader: "Versión",
+      dateHeader: "Fecha",
+      descriptionHeader: "Descripción de cambios",
+      rows: [
+        {
+          id: "s.changes.r1",
+          version: "1.0.0",
+          date: "2026-08-26",
+          description: "Primera entrega.",
+          delivered: { commit: "a9f780e", files: { "agencia-propia": SHA } },
+        },
+      ],
+    }),
+  ];
+
+  it("prints neither the hash nor the commit it was built from", () => {
+    const html = render(withProof, [], PENDING);
+    expect(html).not.toContain(SHA);
+    expect(html).not.toContain("a9f780e");
+    expect(html).not.toContain("agencia-propia");
+  });
+
+  it("still prints the row the reader is meant to see", () => {
+    const text = visible(render(withProof, [], PENDING));
+    expect(text).toContain("1.0.0");
+    expect(text).toContain("26/08/2026");
+    expect(text).toContain("Primera entrega.");
+  });
+});

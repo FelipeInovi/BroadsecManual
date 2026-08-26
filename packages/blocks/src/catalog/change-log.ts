@@ -3,6 +3,42 @@ import { selectorSchema } from "../conditioning.ts";
 import type { BlockDefinition } from "../definition.ts";
 
 /**
+ * Proof that a version was actually handed to the client, and of exactly what.
+ *
+ * ITS PRESENCE IS THE STATE. A row carrying this was delivered and is now a
+ * historical FACT — what the client holds, not what we think we sent. A row
+ * without it is a version declared but not yet handed over. Modelling the state
+ * as the absence of proof rather than as a `delivered: true` flag is deliberate:
+ * a flag is a claim somebody typed, and a claim can be wrong. A hash cannot.
+ *
+ * `commit` is the anchor everything downstream needs. Without it, "what changed
+ * since the last delivery" has no starting point and has to be remembered; with
+ * it, the answer is `git log <commit>..HEAD` and there is nothing to remember.
+ *
+ * `files` is keyed by AXIS VALUE, because a delivery is per target: one round
+ * can hand `mv` version 1.5.0 and `med` version 1.4.7 on the same day, and a
+ * single hash could not describe that.
+ *
+ * The bytes themselves live in `deliveries/`, outside git — see its README for
+ * why. This is the part that survives forever.
+ */
+export const deliveryProof = z.object({
+  /** The commit the delivered files were built from. Short or full SHA. */
+  commit: z.string().regex(/^[0-9a-f]{7,40}$/, "commit must be a hex git SHA"),
+  /** Axis value -> SHA-256 of the file that target received. */
+  files: z
+    .record(
+      z.string().min(1),
+      z.string().regex(/^[0-9a-f]{64}$/, "must be a SHA-256, 64 hex characters"),
+    )
+    .refine((f) => Object.keys(f).length > 0, {
+      message: "a delivery with no files proves nothing — record one hash per target",
+    }),
+});
+
+export type DeliveryProof = z.infer<typeof deliveryProof>;
+
+/**
  * One delivered version of the manual.
  *
  * `version` is the version DELIVERED TO THE CLIENT, which is not the same
@@ -32,6 +68,8 @@ export const changeLogRow = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "date must be ISO YYYY-MM-DD"),
   description: z.string().min(1),
+  /** Present once the version has actually been handed over. See above. */
+  delivered: deliveryProof.optional(),
   when: selectorSchema.optional(),
 });
 
@@ -61,7 +99,8 @@ export function formatChangeLogDate(iso: string): string {
 
 export const changeLog: BlockDefinition<ChangeLogProps> = {
   type: "change-log",
-  version: "0.1.0",
+  // 0.2.0: `delivered` added. A new optional prop is a MINOR.
+  version: "0.2.0",
   description:
     "The manual's own delivery history: one row per version handed to the " +
     "client, with the date and a short statement of what that delivery " +
@@ -69,7 +108,9 @@ export const changeLog: BlockDefinition<ChangeLogProps> = {
     "data-table, whose two columns quote the PRODUCT and feed the label " +
     "citation check — every word in a change log is the manual's own, and a " +
     "version number is not a UI label. Rows condition individually, because " +
-    "a version delivered to one target and not another is normal.",
+    "a version delivered to one target and not another is normal. A row may " +
+    "carry `delivered`, the proof of what the client actually received; that " +
+    "proof is metadata and never reaches the page.",
   schema: changeLogProps,
   children: { kind: "none" },
   // No `numbering`: the version column IS the row's identity, and a second
