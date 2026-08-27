@@ -3,7 +3,6 @@ import type { ManualNode } from "@broadsec-manual/blocks";
 import {
   assertChangeLog,
   deliveryProofFor,
-  undeliveredFilename,
   deliveredVersion,
   axisValueName,
   draftFilename,
@@ -11,6 +10,7 @@ import {
   imageRequests,
   manualConfigSchema,
   outputFilename,
+  workFilename,
   parseAxisFilters,
   parseOutPath,
   primaryAxis,
@@ -347,6 +347,34 @@ describe("outputFilename", () => {
   });
 });
 
+describe("workFilename", () => {
+  const config: ManualConfig = {
+    ...baseConfig,
+    output: { dir: "output", filename: "manual-operador-{tenant}-v{contentVersion}.pdf" },
+  };
+
+  it("replaces the whole version segment, `v` included", () => {
+    expect(workFilename(config, { tenant: "mv" }, 8)).toBe("manual-operador-mv-trabajo-08.pdf");
+  });
+
+  it("never produces a name that could be read as a version", () => {
+    expect(workFilename(config, { tenant: "mv" }, 8)).not.toMatch(/-v/);
+  });
+
+  it("keeps the prefix a template chose when it writes the token bare", () => {
+    const bare: ManualConfig = {
+      ...baseConfig,
+      output: { dir: "output", filename: "catalogo-{tenant}-{contentVersion}.pdf" },
+    };
+    expect(workFilename(bare, { tenant: "mv" }, 3)).toBe("catalogo-mv-trabajo-03.pdf");
+  });
+
+  it("stops padding once the number outgrows two digits", () => {
+    expect(workFilename(config, { tenant: "mv" }, 117)).toBe("manual-operador-mv-trabajo-117.pdf");
+  });
+});
+
+
 describe("axisValueName", () => {
   it("resolves the declared display name for an axis value", () => {
     expect(axisValueName(baseConfig, "tenant", "mv")).toBe("Movilidad Medellín");
@@ -509,16 +537,15 @@ describe("deliveredVersion", () => {
   });
 });
 
-describe("undeliveredFilename", () => {
-  it("marks the build so it cannot be mistaken for the delivered file", () => {
-    expect(undeliveredFilename("manual-operador-mv-v1.0.0.pdf")).toBe(
-      "manual-operador-mv-v1.0.0-NO-ENTREGADO.pdf",
-    );
-  });
+describe("the working number and the draft marker compose", () => {
+  const config: ManualConfig = {
+    ...baseConfig,
+    output: { dir: "output", filename: "manual-operador-{tenant}-v{contentVersion}.pdf" },
+  };
 
-  it("composes with the draft marker rather than fighting it", () => {
-    expect(draftFilename(undeliveredFilename("m-v1.0.0.pdf"))).toBe(
-      "m-v1.0.0-NO-ENTREGADO-BORRADOR.pdf",
+  it("marks a draft of a working build without either marker eating the other", () => {
+    expect(draftFilename(workFilename(config, { tenant: "mv" }, 8))).toBe(
+      "manual-operador-mv-trabajo-08-BORRADOR.pdf",
     );
   });
 });

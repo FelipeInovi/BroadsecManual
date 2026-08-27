@@ -34,9 +34,10 @@ import { printToPdf } from "./chrome.ts";
 import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
-import { headCommit, isDirty, isExactly } from "./git.ts";
+import { headCommit, isDirty } from "./git.ts";
 import { archive, planDelivery, stampFile } from "./deliver.ts";
 import { changeLogSectionFile } from "./delivery-state.ts";
+import { nextWorkNumber, workStamp } from "./naming.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
 import { DEFAULT_PENDING_INSTRUCTION, pendingTable } from "./pending-table.ts";
@@ -300,33 +301,6 @@ export function assertChangeLog(
 }
 
 /**
- * The version this target was DELIVERED at: the highest row of its change log.
- *
- * Read from the ASSEMBLED manual, after conditioning, which is the whole point.
- * `contentVersion` is one scalar per manual and cannot say that `mv` received
- * 1.5.0 while `med` stopped at 1.4.7 — but the rows carry their own selectors,
- * so once a target is assembled its table already holds only what that target
- * received. The bottom of that table is what its cover should print.
- *
- * Falls back to the config field for a manual with no change log at all, so
- * `_catalog` and `bridge-primera-entrega` keep building unchanged.
- */
-/**
- * Mark a build that is NOT the delivered document it would otherwise be named
- * after.
- *
- * `…-v1.0.0.pdf` -> `…-v1.0.0-NO-ENTREGADO.pdf`, the same shape `draftFilename`
- * uses and for the same reason: two files that differ only in their contents
- * are two files nobody can tell apart in a folder listing.
- */
-export function undeliveredFilename(name: string): string {
-  const dot = name.lastIndexOf(".");
-  return dot <= 0
-    ? `${name}-NO-ENTREGADO`
-    : `${name.slice(0, dot)}-NO-ENTREGADO${name.slice(dot)}`;
-}
-
-/**
  * The proof recorded for one target at one version, if that version was
  * delivered to it.
  *
@@ -362,6 +336,25 @@ export function deliveryProofFor(
   return undefined;
 }
 
+/**
+ * The version this target was DELIVERED at: the highest row of its change log.
+ *
+ * Read from the ASSEMBLED manual, after conditioning, which is the whole point.
+ * `contentVersion` is one scalar per manual and cannot say that `mv` received
+ * 1.5.0 while `med` stopped at 1.4.7 — but the rows carry their own selectors,
+ * so once a target is assembled its table already holds only what that target
+ * received. The bottom of that table is what its cover should print.
+ *
+ * STILL THE HIGHEST ROW, delivered or not, now that working builds are named by
+ * their working number instead of by this. The alternative — the highest
+ * DELIVERED row — was considered and rejected: the reader's eye lands on the
+ * last line of the table, and a cover printing a different number than the
+ * bottom of that table is the incoherence this function exists to prevent.
+ * While no new row is written, the highest one IS the previous delivery.
+ *
+ * Falls back to the config field for a manual with no change log at all, so
+ * `_catalog` and `bridge-primera-entrega` keep building unchanged.
+ */
 export function deliveredVersion(children: readonly ManualNode[], fallback: string): string {
   const blocks = [...changeLogsIn(children).values()].flat();
   const rows = blocks.flatMap(
@@ -692,6 +685,28 @@ export function outputFilename(
   return config.output.filename
     .replace(`{${axis}}`, requireAxisValue(target, axis))
     .replace("{contentVersion}", version);
+}
+
+/**
+ * The name a WORKING build carries: `…-trabajo-08.pdf`, never a version.
+ *
+ * Substitutes the template's whole `v{contentVersion}` segment rather than the
+ * token alone, because the `v` belongs to the version and a file called
+ * `…-vtrabajo-08.pdf` would read as a version with a typo in it. Every config
+ * spells the segment that way; a template that writes the token bare still
+ * works, it just keeps whatever prefix it chose.
+ */
+export function workFilename(
+  config: ManualConfig,
+  target: BuildTarget,
+  workNumber: number,
+): string {
+  const axis = primaryAxis(config);
+  const stamp = workStamp(workNumber);
+  const named = config.output.filename.replace(`{${axis}}`, requireAxisValue(target, axis));
+  return named.includes("v{contentVersion}")
+    ? named.replace("v{contentVersion}", stamp)
+    : named.replace("{contentVersion}", stamp);
 }
 
 /**
@@ -1070,13 +1085,19 @@ async function buildDocx(
 }
 
 /**
- * Promote what is in `output/` to an official delivery.
+ * Promote a manual to an official delivery: render it, archive it, stamp it.
+ *
+ * RENDERS THE OFFICIAL DOCUMENT ITSELF rather than looking for one. Ordinary
+ * builds are named by their working number, so no `…-v1.0.1.pdf` exists until
+ * this runs — which removes the whole class of mistake where the file in
+ * `output/` was named after a version but built from different content.
  *
  * REFUSES ON A DIRTY TREE, first and before anything else. The proof records
  * the commit the files were built from; with uncommitted changes that commit
  * does not describe the bytes being archived, and the record would be wrong
  * from the moment it was written. A wrong proof is worse than none, because it
- * looks like authority.
+ * looks like authority. It is also what forces the change-log row to be
+ * committed BEFORE the delivery runs: the row is part of the document.
  *
  * Only ever STAMPS a row that already declares the version. When none does, it
  * archives, says so, and stops — writing that row means summarising what
@@ -1145,13 +1166,22 @@ async function deliverManual(
     return 1;
   }
 
+  // THE OFFICIAL DOCUMENT IS RENDERED HERE, and this is the only place that
+  // renders one. Ordinary builds are named by their working number, so a
+  // `…-v1.0.1.pdf` cannot exist until a delivery decides it should — which
+  // means the file being archived was built from the commit the proof names,
+  // in this run, rather than found in a directory and assumed to match.
+  console.log(`  construyendo el documento oficial v${version}`);
+  await build(manualDir, filters, false, false, true, version);
+
   const { plan, missing } = planDelivery(outDir, version, expected);
   if (missing.length > 0) {
     console.error(
       [
         ``,
-        `faltan en output/ los archivos de ${missing.join(", ")} para la versión ${version}.`,
-        `  Construya primero: broadsec-manual build ${basename(manualDir)} --docx`,
+        `el documento oficial de ${missing.join(", ")} no quedó en output/ después de`,
+        `  construirlo. Eso es un fallo del build, no algo que corregir a mano: revise`,
+        `  lo que imprimió arriba antes de volver a intentar.`,
       ].join("\n"),
     );
     return 1;
@@ -1194,12 +1224,24 @@ async function deliverManual(
   return 0;
 }
 
+/**
+ * Render a manual's targets into `output/`.
+ *
+ * TWO KINDS OF BUILD, and the difference is what the files are called. A
+ * working build is named by the next working number and is what every ordinary
+ * run produces; an OFFICIAL build is named by a version and is produced only
+ * from inside a delivery, which is the one moment a version is authorised.
+ * Both go through this same function on purpose — a delivery rendered by a
+ * second code path would be the one document nobody had tested.
+ */
 async function build(
   manualDir: string,
   filters: ReadonlyMap<string, string>,
   draft: boolean,
   wantPendingTable: boolean,
   wantDocx: boolean,
+  /** Set only by a delivery: the version being promoted. */
+  official: string | null = null,
 ): Promise<void> {
   const { config, doc, warnings, pending, targets, figuresDir, coverMark } = loadManual(
     manualDir,
@@ -1207,6 +1249,11 @@ async function build(
   );
   const outDir = join(manualDir, config.output.dir);
   mkdirSync(outDir, { recursive: true });
+
+  // ONE NUMBER PER RUN, read before anything is written so every target this
+  // run renders shares it. See `nextWorkNumber`.
+  const workNumber =
+    official === null ? nextWorkNumber(readdirSync(outDir)) : null;
 
   const polyfill = pagedRuntime();
   // Undeclared images can only be judged once EVERY target has been resolved —
@@ -1221,31 +1268,24 @@ async function build(
     // Derived from the ASSEMBLED manual, so each target reports the version it
     // actually received. See `deliveredVersion`.
     const version = deliveredVersion(manual.children, config.manual.contentVersion);
-    const rendered = outputFilename(config, target, version);
 
-    // A DELIVERED VERSION IS A FACT, and this build may no longer be it.
-    //
-    // The guard renames rather than refuses, on purpose. Refusing would make
-    // the repository unbuildable the day after a delivery: the highest row
-    // stays delivered while work continues, so every build would fail and the
-    // lock would close with the operator inside. What must never be reused is
-    // the NAME — a file called v1.0.0 whose bytes are not the ones the client
-    // holds is a lie that no later check can catch.
-    //
-    // `isExactly` returns null when git cannot answer. That is not treated as
-    // "safe": an unanswerable question is marked, because a guard that
-    // silently stops guarding is worse than none.
-    const proof = deliveryProofFor(manual.children, version, tenant);
-    const stillTheDelivered = proof === undefined ? true : isExactly(manualDir, proof.commit);
-    const superseded = proof !== undefined && stillTheDelivered !== true;
-    if (superseded) {
-      console.log(
-        `  ${version} ya fue entregada${stillTheDelivered === null ? " (git no responde, se marca por las dudas)" : ""}` +
-          ` — esta construcción se marca NO-ENTREGADO para no pisar el archivo del cliente.`,
+    // AN OFFICIAL BUILD MUST BE THE VERSION IT CLAIMS. The version on the page
+    // comes from the highest row of this target's change log, so asking for a
+    // version no row declares would print one number and file it under
+    // another. The row is written before the delivery renders, always — which
+    // is why this can be an assertion rather than a fallback.
+    if (official !== null && official !== version) {
+      throw new Error(
+        `official build asked for ${official}, but the highest change-log row for ` +
+          `${tenant} is ${version}. The row has to be written and committed before ` +
+          `the delivery renders, or the document would print a version it is not.`,
       );
     }
 
-    const base = superseded ? undeliveredFilename(rendered) : rendered;
+    const base =
+      official === null
+        ? workFilename(config, target, workNumber as number)
+        : outputFilename(config, target, official);
     const name = draft ? draftFilename(base) : base;
 
     const { entries, slots, images, uses } = resolveTargetImages(manual, figuresDir, tenant);
@@ -1260,9 +1300,20 @@ async function build(
     }
     // Composed once and handed to every renderer, so the Word deliverable and
     // the PDF cannot disagree about what the document is called.
+    //
+    // A WORKING BUILD SAYS SO ON EVERY PAGE. `v1.0.0` on its own would be true
+    // of the version this content iterates on and false about the document in
+    // the reader's hands, and the header is the one line that repeats often
+    // enough to be seen. The filename carries the same number; two signals for
+    // the same fact is what makes a working build impossible to mistake for a
+    // delivered one.
+    const stamped =
+      workNumber === null
+        ? `v${version}`
+        : `v${version} · ${workStamp(workNumber).replace("-", " ")}`;
     const headerLine = draft
-      ? `BORRADOR INTERNO  |  ${config.manual.title}  |  v${version}  |  NO DISTRIBUIR`
-      : `${brand}  |  ${config.manual.title}  |  v${version}`;
+      ? `BORRADOR INTERNO  |  ${config.manual.title}  |  ${stamped}  |  NO DISTRIBUIR`
+      : `${brand}  |  ${config.manual.title}  |  ${stamped}`;
     const cover = {
       // The mark rides on the DRAFT cover too. A draft is for the person taking
       // captures, and a cover that looks like the real one is how they can tell
