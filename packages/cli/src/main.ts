@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
@@ -35,8 +35,8 @@ import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
 import { commitFile, headCommit, isDirty } from "./git.ts";
-import { archive, planDelivery, stampFile } from "./deliver.ts";
-import { changeLogSectionFile } from "./delivery-state.ts";
+import { archive, planDelivery, stampFile, unstampFile } from "./deliver.ts";
+import { changeLogSectionFile, proofFor, type ChangeLogRowLike } from "./delivery-state.ts";
 import { nextWorkNumber, workStamp } from "./naming.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
@@ -316,21 +316,15 @@ export function deliveryProofFor(
     const rows = (block.props["rows"] ?? []) as ReadonlyArray<Record<string, unknown>>;
     for (const row of rows) {
       if (String(row["version"]) !== version) continue;
-      const proof = row["delivered"] as
-        | { commit?: unknown; files?: Record<string, unknown> }
-        | undefined;
-      const forTarget = proof?.files?.[axisValue];
-      // A target's entry is a map of filename to hash, and an EMPTY one is not
-      // a delivery: it would say "handed over, nothing handed" and the guard
-      // would treat it as history.
-      if (
-        typeof proof?.commit === "string" &&
-        forTarget !== null &&
-        typeof forTarget === "object" &&
-        Object.keys(forTarget).length > 0
-      ) {
-        return { commit: proof.commit, files: forTarget as Record<string, string> };
-      }
+      // The WALK is this function's job; the judgement is `proofFor`'s. The
+      // wizard asks the same question of rows read straight off a section file,
+      // and two implementations of "does this count as a delivery" is how one
+      // of them comes to say yes where the other says no.
+      const found = proofFor(
+        { version, delivered: row["delivered"] as ChangeLogRowLike["delivered"] },
+        axisValue,
+      );
+      if (found !== undefined) return found;
     }
   }
   return undefined;
@@ -1261,6 +1255,143 @@ async function deliverManual(
 }
 
 /**
+ * Undo a delivery that never left the building.
+ *
+ * THIS EXISTS FOR A MISTAKE OF OURS, never for a document somebody received.
+ * Everything else in this pipeline is built to make a delivery unerasable —
+ * `archive` refuses to overwrite, the proof is committed, a delivered version
+ * cannot be delivered again — and all of that is correct. What those guards
+ * protect is a FACT ABOUT THE WORLD: a client has a PDF. When nobody received
+ * anything, the only fact is about our own machinery, and a wrong record of our
+ * machinery is worth removing rather than preserving.
+ *
+ * The repository cannot tell the two apart, so it does not try to guess:
+ * `--not-handed-over` is the caller ASSERTING it. The flag is the assertion, it
+ * is required, and it is what a reader of a shell history sees.
+ *
+ * NEVER REWRITES HISTORY. The stamp's commit stays and a commit undoing it is
+ * added, so anyone reading the table in six months can tell "never delivered"
+ * from "delivered and undone". A clean history bought by erasing a commit would
+ * be a history that answers that question wrong.
+ */
+async function undeliverManual(
+  manualDir: string,
+  filters: ReadonlyMap<string, string>,
+  args: readonly string[],
+): Promise<number> {
+  const { config, doc, targets } = loadManual(manualDir, filters);
+  const axis = primaryAxis(config);
+  const repoRoot = resolve(process.cwd());
+
+  if (!args.includes("--not-handed-over")) {
+    console.error(
+      [
+        ``,
+        `falta --not-handed-over, y no es burocracia.`,
+        `  Este comando borra archivos de deliveries/ y saca la prueba de la fila.`,
+        `  Sobre un documento que un cliente YA TIENE, eso deja al repositorio`,
+        `  afirmando que no existe algo que existe — y para publicar un cambio hace`,
+        `  falta una versión nueva, no borrar la anterior.`,
+        `  El repositorio no puede saber si salió. Usted sí, y el flag es decirlo.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+
+  const at = args.indexOf("--version");
+  const version = at === -1 ? undefined : args[at + 1];
+  if (version === undefined) {
+    console.error("\nfalta --version <N.N.N>: qué entrega se deshace.");
+    return 1;
+  }
+
+  // Same reason `deliver` refuses: the commit at the end is only safe while
+  // this command's own change is the only one in the tree.
+  const dirty = isDirty(repoRoot);
+  if (dirty !== false) {
+    const why = dirty === null ? " (o git no responde)" : "";
+    console.error(
+      [
+        ``,
+        `el árbol tiene cambios sin commitear${why}.`,
+        `  Deshacer termina en un commit, y con otros cambios sueltos ese commit se`,
+        `  llevaría trabajo que nadie pidió deshacer.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+
+  const sectionFile = changeLogSectionFile(manualDir);
+  if (sectionFile === null) {
+    console.error("\neste manual no tiene Historial de cambios, así que no tiene nada entregado.");
+    return 1;
+  }
+
+  const undone: { value: string; files: readonly string[] }[] = [];
+  for (const target of targets) {
+    const value = requireAxisValue(target, axis);
+    const assembled = assemble(doc, target, catalog);
+    if (deliveryProofFor(assembled.children, version, value) === undefined) {
+      console.error(
+        [
+          ``,
+          `${value} no tiene la versión ${version} entregada, así que no hay nada que`,
+          `  deshacer. Nada se tocó.`,
+        ].join("\n"),
+      );
+      return 1;
+    }
+  }
+
+  // Split from the check above ON PURPOSE: nothing is deleted until every
+  // target asked for has been confirmed as deliverable-back. A run that undid
+  // `mv` and then refused on `med` would leave half a delivery, and half a
+  // delivery is the state this whole flow exists to prevent.
+  for (const target of targets) {
+    const value = requireAxisValue(target, axis);
+    const named = unstampFile(sectionFile, version, value);
+    if (named === null) {
+      console.error(`\nla prueba de ${value} desapareció entre la lectura y el borrado.`);
+      return 1;
+    }
+    for (const file of named) {
+      const path = join(repoRoot, "deliveries", config.manual.id, file);
+      if (existsSync(path)) {
+        unlinkSync(path);
+        console.log(`  borrado -> deliveries/${config.manual.id}/${file}`);
+      } else {
+        console.log(`  ya no estaba -> deliveries/${config.manual.id}/${file}`);
+      }
+    }
+    undone.push({ value, files: named });
+  }
+
+  const label = undone.map((u) => u.value).join(", ");
+  console.log(`  quitada la prueba de ${label} en la fila ${version}`);
+
+  const committed = commitFile(
+    repoRoot,
+    sectionFile,
+    `revert(deliver): ${config.manual.id} ${label} v${version} — entrega deshecha, no salió`,
+  );
+  if (!committed) {
+    console.error(
+      [
+        ``,
+        `BORRADO Y QUITADA LA PRUEBA, pero el commit FALLÓ.`,
+        `  Commitee a mano ${basename(sectionFile)}, o la fila queda diciendo una cosa`,
+        `  en el árbol y otra en la historia.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+  console.log(`  commiteado`);
+  console.log(``);
+  console.log(`  ${version} vuelve a estar disponible para entregar.`);
+  return 0;
+}
+
+/**
  * Render a manual's targets into `output/`.
  *
  * TWO KINDS OF BUILD, and the difference is what the files are called. A
@@ -1505,12 +1636,14 @@ export async function run(argv: readonly string[]): Promise<number> {
       command !== "labels" &&
       command !== "extract" &&
       command !== "deliver" &&
+      command !== "undeliver" &&
       command !== "capture") ||
     !manualId
   ) {
     console.error(
       `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table] [--docx]\n` +
         `       broadsec-manual deliver <manual> ${axisFlags} [--version <x.y.z>]\n` +
+        `       broadsec-manual undeliver <manual> ${axisFlags} --version <x.y.z> --not-handed-over\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual labels <manual>\n` +
@@ -1624,6 +1757,11 @@ ${drift.length} change(s) since the previous map:`);
     if (command === "deliver") {
       console.log(`entregando ${manualId}${label ? ` (${label})` : ""}`);
       return deliverManual(manualDir, filters, rest);
+    }
+
+    if (command === "undeliver") {
+      console.log(`deshaciendo la entrega de ${manualId}${label ? ` (${label})` : ""}`);
+      return undeliverManual(manualDir, filters, rest);
     }
 
     if (command === "awaiting") {

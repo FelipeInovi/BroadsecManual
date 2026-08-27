@@ -33,7 +33,56 @@ export interface ChangeLogRowLike {
   readonly version: string;
   /** The row's own conditioning. Absent means every target holds it. */
   readonly when?: Selector | undefined;
-  readonly delivered?: { readonly commit?: unknown } | undefined;
+  readonly delivered?:
+    | { readonly commit?: unknown; readonly files?: Record<string, unknown> }
+    | undefined;
+}
+
+/**
+ * The proof one row records FOR ONE TARGET, or undefined if it records none.
+ *
+ * Per target, not per version: a row can have been handed to `mv` and not to
+ * `med`, so a version being delivered somewhere says nothing about here. A row
+ * that carries a commit but no entry for this target is not a delivery of this
+ * document, and reading it as one is how a target gets told it received
+ * something it never did.
+ *
+ * An EMPTY entry is not a delivery either. It would say "handed over, nothing
+ * handed", and a guard that accepts it treats a bookkeeping slip as history.
+ *
+ * The single home for this rule. `deliveryProofFor` in `main.ts` walks blocks
+ * out of an assembled manual and then asks this — the walk differs, the
+ * judgement must not.
+ */
+export function proofFor(
+  row: ChangeLogRowLike,
+  axisValue: string,
+): { readonly commit: string; readonly files: Readonly<Record<string, string>> } | undefined {
+  const proof = row.delivered;
+  const forTarget = proof?.files?.[axisValue];
+  if (
+    typeof proof?.commit === "string" &&
+    forTarget !== null &&
+    typeof forTarget === "object" &&
+    Object.keys(forTarget).length > 0
+  ) {
+    return { commit: proof.commit, files: forTarget as Record<string, string> };
+  }
+  return undefined;
+}
+
+/** The versions this target actually received, newest last. */
+export function deliveredFor(
+  rows: readonly ChangeLogRowLike[],
+  axisValue: string,
+): readonly { readonly version: string; readonly files: readonly string[] }[] {
+  return rows
+    .filter((r) => proofFor(r, axisValue) !== undefined)
+    .map((r) => ({
+      version: r.version,
+      files: Object.keys(proofFor(r, axisValue)?.files ?? {}),
+    }))
+    .sort((a, b) => compare(a.version, b.version));
 }
 
 /**

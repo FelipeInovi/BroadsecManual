@@ -257,6 +257,38 @@ the time it commits. Nothing unrelated can be swept in. And of every step in a
 delivery it is the least irreversible — a commit can be amended, an archived
 file cannot be un-archived.
 
+### Undoing a delivery, and the one question that decides it
+
+`pnpm manuales` → "Deshacer una entrega que no salió". It deletes the archived
+files, takes that target's proof off the row, and commits the undo.
+
+**It asks whether the document reached anybody, and the answer is a gate, not a
+warning.** The question is about the WORLD, because the repository cannot know
+it — only the person who ran the delivery does.
+
+- **It reached someone** → refused. A delivered document is superseded by a new
+  version, never unpublished. Erasing its proof would leave this repository
+  asserting that something a client is holding does not exist, and the next time
+  anyone asks "which version does the client have?" the answer would be false.
+  Offering an override here would make every other guard in the pipeline
+  decorative.
+- **It never left** → the only wrong record is about our own machinery, and that
+  is worth removing rather than preserving.
+
+Two properties worth holding on to:
+
+- **It never rewrites history.** The stamp's commit stays and a commit undoing
+  it is added, so a reader can tell "never delivered" from "delivered and
+  undone". A clean history bought by erasing a commit answers that question
+  wrong.
+- **It is PER TARGET**, because the proof is. Undoing `mv` leaves `med`'s proof
+  and `med`'s archived bytes exactly where they were; the `delivered` block goes
+  only when its last target does.
+
+Afterwards that version is deliverable again with nothing else to do — the row
+and its description are untouched, so `classifyDelivery` simply returns `stamp`
+for it once more.
+
 **A version that already has a row is the SIMPLEST delivery, not a rejection.**
 Every manual in this repository sits in exactly that state — rows written, none
 handed over — so the first delivery of each is a version its table already

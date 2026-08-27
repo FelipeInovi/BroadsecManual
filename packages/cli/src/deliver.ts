@@ -166,3 +166,115 @@ export function stampFile(
   writeFileSync(sectionFile, stamped, "utf8");
   return true;
 }
+
+const indentOf = (line: string): number => (line.match(/^\s*/)?.[0] ?? "").length;
+
+/**
+ * Take one target's proof back off a row.
+ *
+ * THE INVERSE OF `stampProof`, and text surgery for the same reason: a YAML
+ * round-trip would reformat every section it touches and lose the comments that
+ * carry this repository's reasoning.
+ *
+ * PER TARGET, because the proof is per target. Removing the whole `delivered:`
+ * block to undo one document would erase the record of the OTHER one — which
+ * still went out, and whose bytes are still in the archive. The block itself is
+ * removed only when the last target leaves it: an empty `delivered:` would say
+ * "handed over, nothing handed", and `deliveryProofFor` already treats that as
+ * a lie worth guarding against.
+ *
+ * Returns null when there is nothing to undo — no such row, no proof, or no
+ * entry for that target. Null is not a failure to report as an error; it is the
+ * caller's signal that this document was never delivered at that version.
+ */
+export function unstampProof(
+  yaml: string,
+  version: string,
+  axisValue: string,
+): { readonly yaml: string; readonly files: readonly string[] } | null {
+  const lines = yaml.split("\n");
+  const at = lines.findIndex((l) =>
+    new RegExp(`^\\s*version:\\s*${version.replace(/\./g, "\\.")}\\s*$`).test(l),
+  );
+  if (at === -1) return null;
+  const rowIndent = indentOf(lines[at] ?? "");
+
+  // Bounded to THIS row. Scanning to the end of the file would find the next
+  // row's proof and quietly undo a delivery nobody asked about.
+  let delivered = -1;
+  for (let i = at + 1; i < lines.length; i++) {
+    const line = lines[i] ?? "";
+    if (line.trim() === "") continue;
+    if (indentOf(line) < rowIndent) break;
+    if (indentOf(line) === rowIndent && /^\s*-\s/.test(line)) break;
+    if (indentOf(line) === rowIndent && /^\s*delivered:\s*$/.test(line)) {
+      delivered = i;
+      break;
+    }
+  }
+  if (delivered === -1) return null;
+
+  // Everything indented deeper than `delivered:` belongs to it.
+  let afterBlock = delivered + 1;
+  while (afterBlock < lines.length) {
+    const line = lines[afterBlock] ?? "";
+    if (line.trim() !== "" && indentOf(line) <= rowIndent) break;
+    afterBlock += 1;
+  }
+
+  const body = lines.slice(delivered + 1, afterBlock);
+  const filesAt = body.findIndex((l) => /^\s*files:\s*$/.test(l));
+  if (filesAt === -1) return null;
+  const filesIndent = indentOf(body[filesAt] ?? "");
+
+  const targetAt = body.findIndex(
+    (l, i) =>
+      i > filesAt &&
+      indentOf(l) === filesIndent + 2 &&
+      l.trim() === `${axisValue}:`,
+  );
+  if (targetAt === -1) return null;
+
+  let afterTarget = targetAt + 1;
+  const named: string[] = [];
+  while (afterTarget < body.length) {
+    const line = body[afterTarget] ?? "";
+    if (line.trim() !== "" && indentOf(line) <= filesIndent + 2) break;
+    const file = /^\s*([^\s:]+):\s*[0-9a-f]{64}\s*$/.exec(line);
+    if (file?.[1] !== undefined) named.push(file[1]);
+    afterTarget += 1;
+  }
+
+  // Was that the only target? Then the block goes, not just the entry.
+  const remaining = body.filter(
+    (l, i) =>
+      i > filesAt &&
+      (i < targetAt || i >= afterTarget) &&
+      l.trim() !== "" &&
+      indentOf(l) === filesIndent + 2,
+  );
+
+  const kept =
+    remaining.length === 0
+      ? [...lines.slice(0, delivered), ...lines.slice(afterBlock)]
+      : [
+          ...lines.slice(0, delivered + 1),
+          ...body.slice(0, targetAt),
+          ...body.slice(afterTarget),
+          ...lines.slice(afterBlock),
+        ];
+
+  return { yaml: kept.join("\n"), files: named };
+}
+
+/** Take the proof off on disk. Null when there was nothing to take off. */
+export function unstampFile(
+  sectionFile: string,
+  version: string,
+  axisValue: string,
+): readonly string[] | null {
+  const undone = unstampProof(readFileSync(sectionFile, "utf8"), version, axisValue);
+  if (undone === null) return null;
+  writeFileSync(sectionFile, undone.yaml, "utf8");
+  return undone.files;
+}

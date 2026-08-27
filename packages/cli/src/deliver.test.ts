@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
-import { archive, hashFile, planDelivery, stampProof } from "./deliver.ts";
+import { archive, hashFile, planDelivery, stampProof, unstampProof } from "./deliver.ts";
 
 const tmp = (): string => mkdtempSync(join(tmpdir(), "deliver-"));
 const file = (dir: string, name: string, body: string): string => {
@@ -220,5 +220,133 @@ describe("stampProof with more than one file per target", () => {
   it("keeps all four hashes", () => {
     const out = stampProof(SECTION, "1.0.0", two) as string;
     for (const c of ["a", "b", "c", "d"]) expect(out).toContain(c.repeat(64));
+  });
+});
+
+describe("unstampProof", () => {
+  const SHA_A = "a".repeat(64);
+  const SHA_B = "b".repeat(64);
+
+  /** A row shaped exactly as `stampProof` leaves it, comment included. */
+  const rowWith = (targets: string) =>
+    [
+      `      rows:`,
+      `        # Este comentario existe para probar que la cirugía no lo pierde.`,
+      `        - id: historial.tabla.1-0-0`,
+      `          version: 1.0.0`,
+      `          date: 2026-08-26`,
+      `          delivered:`,
+      `            commit: 9348ddb`,
+      `            files:`,
+      targets,
+      `          description: >-`,
+      `            Primera entrega.`,
+      ``,
+    ].join("\n");
+
+  const oneTarget = rowWith([`              mv:`, `                m-mv-v1.0.0.pdf: ${SHA_A}`].join("\n"));
+  const twoTargets = rowWith(
+    [
+      `              mv:`,
+      `                m-mv-v1.0.0.pdf: ${SHA_A}`,
+      `              med:`,
+      `                m-med-v1.0.0.pdf: ${SHA_B}`,
+    ].join("\n"),
+  );
+
+  it("names the files it took off, so the caller knows what to delete", () => {
+    expect(unstampProof(oneTarget, "1.0.0", "mv")?.files).toEqual(["m-mv-v1.0.0.pdf"]);
+  });
+
+  it("removes the whole block when that was the last target", () => {
+    const out = unstampProof(oneTarget, "1.0.0", "mv");
+    expect(out?.yaml).not.toContain("delivered:");
+    expect(out?.yaml).not.toContain(SHA_A);
+  });
+
+  /**
+   * The guarantee that matters. The other document went out and its bytes are
+   * in the archive; erasing its proof to undo this one would destroy the only
+   * record of a delivery nobody asked about.
+   */
+  it("leaves the OTHER target's proof untouched", () => {
+    const out = unstampProof(twoTargets, "1.0.0", "med");
+    expect(out?.files).toEqual(["m-med-v1.0.0.pdf"]);
+    expect(out?.yaml).toContain("delivered:");
+    expect(out?.yaml).toContain(`m-mv-v1.0.0.pdf: ${SHA_A}`);
+    expect(out?.yaml).not.toContain(SHA_B);
+    expect(out?.yaml).not.toMatch(/^\s+med:$/m);
+  });
+
+  it("keeps the row's own fields and its comments", () => {
+    const out = unstampProof(oneTarget, "1.0.0", "mv");
+    expect(out?.yaml).toContain("version: 1.0.0");
+    expect(out?.yaml).toContain("date: 2026-08-26");
+    expect(out?.yaml).toContain("Primera entrega.");
+    expect(out?.yaml).toContain("# Este comentario existe");
+  });
+
+  it("is null for a version no row declares", () => {
+    expect(unstampProof(oneTarget, "9.9.9", "mv")).toBeNull();
+  });
+
+  it("is null for a target that row never delivered", () => {
+    expect(unstampProof(oneTarget, "1.0.0", "med")).toBeNull();
+  });
+
+  it("is null for a row with no proof at all", () => {
+    const bare = [
+      `      rows:`,
+      `        - id: historial.tabla.1-0-0`,
+      `          version: 1.0.0`,
+      `          date: 2026-08-26`,
+      `          description: Nada entregado.`,
+      ``,
+    ].join("\n");
+    expect(unstampProof(bare, "1.0.0", "mv")).toBeNull();
+  });
+
+  /**
+   * Bounded to the row asked for. Scanning on would find the NEXT row's proof
+   * and quietly undo a delivery nobody mentioned.
+   */
+  it("does not reach into the next row's proof", () => {
+    const two = [
+      `      rows:`,
+      `        - id: historial.tabla.1-0-0`,
+      `          version: 1.0.0`,
+      `          date: 2026-08-26`,
+      `          description: Sin entregar.`,
+      `        - id: historial.tabla.1-1-0`,
+      `          version: 1.1.0`,
+      `          date: 2026-09-01`,
+      `          delivered:`,
+      `            commit: abc1234`,
+      `            files:`,
+      `              mv:`,
+      `                m-mv-v1.1.0.pdf: ${SHA_A}`,
+      `          description: Entregada.`,
+      ``,
+    ].join("\n");
+    expect(unstampProof(two, "1.0.0", "mv")).toBeNull();
+    expect(unstampProof(two, "1.1.0", "mv")?.files).toEqual(["m-mv-v1.1.0.pdf"]);
+  });
+
+  /** Round trip: stamp, unstamp, and the file is what it was. */
+  it("undoes exactly what stampProof did", () => {
+    const bare = [
+      `      rows:`,
+      `        - id: historial.tabla.1-0-0`,
+      `          version: 1.0.0`,
+      `          date: 2026-08-26`,
+      `          description: Primera entrega.`,
+      ``,
+    ].join("\n");
+    const stamped = stampProof(bare, "1.0.0", {
+      commit: "9348ddb",
+      files: [{ axisValue: "mv", path: "out/m-mv-v1.0.0.pdf", sha: SHA_A }],
+    });
+    expect(stamped).not.toBeNull();
+    expect(unstampProof(stamped as string, "1.0.0", "mv")?.yaml).toBe(bare);
   });
 });

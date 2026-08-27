@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   checkTypedVersion,
   classifyDelivery,
+  deliveredFor,
   deliveredRows,
   newestVersion,
+  proofFor,
   rowsForTarget,
 } from "./delivery-state.ts";
 
@@ -199,5 +201,72 @@ describe("newestVersion", () => {
   /** String order puts 1.9.0 above 1.10.0. Numeric order does not. */
   it("compares parts numerically", () => {
     expect(newestVersion([row("1.9.0"), row("1.10.0")])).toBe("1.10.0");
+  });
+});
+
+describe("proofFor", () => {
+  const SHA = "a".repeat(64);
+  const stamped = (files: Record<string, unknown>) => ({
+    version: "1.0.0",
+    delivered: { commit: "9348ddb", files },
+  });
+
+  it("finds the proof for the target that received it", () => {
+    expect(proofFor(stamped({ mv: { "m.pdf": SHA } }), "mv")).toEqual({
+      commit: "9348ddb",
+      files: { "m.pdf": SHA },
+    });
+  });
+
+  /**
+   * A row can be handed to `mv` and not to `med`. Reading a commit as proof for
+   * every target is how a document gets told it received something it never did.
+   */
+  it("finds nothing for a target the row does not name", () => {
+    expect(proofFor(stamped({ mv: { "m.pdf": SHA } }), "med")).toBeUndefined();
+  });
+
+  /** "Handed over, nothing handed" is a bookkeeping slip, not history. */
+  it("rejects an empty entry", () => {
+    expect(proofFor(stamped({ mv: {} }), "mv")).toBeUndefined();
+  });
+
+  it("rejects a row with files but no commit", () => {
+    expect(
+      proofFor({ version: "1.0.0", delivered: { files: { mv: { "m.pdf": SHA } } } }, "mv"),
+    ).toBeUndefined();
+  });
+
+  it("finds nothing on a row that was never delivered", () => {
+    expect(proofFor({ version: "1.0.0" }, "mv")).toBeUndefined();
+  });
+});
+
+describe("deliveredFor", () => {
+  const SHA = "a".repeat(64);
+  const stamped = (version: string, target: string, ...names: string[]) => ({
+    version,
+    delivered: {
+      commit: "c",
+      files: { [target]: Object.fromEntries(names.map((n) => [n, SHA])) },
+    },
+  });
+
+  it("lists only what this target received, newest last", () => {
+    const rows = [stamped("1.1.0", "mv", "b.pdf"), stamped("1.0.0", "mv", "a.pdf")];
+    expect(deliveredFor(rows, "mv").map((d) => d.version)).toEqual(["1.0.0", "1.1.0"]);
+  });
+
+  it("names the archived files, which is what an undo has to delete", () => {
+    const rows = [stamped("1.0.0", "mv", "m.pdf", "m.docx")];
+    expect(deliveredFor(rows, "mv")[0]?.files).toEqual(["m.pdf", "m.docx"]);
+  });
+
+  it("is empty for a target that received nothing", () => {
+    expect(deliveredFor([stamped("1.0.0", "mv", "m.pdf")], "med")).toEqual([]);
+  });
+
+  it("ignores rows written but never handed over", () => {
+    expect(deliveredFor([{ version: "1.0.0" }], "mv")).toEqual([]);
   });
 });

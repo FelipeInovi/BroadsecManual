@@ -25,6 +25,7 @@ import { themes } from "@broadsec-manual/tokens";
 import {
   checkTypedVersion,
   classifyDelivery,
+  deliveredFor,
   newestVersion,
   readChangeLogRows,
   rowsForTarget,
@@ -722,10 +723,22 @@ export async function runWizard(repoRoot: string): Promise<number> {
                 `el cliente, y si hace falta pide a un agente el resumen de la fila.`,
               value: "deliver" as const,
             },
+            {
+              label: "Deshacer una entrega que no salió",
+              detail:
+                `Sólo para un error nuestro: borra los archivos de deliveries/ y quita la ` +
+                `prueba de la fila. Pregunta primero si el documento llegó a alguien, y si ` +
+                `llegó se niega — eso se supera con una versión nueva, no se borra.`,
+              value: "undeliver" as const,
+            },
           ]);
 
     if (action === "deliver") {
       return await deliveryFlow(rl, repoRoot);
+    }
+
+    if (action === "undeliver") {
+      return await undeliveryFlow(rl, repoRoot);
     }
 
     if (action === "continue") {
@@ -1254,4 +1267,131 @@ async function deliveryFlow(
       { axis: doc.axis, value: doc.axisValue },
     ),
   );
+}
+
+/**
+ * Undo a delivery that never left the building.
+ *
+ * THE ONE QUESTION THIS FLOW EXISTS TO ASK is whether the document reached
+ * anybody, and it is asked about the WORLD rather than about the repository —
+ * because the repository cannot know. A delivery that a client holds is a fact,
+ * and every guard in this pipeline is built to make it unerasable; a delivery
+ * nobody received is a wrong record of our own machinery, and that is worth
+ * removing rather than preserving.
+ *
+ * So the answer decides everything, and "yes" is a refusal rather than a warning
+ * with an override. A published document is superseded by a new version, never
+ * unpublished — and offering a way to do it anyway would make every other guard
+ * decorative.
+ *
+ * NEVER REWRITES HISTORY. The stamp's commit stays and a commit undoing it is
+ * added, so a reader can tell "never delivered" from "delivered and undone".
+ */
+async function undeliveryFlow(
+  rl: ReturnType<typeof createInterface>,
+  repoRoot: string,
+): Promise<number> {
+  const { docs } = readDeliverableDocs(repoRoot);
+
+  // Only what is actually delivered TO THIS TARGET. A row carrying a commit
+  // with no entry for this document is not this document's delivery.
+  const candidates = docs.flatMap((doc) =>
+    deliveredFor(doc.rows, doc.axisValue).map((entry) => ({ doc, entry })),
+  );
+
+  if (candidates.length === 0) {
+    ui(dim("   No hay ninguna entrega registrada, así que no hay nada que deshacer."));
+    ui("");
+    return 0;
+  }
+
+  const picked = await select(
+    rl,
+    "Paso 1 — ¿qué entrega se deshace?",
+    candidates.map(({ doc, entry }) => ({
+      label: `${doc.manualId}  ${doc.axis}=${accent(doc.axisValue)}  v${entry.version}`,
+      detail: `${entry.files.length} archivo(s) archivado(s): ${entry.files.join("  ")}`,
+      value: { doc, entry },
+    })),
+  );
+
+  // --- the question the repository cannot answer ----------------------------
+  //
+  // Asked FIRST, before anything is shown about what would be deleted, so the
+  // answer is about the document rather than about how much work undoing looks
+  // like. Ordered with the safe answer first, like every other confirmation
+  // here: the dangerous option is never the one a stray Enter lands on.
+  ui(bold("Paso 2 — la pregunta que el repositorio no puede responder"));
+  ui("");
+  ui(`   ${accent(`${picked.doc.manualId} ${picked.doc.axis}=${picked.doc.axisValue} v${picked.entry.version}`)}`);
+  ui("");
+  ui(dim("   Nadie acá sabe si ese PDF salió de esta máquina. Vos sí."));
+  ui("");
+  const reached = await select(rl, "¿Ese documento llegó a alguien fuera del equipo?", [
+    { label: "Sí, o no estoy seguro", value: true },
+    { label: "No. No salió de acá", value: false },
+  ]);
+
+  if (reached) {
+    ui("");
+    ui(`   Entonces no se deshace, y no es una traba: es lo que significa una entrega.`);
+    ui("");
+    ui(dim(`   Ese documento existe en manos de otro. Borrar su prueba dejaría a este`));
+    ui(dim(`   repositorio afirmando que no existe, y la próxima vez que alguien`));
+    ui(dim(`   pregunte "¿qué versión tiene el cliente?" la respuesta sería falsa.`));
+    ui("");
+    ui(`   Lo que corrige un documento ya entregado es una ${accent("versión nueva")}, que lo`);
+    ui(`   supera. La anterior queda en la tabla, que es exactamente para lo que está.`);
+    ui("");
+    return 1;
+  }
+
+  // --- what will happen ----------------------------------------------------
+  ui(bold("Paso 3 — esto es lo que va a pasar"));
+  ui("");
+  ui(`   Se borran de ${accent(`deliveries/${picked.doc.manualId}/`)}:`);
+  for (const f of picked.entry.files) ui(`      ${dim("·")} ${f}`);
+  ui("");
+  ui(`   Se quita la prueba de ${accent(picked.doc.axisValue)} de la fila ${accent(picked.entry.version)}.`);
+  ui(dim(`   Si esa fila no tiene prueba de ningún otro documento, el bloque se va entero.`));
+  ui("");
+  ui(`   Queda un commit diciendo que se deshizo. ${dim("La historia no se reescribe: sin")}`);
+  ui(`   ${dim(`ese commit, nadie podría distinguir "nunca se entregó" de "se deshizo".`)}`);
+  ui("");
+  ui(dim(`   La fila y su descripción NO se tocan. ${picked.entry.version} vuelve a estar`));
+  ui(dim(`   disponible para entregar cuando quieras.`));
+  ui("");
+  const go = await select(rl, "¿Deshacemos?", [
+    { label: "No, dejalo como está", value: false },
+    {
+      label: `Sí, deshacer ${picked.doc.manualId} ${picked.doc.axisValue} v${picked.entry.version}`,
+      value: true,
+    },
+  ]);
+  if (!go) {
+    ui(dim("   No se tocó nada."));
+    ui("");
+    return 0;
+  }
+
+  // Spawned rather than imported, like the delivery: `main.ts` imports this
+  // file, and spawning is also what makes the wizard and a plain terminal run
+  // the same code. `--not-handed-over` is the answer to Paso 2, carried across.
+  return await new Promise<number>((done) => {
+    const child = spawn(
+      process.execPath,
+      [
+        join(repoRoot, "packages", "cli", "src", "main.ts"),
+        "undeliver",
+        picked.doc.manualId,
+        "--version",
+        picked.entry.version,
+        "--axis",
+        `${picked.doc.axis}=${picked.doc.axisValue}`,
+        "--not-handed-over",
+      ],
+      { cwd: repoRoot, stdio: "inherit" },
+    );
+    child.on("close", (c) => done(c ?? 1));
+  });
 }

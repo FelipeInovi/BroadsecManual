@@ -19,6 +19,7 @@ the authority if they ever disagree.
 |---|---|
 | `build <manual>` | Assemble and render every configured target, named by the next working number (`…-trabajo-08.pdf`) — a new one per run, never overwriting the last |
 | `deliver <manual> --version <N.N.N>` | Promote to an official delivery: render the version-named document, archive it in `deliveries/`, stamp the commit and each file's hash onto the change-log row. Refuses on a dirty tree. The only command that produces a version-named file |
+| `undeliver <manual> --version <N.N.N> --not-handed-over` | Undo a delivery **that never left the building**: delete the archived files, take that target's proof off the row, commit the undo. The flag is the caller ASSERTING nobody received the document — the repository cannot know, and without it the command refuses. Never rewrites history |
 | `images <manual>` | Export the image request document for the area that produces the screenshots |
 | `capture <manual> --tenant <id>` | Shoot pending figures off the **running** product, per `manuals/<manual>/capture-recipes.yaml` |
 | `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
