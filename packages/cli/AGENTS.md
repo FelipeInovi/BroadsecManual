@@ -66,7 +66,8 @@ there.
   pipeline internal and invariant 4 keeps those out of client-facing output. The
   draft is marked in its filename (`-BORRADOR`), its cover and its running
   header, because two PDFs that differ only in their contents will eventually be
-  sent to the wrong place. Default is always the client build.
+  sent to the wrong place. The plain build is the default — though it is not the
+  client's document either: only `deliver` renders that one.
 - **The image request document is NOT build output.** It leaves the repository
   for another team, so `images` writes it outside `output/` (default
   `manuals/<manual>/image-requests.json`) and it is committed. `build` reports

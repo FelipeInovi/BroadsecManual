@@ -226,15 +226,21 @@ to know what to call the file. Whoever receives the manual must not see a path
 from our repository in a document marked Confidential. Both are true, so there
 are two builds of the same content:
 
-| Build | Pending images render as | For |
-|---|---|---|
-| `build <manual>` | The placeholder, nothing else | The client |
-| `build <manual> --draft` | The placeholder **plus the exact filename to deliver it under** | Whoever takes the captures |
+| Build | Named | Pending images render as | For |
+|---|---|---|---|
+| `build <manual>` | `…-trabajo-08.pdf` | The placeholder, nothing else | Us, checking our own work |
+| `build <manual> --draft` | `…-trabajo-08-BORRADOR.pdf` | The placeholder **plus the exact filename to deliver it under** | Whoever takes the captures |
+| `deliver <manual> --version <N.N.N>` | `…-v1.0.1.pdf` | The placeholder, nothing else | The client |
+
+**No ordinary build is the client's document.** A build is named by its working
+number and every run makes a new one; only a delivery writes a version-named
+file, and it renders that file itself. So a `…-v1.0.1.pdf` on disk always means
+a delivery happened. See `manuals/AGENTS.md`, "Two kinds of build".
 
 The draft is marked at every level so it cannot be handed over by accident: its
 filename gains `-BORRADOR`, its cover reads BORRADOR INTERNO, and its running
-header says NO DISTRIBUIR. The client build is the default; you have to ask for
-the draft.
+header says NO DISTRIBUIR. You have to ask for the draft; the plain build is the
+default.
 
 Give the capture team the draft PDF **and** the request document. The PDF shows
 them where each image goes and what to name it; the document is the full list
