@@ -18,6 +18,7 @@ import {
   type ManualState,
   type WizardAnswers,
   assembleDeliveryPrompt,
+  assembleUpdatePrompt,
   readDeliverableDocs,
   readBuildableManuals,
   BUILD_KINDS,
@@ -1061,5 +1062,100 @@ describe("readBuildableManuals", () => {
     const root = repo();
     mkdirSync(join(root, "manuals", "basura"), { recursive: true });
     expect(readBuildableManuals(root)).toEqual([]);
+  });
+});
+
+describe("assembleUpdatePrompt", () => {
+  const state: ManualState = {
+    id: "broadlineavida",
+    title: "Manual de operador",
+    source: "broadsec",
+    hasMap: true,
+    sections: 14,
+    pending: 1,
+    totalImages: 240,
+    hasState: true,
+  };
+
+  /**
+   * The decisions this repository keeps in memory are not derivable from
+   * `sections/` — which module comes next, what was ruled out, what the team
+   * agreed. An agent that starts editing without them re-proposes what was
+   * already discarded.
+   */
+  it("puts the memory recall before anything else", () => {
+    const p = assembleUpdatePrompt(state, "Agregá el módulo de reportes.");
+    const recall = p.indexOf("mem_context");
+    const task = p.indexOf("Lo que hay que hacer");
+    expect(recall).toBeGreaterThan(-1);
+    expect(recall).toBeLessThan(task);
+  });
+
+  /** Search results come back truncated, so the detail needs a second call. */
+  it("names all three recovery calls, not just the search", () => {
+    const p = assembleUpdatePrompt(state, "x");
+    for (const call of ["mem_context", "mem_search", "mem_get_observation"]) {
+      expect(p).toContain(call);
+    }
+  });
+
+  /**
+   * The tools may simply not be there — a teammate's checkout, a headless run.
+   * An agent that stalls waiting for them has turned a missing convenience into
+   * a blocked task.
+   */
+  it("says what to do when memory is unavailable", () => {
+    expect(assembleUpdatePrompt(state, "x")).toContain("no están disponibles");
+  });
+
+  /**
+   * Everything around the instruction is this harness talking; the fenced block
+   * is the owner talking. An agent that cannot tell them apart treats a
+   * suggestion as a rule, or a rule as a suggestion.
+   */
+  it("quotes the instruction verbatim and fenced", () => {
+    const instruction = "Corregí el paso 3 de turnos: el botón se llama Guardar, no Aceptar.";
+    const p = assembleUpdatePrompt(state, instruction);
+    expect(p).toContain("```\n" + instruction + "\n```");
+  });
+
+  it("keeps a multi-line instruction whole", () => {
+    const p = assembleUpdatePrompt(state, "Primera línea.\nSegunda línea.");
+    expect(p).toContain("Primera línea.\nSegunda línea.");
+  });
+
+  /**
+   * The version marks a DELIVERY and only the owner moves it. A content update
+   * that bumped it on its way past is exactly the behaviour `manuals/AGENTS.md`
+   * removed, and nothing in the build would stop it.
+   */
+  it("forbids moving the version on the way past", () => {
+    const p = assembleUpdatePrompt(state, "x");
+    expect(p).toContain("La versión no se mueve sola");
+    expect(p).toContain("sólo Daniel la");
+  });
+
+  it("tells the agent to stop when the task collides with a rule", () => {
+    expect(assembleUpdatePrompt(state, "x")).toContain("PARÁ y contá el choque");
+  });
+
+  /**
+   * Unlike `assembleContinuationPrompt`, the step here is already decided. A
+   * prompt that also asked for a proposal would have the agent negotiating with
+   * an instruction it was handed.
+   */
+  it("hands over an instruction instead of asking for a proposal", () => {
+    const p = assembleUpdatePrompt(state, "x");
+    expect(p).not.toContain("Proponé el próximo paso");
+  });
+
+  it("reports a manual with no map or no source rather than hiding it", () => {
+    const blocked = assembleUpdatePrompt(
+      { ...state, source: null, hasMap: false, pending: null, hasState: false },
+      "x",
+    );
+    expect(blocked).toContain("(ninguna declarada)");
+    expect(blocked).toContain("NO existe");
+    expect(blocked).toContain("todavía no se exportaron pedidos");
   });
 });

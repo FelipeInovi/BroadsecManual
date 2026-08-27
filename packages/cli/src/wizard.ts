@@ -717,6 +717,14 @@ export async function runWizard(repoRoot: string): Promise<number> {
               value: "continue" as const,
             },
             {
+              label: "Actualizar un manual",
+              detail:
+                `Vos escribís qué hay que hacer y un agente lo hace. Distinto de ` +
+                `"Continuar", donde el agente propone el próximo paso: acá el paso ya ` +
+                `está decidido. Antes de arrancar recupera la memoria del proyecto.`,
+              value: "update" as const,
+            },
+            {
               label: "Construir un manual",
               detail:
                 `Cada corrida deja el trabajo siguiente en output/ en vez de pisar el ` +
@@ -739,6 +747,10 @@ export async function runWizard(repoRoot: string): Promise<number> {
               value: "undeliver" as const,
             },
           ]);
+
+    if (action === "update") {
+      return await updateFlow(rl, repoRoot, started);
+    }
 
     if (action === "build") {
       return await buildFlow(rl, repoRoot);
@@ -1565,4 +1577,169 @@ async function buildFlow(
     );
     child.on("close", (c) => done(c ?? 1));
   });
+}
+
+/**
+ * Read an instruction that may run to several lines.
+ *
+ * `ask` reads ONE line, which is right for a path or a version and wrong for a
+ * sentence somebody is composing. Terminated by a blank line rather than by a
+ * sentinel word: a sentinel is one more thing to remember, and an empty line is
+ * what a person types when they have finished a paragraph.
+ */
+async function askParagraph(
+  rl: ReturnType<typeof createInterface>,
+  prompt: string,
+): Promise<string> {
+  ui(bold(prompt));
+  ui(dim("   Escribí lo que haya que hacer. Línea vacía para terminar."));
+  ui("");
+  for (;;) {
+    const lines: string[] = [];
+    for (;;) {
+      const line = await rl.question(`   ${lines.length === 0 ? ">" : "|"} `);
+      if (line.trim() === "") break;
+      lines.push(line);
+    }
+    const text = lines.join("\n").trim();
+    if (text !== "") {
+      ui("");
+      return text;
+    }
+    ui(dim("   hace falta decir qué hay que hacer."));
+  }
+}
+
+/**
+ * What to ask an agent for an update the owner has already decided on.
+ *
+ * THE INSTRUCTION IS QUOTED VERBATIM and fenced. Everything around it is this
+ * harness talking; the fenced block is the owner talking, and an agent that
+ * cannot tell the two apart will treat a suggestion as a rule or a rule as a
+ * suggestion.
+ *
+ * MEMORY COMES FIRST, and the prompt says so rather than assuming it. Recovering
+ * it is an ENGRAM call the agent makes — this wizard is a Node CLI with no MCP
+ * access, so it cannot load anything itself; what it can do is make the recall
+ * the agent's first act and say why. And the why is real: this repository's
+ * decisions live partly in memory rather than on disk. Which module comes next,
+ * what was ruled out and why, the numbering restart the Broadsec team agreed —
+ * none of that is derivable from `sections/`. An agent that starts editing
+ * without it re-proposes what was already discarded.
+ *
+ * Distinct from `assembleContinuationPrompt`, which ends by asking the agent to
+ * PROPOSE the next step. Here the step is already decided, so the prompt hands
+ * over an instruction rather than asking for one.
+ */
+export function assembleUpdatePrompt(s: ManualState, instruction: string): string {
+  return [
+    `Actualizar \`${s.id}\`, un manual que este repositorio ya tiene escrito.`,
+    ``,
+    `## Paso 0 — recuperá la memoria del proyecto, antes de tocar nada`,
+    ``,
+    `Este repositorio guarda parte de sus decisiones en memoria y no en el disco:`,
+    `qué módulo sigue y por qué ése, qué se descartó, qué acordó el equipo. Nada`,
+    `de eso se deriva de \`sections/\`, y sin leerlo se vuelve a proponer lo que ya`,
+    `se descartó.`,
+    ``,
+    `  1. \`mem_context\` con project \`broadsecmanual\`.`,
+    `  2. \`mem_search\` con palabras de este manual y de la tarea de abajo.`,
+    `  3. \`mem_get_observation\` de lo que resulte relevante — los resultados de`,
+    `     búsqueda vienen truncados, y el detalle está en la observación completa.`,
+    ``,
+    `Si una observación viene marcada \`needs_review\`, es contexto viejo y no un`,
+    `hecho: verificala contra el disco antes de apoyarte en ella.`,
+    ``,
+    `Si las herramientas de memoria no están disponibles, decilo y seguí desde el`,
+    `disco. No te quedes esperando.`,
+    ``,
+    `## Lo que hay que hacer`,
+    ``,
+    `Esto lo escribió Daniel. Es la tarea, textual:`,
+    ``,
+    "```",
+    instruction,
+    "```",
+    ``,
+    `## Con qué te vas a encontrar`,
+    ``,
+    `  Id del manual      ${s.id}`,
+    `  Fuente             ${s.source ?? "(ninguna declarada)"}`,
+    `  Mapa del producto  ${s.hasMap ? "presente" : "NO existe"}`,
+    `  Secciones escritas ${s.sections}`,
+    `  Imágenes           ${
+      s.pending === null
+        ? "todavía no se exportaron pedidos"
+        : `${s.pending} pendiente(s) de ${s.totalImages ?? "?"}`
+    }`,
+    `  Estado registrado  ${s.hasState ? `manuals/${s.id}/${STATE_FILE}` : "NO existe todavía"}`,
+    ``,
+    `Derivá el resto del disco, nunca de una suposición: \`sections/\`,`,
+    `\`knowledge/module-map.json\`, \`image-requests.json\`,`,
+    `\`git log -- manuals/${s.id}/\`.`,
+    ``,
+    `## Las reglas`,
+    ``,
+    `Empezá por \`AGENTS.md\` en la raíz: fija los invariantes del sistema y dónde`,
+    `está el resto. Las de autoría están en \`manuals/AGENTS.md\`, en`,
+    `\`manuals/${s.id}/AGENTS.md\` si existe, y en las skills que esos archivos`,
+    `nombran. Cargá las que apliquen ANTES de escribir.`,
+    ``,
+    `Dos que no se negocian y que el disco no te va a frenar si las rompés:`,
+    ``,
+    `  - **La versión no se mueve sola.** Un cambio de contenido no toca el`,
+    `    Historial de cambios. Una versión marca una ENTREGA, y sólo Daniel la`,
+    `    autoriza. Si crees que corresponde una, proponela y PARÁ.`,
+    `  - **No reescribas una sección que ya existe** porque te parezca mejor de`,
+    `    otra forma. Está hecha hasta que alguien diga lo contrario.`,
+    ``,
+    `Si la tarea de arriba choca con una regla, o con algo que la memoria dice que`,
+    `ya se decidió, PARÁ y contá el choque. No elijas por tu cuenta.`,
+    ``,
+    `Cuando pares, dejá \`manuals/${s.id}/${STATE_FILE}\` al día y guardá en`,
+    `memoria lo que valga la pena: decisiones, hallazgos no obvios, lo que se`,
+    `descartó y por qué.`,
+  ].join("\n");
+}
+
+/**
+ * Ask an agent for a specific update to a manual.
+ *
+ * Three questions: which manual, what to do, and who does it. The manual is the
+ * unit because that is what a manual IS on disk — its own config, sections,
+ * assets, `AGENTS.md` and `ESTADO.md`. Targets are build-time conditioning, not
+ * something you author against: a change may end up tagged for one deployment,
+ * but it is written in one place.
+ */
+async function updateFlow(
+  rl: ReturnType<typeof createInterface>,
+  repoRoot: string,
+  manuals: readonly ManualState[],
+): Promise<number> {
+  const picked = await select(
+    rl,
+    "Paso 1 — ¿qué manual se actualiza?",
+    manuals.map((m) => ({
+      label: `${m.id}  ${dim(m.title)}`,
+      detail: describeState(m),
+      value: m,
+    })),
+  );
+
+  const instruction = await askParagraph(rl, `Paso 2 — ¿qué hay que hacer en ${picked.id}?`);
+
+  ui(bold("Paso 3 — esto es lo que se le va a pedir"));
+  ui("");
+  for (const line of instruction.split("\n")) ui(`   ${dim("|")} ${line}`);
+  ui("");
+  ui(dim(`   Antes de esto, el agente recupera la memoria del proyecto: sin eso`));
+  ui(dim(`   vuelve a proponer lo que ya se descartó.`));
+  ui("");
+
+  return await handOff(
+    rl,
+    repoRoot,
+    `.broadsec-manual/actualizar-${picked.id}.md`,
+    assembleUpdatePrompt(picked, instruction),
+  );
 }
