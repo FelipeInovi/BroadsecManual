@@ -197,6 +197,31 @@ is gone along with the collision it covered.
 `…-v1.0.1.pdf` exists until `deliver` renders it, which removes the whole class
 of mistake where a file named after a version was built from different content.
 
+### Running a build
+
+`pnpm manuales` → "Construir un manual", or `broadsec-manual build <manual>`
+directly. The wizard asks two things: which document, and what to generate.
+
+**Nothing but the PDF comes out by default.** The other two are opt-in and stay
+that way, because both cost something a normal iteration should not pay:
+
+| Choice | Flags | For |
+|---|---|---|
+| The document, nothing else | — | Us, checking our own work |
+| The document and its Word | `--docx` | A review that needs the .docx; it is much slower |
+| Draft for the capture team | `--draft --pending-table` | Whoever takes the screenshots |
+
+The draft and the pending-image table travel **together**, deliberately: they go
+to the same people, and both `COMO-ENTREGAR-IMAGENES.md` files tell them to use
+both. Offering them separately invites handing over half of what those documents
+describe.
+
+Building the WHOLE manual is offered first, because the working number is
+allocated once per run — so every target built together shares it, and equal
+numbers meaning equal content is the one property the counter buys. A filtered
+run is still offered; the gap it leaves in the other target's numbering is true,
+not untidy.
+
 ### Where the printed version comes from
 
 **The change log is the source of truth, not `manual.config.yaml`.** The cover,

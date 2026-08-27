@@ -19,6 +19,8 @@ import {
   type WizardAnswers,
   assembleDeliveryPrompt,
   readDeliverableDocs,
+  readBuildableManuals,
+  BUILD_KINDS,
 } from "./wizard.ts";
 
 const answers = (over: Partial<WizardAnswers> = {}): WizardAnswers => ({
@@ -945,5 +947,119 @@ describe("readDeliverableDocs", () => {
       docs: [],
       skipped: [],
     });
+  });
+});
+
+describe("BUILD_KINDS", () => {
+  const flags = (label: string) =>
+    BUILD_KINDS.find((k) => k.label.includes(label))?.flags ?? null;
+
+  it("makes the plain build ask for nothing", () => {
+    expect(flags("nada más")).toEqual([]);
+  });
+
+  /**
+   * The Word takes far longer than the PDF, so it is opt-in rather than part of
+   * every iteration. Only a delivery gets it unconditionally, because a client
+   * receives the set.
+   */
+  it("keeps the Word behind its own choice", () => {
+    expect(flags("Word")).toEqual(["--docx"]);
+  });
+
+  /**
+   * The draft PDF and the pending-image table go to the same people, and the
+   * two COMO-ENTREGAR-IMAGENES.md files tell them to use both. Offering them
+   * separately would invite handing over half of what those documents describe.
+   */
+  it("sends the draft and the pending table together", () => {
+    expect(flags("Borrador")).toEqual(["--draft", "--pending-table"]);
+  });
+
+  /**
+   * A version-named document is a delivery: it is a different menu entry, it
+   * renders the file itself, and it is the one act that needs the owner's
+   * authorisation. No build option may reach it.
+   */
+  it("offers no way to produce a client's document", () => {
+    for (const kind of BUILD_KINDS) {
+      expect(kind.flags).not.toContain("--version");
+      expect(kind.flags.join(" ")).not.toMatch(/deliver|official/);
+    }
+  });
+});
+
+describe("readBuildableManuals", () => {
+  const withConfig = (root: string, id: string, body: string) => {
+    mkdirSync(join(root, "manuals", id), { recursive: true });
+    writeFileSync(join(root, "manuals", id, "manual.config.yaml"), body);
+  };
+
+  const oneAxis = [
+    `manual:`,
+    `  title: Manual`,
+    `axes:`,
+    `  tenant:`,
+    `    values:`,
+    `      - id: mv`,
+    `        name: Movilidad Medellín`,
+    `targets:`,
+    `  - tenant: mv`,
+    `output:`,
+    `  dir: output`,
+    ``,
+  ].join("\n");
+
+  /**
+   * Looser than `readDeliverableDocs` on purpose. A manual with no change log
+   * cannot be versioned but builds perfectly well — `_catalog` and
+   * `bridge-primera-entrega` are exactly that, and hiding them would hide the
+   * gallery from whoever maintains it.
+   */
+  it("includes a manual with no change log at all", () => {
+    const root = repo();
+    withConfig(root, "sin-log", oneAxis);
+    expect(readBuildableManuals(root).map((m) => m.id)).toEqual(["sin-log"]);
+  });
+
+  it("resolves an axis value's display name", () => {
+    const root = repo();
+    withConfig(root, "uno", oneAxis);
+    expect(readBuildableManuals(root)[0]?.nameFor("mv")).toBe("Movilidad Medellín");
+  });
+
+  it("falls back to the value itself when nothing names it", () => {
+    const root = repo();
+    withConfig(root, "uno", oneAxis);
+    expect(readBuildableManuals(root)[0]?.nameFor("desconocido")).toBe("desconocido");
+  });
+
+  /**
+   * Reported as `axis: null` rather than dropped, so each caller decides: a
+   * build can still run unfiltered, while a delivery has to refuse because it
+   * could not say which document a target names.
+   */
+  it("reports a manual without a single axis instead of hiding it", () => {
+    const root = repo();
+    withConfig(
+      root,
+      "dos-ejes",
+      `manual:\n  title: Dos\naxes:\n  tenant:\n    values: []\n  role:\n    values: []\ntargets: []\n`,
+    );
+    const found = readBuildableManuals(root);
+    expect(found).toHaveLength(1);
+    expect(found[0]?.axis).toBeNull();
+  });
+
+  it("reports an empty output/ rather than failing on a manual never built", () => {
+    const root = repo();
+    withConfig(root, "uno", oneAxis);
+    expect(readBuildableManuals(root)[0]?.built).toEqual([]);
+  });
+
+  it("skips a directory with no config", () => {
+    const root = repo();
+    mkdirSync(join(root, "manuals", "basura"), { recursive: true });
+    expect(readBuildableManuals(root)).toEqual([]);
   });
 });

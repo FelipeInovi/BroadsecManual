@@ -31,7 +31,7 @@ import {
   rowsForTarget,
   type ChangeLogRowLike,
 } from "./delivery-state.ts";
-import { newestWorkNumberFor } from "./naming.ts";
+import { newestWorkNumberFor, nextWorkNumber, workStamp } from "./naming.ts";
 import { soleAxis } from "./axis.ts";
 
 /**
@@ -717,6 +717,13 @@ export async function runWizard(repoRoot: string): Promise<number> {
               value: "continue" as const,
             },
             {
+              label: "Construir un manual",
+              detail:
+                `Cada corrida deja el trabajo siguiente en output/ en vez de pisar el ` +
+                `anterior. Ni el Word ni el borrador salen por defecto: se piden.`,
+              value: "build" as const,
+            },
+            {
               label: "Versionar un manual para entrega oficial",
               detail:
                 `Archiva el PDF y el Word en deliveries/, sella la prueba de qué recibió ` +
@@ -732,6 +739,10 @@ export async function runWizard(repoRoot: string): Promise<number> {
               value: "undeliver" as const,
             },
           ]);
+
+    if (action === "build") {
+      return await buildFlow(rl, repoRoot);
+    }
 
     if (action === "deliver") {
       return await deliveryFlow(rl, repoRoot);
@@ -961,6 +972,74 @@ async function handOff(
   }
 }
 
+/** A manual on disk, as both the build flow and the delivery flow read it. */
+export interface BuildableManual {
+  readonly id: string;
+  readonly dir: string;
+  readonly title: string;
+  /** The single axis it conditions on, or null when it declares no such thing. */
+  readonly axis: string | null;
+  readonly targets: readonly Record<string, string>[];
+  /** Filenames currently in its `output/`. Empty when nothing was ever built. */
+  readonly built: readonly string[];
+  /** An axis value's display name, falling back to the value itself. */
+  readonly nameFor: (value: string) => string;
+}
+
+/**
+ * Every manual with a config, whether or not it can be delivered.
+ *
+ * DELIBERATELY LOOSER than `readDeliverableDocs`. A manual with no change log
+ * cannot be versioned — there is no row to carry a version — but it builds
+ * perfectly well, and `_catalog` and `bridge-primera-entrega` are exactly that.
+ * A build flow that hid them would hide the gallery from the person maintaining
+ * it.
+ *
+ * A manual with no single axis comes back with `axis: null` rather than being
+ * dropped, so each caller decides: the build flow can still hand it to the CLI
+ * unfiltered, while a delivery has to refuse — it could not say which document
+ * a target names.
+ */
+export function readBuildableManuals(repoRoot: string): readonly BuildableManual[] {
+  const manualsDir = join(repoRoot, "manuals");
+  if (!existsSync(manualsDir)) return [];
+
+  const out: BuildableManual[] = [];
+  for (const id of readdirSync(manualsDir).sort()) {
+    const dir = join(manualsDir, id);
+    const configFile = join(dir, "manual.config.yaml");
+    if (!existsSync(configFile)) continue;
+
+    const config = parseYaml(readFileSync(configFile, "utf8")) as {
+      manual?: { title?: string };
+      axes?: Record<string, { values?: { id?: string; name?: string }[] }>;
+      targets?: Record<string, string>[];
+      output?: { dir?: string };
+    };
+
+    let axis: string | null;
+    try {
+      axis = soleAxis(Object.keys(config.axes ?? {}));
+    } catch {
+      axis = null;
+    }
+
+    const outDir = join(dir, config.output?.dir ?? "output");
+    const values = axis === null ? [] : (config.axes?.[axis]?.values ?? []);
+
+    out.push({
+      id,
+      dir,
+      title: config.manual?.title ?? id,
+      axis,
+      targets: config.targets ?? [],
+      built: existsSync(outDir) ? readdirSync(outDir) : [],
+      nameFor: (value) => values.find((v) => v.id === value)?.name ?? value,
+    });
+  }
+  return out;
+}
+
 /**
  * One document a delivery can be made of: a manual narrowed to one target.
  *
@@ -1003,42 +1082,22 @@ export function readDeliverableDocs(repoRoot: string): {
   readonly docs: readonly DeliverableDoc[];
   readonly skipped: readonly UndeliverableManual[];
 } {
-  const manualsDir = join(repoRoot, "manuals");
-  if (!existsSync(manualsDir)) return { docs: [], skipped: [] };
-
   const docs: DeliverableDoc[] = [];
   const skipped: UndeliverableManual[] = [];
 
-  for (const id of readdirSync(manualsDir).sort()) {
-    const dir = join(manualsDir, id);
-    const configFile = join(dir, "manual.config.yaml");
-    if (!existsSync(configFile)) continue;
-
-    const config = parseYaml(readFileSync(configFile, "utf8")) as {
-      manual?: { title?: string };
-      axes?: Record<string, { values?: { id?: string; name?: string }[] }>;
-      targets?: Record<string, string>[];
-      output?: { dir?: string };
-    };
-
-    const rows = readChangeLogRows(dir);
+  for (const manual of readBuildableManuals(repoRoot)) {
+    if (manual.axis === null) {
+      skipped.push({ id: manual.id, why: "no declara exactamente un eje" });
+      continue;
+    }
+    const rows = readChangeLogRows(manual.dir);
     if (rows.length === 0) {
-      skipped.push({ id, why: "no tiene Historial de cambios" });
+      skipped.push({ id: manual.id, why: "no tiene Historial de cambios" });
       continue;
     }
+    const axis = manual.axis;
 
-    let axis: string;
-    try {
-      axis = soleAxis(Object.keys(config.axes ?? {}));
-    } catch {
-      skipped.push({ id, why: "no declara exactamente un eje" });
-      continue;
-    }
-
-    const outDir = join(dir, config.output?.dir ?? "output");
-    const built = existsSync(outDir) ? readdirSync(outDir) : [];
-
-    for (const target of config.targets ?? []) {
+    for (const target of manual.targets) {
       const value = target[axis];
       if (value === undefined) continue;
       const mine = rowsForTarget(rows, target);
@@ -1049,15 +1108,14 @@ export function readDeliverableDocs(repoRoot: string): {
       if (printing === null) continue;
 
       docs.push({
-        manualId: id,
-        manualTitle: config.manual?.title ?? id,
+        manualId: manual.id,
+        manualTitle: manual.title,
         axis,
         axisValue: value,
-        axisName:
-          config.axes?.[axis]?.values?.find((v) => v.id === value)?.name ?? value,
+        axisName: manual.nameFor(value),
         rows: mine,
         printing,
-        work: newestWorkNumberFor(built, value),
+        work: newestWorkNumberFor(manual.built, value),
       });
     }
   }
@@ -1390,6 +1448,119 @@ async function undeliveryFlow(
         `${picked.doc.axis}=${picked.doc.axisValue}`,
         "--not-handed-over",
       ],
+      { cwd: repoRoot, stdio: "inherit" },
+    );
+    child.on("close", (c) => done(c ?? 1));
+  });
+}
+
+/** What a build run produces, as the operator chooses it. */
+export interface BuildKind {
+  readonly label: string;
+  readonly detail: string;
+  readonly flags: readonly string[];
+}
+
+/**
+ * The three builds worth offering, and why there are three rather than four
+ * booleans.
+ *
+ * `--draft` and `--pending-table` travel TOGETHER because they go to the same
+ * people. The draft PDF shows the capture team where each image goes and what to
+ * name it; the table is the full list with a column they write into. The two
+ * `COMO-ENTREGAR-IMAGENES.md` files tell them to use both, so offering them
+ * separately would invite handing over half of what those documents describe.
+ *
+ * There is deliberately no option here that produces a client's document. That
+ * is a delivery, it is a different menu entry, and it renders the file itself.
+ */
+export const BUILD_KINDS: readonly BuildKind[] = [
+  {
+    label: "El documento, nada más",
+    detail: "PDF. Lo normal mientras se escribe: cada corrida deja el trabajo siguiente.",
+    flags: [],
+  },
+  {
+    label: "El documento y su Word",
+    detail:
+      "PDF y .docx. El Word tarda bastante más, así que vale pedirlo cuando hace " +
+      "falta revisarlo y no en cada vuelta.",
+    flags: ["--docx"],
+  },
+  {
+    label: "Borrador para el área de capturas",
+    detail:
+      "Debajo de cada imagen pendiente imprime el nombre exacto del archivo, y " +
+      "escribe también imagenes-pendientes-<target>.md. Marcado BORRADOR en el " +
+      "nombre, la tapa y la cabecera: no se distribuye.",
+    flags: ["--draft", "--pending-table"],
+  },
+];
+
+/**
+ * Run a build from the wizard.
+ *
+ * Spawns the CLI's own `build`, like the delivery does, so the wizard and a
+ * plain terminal cannot come to disagree about what a build is.
+ *
+ * OFFERS THE WHOLE MANUAL FIRST. The working number is allocated once per run,
+ * so building every target together is what keeps their numbers aligned — and
+ * two files carrying the same number always being the same content is the one
+ * property the counter buys. A filtered run is still offered, because that is
+ * what a person iterating on one deployment actually wants; the gap it leaves in
+ * the other target's numbering is true rather than untidy.
+ */
+async function buildFlow(
+  rl: ReturnType<typeof createInterface>,
+  repoRoot: string,
+): Promise<number> {
+  const manuals = readBuildableManuals(repoRoot);
+  if (manuals.length === 0) {
+    ui(dim("   No hay ningún manual con manual.config.yaml en manuals/."));
+    ui("");
+    return 1;
+  }
+
+  const options: { label: string; detail: string; value: readonly string[] }[] = [];
+  for (const manual of manuals) {
+    const next = nextWorkNumber(manual.built);
+    options.push({
+      label: `${manual.id}  ${dim(manual.title)}`,
+      detail:
+        `${manual.targets.length} documento(s), todos juntos con el mismo número ` +
+        `· el próximo sería ${workStamp(next)}`,
+      value: [manual.id],
+    });
+    if (manual.axis === null || manual.targets.length < 2) continue;
+    const axis = manual.axis;
+    for (const target of manual.targets) {
+      const value = target[axis];
+      if (value === undefined) continue;
+      const newest = newestWorkNumberFor(manual.built, value);
+      options.push({
+        label: `${manual.id}  ${axis}=${accent(value)}  ${dim(manual.nameFor(value))}`,
+        detail:
+          `sólo este documento` +
+          (newest === null
+            ? " · nada construido todavía"
+            : ` · su último es ${workStamp(newest)}`),
+        value: [manual.id, "--axis", `${axis}=${value}`],
+      });
+    }
+  }
+
+  const picked = await select(rl, "Paso 1 — ¿qué se construye?", options);
+  const kind = await select(
+    rl,
+    "Paso 2 — ¿qué se genera?",
+    BUILD_KINDS.map((k) => ({ label: k.label, detail: k.detail, value: k })),
+  );
+
+  ui("");
+  return await new Promise<number>((done) => {
+    const child = spawn(
+      process.execPath,
+      [join(repoRoot, "packages", "cli", "src", "main.ts"), "build", ...picked, ...kind.flags],
       { cwd: repoRoot, stdio: "inherit" },
     );
     child.on("close", (c) => done(c ?? 1));
