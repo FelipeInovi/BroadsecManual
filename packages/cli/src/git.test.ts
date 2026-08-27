@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { headCommit, isDirty, isExactly } from "./git.ts";
+import { commitFile, headCommit, isDirty, isExactly } from "./git.ts";
 
 /**
  * These run against THIS repository, which is the only honest way to test a
@@ -55,5 +59,71 @@ describe("when git cannot answer", () => {
   it("returns null and NOT false, which the caller must treat as unsafe", () => {
     expect(isExactly(NOWHERE, "a9f780e")).not.toBe(false);
     expect(isExactly(NOWHERE, "a9f780e")).not.toBe(true);
+  });
+});
+
+/**
+ * Against a THROWAWAY repository, never this one. Every other test here reads;
+ * this one writes, and a test that leaves commits in the repository it is
+ * testing has changed the thing it was measuring.
+ */
+describe("commitFile", () => {
+  const scratch = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "git-"));
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    // Set locally: a machine with no global identity cannot commit at all, and
+    // the failure would look like a bug in commitFile.
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    writeFileSync(join(root, "seed.txt"), "seed\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return root;
+  };
+
+  it("commits the named file and leaves the tree clean", () => {
+    const root = scratch();
+    writeFileSync(join(root, "seed.txt"), "stamped\n");
+    expect(commitFile(root, join(root, "seed.txt"), "chore: stamp")).toBe(true);
+    expect(isDirty(root)).toBe(false);
+  });
+
+  /**
+   * The guarantee the delivery leans on. `commit -a`, or a bare commit after an
+   * `add`, would take the other file too — and a delivery that quietly commits
+   * unrelated work is worse than one that commits nothing.
+   */
+  it("takes ONLY that file, leaving anything else dirty", () => {
+    const root = scratch();
+    writeFileSync(join(root, "seed.txt"), "stamped\n");
+    writeFileSync(join(root, "otra.txt"), "trabajo ajeno\n");
+    expect(commitFile(root, join(root, "seed.txt"), "chore: stamp")).toBe(true);
+    expect(isDirty(root)).toBe(true);
+    const listed = execFileSync("git", ["-C", root, "status", "--porcelain"], { encoding: "utf8" });
+    expect(listed).toContain("otra.txt");
+    expect(listed).not.toContain("seed.txt");
+  });
+
+  it("does not sweep in a file somebody else staged", () => {
+    const root = scratch();
+    writeFileSync(join(root, "seed.txt"), "stamped\n");
+    writeFileSync(join(root, "colada.txt"), "ya estaba en el índice\n");
+    execFileSync("git", ["-C", root, "add", "--", join(root, "colada.txt")]);
+    expect(commitFile(root, join(root, "seed.txt"), "chore: stamp")).toBe(true);
+    const shown = execFileSync("git", ["-C", root, "show", "--name-only", "--format=", "HEAD"], {
+      encoding: "utf8",
+    });
+    expect(shown).toContain("seed.txt");
+    expect(shown).not.toContain("colada.txt");
+  });
+
+  /** Reported, never thrown — the caller has already archived and cannot undo it. */
+  it("returns false outside a repository instead of throwing", () => {
+    expect(commitFile(mkdtempSync(join(tmpdir(), "git-")), "x.txt", "chore: nada")).toBe(false);
+  });
+
+  it("returns false when there is nothing to commit", () => {
+    const root = scratch();
+    expect(commitFile(root, join(root, "seed.txt"), "chore: nada cambió")).toBe(false);
   });
 });

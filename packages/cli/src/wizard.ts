@@ -1096,18 +1096,19 @@ export function assembleDeliveryPrompt(
     `Daniel ya autorizó esta entrega en el asistente, con esta versión y este`,
     `documento. No vuelvas a preguntar si hacerla.`,
     ``,
-    `Cuatro pasos, en este orden:`,
+    `Tres pasos, en este orden:`,
     ``,
     `1. Escribí la fila ${version} en el Historial de cambios, con su fecha y su`,
     `   descripción. Cargá la skill \`delivery-summary\` y seguila: es la que dice`,
     `   qué le importa a un cliente y qué es ruido nuestro.`,
     `2. Commiteá esa fila. Tiene que estar en un commit ANTES del build oficial,`,
     `   porque la prueba de entrega guarda el commit del que salió el documento y`,
-    `   la fila es parte del documento.`,
-    `3. Corré la entrega, que construye el oficial, lo archiva y sella la prueba:`,
+    `   la fila es parte del documento. El comando del paso 3 se niega a arrancar`,
+    `   con el árbol sucio, así que sin este commit no hay entrega.`,
+    `3. Corré la entrega. Construye el oficial, lo archiva, sella la prueba y`,
+    `   COMMITEA EL SELLO ella misma — no hay un cuarto paso:`,
     `      node packages/cli/src/main.ts deliver ${manualId} \\`,
     `        --version ${version} --axis ${target.axis}=${target.value}`,
-    `4. Commiteá el sello que dejó en la fila.`,
     ``,
     `Si algo se niega, PARÁ y contá qué dijo. Una entrega a medias es peor que`,
     `ninguna: los archivos archivados no se pisan.`,
@@ -1199,6 +1200,9 @@ async function deliveryFlow(
   ui("");
   ui(`   Se archivan en ${accent(`deliveries/${doc.manualId}/`)}, para no borrarse nunca,`);
   ui(`   y la fila queda sellada con el commit y el hash de cada archivo.`);
+  ui("");
+  ui(`   El sello se ${accent("commitea")} solo. Es lo único que hace verificable el`);
+  ui(`   ${dim("archivo, y dejarlo sin commitear es dejarlo perdible.")}`);
   ui("");
   ui(dim(`   Una vez archivado no se pisa, y la fila pasa a ser historia.`));
   ui("");

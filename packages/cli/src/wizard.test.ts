@@ -755,6 +755,19 @@ describe("assembleDeliveryPrompt", () => {
     expect(deliver).toBeGreaterThan(commit);
   });
 
+  /**
+   * `deliver` commits its own stamp. A prompt still asking for a fourth step
+   * would have the agent commit nothing, look for a change that is not there,
+   * and start improvising — which is how an agent ends up committing something
+   * else.
+   */
+  it("stops at three steps, because the stamp commits itself", () => {
+    const p = assembleDeliveryPrompt("m", "summarise-first", "1.0.0", null, bridge);
+    expect(p).toContain("Tres pasos");
+    expect(p).toContain("COMMITEA EL SELLO");
+    expect(p).not.toMatch(/^4\./m);
+  });
+
   it("names the exact target, so the agent cannot deliver the other document", () => {
     const p = assembleDeliveryPrompt("broadlineavida", "summarise-first", "1.6.0", null, {
       axis: "tenant",

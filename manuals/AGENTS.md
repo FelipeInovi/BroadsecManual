@@ -242,8 +242,20 @@ questions and nothing more:
 Then, after one confirmation that spells out everything that follows:
 
 ```
-fila escrita y commiteada  ->  build oficial  ->  archivo en deliveries/  ->  sello
+fila escrita y commiteada  ->  build oficial  ->  archivo en deliveries/  ->  sello commiteado
 ```
+
+**The stamp commits itself**, and that is not a convenience. The stamp is the
+only thing that makes an archived file verifiable, so leaving it uncommitted
+opened a window where the delivery was permanent — `archive` refuses to
+overwrite — while the proof of it could still vanish under a `git checkout`.
+That window is what the proof exists to close.
+
+It is safe there and would not be in general, for one reason: `deliver` refuses
+to start on a dirty tree, so its own stamp is the only change in existence by
+the time it commits. Nothing unrelated can be swept in. And of every step in a
+delivery it is the least irreversible — a commit can be amended, an archived
+file cannot be un-archived.
 
 **A version that already has a row is the SIMPLEST delivery, not a rejection.**
 Every manual in this repository sits in exactly that state — rows written, none

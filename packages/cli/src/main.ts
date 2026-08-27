@@ -34,7 +34,7 @@ import { printToPdf } from "./chrome.ts";
 import { rasterise, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
-import { headCommit, isDirty } from "./git.ts";
+import { commitFile, headCommit, isDirty } from "./git.ts";
 import { archive, planDelivery, stampFile } from "./deliver.ts";
 import { changeLogSectionFile } from "./delivery-state.ts";
 import { nextWorkNumber, workStamp } from "./naming.ts";
@@ -1221,6 +1221,42 @@ async function deliverManual(
   console.log(
     `  sellada la fila ${version} en ${basename(sectionFile as string)} (commit ${commit.slice(0, 7)})`,
   );
+
+  // --- the stamp is committed here, and that is not a convenience -----------
+  //
+  // The stamp is the ONLY thing that makes the archived file verifiable.
+  // Leaving it uncommitted opens a window where the delivery is permanent —
+  // `archive` refuses to overwrite — while the proof of it can still vanish
+  // under a `git checkout`. That window is precisely what the proof exists to
+  // close, so leaving it open was the defect.
+  //
+  // Safe HERE and not in general, for one reason: this command refuses to start
+  // on a dirty tree, so its own stamp is the only change in existence by now.
+  // Nothing unrelated can be swept in.
+  //
+  // Nothing in the message is a judgement — manual, target, version, all
+  // derived. And of every step in a delivery this is the LEAST irreversible: a
+  // commit can be amended or reset, an archived file cannot be un-archived.
+  const targetLabel = [...expected.keys()].join(", ");
+  const committed = commitFile(
+    repoRoot,
+    sectionFile as string,
+    `chore(deliver): ${config.manual.id} ${targetLabel} v${version} — sello de entrega`,
+  );
+  if (!committed) {
+    console.error(
+      [
+        ``,
+        `ARCHIVADO Y SELLADO, pero el commit del sello FALLÓ.`,
+        `  Los archivos ya están en deliveries/ y no se pisan, así que esto no se`,
+        `  deshace: lo que falta es dejar la prueba en la historia. Commitee a mano`,
+        `  ${basename(sectionFile as string)} antes de seguir, o el PDF archivado queda`,
+        `  sin nada que lo verifique.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+  console.log(`  commiteado el sello`);
   return 0;
 }
 

@@ -21,15 +21,22 @@ row has to exist and be **committed** before the official document renders.
 Written afterwards, it would ship a PDF whose own history carries a blank
 description — the one place a client is certain to look.
 
-So when the wizard hands you a delivery, it is four steps in this order:
+So when the wizard hands you a delivery, it is three steps in this order:
 
 1. Write the row (this skill).
 2. Commit it. The delivery's proof records the commit the document came from, and
-   the row is part of the document.
-3. Run the delivery, which builds the official PDF and Word file, archives them
-   in `deliveries/`, and stamps the hashes onto your row:
+   the row is part of the document. Step 3 refuses to start on a dirty tree, so
+   without this commit there is no delivery at all.
+3. Run the delivery. It builds the official PDF and Word file, archives them in
+   `deliveries/`, stamps the hashes onto your row, and **commits the stamp
+   itself** — there is no fourth step:
    `node packages/cli/src/main.ts deliver <manual> --version <N.N.N> --axis <axis>=<value>`
-4. Commit the stamp.
+
+The two commits are not symmetric, which is why one is yours and one is not.
+Your row carries judgement, so committing it is part of writing it. The stamp
+carries none — version, commit, hashes, all derived — and it is the only thing
+that makes the archived file verifiable, so leaving it for a step that can be
+forgotten was the defect.
 
 **The owner already authorised the delivery** in the wizard, with that version
 and that document. Do not ask again. If any step refuses, STOP and report what it

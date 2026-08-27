@@ -45,6 +45,27 @@ export function isDirty(repoRoot: string): boolean | null {
 }
 
 /**
+ * Commit ONE file, with a message, and nothing else.
+ *
+ * NAMES THE PATH IN BOTH HALVES — staged explicitly and passed to `commit`, so
+ * a file that arrived in the tree between the stage and the commit cannot ride
+ * along. `commit -a` or a bare `commit` after `add` would both sweep it up.
+ *
+ * Only safe because of where it is called from: a delivery refuses to start on
+ * a dirty tree, so the file it stamps is the only change in existence by the
+ * time this runs. Do not reach for it from anywhere that cannot make the same
+ * promise.
+ *
+ * Returns false when git could not do it. The caller has already archived by
+ * then and cannot roll that back, so a false here is something to REPORT
+ * loudly, never to swallow.
+ */
+export function commitFile(repoRoot: string, path: string, message: string): boolean {
+  if (git(repoRoot, ["add", "--", path]) === null) return false;
+  return git(repoRoot, ["commit", "-m", message, "--", path]) !== null;
+}
+
+/**
  * Whether `commit` is what the tree currently holds, unmodified.
  *
  * Both halves are required. A build sitting on the delivered commit but with
