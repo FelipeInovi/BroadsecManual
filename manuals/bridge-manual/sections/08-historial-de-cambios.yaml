@@ -58,12 +58,6 @@ children:
         - id: historial.tabla.1-0-0
           version: 1.0.0
           date: 2026-08-26
-          delivered:
-            todas-las-agencias:
-              commit: 57edf6931fe616131c2e3f3d8b31b107a9a5f79e
-              files:
-                manual-operador-bridge-todas-las-agencias-v1.0.0.pdf: 74b151349bb57cc0c53aac4439f769aab53878390be718e86f4519d24c5de7c2
-                manual-operador-bridge-todas-las-agencias-v1.0.0.docx: bdfc3f5b86d6dbc7da86f14f48316fbca3322c0453f1d791c7ba0db2f1fefd50
           description: >-
             Primera entrega del manual de operador de Bridge360. Documenta los
             módulos Home, Llamada, Seatmap, Dashboard, Bridge of Things,
