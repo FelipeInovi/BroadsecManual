@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
+import { parse as parseYaml } from "yaml";
 import { archive, hashFile, planDelivery, stampProof, unstampProof } from "./deliver.ts";
 
 const tmp = (): string => mkdtempSync(join(tmpdir(), "deliver-"));
@@ -131,14 +132,52 @@ children:
     ],
   };
 
-  it("inserts the proof under the row that declares the version", () => {
-    const out = stampProof(SECTION, "1.0.0", proof) as string;
-    expect(out).toContain("          delivered:");
-    expect(out).toContain("            commit: 8a0ab58");
-    expect(out).toContain("            agencia-propia:");
-    expect(out).toContain(`              ap.pdf: ${"a".repeat(64)}`);
-    expect(out).toContain("            todas-las-agencias:");
-    expect(out).toContain(`              tla.pdf: ${"b".repeat(64)}`);
+  /**
+   * Asserted as WHOLE LINES, not with `toContain`. Substring matching is blind
+   * to leading whitespace — `"    commit:"` matches inside `"      commit:"` —
+   * so the first version of this test passed unchanged through the move of
+   * `commit` from row level down under each target. A test that survives the
+   * change it should have caught is not a test.
+   */
+  it("nests commit and files UNDER each target, at the right depth", () => {
+    const out = (stampProof(SECTION, "1.0.0", proof) as string).split("\n");
+    const from = out.indexOf("          delivered:");
+    expect(from).toBeGreaterThan(-1);
+    expect(out.slice(from, from + 9)).toEqual([
+      "          delivered:",
+      "            agencia-propia:",
+      "              commit: 8a0ab58",
+      "              files:",
+      `                ap.pdf: ${"a".repeat(64)}`,
+      "            todas-las-agencias:",
+      "              commit: 8a0ab58",
+      "              files:",
+      `                tla.pdf: ${"b".repeat(64)}`,
+    ]);
+  });
+
+  /**
+   * The whole point of the shape. Two targets delivered from two commits is
+   * normal — one can be handed a version months after the other — and a single
+   * row-level commit could only ever have described one of them.
+   */
+  it("lets a second target carry its OWN commit", () => {
+    const first = stampProof(SECTION, "1.0.0", {
+      commit: "9348ddb",
+      files: [{ axisValue: "todas-las-agencias", path: "out/tla.pdf", sha: "b".repeat(64) }],
+    }) as string;
+    const both = stampProof(first, "1.0.0", {
+      commit: "274e66f",
+      files: [{ axisValue: "agencia-propia", path: "out/ap.pdf", sha: "a".repeat(64) }],
+    }) as string;
+
+    // ONE block, not two. Two `delivered:` keys in one mapping is a duplicate
+    // key, YAML rejects it, and the manual stops parsing — after the files have
+    // already been archived and committed.
+    expect(both.split("\n").filter((l) => /^\s+delivered:$/.test(l))).toHaveLength(1);
+    expect(both).toContain("commit: 9348ddb");
+    expect(both).toContain("commit: 274e66f");
+    expect(parseYaml(both)).toBeTruthy();
   });
 
   it("puts it after the date, leaving the human-facing fields together", () => {
@@ -201,11 +240,16 @@ describe("stampProof with more than one file per target", () => {
   };
 
   it("groups by target and keys each file by its own name", () => {
-    const out = stampProof(SECTION, "1.0.0", two) as string;
-    expect(out).toContain("            agencia-propia:");
-    expect(out).toContain(`              m-ap-v1.0.0.pdf: ${"a".repeat(64)}`);
-    expect(out).toContain(`              m-ap-v1.0.0.docx: ${"b".repeat(64)}`);
-    expect(out).toContain("            todas-las-agencias:");
+    const out = (stampProof(SECTION, "1.0.0", two) as string).split("\n");
+    const from = out.indexOf("          delivered:");
+    expect(out.slice(from, from + 5)).toEqual([
+      "          delivered:",
+      "            agencia-propia:",
+      "              commit: f485b0d",
+      "              files:",
+      `                m-ap-v1.0.0.pdf: ${"a".repeat(64)}`,
+    ]);
+    expect(out).toContain(`                m-ap-v1.0.0.docx: ${"b".repeat(64)}`);
   });
 
   it("writes each target's key exactly once", () => {
@@ -236,21 +280,27 @@ describe("unstampProof", () => {
       `          version: 1.0.0`,
       `          date: 2026-08-26`,
       `          delivered:`,
-      `            commit: 9348ddb`,
-      `            files:`,
       targets,
       `          description: >-`,
       `            Primera entrega.`,
       ``,
     ].join("\n");
 
-  const oneTarget = rowWith([`              mv:`, `                m-mv-v1.0.0.pdf: ${SHA_A}`].join("\n"));
+  const target = (name: string, commit: string, file: string, sha: string) =>
+    [
+      `            ${name}:`,
+      `              commit: ${commit}`,
+      `              files:`,
+      `                ${file}: ${sha}`,
+    ].join("\n");
+
+  const oneTarget = rowWith(target("mv", "9348ddb", "m-mv-v1.0.0.pdf", SHA_A));
   const twoTargets = rowWith(
     [
-      `              mv:`,
-      `                m-mv-v1.0.0.pdf: ${SHA_A}`,
-      `              med:`,
-      `                m-med-v1.0.0.pdf: ${SHA_B}`,
+      target("mv", "9348ddb", "m-mv-v1.0.0.pdf", SHA_A),
+      // Its own commit, delivered later. That is the case the old shape could
+      // not hold, and the reason this one is keyed by target all the way down.
+      target("med", "274e66f", "m-med-v1.0.0.pdf", SHA_B),
     ].join("\n"),
   );
 
@@ -274,6 +324,8 @@ describe("unstampProof", () => {
     expect(out?.files).toEqual(["m-med-v1.0.0.pdf"]);
     expect(out?.yaml).toContain("delivered:");
     expect(out?.yaml).toContain(`m-mv-v1.0.0.pdf: ${SHA_A}`);
+    expect(out?.yaml).toContain("commit: 9348ddb");
+    expect(out?.yaml).not.toContain("commit: 274e66f");
     expect(out?.yaml).not.toContain(SHA_B);
     expect(out?.yaml).not.toMatch(/^\s+med:$/m);
   });
@@ -321,10 +373,7 @@ describe("unstampProof", () => {
       `          version: 1.1.0`,
       `          date: 2026-09-01`,
       `          delivered:`,
-      `            commit: abc1234`,
-      `            files:`,
-      `              mv:`,
-      `                m-mv-v1.1.0.pdf: ${SHA_A}`,
+      target("mv", "abc1234", "m-mv-v1.1.0.pdf", SHA_A),
       `          description: Entregada.`,
       ``,
     ].join("\n");

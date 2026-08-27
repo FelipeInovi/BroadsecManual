@@ -562,8 +562,20 @@ describe("deliveryProofFor", () => {
   });
 
   const delivered = log([
-    { id: "r1", version: "1.0.0", delivered: { commit: "a9f780e", files: { mv: { "m-mv.pdf": SHA_A } } } },
-    { id: "r2", version: "1.1.0", delivered: { commit: "cd40d46", files: { mv: { "m-mv.pdf": SHA_B }, med: { "m-med.pdf": SHA_A } } } },
+    {
+      id: "r1",
+      version: "1.0.0",
+      delivered: { mv: { commit: "a9f780e", files: { "m-mv.pdf": SHA_A } } },
+    },
+    {
+      id: "r2",
+      version: "1.1.0",
+      delivered: {
+        mv: { commit: "cd40d46", files: { "m-mv.pdf": SHA_B } },
+        // Its own commit, because it was handed over on its own day.
+        med: { commit: "8a0ab58", files: { "m-med.pdf": SHA_A } },
+      },
+    },
   ]);
 
   it("finds the proof for one version and one target", () => {

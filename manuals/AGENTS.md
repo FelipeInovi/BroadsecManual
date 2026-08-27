@@ -285,6 +285,39 @@ Two properties worth holding on to:
   and `med`'s archived bytes exactly where they were; the `delivered` block goes
   only when its last target does.
 
+### The proof is keyed by target, all the way down
+
+```yaml
+delivered:
+  todas-las-agencias:
+    commit: 9348ddb
+    files:
+      manual-operador-bridge-todas-las-agencias-v1.0.0.pdf: ed8cb65f…
+      manual-operador-bridge-todas-las-agencias-v1.0.0.docx: 4e05ad53…
+  agencia-propia:
+    commit: 274e66f
+    files:
+      manual-operador-bridge-agencia-propia-v1.0.0.pdf: aaaaaaaa…
+```
+
+`commit` sat above `files` once, ONE per row, and that single field broke three
+ways at the same time — all three because it described the row when the fact it
+describes belongs to a target:
+
+- Delivering the same version to a second target wrote a **second `delivered:`
+  key** into one mapping. YAML rejects duplicate keys, so the manual stopped
+  parsing — and that failure landed *after* the files were archived and
+  committed, which is the worst possible moment.
+- Merging into the existing block instead would have **anchored the second
+  target to the first one's commit**, sending its next summary to diff from a
+  point it was never built at.
+- Every reader asking "was this delivered?" got a **row-level answer**, so
+  `agencia-propia` — which had received nothing — was told 1.0.0 "ya fue
+  entregada". A refusal built on a false statement.
+
+A target can be handed a version long after another one got it. Nothing about
+the proof belongs above the target.
+
 Afterwards that version is deliverable again with nothing else to do — the row
 and its description are untouched, so `classifyDelivery` simply returns `stamp`
 for it once more.

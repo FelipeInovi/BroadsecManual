@@ -3,6 +3,31 @@ import { selectorSchema } from "../conditioning.ts";
 import type { BlockDefinition } from "../definition.ts";
 
 /**
+ * What ONE TARGET received, and the commit it was built from.
+ *
+ * `commit` is the anchor everything downstream needs. Without it, "what changed
+ * since the last delivery" has no starting point and has to be remembered; with
+ * it, the answer is `git log <commit>..HEAD` and there is nothing to remember.
+ *
+ * `files` is by FILENAME, because a target receives a SET — the PDF and the Word
+ * file, and one day perhaps more. An earlier schema had one hash per target and
+ * the two artefacts collided on the same YAML key: duplicates collapse
+ * silently, last one wins, and the PDF's hash was simply gone.
+ */
+export const targetProof = z.object({
+  /** The commit this target's delivered files were built from. Short or full SHA. */
+  commit: z.string().regex(/^[0-9a-f]{7,40}$/, "commit must be a hex git SHA"),
+  files: z
+    .record(
+      z.string().min(1),
+      z.string().regex(/^[0-9a-f]{64}$/, "must be a SHA-256, 64 hex characters"),
+    )
+    .refine((f) => Object.keys(f).length > 0, {
+      message: "a target with no files proves nothing — record one hash per file",
+    }),
+});
+
+/**
  * Proof that a version was actually handed to the client, and of exactly what.
  *
  * ITS PRESENCE IS THE STATE. A row carrying this was delivered and is now a
@@ -11,45 +36,30 @@ import type { BlockDefinition } from "../definition.ts";
  * as the absence of proof rather than as a `delivered: true` flag is deliberate:
  * a flag is a claim somebody typed, and a claim can be wrong. A hash cannot.
  *
- * `commit` is the anchor everything downstream needs. Without it, "what changed
- * since the last delivery" has no starting point and has to be remembered; with
- * it, the answer is `git log <commit>..HEAD` and there is nothing to remember.
+ * KEYED BY AXIS VALUE, ALL THE WAY DOWN, and the whole shape turns on that. A
+ * delivery is per target: one round can hand `mv` 1.5.0 and `med` 1.4.7, and a
+ * target can be handed a version months after another target got it.
  *
- * `files` is AXIS VALUE -> FILENAME -> hash, and both levels are load-bearing.
+ * `commit` used to sit here, ONE per row, above a `files` map keyed by target.
+ * That single field could not describe two targets delivered from two commits,
+ * and it broke three ways at once: a second delivery of the same version wrote
+ * a duplicate `delivered:` key and made the manual unparseable; merging into the
+ * existing block instead would have anchored the second target to the first
+ * one's commit, sending its next summary to diff from the wrong point; and every
+ * reader asking "was this delivered?" got a row-level answer, so a target that
+ * had received NOTHING was told the version was already handed over.
  *
- * By axis value, because a delivery is per target: one round can hand `mv`
- * version 1.5.0 and `med` version 1.4.7 on the same day.
- *
- * By filename UNDER it, because a target receives a SET — the PDF and the Word
- * file, and one day perhaps more. The first version of this schema had one hash
- * per target, and the two artefacts collided on the same YAML key: duplicates
- * collapse silently, last one wins, and the PDF's hash was simply gone. Nothing
- * downstream could have caught it, because by the time the schema sees the
- * document the parser has already discarded the loser.
+ * One shape fixes all three, because all three were the same mistake: the proof
+ * is per target, so nothing about it belongs above the target.
  *
  * The bytes themselves live in `deliveries/`, outside git — see its README for
  * why. This is the part that survives forever.
  */
-export const deliveryProof = z.object({
-  /** The commit the delivered files were built from. Short or full SHA. */
-  commit: z.string().regex(/^[0-9a-f]{7,40}$/, "commit must be a hex git SHA"),
-  /** Axis value -> the files that target received, by name, each with its hash. */
-  files: z
-    .record(
-      z.string().min(1),
-      z
-        .record(
-          z.string().min(1),
-          z.string().regex(/^[0-9a-f]{64}$/, "must be a SHA-256, 64 hex characters"),
-        )
-        .refine((f) => Object.keys(f).length > 0, {
-          message: "a target with no files proves nothing — record one hash per file",
-        }),
-    )
-    .refine((f) => Object.keys(f).length > 0, {
-      message: "a delivery with no targets proves nothing",
-    }),
-});
+export const deliveryProof = z
+  .record(z.string().min(1), targetProof)
+  .refine((p) => Object.keys(p).length > 0, {
+    message: "a delivery with no targets proves nothing",
+  });
 
 export type DeliveryProof = z.infer<typeof deliveryProof>;
 

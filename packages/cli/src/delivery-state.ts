@@ -33,19 +33,18 @@ export interface ChangeLogRowLike {
   readonly version: string;
   /** The row's own conditioning. Absent means every target holds it. */
   readonly when?: Selector | undefined;
-  readonly delivered?:
-    | { readonly commit?: unknown; readonly files?: Record<string, unknown> }
-    | undefined;
+  /** Axis value -> what that target received. See `deliveryProof` in `blocks`. */
+  readonly delivered?: Record<string, unknown> | undefined;
 }
 
 /**
  * The proof one row records FOR ONE TARGET, or undefined if it records none.
  *
- * Per target, not per version: a row can have been handed to `mv` and not to
- * `med`, so a version being delivered somewhere says nothing about here. A row
- * that carries a commit but no entry for this target is not a delivery of this
- * document, and reading it as one is how a target gets told it received
- * something it never did.
+ * Per target, all the way down: a row can have been handed to `mv` and not to
+ * `med`, so a version being delivered somewhere says nothing about here. Reading
+ * this at row level is how a target gets told it received something it never
+ * did — which is exactly what happened while the commit lived above the targets,
+ * and `agencia-propia` was refused a version it had never been handed.
  *
  * An EMPTY entry is not a delivery either. It would say "handed over, nothing
  * handed", and a guard that accepts it treats a bookkeeping slip as history.
@@ -58,15 +57,17 @@ export function proofFor(
   row: ChangeLogRowLike,
   axisValue: string,
 ): { readonly commit: string; readonly files: Readonly<Record<string, string>> } | undefined {
-  const proof = row.delivered;
-  const forTarget = proof?.files?.[axisValue];
+  const entry = row.delivered?.[axisValue] as
+    | { commit?: unknown; files?: Record<string, unknown> }
+    | undefined;
+  const files = entry?.files;
   if (
-    typeof proof?.commit === "string" &&
-    forTarget !== null &&
-    typeof forTarget === "object" &&
-    Object.keys(forTarget).length > 0
+    typeof entry?.commit === "string" &&
+    files !== null &&
+    typeof files === "object" &&
+    Object.keys(files).length > 0
   ) {
-    return { commit: proof.commit, files: forTarget as Record<string, string> };
+    return { commit: entry.commit, files: files as Record<string, string> };
   }
   return undefined;
 }
@@ -126,6 +127,7 @@ export type PromotableCase = Extract<
 export function checkTypedVersion(
   typed: string,
   rows: readonly ChangeLogRowLike[],
+  axisValue: string,
 ): { readonly delivery: PromotableCase } | { readonly problem: string } {
   const version = typed.trim();
   if (version === "") return { problem: "hace falta una versión" };
@@ -145,7 +147,7 @@ export function checkTypedVersion(
     };
   }
 
-  const state = classifyDelivery(rows, version);
+  const state = classifyDelivery(rows, version, axisValue);
   if (state.kind === "already-delivered") {
     return {
       problem:
@@ -195,13 +197,24 @@ const compare = (a: string, b: string): number => {
   return 0;
 };
 
-/** The rows already handed over, newest last. */
+/**
+ * The versions ONE TARGET was handed, newest last, each with its own commit.
+ *
+ * Takes the axis value because it has to. This used to filter on a row-level
+ * commit, so it reported every delivery of every target as this target's — and
+ * the last one won, which is what `summarise-since` then diffed from. Anchoring
+ * a summary on another document's commit produces a description of changes the
+ * reader of THIS document never saw.
+ */
 export function deliveredRows(
   rows: readonly ChangeLogRowLike[],
+  axisValue: string,
 ): readonly { version: string; commit: string }[] {
   return rows
-    .filter((r) => typeof r.delivered?.commit === "string")
-    .map((r) => ({ version: r.version, commit: r.delivered?.commit as string }))
+    .flatMap((r) => {
+      const proof = proofFor(r, axisValue);
+      return proof === undefined ? [] : [{ version: r.version, commit: proof.commit }];
+    })
     .sort((a, b) => compare(a.version, b.version));
 }
 
@@ -219,9 +232,23 @@ export function newestVersion(rows: readonly ChangeLogRowLike[]): string | null 
   );
 }
 
+/**
+ * Which case a delivery of `version` to `axisValue` is.
+ *
+ * TAKES THE TARGET, and every question it asks is about that target alone. The
+ * first version of this read the proof at row level, and the consequence was
+ * concrete: `bridge-manual` delivered `todas-las-agencias` at 1.0.0, and the
+ * wizard then told `agencia-propia` — which had received nothing — that 1.0.0
+ * "ya fue entregada". A refusal built on a false statement.
+ *
+ * `not-the-newest` stays a question about the ROW, not the proof: the version
+ * printed on the page is the highest row of this target's table, so delivering
+ * below it would archive a document that prints a different number.
+ */
 export function classifyDelivery(
   rows: readonly ChangeLogRowLike[],
   version: string,
+  axisValue: string,
 ): DeliveryCase {
   const newest = newestVersion(rows);
   if (newest !== null && compare(version, newest) < 0) {
@@ -229,12 +256,12 @@ export function classifyDelivery(
   }
 
   const row = rows.find((r) => r.version === version);
-  if (row !== undefined && typeof row.delivered?.commit === "string") {
+  if (row !== undefined && proofFor(row, axisValue) !== undefined) {
     return { kind: "already-delivered", version };
   }
   if (row !== undefined) return { kind: "stamp", version };
 
-  const previous = deliveredRows(rows).at(-1);
+  const previous = deliveredRows(rows, axisValue).at(-1);
   return previous === undefined
     ? { kind: "summarise-first", version }
     : { kind: "summarise-since", version, since: previous.commit };

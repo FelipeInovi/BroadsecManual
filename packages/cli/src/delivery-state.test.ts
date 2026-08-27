@@ -9,9 +9,21 @@ import {
   rowsForTarget,
 } from "./delivery-state.ts";
 
+/** The target every row here is delivered to, unless a test says otherwise. */
+const MV = "mv";
+const SHA = "f".repeat(64);
+
+/**
+ * A row, optionally delivered TO `mv` from `commit`.
+ *
+ * The proof is per target all the way down, so there is no such thing as a row
+ * "delivered" without naming who received it.
+ */
 const row = (version: string, commit?: string) => ({
   version,
-  ...(commit === undefined ? {} : { delivered: { commit } }),
+  ...(commit === undefined
+    ? {}
+    : { delivered: { [MV]: { commit, files: { "m-mv.pdf": SHA } } } }),
 });
 
 describe("classifyDelivery", () => {
@@ -20,12 +32,12 @@ describe("classifyDelivery", () => {
    * handed over. Nothing to summarise — the row already says what it says.
    */
   it("stamps when the row exists and nothing was delivered under it", () => {
-    expect(classifyDelivery([row("1.0.0")], "1.0.0")).toEqual({ kind: "stamp", version: "1.0.0" });
+    expect(classifyDelivery([row("1.0.0")], "1.0.0", MV)).toEqual({ kind: "stamp", version: "1.0.0" });
   });
 
   /** A row already written after a previous delivery still only needs stamping. */
   it("stamps a written row even when an earlier version was delivered", () => {
-    expect(classifyDelivery([row("1.0.0", "aaaaaaa"), row("1.1.0")], "1.1.0")).toEqual({
+    expect(classifyDelivery([row("1.0.0", "aaaaaaa"), row("1.1.0")], "1.1.0", MV)).toEqual({
       kind: "stamp",
       version: "1.1.0",
     });
@@ -33,12 +45,12 @@ describe("classifyDelivery", () => {
 
   /** The contingency: a manual reaching its first delivery with no table at all. */
   it("asks for a first summary when no row exists and nothing was ever delivered", () => {
-    expect(classifyDelivery([], "1.0.0")).toEqual({ kind: "summarise-first", version: "1.0.0" });
+    expect(classifyDelivery([], "1.0.0", MV)).toEqual({ kind: "summarise-first", version: "1.0.0" });
   });
 
   /** The everyday case once the flow is running. */
   it("asks for a diff summary, anchored on the last delivery's own commit", () => {
-    expect(classifyDelivery([row("1.0.0", "8a0ab58")], "1.1.0")).toEqual({
+    expect(classifyDelivery([row("1.0.0", "8a0ab58")], "1.1.0", MV)).toEqual({
       kind: "summarise-since",
       version: "1.1.0",
       since: "8a0ab58",
@@ -47,7 +59,7 @@ describe("classifyDelivery", () => {
 
   it("anchors on the NEWEST delivery, not the first", () => {
     const rows = [row("1.0.0", "aaaaaaa"), row("1.1.0", "bbbbbbb")];
-    expect(classifyDelivery(rows, "1.2.0")).toEqual({
+    expect(classifyDelivery(rows, "1.2.0", MV)).toEqual({
       kind: "summarise-since",
       version: "1.2.0",
       since: "bbbbbbb",
@@ -55,7 +67,7 @@ describe("classifyDelivery", () => {
   });
 
   it("refuses to hand over a version already handed over", () => {
-    expect(classifyDelivery([row("1.0.0", "aaaaaaa")], "1.0.0")).toEqual({
+    expect(classifyDelivery([row("1.0.0", "aaaaaaa")], "1.0.0", MV)).toEqual({
       kind: "already-delivered",
       version: "1.0.0",
     });
@@ -67,7 +79,7 @@ describe("classifyDelivery", () => {
    * as history — and history is the one thing this flow exists to protect.
    */
   it("refuses a version below the newest row", () => {
-    expect(classifyDelivery([row("1.0.0"), row("1.1.0")], "1.0.0")).toEqual({
+    expect(classifyDelivery([row("1.0.0"), row("1.1.0")], "1.0.0", MV)).toEqual({
       kind: "not-the-newest",
       version: "1.0.0",
       newest: "1.1.0",
@@ -76,25 +88,25 @@ describe("classifyDelivery", () => {
 
   /** Numerically, so 1.10.0 is above 1.9.0 rather than below it. */
   it("compares versions numerically", () => {
-    expect(classifyDelivery([row("1.9.0"), row("1.10.0")], "1.9.0").kind).toBe("not-the-newest");
-    expect(classifyDelivery([row("1.9.0"), row("1.10.0")], "1.10.0").kind).toBe("stamp");
+    expect(classifyDelivery([row("1.9.0"), row("1.10.0")], "1.9.0", MV).kind).toBe("not-the-newest");
+    expect(classifyDelivery([row("1.9.0"), row("1.10.0")], "1.10.0", MV).kind).toBe("stamp");
   });
 });
 
 describe("deliveredRows", () => {
   it("keeps only rows carrying a commit, newest last", () => {
     const rows = [row("1.1.0", "bbbbbbb"), row("2.0.0"), row("1.0.0", "aaaaaaa")];
-    expect(deliveredRows(rows).map((r) => r.version)).toEqual(["1.0.0", "1.1.0"]);
+    expect(deliveredRows(rows, MV).map((r) => r.version)).toEqual(["1.0.0", "1.1.0"]);
   });
 
   it("is empty when nothing was ever delivered", () => {
-    expect(deliveredRows([row("1.0.0"), row("1.1.0")])).toEqual([]);
+    expect(deliveredRows([row("1.0.0"), row("1.1.0")], MV)).toEqual([]);
   });
 });
 
 describe("checkTypedVersion", () => {
   const problem = (typed: string, rows = [row("1.0.0")]) => {
-    const judged = checkTypedVersion(typed, rows);
+    const judged = checkTypedVersion(typed, rows, MV);
     if (!("problem" in judged)) throw new Error(`expected ${typed} to be rejected`);
     return judged.problem;
   };
@@ -122,7 +134,7 @@ describe("checkTypedVersion", () => {
   });
 
   it("accepts a legitimate zero part", () => {
-    expect(checkTypedVersion("1.0.1", [row("1.0.0")])).toEqual({
+    expect(checkTypedVersion("1.0.1", [row("1.0.0")], MV)).toEqual({
       delivery: { kind: "summarise-first", version: "1.0.1" },
     });
   });
@@ -133,7 +145,7 @@ describe("checkTypedVersion", () => {
    * row. Rejecting it as "already exists" would have blocked all of them.
    */
   it("accepts a version whose row exists but was never delivered", () => {
-    expect(checkTypedVersion("1.0.0", [row("1.0.0")])).toEqual({
+    expect(checkTypedVersion("1.0.0", [row("1.0.0")], MV)).toEqual({
       delivery: { kind: "stamp", version: "1.0.0" },
     });
   });
@@ -152,20 +164,20 @@ describe("checkTypedVersion", () => {
   });
 
   it("carries the previous delivery's commit through, for the diff", () => {
-    expect(checkTypedVersion("1.1.0", [row("1.0.0", "8a0ab58")])).toEqual({
+    expect(checkTypedVersion("1.1.0", [row("1.0.0", "8a0ab58")], MV)).toEqual({
       delivery: { kind: "summarise-since", version: "1.1.0", since: "8a0ab58" },
     });
   });
 
   it("trims what was typed, so a stray space is not a rejection", () => {
-    expect(checkTypedVersion("  1.0.0  ", [row("1.0.0")])).toEqual({
+    expect(checkTypedVersion("  1.0.0  ", [row("1.0.0")], MV)).toEqual({
       delivery: { kind: "stamp", version: "1.0.0" },
     });
   });
 
   /** A first delivery on a manual whose table is empty has nothing to be below. */
   it("accepts any valid version when there are no rows at all", () => {
-    expect(checkTypedVersion("2.0.0", [])).toEqual({
+    expect(checkTypedVersion("2.0.0", [], MV)).toEqual({
       delivery: { kind: "summarise-first", version: "2.0.0" },
     });
   });
@@ -206,16 +218,25 @@ describe("newestVersion", () => {
 
 describe("proofFor", () => {
   const SHA = "a".repeat(64);
-  const stamped = (files: Record<string, unknown>) => ({
-    version: "1.0.0",
-    delivered: { commit: "9348ddb", files },
-  });
+  const stamped = (delivered: Record<string, unknown>) => ({ version: "1.0.0", delivered });
 
   it("finds the proof for the target that received it", () => {
-    expect(proofFor(stamped({ mv: { "m.pdf": SHA } }), "mv")).toEqual({
-      commit: "9348ddb",
-      files: { "m.pdf": SHA },
+    expect(
+      proofFor(stamped({ mv: { commit: "9348ddb", files: { "m.pdf": SHA } } }), "mv"),
+    ).toEqual({ commit: "9348ddb", files: { "m.pdf": SHA } });
+  });
+
+  /**
+   * The case the old shape could not express: each target carries its own
+   * commit, so one delivered months later is not misattributed to the other's.
+   */
+  it("gives each target its own commit", () => {
+    const row = stamped({
+      mv: { commit: "9348ddb", files: { "mv.pdf": SHA } },
+      med: { commit: "274e66f", files: { "med.pdf": SHA } },
     });
+    expect(proofFor(row, "mv")?.commit).toBe("9348ddb");
+    expect(proofFor(row, "med")?.commit).toBe("274e66f");
   });
 
   /**
@@ -223,18 +244,18 @@ describe("proofFor", () => {
    * every target is how a document gets told it received something it never did.
    */
   it("finds nothing for a target the row does not name", () => {
-    expect(proofFor(stamped({ mv: { "m.pdf": SHA } }), "med")).toBeUndefined();
+    expect(
+      proofFor(stamped({ mv: { commit: "9348ddb", files: { "m.pdf": SHA } } }), "med"),
+    ).toBeUndefined();
   });
 
   /** "Handed over, nothing handed" is a bookkeeping slip, not history. */
-  it("rejects an empty entry", () => {
-    expect(proofFor(stamped({ mv: {} }), "mv")).toBeUndefined();
+  it("rejects an empty file set", () => {
+    expect(proofFor(stamped({ mv: { commit: "9348ddb", files: {} } }), "mv")).toBeUndefined();
   });
 
-  it("rejects a row with files but no commit", () => {
-    expect(
-      proofFor({ version: "1.0.0", delivered: { files: { mv: { "m.pdf": SHA } } } }, "mv"),
-    ).toBeUndefined();
+  it("rejects an entry with files but no commit", () => {
+    expect(proofFor(stamped({ mv: { files: { "m.pdf": SHA } } }), "mv")).toBeUndefined();
   });
 
   it("finds nothing on a row that was never delivered", () => {
@@ -247,8 +268,7 @@ describe("deliveredFor", () => {
   const stamped = (version: string, target: string, ...names: string[]) => ({
     version,
     delivered: {
-      commit: "c",
-      files: { [target]: Object.fromEntries(names.map((n) => [n, SHA])) },
+      [target]: { commit: "c", files: Object.fromEntries(names.map((n) => [n, SHA])) },
     },
   });
 

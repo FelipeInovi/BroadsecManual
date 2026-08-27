@@ -103,6 +103,47 @@ export function archive(
   return { copied, refused };
 }
 
+const indentOf = (line: string): number => (line.match(/^\s*/)?.[0] ?? "").length;
+
+/**
+ * The row declaring `version`, and its `delivered:` block if it has one.
+ *
+ * Bounded to that ONE row. Scanning past its end would find the next row's
+ * proof and let a stamp or an undo land on a delivery nobody mentioned.
+ */
+function locateRow(
+  lines: readonly string[],
+  version: string,
+): { readonly at: number; readonly indent: number; readonly delivered: number } | null {
+  const at = lines.findIndex((l) =>
+    new RegExp(`^\\s*version:\\s*${version.replace(/\./g, "\\.")}\\s*$`).test(l),
+  );
+  if (at === -1) return null;
+  const indent = indentOf(lines[at] ?? "");
+
+  for (let i = at + 1; i < lines.length; i++) {
+    const line = lines[i] ?? "";
+    if (line.trim() === "") continue;
+    if (indentOf(line) < indent) break;
+    if (indentOf(line) === indent && /^\s*-\s/.test(line)) break;
+    if (indentOf(line) === indent && /^\s*delivered:\s*$/.test(line)) {
+      return { at, indent, delivered: i };
+    }
+  }
+  return { at, indent, delivered: -1 };
+}
+
+/** Where a block starting at `from` ends: the first line indented no deeper. */
+function blockEnd(lines: readonly string[], from: number, indent: number): number {
+  let end = from + 1;
+  while (end < lines.length) {
+    const line = lines[end] ?? "";
+    if (line.trim() !== "" && indentOf(line) <= indent) break;
+    end += 1;
+  }
+  return end;
+}
+
 /**
  * Write the proof onto the row that already declares this version.
  *
@@ -111,6 +152,18 @@ export function archive(
  * carry this repository's reasoning, which are the most valuable thing in those
  * files. The insertion is anchored on the row's own `version:` line and its
  * indentation is taken from it.
+ *
+ * MERGES INTO AN EXISTING BLOCK rather than adding a second one. The first
+ * version of this only ever inserted, so delivering the same version to a
+ * second target wrote two `delivered:` keys into one mapping — and YAML rejects
+ * duplicate keys, so the manual stopped parsing. That failure landed AFTER the
+ * files were archived and committed, which is the worst possible moment: the
+ * irreversible half had already happened.
+ *
+ * Each target carries its OWN commit, which is why merging is safe. Two targets
+ * delivered from two commits is normal — a target can be handed a version
+ * months after another one got it — and a single row-level commit could only
+ * have described one of them.
  *
  * Returns `null` when no row declares that version: that is the caller's signal
  * that this is not a stamp but a new row, which is an agent's job to write.
@@ -121,14 +174,14 @@ export function stampProof(
   proof: { readonly commit: string; readonly files: readonly DeliverableFile[] },
 ): string | null {
   const lines = yaml.split("\n");
-  const at = lines.findIndex((l) => new RegExp(`^\\s*version:\\s*${version.replace(/\./g, "\\.")}\\s*$`).test(l));
-  if (at === -1) return null;
+  const found = locateRow(lines, version);
+  if (found === null) return null;
+  const indent = " ".repeat(found.indent);
 
-  const indent = (lines[at] ?? "").match(/^\s*/)?.[0] ?? "          ";
   // Grouped by target, then by filename. A target receives a SET — the PDF and
-  // the Word file — and the first version of this wrote one line per FILE under
+  // the Word file — and an early version of this wrote one line per FILE under
   // the target's own key. The two collided, YAML kept the last, and the PDF's
-  // hash vanished without a word. Grouping is what makes the collision
+  // hash vanished without a word. Grouping is what makes that collision
   // impossible rather than merely unlikely.
   const byTarget = new Map<string, DeliverableFile[]>();
   for (const f of proof.files) {
@@ -137,22 +190,36 @@ export function stampProof(
     else byTarget.set(f.axisValue, [f]);
   }
 
-  const block = [
-    `${indent}delivered:`,
-    `${indent}  commit: ${proof.commit}`,
-    `${indent}  files:`,
-    ...[...byTarget.entries()].flatMap(([axisValue, files]) => [
-      `${indent}    ${axisValue}:`,
-      ...files.map((f) => `${indent}      ${basename(f.path)}: ${f.sha}`),
-    ]),
-  ];
+  const entries = (pad: string): string[] =>
+    [...byTarget.entries()].flatMap(([axisValue, files]) => [
+      `${pad}${axisValue}:`,
+      `${pad}  commit: ${proof.commit}`,
+      `${pad}  files:`,
+      ...files.map((f) => `${pad}    ${basename(f.path)}: ${f.sha}`),
+    ]);
+
+  if (found.delivered !== -1) {
+    // Merged in at the END of the existing block, so the reading order matches
+    // the order things were handed over.
+    const end = blockEnd(lines, found.delivered, found.indent);
+    return [
+      ...lines.slice(0, end),
+      ...entries(`${indent}  `),
+      ...lines.slice(end),
+    ].join("\n");
+  }
 
   // After the row's `date:` when there is one, so the human-facing fields stay
   // together at the top of the row and the machinery sits below them.
-  let insertAt = at + 1;
+  let insertAt = found.at + 1;
   while (insertAt < lines.length && /^\s*date:\s/.test(lines[insertAt] ?? "")) insertAt += 1;
 
-  return [...lines.slice(0, insertAt), ...block, ...lines.slice(insertAt)].join("\n");
+  return [
+    ...lines.slice(0, insertAt),
+    `${indent}delivered:`,
+    ...entries(`${indent}  `),
+    ...lines.slice(insertAt),
+  ].join("\n");
 }
 
 /** Write the stamped YAML back, or throw if the row vanished between reads. */
@@ -166,8 +233,6 @@ export function stampFile(
   writeFileSync(sectionFile, stamped, "utf8");
   return true;
 }
-
-const indentOf = (line: string): number => (line.match(/^\s*/)?.[0] ?? "").length;
 
 /**
  * Take one target's proof back off a row.
@@ -193,45 +258,16 @@ export function unstampProof(
   axisValue: string,
 ): { readonly yaml: string; readonly files: readonly string[] } | null {
   const lines = yaml.split("\n");
-  const at = lines.findIndex((l) =>
-    new RegExp(`^\\s*version:\\s*${version.replace(/\./g, "\\.")}\\s*$`).test(l),
-  );
-  if (at === -1) return null;
-  const rowIndent = indentOf(lines[at] ?? "");
+  const found = locateRow(lines, version);
+  if (found === null || found.delivered === -1) return null;
+  const { delivered, indent: rowIndent } = found;
 
-  // Bounded to THIS row. Scanning to the end of the file would find the next
-  // row's proof and quietly undo a delivery nobody asked about.
-  let delivered = -1;
-  for (let i = at + 1; i < lines.length; i++) {
-    const line = lines[i] ?? "";
-    if (line.trim() === "") continue;
-    if (indentOf(line) < rowIndent) break;
-    if (indentOf(line) === rowIndent && /^\s*-\s/.test(line)) break;
-    if (indentOf(line) === rowIndent && /^\s*delivered:\s*$/.test(line)) {
-      delivered = i;
-      break;
-    }
-  }
-  if (delivered === -1) return null;
-
-  // Everything indented deeper than `delivered:` belongs to it.
-  let afterBlock = delivered + 1;
-  while (afterBlock < lines.length) {
-    const line = lines[afterBlock] ?? "";
-    if (line.trim() !== "" && indentOf(line) <= rowIndent) break;
-    afterBlock += 1;
-  }
-
+  const afterBlock = blockEnd(lines, delivered, rowIndent);
   const body = lines.slice(delivered + 1, afterBlock);
-  const filesAt = body.findIndex((l) => /^\s*files:\s*$/.test(l));
-  if (filesAt === -1) return null;
-  const filesIndent = indentOf(body[filesAt] ?? "");
+  const targetIndent = rowIndent + 2;
 
   const targetAt = body.findIndex(
-    (l, i) =>
-      i > filesAt &&
-      indentOf(l) === filesIndent + 2 &&
-      l.trim() === `${axisValue}:`,
+    (l) => indentOf(l) === targetIndent && l.trim() === `${axisValue}:`,
   );
   if (targetAt === -1) return null;
 
@@ -239,7 +275,7 @@ export function unstampProof(
   const named: string[] = [];
   while (afterTarget < body.length) {
     const line = body[afterTarget] ?? "";
-    if (line.trim() !== "" && indentOf(line) <= filesIndent + 2) break;
+    if (line.trim() !== "" && indentOf(line) <= targetIndent) break;
     const file = /^\s*([^\s:]+):\s*[0-9a-f]{64}\s*$/.exec(line);
     if (file?.[1] !== undefined) named.push(file[1]);
     afterTarget += 1;
@@ -248,10 +284,7 @@ export function unstampProof(
   // Was that the only target? Then the block goes, not just the entry.
   const remaining = body.filter(
     (l, i) =>
-      i > filesAt &&
-      (i < targetAt || i >= afterTarget) &&
-      l.trim() !== "" &&
-      indentOf(l) === filesIndent + 2,
+      (i < targetAt || i >= afterTarget) && l.trim() !== "" && indentOf(l) === targetIndent,
   );
 
   const kept =

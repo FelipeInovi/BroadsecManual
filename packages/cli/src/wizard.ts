@@ -1183,7 +1183,7 @@ async function deliveryFlow(
     rl,
     `Paso 2 — versión oficial (hoy imprime v${doc.printing})`,
     (typed) => {
-      const judged = checkTypedVersion(typed, doc.rows);
+      const judged = checkTypedVersion(typed, doc.rows, doc.axisValue);
       return "problem" in judged ? judged : { value: judged.delivery };
     },
   );

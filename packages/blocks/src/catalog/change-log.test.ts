@@ -129,20 +129,40 @@ describe("delivery proof — the state is the evidence, not a flag", () => {
     expect(() => changeLogProps.parse(props(row))).not.toThrow();
   });
 
-  it("accepts a row carrying the commit and one hash per target", () => {
+  it("accepts a row carrying one commit and one hash per file, per target", () => {
     const parsed = changeLogProps.parse(
       props({
         ...row,
         delivered: {
-          commit: "a9f780e",
-          files: {
-            "agencia-propia": { "m-ap.pdf": SHA, "m-ap.docx": SHA },
-            "todas-las-agencias": { "m-tla.pdf": SHA },
+          "agencia-propia": {
+            commit: "a9f780e",
+            files: { "m-ap.pdf": SHA, "m-ap.docx": SHA },
           },
+          "todas-las-agencias": { commit: "cd40d46", files: { "m-tla.pdf": SHA } },
         },
       }),
     );
-    expect(Object.keys(parsed.rows[0]?.delivered?.files ?? {})).toHaveLength(2);
+    expect(Object.keys(parsed.rows[0]?.delivered ?? {})).toHaveLength(2);
+  });
+
+  /**
+   * The reason `commit` sits under each target rather than above them. A target
+   * can be handed a version long after another one got it, and one row-level
+   * commit could only ever have described one of the two — sending the other's
+   * next summary to diff from a point it was never built at.
+   */
+  it("lets two targets of one version carry two different commits", () => {
+    const parsed = changeLogProps.parse(
+      props({
+        ...row,
+        delivered: {
+          "agencia-propia": { commit: "274e66f", files: { "m-ap.pdf": SHA } },
+          "todas-las-agencias": { commit: "9348ddb", files: { "m-tla.pdf": SHA } },
+        },
+      }),
+    );
+    expect(parsed.rows[0]?.delivered?.["agencia-propia"]?.commit).toBe("274e66f");
+    expect(parsed.rows[0]?.delivered?.["todas-las-agencias"]?.commit).toBe("9348ddb");
   });
 
   /**

@@ -155,9 +155,13 @@ Write into the row whose `version` matches the one the prompt names.
   version: 1.1.0
   date: 2026-09-14
   delivered:
-    commit: a65d448
-    files:
-      mv: 9ab5064e…
+    # Keyed by target, all the way down. A target can be handed this version
+    # long after another one got it, so each carries its own commit.
+    mv:
+      commit: a65d448
+      files:
+        manual-operador-mv-v1.1.0.pdf: 9ab5064e…
+        manual-operador-mv-v1.1.0.docx: 4e05ad53…
   description: >-
     Incorpora el módulo **Broadsec of Things**, con la gestión de dispositivos
     en campo.
