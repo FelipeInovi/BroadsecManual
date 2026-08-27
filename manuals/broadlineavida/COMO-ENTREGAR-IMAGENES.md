@@ -9,7 +9,9 @@ código ni preguntar nombres.
 node packages/cli/src/main.ts build broadlineavida --draft
 ```
 
-Produce `output/manual-operador-<despliegue>-v0.1.0-BORRADOR.pdf`. Es el mismo
+Produce `output/manual-operador-<despliegue>-trabajo-NN-BORRADOR.pdf`, donde `NN`
+es el número de la construcción — cada corrida hace uno nuevo en vez de pisar el
+anterior, así que **tome siempre el de número más alto**. Es el mismo
 manual, con una diferencia: **debajo de cada imagen pendiente imprime el nombre
 exacto del archivo**. El PDF del cliente no lo lleva a propósito, porque una ruta
 de nuestro repositorio no va en un documento que recibe un cliente.

@@ -37,7 +37,7 @@ For every block type in the catalogue:
 Unimplemented — but not blocked, and not waiting on anyone.
 
 The gallery ships today as `manuals/_catalog`: hand-written fixtures run through
-the real pipeline, delivered as `catalogo-estructuras-v0.1.0.pdf`. That works,
+the real pipeline, built as `catalogo-estructuras-trabajo-NN.pdf`. That works,
 and it has the exact flaw the rule above names — the list is hand-written, so a
 block type added to `blocks` does not appear there on its own.
 

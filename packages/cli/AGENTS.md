@@ -17,7 +17,8 @@ the authority if they ever disagree.
 
 | Command | Does |
 |---|---|
-| `build <manual>` | Assemble and render every configured target |
+| `build <manual>` | Assemble and render every configured target, named by the next working number (`…-trabajo-08.pdf`) — a new one per run, never overwriting the last |
+| `deliver <manual> --version <N.N.N>` | Promote to an official delivery: render the version-named document, archive it in `deliveries/`, stamp the commit and each file's hash onto the change-log row. Refuses on a dirty tree. The only command that produces a version-named file |
 | `images <manual>` | Export the image request document for the area that produces the screenshots |
 | `capture <manual> --tenant <id>` | Shoot pending figures off the **running** product, per `manuals/<manual>/capture-recipes.yaml` |
 | `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
@@ -55,6 +56,11 @@ there.
   inputs. Enforce it; do not merely intend it.
 - **Build output goes to `manuals/<manual>/output/`**, which is gitignored.
   Generated PDFs are never committed.
+- **A working build is never named after a version.** `build` names its output by
+  a working number and `deliver` is the only thing that writes a version-named
+  file, so a `…-v1.0.1.pdf` on disk always means a delivery happened. The
+  counter is `naming.ts`; the reasoning is in `manuals/AGENTS.md`, "Two kinds of
+  build".
 - **`--draft` is the only build allowed to print a slot path.** A slot path is a
   pipeline internal and invariant 4 keeps those out of client-facing output. The
   draft is marked in its filename (`-BORRADOR`), its cover and its running

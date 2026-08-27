@@ -1,6 +1,6 @@
 ---
 name: delivery-summary
-description: Writes the description of one row in a manual's Historial de cambios — the sentence a client reads to learn what a delivered version changed. Two modes, chosen for you by the wizard that invokes it: a FIRST delivery describes what the manual covers, since there is nothing to diff against; a LATER one reads `git log <previous-delivery-commit>..HEAD` and reports only what changed for the READER. Use when promoting a manual to an official delivery, when a change-log row exists with no description, or when asked to summarise what a version changed for a client.
+description: Writes a new row of a manual's Historial de cambios and then runs the delivery it belongs to — the sentence a client reads to learn what a version changed, committed BEFORE the official document renders, because the cover prints the highest row. Two modes, chosen for you by the wizard that invokes it: a FIRST delivery describes what the manual covers, since there is nothing to diff against; a LATER one reads `git log <previous-delivery-commit>..HEAD` and reports only what changed for the READER. Use when promoting a manual to an official delivery, when a change-log row is missing its description, or when asked to summarise what a version changed for a client. Not needed when the row already exists: `deliver` stamps it with no agent involved.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
@@ -9,9 +9,35 @@ metadata:
 
 # Writing a delivery's row
 
-One row of the `change-log` block, in a manual's final module. You write **one
-field**: `description`. Everything else in that row was already filled in by
-`broadsec-manual deliver`, and none of it is yours to touch.
+One row of the `change-log` block, in a manual's final module. You write the row
+**whole** — `id`, `version`, `date`, `description` — and the field that takes
+judgement is `description`. The `delivered` block underneath it is written by
+`broadsec-manual deliver`, afterwards, and is never yours to touch.
+
+## The row comes first, and that ordering is not a preference
+
+The version printed on the cover is read from the highest change-log row, so the
+row has to exist and be **committed** before the official document renders.
+Written afterwards, it would ship a PDF whose own history carries a blank
+description — the one place a client is certain to look.
+
+So when the wizard hands you a delivery, it is four steps in this order:
+
+1. Write the row (this skill).
+2. Commit it. The delivery's proof records the commit the document came from, and
+   the row is part of the document.
+3. Run the delivery, which builds the official PDF and Word file, archives them
+   in `deliveries/`, and stamps the hashes onto your row:
+   `node packages/cli/src/main.ts deliver <manual> --version <N.N.N> --axis <axis>=<value>`
+4. Commit the stamp.
+
+**The owner already authorised the delivery** in the wizard, with that version
+and that document. Do not ask again. If any step refuses, STOP and report what it
+said — a half-finished delivery is worse than none, because archived files are
+never overwritten.
+
+Nothing above applies when the row already exists: then `deliver` stamps it and
+no agent is involved at all.
 
 ## The only question that matters
 
@@ -130,10 +156,17 @@ Write into the row whose `version` matches the one the prompt names.
     en campo.
 ```
 
-If no row carries that version, the `deliver` command said so and the row has
-to be written whole — same `id` shape as its siblings, `version` and `date` from
-the prompt, and no `delivered` block, which is the command's to write and not
-yours.
+That `delivered` block is what step 3 adds. What YOU write is the row without it
+— same `id` shape as its siblings, `version` from the prompt, `date` as today:
+
+```yaml
+- id: historial.tabla.1-1-0
+  version: 1.1.0
+  date: 2026-09-14
+  description: >-
+    Incorpora el módulo **Broadsec of Things**, con la gestión de dispositivos
+    en campo.
+```
 
 ## Before you finish
 

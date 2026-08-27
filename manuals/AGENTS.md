@@ -162,15 +162,50 @@ When it does move, SemVer still applies:
 - **minor** — new functionality documented inside an existing module
 - **patch** — a step tweak, a wording or typo fix
 
+### Two kinds of build, and only one of them has a version
+
+**An ordinary build is NOT a version.** It is named by a working number, and
+every run makes a new one rather than overwriting the last:
+
+```
+manual-operador-bridge-todas-las-agencias-trabajo-08.pdf
+```
+
+Its running header says the same thing on every page:
+`BRIDGE360  |  Manual de operador  |  v1.0.0 · trabajo 08`. The `v1.0.0` is the
+version this content is an iteration OF — the last one written in the table —
+and `trabajo 08` is what says this file is not it.
+
+That split replaced a rule where every build was named after the highest
+change-log row. It could not hold: work continues after a delivery, so the day
+after one, every build carried a name that already belonged to the client's copy.
+A marker called `-NO-ENTREGADO` existed to label the ones that were lying, and it
+is gone along with the collision it covered.
+
+- The counter is **per manual, allocated once per build run** —
+  `nextWorkNumber` in `packages/cli/src/naming.ts`. Every target that run
+  renders shares it, so **two files with the same number are always the same
+  content**.
+- It is read off the filenames in `output/`, which is gitignored and disposable.
+  A fresh clone starts at 1, correctly: it has no working builds to be the ninth
+  of.
+- Expect **gaps**. `build --tenant mv` spends a number on `mv` alone, so `med`'s
+  newest can sit at 08 while `mv` is at 09. The gap is true — run 09 did not
+  include `med`.
+
+**An official build is named by a version, and only a delivery makes one.** No
+`…-v1.0.1.pdf` exists until `deliver` renders it, which removes the whole class
+of mistake where a file named after a version was built from different content.
+
 ### Where the printed version comes from
 
 **The change log is the source of truth, not `manual.config.yaml`.** The cover,
-the running header and the PDF's own FILENAME all print the highest row of that
-target's change log — `deliveredVersion` in `packages/cli/src/main.ts`.
+the running header and an official build's FILENAME all print the highest row of
+that target's change log — `deliveredVersion` in `packages/cli/src/main.ts`.
 
 It has to work that way, because the delivered version is **per target** and
 `contentVersion` is one scalar per manual. `broadlineavida` proves it: `mv`
-received 1.5.0 and `med` stopped at 1.4.7, so they build as
+received 1.5.0 and `med` stopped at 1.4.7, so they deliver as
 `manual-operador-mv-v1.5.0.pdf` and `manual-operador-med-v1.4.7.pdf` off the
 same config. No single field can say that.
 
@@ -184,6 +219,38 @@ Two consequences worth holding on to:
   read from the highest row and the reader reads the last one; ascending order
   is what keeps those the same fact, so the cover always matches the bottom of
   the table.
+
+### How a delivery actually runs
+
+The order is not a preference. **The row is written and committed BEFORE the
+official document renders**, because the version on the cover is read from the
+highest row — so a row written afterwards would ship a PDF whose own history has
+a blank description, which is the one place a client is certain to look.
+
+Run it from the wizard (`pnpm manuales` → "Versionar un manual"), which asks two
+questions and nothing more:
+
+1. **Which document** — a manual narrowed to one target, because their delivery
+   histories are independent. There is deliberately no question about *which
+   build* to promote: the renderer reads `sections/`, not a PDF, so the only
+   content it can render is the content that is there now.
+2. **Which version**, TYPED, in `N.N.N` form. A new delivery is by definition a
+   number nothing on disk has yet, so there is nothing to pick from.
+   `checkTypedVersion` (`packages/cli/src/delivery-state.ts`) answers every way
+   of being wrong and re-asks instead of exiting.
+
+Then, after one confirmation that spells out everything that follows:
+
+```
+fila escrita y commiteada  ->  build oficial  ->  archivo en deliveries/  ->  sello
+```
+
+**A version that already has a row is the SIMPLEST delivery, not a rejection.**
+Every manual in this repository sits in exactly that state — rows written, none
+handed over — so the first delivery of each is a version its table already
+declares. There is nothing to summarise and no agent runs; the row is stamped and
+that is all. Only a version with NO row needs one written, and writing it is
+judgement (`delivery-summary`).
 
 ### The change log is written by hand, and that is deliberate
 

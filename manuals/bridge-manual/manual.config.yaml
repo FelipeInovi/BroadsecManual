@@ -20,13 +20,16 @@ manual:
   # SemVer of the manual content. 0.x while this is a pipeline spike, so a new
   # module bumps the minor rather than the major: the major stays at 0
   # deliberately. Bridge of Things is the fifth module.
-  # NOT WHAT THE MANUAL PRINTS, and not what names its PDF. Both come from the
-  # highest row of this manual's change log, per target — see `deliveredVersion`
-  # in packages/cli/src/main.ts. Editing this field changes nothing on the page.
+  # NOT WHAT THE MANUAL PRINTS. What it prints is the highest row of this
+  # manual's change log, per target — see `deliveredVersion` in
+  # packages/cli/src/main.ts. Editing this field changes nothing on the page.
   #
-  # To move a delivered version, ADD A ROW to the final module. That is the
-  # owner's authorisation made visible, and it is the only thing that moves it.
-  # See `manuals/AGENTS.md`, "Versioning".
+  # It does not name the PDF either. An ordinary build is named by its working
+  # number (`…-trabajo-08.pdf`) and only a delivery writes a version-named file.
+  #
+  # To move a delivered version, a ROW is written for it — by the wizard's
+  # "Versionar un manual", on the owner's authorisation. See
+  # `manuals/AGENTS.md`, "Versioning".
   contentVersion: 0.6.9
   language: es
   register: neutral-formal
@@ -99,4 +102,7 @@ output:
   dir: output
   # `{permission}` is the axis's own name, and that is what the CLI expands:
   # `outputFilename` substitutes `{<primaryAxis>}` (packages/cli/src/main.ts:473-477).
+  # The `v{contentVersion}` segment is substituted WHOLE, `v` included: an
+  # ordinary build replaces it with `trabajo-08` and only a delivery replaces
+  # it with a version. See `workFilename` and `manuals/AGENTS.md`.
   filename: "manual-operador-bridge-{permission}-v{contentVersion}.pdf"
