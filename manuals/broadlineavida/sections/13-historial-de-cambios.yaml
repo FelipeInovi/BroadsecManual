@@ -14,15 +14,28 @@
 #  - **It must sort LAST.** `13-` puts it after `12-broadsec-of-things.yaml`,
 #    and the build enforces the outcome (`assertChangeLogIsLast`).
 #
+# THE NUMBERING RESTARTS HERE, and it is not the legacy one.
+#
+# These rows read 1.0.0 and 1.1.0. They used to read 1.4.7 and 1.5.0, which were
+# the numbers of the manual Broadsec maintained BEFORE this pipeline existed —
+# 1.4.7 being the delivery this project imported and rebuilt from.
+#
+# The Broadsec team decided on 2026-08-27 to restart the count: this manual is a
+# new document produced by a new system, and continuing someone else's sequence
+# only invited the question of which numbering a given PDF belonged to. Nothing
+# was ever delivered from this repository under the old numbers — `deliveries/`
+# held nothing and no row carried a proof — so no client's document is
+# contradicted by the change.
+#
 # THE TWO ROWS DO NOT BOTH BELONG TO BOTH TENANTS, and that is the whole reason
 # the block conditions its rows individually.
 #
-# 1.4.7 is the manual as it was received: the delivery this project imported and
+# 1.0.0 is the manual as it was received: the delivery this project imported and
 # rebuilt from. Both tenants have it.
 #
-# 1.5.0 adds Broadsec of Things, which `12-broadsec-of-things.yaml` declares as
+# 1.1.0 adds Broadsec of Things, which `12-broadsec-of-things.yaml` declares as
 # `when: {tenant: [mv, demo]}` — `med` does not receive that module, so `med`
-# must not be told it received that version. Its history ends at 1.4.7. The
+# must not be told it received that version. Its history ends at 1.0.0. The
 # selector below is copied from that section deliberately, `demo` included: if
 # `demo` ever becomes a build target, the module and its delivery row appear
 # together rather than one without the other.
@@ -51,15 +64,15 @@ children:
       dateHeader: Fecha
       descriptionHeader: Descripción de cambios
       rows:
-        - id: historial.tabla.1-4-7
-          version: 1.4.7
+        - id: historial.tabla.1-0-0
+          version: 1.0.0
           date: 2026-02-28
           description: >-
             Versión actual documentada en este manual. Incluye mejoras en
             interfaz, Call AI, Fuerzas en Campo y Security Dashboard.
 
-        - id: historial.tabla.1-5-0
-          version: 1.5.0
+        - id: historial.tabla.1-1-0
+          version: 1.1.0
           date: 2026-08-26
           # Same selector as the module this row announces. See the note above.
           when:

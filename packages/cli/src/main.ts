@@ -335,7 +335,7 @@ export function deliveryProofFor(
  *
  * Read from the ASSEMBLED manual, after conditioning, which is the whole point.
  * `contentVersion` is one scalar per manual and cannot say that `mv` received
- * 1.5.0 while `med` stopped at 1.4.7 — but the rows carry their own selectors,
+ * 1.1.0 while `med` stopped at 1.0.0 — but the rows carry their own selectors,
  * so once a target is assembled its table already holds only what that target
  * received. The bottom of that table is what its cover should print.
  *

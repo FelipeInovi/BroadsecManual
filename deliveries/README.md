@@ -12,14 +12,15 @@ deliveries/
     manual-operador-bridge-agencia-propia-v1.0.0.pdf
     manual-operador-bridge-agencia-propia-v1.0.0.docx
   broadlineavida/
-    manual-operador-mv-v1.5.0.pdf
-    manual-operador-med-v1.4.7.pdf
+    manual-operador-mv-v1.1.0.pdf
+    manual-operador-med-v1.0.0.pdf
 ```
 
 Plano dentro de cada manual, sin subcarpeta por versión — y no es pereza. Una
-entrega puede llevar versiones distintas en cada target: broadlineavida entregó
-`mv` en 1.5.0 y `med` en 1.4.7 el mismo día. Una carpeta `v1.5.0/` sería mentira
-para el archivo de `med`. El nombre del archivo ya lleva perfil y versión.
+entrega puede llevar versiones distintas en cada target: la tabla de
+broadlineavida le da a `mv` una fila 1.1.0 que `med` no recibe, así que `med` se
+queda en 1.0.0. Una carpeta `v1.1.0/` sería mentira para el archivo de `med`. El
+nombre del archivo ya lleva perfil y versión.
 
 ## Por qué esta carpeta está lejos de `output/`
 

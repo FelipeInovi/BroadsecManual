@@ -229,10 +229,11 @@ the running header and an official build's FILENAME all print the highest row of
 that target's change log — `deliveredVersion` in `packages/cli/src/main.ts`.
 
 It has to work that way, because the delivered version is **per target** and
-`contentVersion` is one scalar per manual. `broadlineavida` proves it: `mv`
-received 1.5.0 and `med` stopped at 1.4.7, so they deliver as
-`manual-operador-mv-v1.5.0.pdf` and `manual-operador-med-v1.4.7.pdf` off the
-same config. No single field can say that.
+`contentVersion` is one scalar per manual. `broadlineavida` proves it: its table
+gives `mv` a row at 1.1.0 that `med` never receives, so `med` stops at 1.0.0 and
+the two deliver as `manual-operador-mv-v1.1.0.pdf` and
+`manual-operador-med-v1.0.0.pdf` off the same config. No single field can say
+that.
 
 Two consequences worth holding on to:
 

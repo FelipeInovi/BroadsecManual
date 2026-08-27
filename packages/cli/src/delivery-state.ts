@@ -320,7 +320,7 @@ export function readChangeLogRows(manualDir: string): readonly ChangeLogRowLike[
             version: r["version"],
             // Carried through, not dropped: these rows come back UNCONDITIONED
             // and `rowsForTarget` is what narrows them. Without the selector
-            // there is nothing to narrow by, and broadlineavida — whose 1.5.0
+            // there is nothing to narrow by, and broadlineavida — whose 1.1.0
             // row belongs to `mv` and `demo` only — would report the same
             // history for every target.
             when: r["when"] as ChangeLogRowLike["when"],

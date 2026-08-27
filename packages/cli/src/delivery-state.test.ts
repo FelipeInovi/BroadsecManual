@@ -190,14 +190,14 @@ describe("rowsForTarget", () => {
   });
 
   /**
-   * broadlineavida's real shape: 1.4.7 for everyone, 1.5.0 for `mv` and `demo`
+   * broadlineavida's real shape: 1.0.0 for everyone, 1.1.0 for `mv` and `demo`
    * only. A wizard that ignored the selector would offer `med` a version it was
    * never handed.
    */
   it("narrows to the rows one target actually holds", () => {
-    const rows = [conditioned("1.4.7"), conditioned("1.5.0", ["mv", "demo"])];
-    expect(rowsForTarget(rows, { tenant: "mv" }).map((r) => r.version)).toEqual(["1.4.7", "1.5.0"]);
-    expect(rowsForTarget(rows, { tenant: "med" }).map((r) => r.version)).toEqual(["1.4.7"]);
+    const rows = [conditioned("1.0.0"), conditioned("1.1.0", ["mv", "demo"])];
+    expect(rowsForTarget(rows, { tenant: "mv" }).map((r) => r.version)).toEqual(["1.0.0", "1.1.0"]);
+    expect(rowsForTarget(rows, { tenant: "med" }).map((r) => r.version)).toEqual(["1.0.0"]);
   });
 
   it("gives an unconditioned row to every target", () => {

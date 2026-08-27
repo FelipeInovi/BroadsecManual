@@ -37,7 +37,7 @@ export const targetProof = z.object({
  * a flag is a claim somebody typed, and a claim can be wrong. A hash cannot.
  *
  * KEYED BY AXIS VALUE, ALL THE WAY DOWN, and the whole shape turns on that. A
- * delivery is per target: one round can hand `mv` 1.5.0 and `med` 1.4.7, and a
+ * delivery is per target: one round can hand `mv` 1.1.0 and `med` 1.0.0, and a
  * target can be handed a version months after another target got it.
  *
  * `commit` used to sit here, ONE per row, above a `files` map keyed by target.

@@ -866,9 +866,9 @@ describe("readDeliverableDocs", () => {
       ],
       rows: [
         `        - id: r1`,
-        `          version: 1.4.7`,
+        `          version: 1.0.0`,
         `        - id: r2`,
-        `          version: 1.5.0`,
+        `          version: 1.1.0`,
         `          when:`,
         `            tenant: [mv]`,
       ].join("\n"),
@@ -876,8 +876,8 @@ describe("readDeliverableDocs", () => {
     const { docs } = readDeliverableDocs(root);
     const mv = docs.find((d) => d.axisValue === "mv");
     const med = docs.find((d) => d.axisValue === "med");
-    expect(mv?.printing).toBe("1.5.0");
-    expect(med?.printing).toBe("1.4.7");
+    expect(mv?.printing).toBe("1.1.0");
+    expect(med?.printing).toBe("1.0.0");
     expect(med?.rows).toHaveLength(1);
   });
 
