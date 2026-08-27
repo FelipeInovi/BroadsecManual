@@ -64,6 +64,11 @@ children:
               files:
                 manual-operador-bridge-todas-las-agencias-v1.0.0.pdf: 74b151349bb57cc0c53aac4439f769aab53878390be718e86f4519d24c5de7c2
                 manual-operador-bridge-todas-las-agencias-v1.0.0.docx: bdfc3f5b86d6dbc7da86f14f48316fbca3322c0453f1d791c7ba0db2f1fefd50
+            agencia-propia:
+              commit: 46872b025011aa543ef887a6791e4a09e6abdf77
+              files:
+                manual-operador-bridge-agencia-propia-v1.0.0.pdf: 6d70589c3175337642c004eaf462c00792a0c9bcb566de37ab5effba0cc3faa3
+                manual-operador-bridge-agencia-propia-v1.0.0.docx: 62fc6f9042ae877a2adc1458b8fa94e8dac3d25f54e50b13263eaff48f91483a
           description: >-
             Primera entrega del manual de operador de Bridge360. Documenta los
             módulos Home, Llamada, Seatmap, Dashboard, Bridge of Things,
