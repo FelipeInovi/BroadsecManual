@@ -22,7 +22,16 @@ import { delimiter, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { parse as parseYaml } from "yaml";
 import { themes } from "@broadsec-manual/tokens";
-import { classifyDelivery, readChangeLogRows } from "./delivery-state.ts";
+import {
+  checkTypedVersion,
+  classifyDelivery,
+  newestVersion,
+  readChangeLogRows,
+  rowsForTarget,
+  type ChangeLogRowLike,
+} from "./delivery-state.ts";
+import { newestWorkNumberFor } from "./naming.ts";
+import { soleAxis } from "./axis.ts";
 
 /**
  * Agent CLIs this wizard can hand the prompt to.
@@ -716,7 +725,7 @@ export async function runWizard(repoRoot: string): Promise<number> {
           ]);
 
     if (action === "deliver") {
-      return await deliveryFlow(rl, repoRoot, started);
+      return await deliveryFlow(rl, repoRoot);
     }
 
     if (action === "continue") {
@@ -940,65 +949,142 @@ async function handOff(
 }
 
 /**
- * What `output/` holds for one manual, as filenames the wizard can show.
+ * One document a delivery can be made of: a manual narrowed to one target.
  *
- * DRAFTS AND SUPERSEDED BUILDS ARE EXCLUDED. Only a final build can become an
- * official delivery — a draft carries internal slot paths, and a
- * `-NO-ENTREGADO` build is by definition not the delivered document. Offering
- * either in a list of things to hand a client is offering a mistake.
+ * THE UNIT IS THE DOCUMENT, not the manual. A manual produces one file per
+ * target and their delivery histories are independent — broadlineavida handed
+ * `mv` a module that `med` never received, so their tables genuinely differ.
+ * Versioning a manual would mean versioning both, which is a decision nobody
+ * asked for.
  */
-export function builtDeliverables(manualDir: string): readonly string[] {
-  const out = join(manualDir, "output");
-  if (!existsSync(out)) return [];
-  return readdirSync(out)
-    .filter((f) => /\.(pdf|docx)$/.test(f))
-    .filter((f) => !/-BORRADOR|-NO-ENTREGADO/.test(f))
-    .sort();
+export interface DeliverableDoc {
+  readonly manualId: string;
+  readonly manualTitle: string;
+  readonly axis: string;
+  readonly axisValue: string;
+  readonly axisName: string;
+  /** This target's rows, narrowed by their own selectors. */
+  readonly rows: readonly ChangeLogRowLike[];
+  /** The version this document currently prints: the bottom of its table. */
+  readonly printing: string;
+  /** Its newest working build, or null when nothing has been built yet. */
+  readonly work: number | null;
 }
 
-/** Every version those filenames carry, newest first. */
-export function versionsInOutput(names: readonly string[]): readonly string[] {
-  const found = new Set<string>();
-  for (const n of names) {
-    const m = /-v(\d+\.\d+\.\d+)\./.exec(n);
-    if (m?.[1]) found.add(m[1]);
-  }
-  return [...found].sort((a, b) => {
-    const pa = a.split(".").map(Number);
-    const pb = b.split(".").map(Number);
-    for (let i = 0; i < 3; i++) {
-      const d = (pb[i] ?? 0) - (pa[i] ?? 0);
-      if (d !== 0) return d;
-    }
-    return 0;
-  });
+/** A manual that cannot be versioned, and the reason a picker should say so. */
+export interface UndeliverableManual {
+  readonly id: string;
+  readonly why: string;
 }
 
 /**
- * What to ask an agent for, once the deterministic half has run.
+ * Every document on disk that a version can be pinned to.
+ *
+ * REPORTS WHAT IT SKIPPED. A manual missing from the list without explanation
+ * reads as a bug in the wizard, and the operator's next move is to go looking
+ * for one. Both exclusions here are real and permanent: a manual with no change
+ * log has no row to carry a version, and one with no axis cannot say which
+ * document a target names.
+ */
+export function readDeliverableDocs(repoRoot: string): {
+  readonly docs: readonly DeliverableDoc[];
+  readonly skipped: readonly UndeliverableManual[];
+} {
+  const manualsDir = join(repoRoot, "manuals");
+  if (!existsSync(manualsDir)) return { docs: [], skipped: [] };
+
+  const docs: DeliverableDoc[] = [];
+  const skipped: UndeliverableManual[] = [];
+
+  for (const id of readdirSync(manualsDir).sort()) {
+    const dir = join(manualsDir, id);
+    const configFile = join(dir, "manual.config.yaml");
+    if (!existsSync(configFile)) continue;
+
+    const config = parseYaml(readFileSync(configFile, "utf8")) as {
+      manual?: { title?: string };
+      axes?: Record<string, { values?: { id?: string; name?: string }[] }>;
+      targets?: Record<string, string>[];
+      output?: { dir?: string };
+    };
+
+    const rows = readChangeLogRows(dir);
+    if (rows.length === 0) {
+      skipped.push({ id, why: "no tiene Historial de cambios" });
+      continue;
+    }
+
+    let axis: string;
+    try {
+      axis = soleAxis(Object.keys(config.axes ?? {}));
+    } catch {
+      skipped.push({ id, why: "no declara exactamente un eje" });
+      continue;
+    }
+
+    const outDir = join(dir, config.output?.dir ?? "output");
+    const built = existsSync(outDir) ? readdirSync(outDir) : [];
+
+    for (const target of config.targets ?? []) {
+      const value = target[axis];
+      if (value === undefined) continue;
+      const mine = rowsForTarget(rows, target);
+      const printing = newestVersion(mine);
+      // A target whose table conditions every row away has no version to move.
+      // It is not an error — it is a document that has never been delivered
+      // anything — but it cannot be the subject of a delivery either.
+      if (printing === null) continue;
+
+      docs.push({
+        manualId: id,
+        manualTitle: config.manual?.title ?? id,
+        axis,
+        axisValue: value,
+        axisName:
+          config.axes?.[axis]?.values?.find((v) => v.id === value)?.name ?? value,
+        rows: mine,
+        printing,
+        work: newestWorkNumberFor(built, value),
+      });
+    }
+  }
+  return { docs, skipped };
+}
+
+/**
+ * What to ask an agent for when the row does not exist yet.
+ *
+ * THE ROW COMES BEFORE THE DOCUMENT, and that ordering is the whole reason this
+ * prompt asks for more than a sentence. The version on the cover is read from
+ * the highest change-log row, so the row has to be written and committed before
+ * the official build renders — otherwise the delivered PDF would contain its own
+ * history with the description blank, which is the one place a client is certain
+ * to look.
  *
  * The two modes differ in their INPUT and their framing, never in their
- * standards — which is why they name one skill rather than two. A first
- * delivery has nothing to diff against and describes what the manual covers; a
- * later one is read from the previous delivery's own commit forward.
+ * standards — which is why they name one skill rather than two. A first delivery
+ * has nothing to diff against and describes what the manual covers; a later one
+ * is read from the previous delivery's own commit forward.
  */
 export function assembleDeliveryPrompt(
   manualId: string,
   kind: "summarise-first" | "summarise-since",
   version: string,
   since: string | null,
+  target: { readonly axis: string; readonly value: string },
 ): string {
   const head =
     kind === "summarise-since"
       ? [
-          `Escribí la fila ${version} del Historial de cambios de \`${manualId}\`.`,
+          `Entregá la versión ${version} de \`${manualId}\` para`,
+          `\`${target.axis}=${target.value}\`.`,
           ``,
           `Lo entregado por última vez salió del commit \`${since}\`. Lo que cambió`,
           `desde entonces está en \`git log ${since}..HEAD\`.`,
         ]
       : [
-          `Escribí la PRIMERA fila del Historial de cambios de \`${manualId}\`,`,
-          `versión ${version}.`,
+          `Entregá la versión ${version} de \`${manualId}\` para`,
+          `\`${target.axis}=${target.value}\`. Es su PRIMERA entrega.`,
           ``,
           `No hay entrega anterior, así que no hay diff que tomar: la fila describe`,
           `lo que este manual CUBRE, no lo que cambió.`,
@@ -1007,114 +1093,121 @@ export function assembleDeliveryPrompt(
   return [
     ...head,
     ``,
-    `Cargá la skill \`delivery-summary\` y seguila. Es la que dice qué le importa`,
-    `a un cliente y qué es ruido nuestro.`,
+    `Daniel ya autorizó esta entrega en el asistente, con esta versión y este`,
+    `documento. No vuelvas a preguntar si hacerla.`,
     ``,
-    `Los archivos ya están archivados en \`deliveries/${manualId}/\` y la prueba`,
-    `quedó sellada. Falta la descripción, y sólo eso.`,
+    `Cuatro pasos, en este orden:`,
+    ``,
+    `1. Escribí la fila ${version} en el Historial de cambios, con su fecha y su`,
+    `   descripción. Cargá la skill \`delivery-summary\` y seguila: es la que dice`,
+    `   qué le importa a un cliente y qué es ruido nuestro.`,
+    `2. Commiteá esa fila. Tiene que estar en un commit ANTES del build oficial,`,
+    `   porque la prueba de entrega guarda el commit del que salió el documento y`,
+    `   la fila es parte del documento.`,
+    `3. Corré la entrega, que construye el oficial, lo archiva y sella la prueba:`,
+    `      node packages/cli/src/main.ts deliver ${manualId} \\`,
+    `        --version ${version} --axis ${target.axis}=${target.value}`,
+    `4. Commiteá el sello que dejó en la fila.`,
+    ``,
+    `Si algo se niega, PARÁ y contá qué dijo. Una entrega a medias es peor que`,
+    `ninguna: los archivos archivados no se pisan.`,
   ].join("\n");
 }
 
 /**
- * Promote a built manual to an official delivery.
+ * Promote a document to an official delivery.
  *
- * The deterministic half runs as the CLI's own `deliver` command, spawned
- * rather than imported: `main.ts` imports this file, so calling back into it
- * would be a cycle. Spawning also means the wizard and a plain terminal run
- * exactly the same code, which is the only way the two can be trusted to agree.
+ * TWO QUESTIONS, and the second one is TYPED. Which document, and what version
+ * it becomes. There is deliberately no question about which build to promote:
+ * the renderer reads `sections/`, not a PDF, so the only content it can render
+ * is the content that is there now. Offering a list of older working builds
+ * would be offering to render today's content under an older build's name.
+ *
+ * The version is typed rather than picked because a new delivery is by
+ * definition a number nothing on disk has yet. `checkTypedVersion` answers every
+ * way of being wrong, as a re-ask rather than an exit.
+ *
+ * Splits at the end on one fact: whether a row already declares that version. If
+ * one does, everything left is deterministic and runs here as the CLI's own
+ * `deliver` — spawned rather than imported, because `main.ts` imports this file.
+ * If none does, the row has to be WRITTEN first, and writing it is judgement.
  */
 async function deliveryFlow(
   rl: ReturnType<typeof createInterface>,
   repoRoot: string,
-  manuals: readonly ManualState[],
 ): Promise<number> {
-  // Named for the DECISION, not for the noun. The continuation flow also asks
-  // "¿Cuál manual?", and two identical questions doing different things read as
-  // one question the operator has already answered.
-  const picked = await select(
-    rl,
-    "Paso 1 — ¿qué manual se entrega?",
-    manuals.map((m) => {
-      const built = builtDeliverables(join(repoRoot, "manuals", m.id));
-      const versions = versionsInOutput(built);
-      return {
-        label: `${m.id}  ${dim(m.title)}`,
-        detail:
-          built.length === 0
-            ? "sin nada construido en output/ — no hay qué entregar"
-            : `construido: ${versions.join(", ")}  (${built.length} archivo(s))`,
-        value: m,
-      };
-    }),
-  );
-  const manualDir = join(repoRoot, "manuals", picked.id);
-
-  const built = builtDeliverables(manualDir);
-  if (built.length === 0) {
-    ui(dim(`   No hay nada final en output/ de ${picked.id}.`));
-    ui(dim(`   Construilo primero:  broadsec-manual build ${picked.id} --docx`));
+  const { docs, skipped } = readDeliverableDocs(repoRoot);
+  for (const s of skipped) {
+    ui(dim(`   ${s.id}: ${s.why} — no se puede versionar.`));
+  }
+  if (skipped.length > 0) ui("");
+  if (docs.length === 0) {
+    ui(dim("   Ningún manual tiene un Historial de cambios al que anclar una versión."));
     ui("");
     return 1;
   }
 
-  ui(bold("Lo que hay construido y listo para entregar"));
-  ui("");
-  for (const f of built) ui(`   ${dim("·")} ${f}`);
-  ui("");
-
-  // ALWAYS ASKED, even when there is only one candidate. The first version of
-  // this skipped the question in that case, to save a keystroke — and the
-  // version is the one thing the owner authorises. Skipping the confirmation on
-  // the single most consequential and least reversible action in the pipeline,
-  // to save one key, is exactly backwards: the keystroke IS the authorisation.
-  const versions = versionsInOutput(built);
-  const version = await select(
+  // The unit is the DOCUMENT. See `DeliverableDoc`.
+  const doc = await select(
     rl,
-    "Paso 2 — ¿qué versión se entrega oficialmente?",
-    versions.map((v) => ({
-      label: `v${v}`,
-      detail: built.filter((f) => f.includes(`-v${v}.`)).join("  "),
-      value: v,
+    "Paso 1 — ¿qué documento se entrega?",
+    docs.map((d) => ({
+      label: `${d.manualId}  ${d.axis}=${accent(d.axisValue)}  ${dim(d.axisName)}`,
+      detail:
+        `imprime v${d.printing}` +
+        (d.work === null
+          ? " · nada construido todavía en output/"
+          : ` · último trabajo en output/: ${String(d.work).padStart(2, "0")}`),
+      value: d,
     })),
   );
 
-  const state = classifyDelivery(readChangeLogRows(manualDir), version);
-  if (state.kind === "already-delivered") {
-    ui(dim(`   ${version} ya fue entregada. Una entrega es un hecho: publicar cambios`));
-    ui(dim(`   necesita una versión nueva, no reescribir ésta.`));
-    ui("");
-    return 1;
-  }
-  if (state.kind === "not-the-newest") {
-    ui(dim(`   ${version} está por debajo de ${state.newest}, la fila más alta de la tabla.`));
-    ui(dim(`   Lo que hay en output/ se construyó del contenido actual, así que NO es`));
-    ui(dim(`   esa versión: archivarlo con ese nombre guardaría el documento equivocado.`));
-    ui("");
-    return 1;
-  }
+  // ALWAYS ASKED. The version is the one thing the owner authorises, and the
+  // keystroke IS the authorisation — see the note this replaced, which made the
+  // same point about a menu it was tempting to skip.
+  const state = await ask(
+    rl,
+    `Paso 2 — versión oficial (hoy imprime v${doc.printing})`,
+    (typed) => {
+      const judged = checkTypedVersion(typed, doc.rows);
+      return "problem" in judged ? judged : { value: judged.delivery };
+    },
+  );
+  const version = state.version;
 
   // --- the last chance to stop ---------------------------------------------
   //
   // Everything after this point is meant to be permanent: the archive refuses
   // to be overwritten and the row becomes history. A flow that reaches an
   // irreversible act without ever saying what it is about to do has asked the
-  // operator to trust it, which is not the same as having their consent.
+  // operator to trust it, which is not the same as having their consent. It says
+  // so HERE, before the agent is launched, because once launched the agent
+  // finishes the whole delivery without stopping to ask again.
   ui(bold(`Paso 3 — esto es lo que va a pasar`));
   ui("");
-  ui(`   Se archivan en ${accent(`deliveries/${picked.id}/`)}, para no borrarse nunca:`);
-  for (const f of built.filter((f) => f.includes(`-v${version}.`))) ui(`      ${dim("·")} ${f}`);
+  if (state.kind !== "stamp") {
+    ui(`   Un agente escribe la fila ${accent(version)} del Historial de cambios,`);
+    ui(`   ${dim("con su descripción, y la commitea antes de construir.")}`);
+    ui("");
+  } else {
+    ui(`   La fila ${accent(version)} ya está escrita, con su descripción. No hace`);
+    ui(`   ${dim("falta ningún agente.")}`);
+    ui("");
+  }
+  ui(`   Se construye el documento oficial de ${accent(`${doc.axis}=${doc.axisValue}`)}:`);
+  ui(`      ${dim("·")} PDF y Word, nombrados v${version}`);
   ui("");
-  ui(
-    state.kind === "stamp"
-      ? `   Se sella la fila ${accent(version)}, que ya está escrita.`
-      : `   Se sella la fila ${accent(version)} y después un agente escribe su descripción.`,
-  );
+  ui(`   Se archivan en ${accent(`deliveries/${doc.manualId}/`)}, para no borrarse nunca,`);
+  ui(`   y la fila queda sellada con el commit y el hash de cada archivo.`);
   ui("");
   ui(dim(`   Una vez archivado no se pisa, y la fila pasa a ser historia.`));
   ui("");
   const go = await select(rl, "¿Entregamos?", [
     { label: "No, todavía no", value: false },
-    { label: `Sí, entregar ${picked.id} v${version}`, value: true },
+    {
+      label: `Sí, entregar ${doc.manualId} ${doc.axis}=${doc.axisValue} v${version}`,
+      value: true,
+    },
   ]);
   if (!go) {
     ui(dim("   No se tocó nada."));
@@ -1122,36 +1215,39 @@ async function deliveryFlow(
     return 0;
   }
 
-  // --- the deterministic half, as the CLI's own command --------------------
-  const code = await new Promise<number>((done) => {
-    const child = spawn(
-      process.execPath,
-      [join(repoRoot, "packages", "cli", "src", "main.ts"), "deliver", picked.id, "--version", version],
-      { cwd: repoRoot, stdio: "inherit" },
-    );
-    child.on("close", (c) => done(c ?? 1));
-  });
-  if (code !== 0) return code;
-
+  // --- the row already exists: nothing left is judgement -------------------
   if (state.kind === "stamp") {
-    ui("");
-    ui(dim(`   La fila ${version} ya estaba escrita, así que no hace falta ningún agente.`));
-    ui("");
-    return 0;
+    return await new Promise<number>((done) => {
+      const child = spawn(
+        process.execPath,
+        [
+          join(repoRoot, "packages", "cli", "src", "main.ts"),
+          "deliver",
+          doc.manualId,
+          "--version",
+          version,
+          "--axis",
+          `${doc.axis}=${doc.axisValue}`,
+        ],
+        { cwd: repoRoot, stdio: "inherit" },
+      );
+      child.on("close", (c) => done(c ?? 1));
+    });
   }
 
   ui("");
-  ui(dim(`   Falta la descripción de la fila, y eso es criterio: qué cambió PARA EL LECTOR.`));
+  ui(dim(`   Falta la fila, y eso es criterio: qué cambió PARA EL LECTOR.`));
   ui("");
   return await handOff(
     rl,
     repoRoot,
-    `.broadsec-manual/entrega-${picked.id}-v${version}.md`,
+    `.broadsec-manual/entrega-${doc.manualId}-${doc.axisValue}-v${version}.md`,
     assembleDeliveryPrompt(
-      picked.id,
+      doc.manualId,
       state.kind,
       version,
       state.kind === "summarise-since" ? state.since : null,
+      { axis: doc.axis, value: doc.axisValue },
     ),
   );
 }

@@ -1,6 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
+import type { BuildTarget, Selector } from "@broadsec-manual/blocks";
+import { matches } from "@broadsec-manual/core";
 
 /**
  * What promoting a version to an official delivery actually requires.
@@ -29,7 +31,91 @@ import { parse as parseYaml } from "yaml";
 /** One change-log row, as it comes off the loaded document. */
 export interface ChangeLogRowLike {
   readonly version: string;
+  /** The row's own conditioning. Absent means every target holds it. */
+  readonly when?: Selector | undefined;
   readonly delivered?: { readonly commit?: unknown } | undefined;
+}
+
+/**
+ * The rows ONE TARGET's table actually holds.
+ *
+ * Delegates to the engine's own `matches` rather than reading `when` here. A
+ * second selector implementation is precisely how content leaks across
+ * tenants: the first version of that check used `includes` on a scalar and
+ * turned exact matching into substring matching. There is one answer to "does
+ * this target see this", and it lives in `@broadsec-manual/core`.
+ */
+export function rowsForTarget(
+  rows: readonly ChangeLogRowLike[],
+  target: BuildTarget,
+): readonly ChangeLogRowLike[] {
+  return rows.filter((row) => matches(row.when, target));
+}
+
+/**
+ * Judge a version typed by hand, against the history of ONE target.
+ *
+ * The version is TYPED rather than picked, because picking is only possible
+ * among things that already exist and a new delivery is by definition a number
+ * nothing has yet. What a menu did give was validity for free, so every way of
+ * being wrong has to be answered here — and answered as a re-ask, never as an
+ * exit: a flow that drops the operator back to a shell over a typo makes them
+ * start the whole conversation again.
+ *
+ * ACCEPTS A VERSION THAT ALREADY HAS A ROW, deliberately. A row written and not
+ * yet delivered is the `stamp` case, and it is the SIMPLEST delivery there is —
+ * nothing to summarise, because the description is already written. Rejecting
+ * it as "already exists" would have blocked the first delivery of every manual
+ * in this repository, all of which sit in exactly that state.
+ */
+/** A version that can still be delivered, and the work that delivering it takes. */
+export type PromotableCase = Extract<
+  DeliveryCase,
+  { readonly kind: "stamp" | "summarise-first" | "summarise-since" }
+>;
+
+export function checkTypedVersion(
+  typed: string,
+  rows: readonly ChangeLogRowLike[],
+): { readonly delivery: PromotableCase } | { readonly problem: string } {
+  const version = typed.trim();
+  if (version === "") return { problem: "hace falta una versión" };
+  if (!/^\d+\.\d+\.\d+$/.test(version)) {
+    return { problem: "no es una versión válida: sólo números y puntos, como 1.0.1" };
+  }
+  // `1.0.01` and `1.0.1` compare equal but are two different strings, so they
+  // would file as two rows for one version and the proof would attach to
+  // whichever was typed. Rejected by shape rather than normalised, because
+  // silently rewriting what the owner typed is the wrong kind of helpful.
+  if (version.split(".").some((part) => part.length > 1 && part.startsWith("0"))) {
+    return {
+      problem: `${version} y ${version
+        .split(".")
+        .map((p) => String(Number(p)))
+        .join(".")} serían la misma versión escrita de dos formas; escribila sin ceros al principio`,
+    };
+  }
+
+  const state = classifyDelivery(rows, version);
+  if (state.kind === "already-delivered") {
+    return {
+      problem:
+        `${version} ya fue entregada. Una entrega es un hecho: publicar cambios ` +
+        `necesita una versión nueva, no reescribir ésta`,
+    };
+  }
+  if (state.kind === "not-the-newest") {
+    return {
+      problem:
+        `${version} está por debajo de ${state.newest}, la fila más alta de la tabla. ` +
+        `Una entrega sólo puede ser la última fila`,
+    };
+  }
+  // The CASE travels with the accepted version, so the caller never classifies
+  // the same version twice. Two classifications of one fact are two chances to
+  // disagree, and the second one would be the branch that decides whether an
+  // agent runs at all.
+  return { delivery: state };
 }
 
 export type DeliveryCase =
@@ -70,14 +156,25 @@ export function deliveredRows(
     .sort((a, b) => compare(a.version, b.version));
 }
 
+/**
+ * The highest version among rows, or null when the table is empty.
+ *
+ * Compared NUMERICALLY per part: string order puts 1.9.0 above 1.10.0, and a
+ * cover printing 1.9.0 while the bottom of the table reads 1.10.0 is the exact
+ * incoherence the version-derivation rule exists to prevent.
+ */
+export function newestVersion(rows: readonly ChangeLogRowLike[]): string | null {
+  return rows.reduce<string | null>(
+    (best, r) => (best === null || compare(r.version, best) > 0 ? r.version : best),
+    null,
+  );
+}
+
 export function classifyDelivery(
   rows: readonly ChangeLogRowLike[],
   version: string,
 ): DeliveryCase {
-  const newest = rows.reduce<string | null>(
-    (best, r) => (best === null || compare(r.version, best) > 0 ? r.version : best),
-    null,
-  );
+  const newest = newestVersion(rows);
   if (newest !== null && compare(version, newest) < 0) {
     return { kind: "not-the-newest", version, newest };
   }
@@ -145,6 +242,12 @@ export function readChangeLogRows(manualDir: string): readonly ChangeLogRowLike[
         if (typeof r["version"] === "string") {
           rows.push({
             version: r["version"],
+            // Carried through, not dropped: these rows come back UNCONDITIONED
+            // and `rowsForTarget` is what narrows them. Without the selector
+            // there is nothing to narrow by, and broadlineavida — whose 1.5.0
+            // row belongs to `mv` and `demo` only — would report the same
+            // history for every target.
+            when: r["when"] as ChangeLogRowLike["when"],
             delivered: r["delivered"] as ChangeLogRowLike["delivered"],
           });
         }

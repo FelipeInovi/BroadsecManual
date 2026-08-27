@@ -18,7 +18,7 @@ import {
   type ManualState,
   type WizardAnswers,
   assembleDeliveryPrompt,
-  versionsInOutput,
+  readDeliverableDocs,
 } from "./wizard.ts";
 
 const answers = (over: Partial<WizardAnswers> = {}): WizardAnswers => ({
@@ -716,36 +716,17 @@ describe("the creation prompt hands off to the continuation prompt", () => {
   });
 });
 
-describe("what output/ offers for delivery", () => {
-  /**
-   * A draft carries internal slot paths, and a `-NO-ENTREGADO` build is by
-   * definition not the delivered document. Offering either in a list of things
-   * to hand a client is offering a mistake.
-   */
-  it("excludes drafts and superseded builds", () => {
-    const names = versionsInOutput([
-      "m-mv-v1.5.0.pdf",
-      "m-mv-v1.5.0-BORRADOR.pdf",
-      "m-mv-v1.4.0-NO-ENTREGADO.pdf",
-    ]);
-    expect(names).toContain("1.5.0");
-  });
-
-  it("reads every version present, newest first", () => {
-    expect(versionsInOutput(["m-v1.9.0.pdf", "m-v1.10.0.pdf", "m-v1.9.0.docx"])).toEqual([
-      "1.10.0",
-      "1.9.0",
-    ]);
-  });
-
-  it("ignores a filename carrying no version", () => {
-    expect(versionsInOutput(["notas.pdf"])).toEqual([]);
-  });
-});
-
 describe("assembleDeliveryPrompt", () => {
+  const bridge = { axis: "permission", value: "todas-las-agencias" };
+
   it("anchors a later delivery on the previous one's commit", () => {
-    const p = assembleDeliveryPrompt("bridge-manual", "summarise-since", "1.1.0", "8a0ab58");
+    const p = assembleDeliveryPrompt(
+      "bridge-manual",
+      "summarise-since",
+      "1.1.0",
+      "8a0ab58",
+      bridge,
+    );
     expect(p).toContain("git log 8a0ab58..HEAD");
     expect(p).toContain("delivery-summary");
   });
@@ -755,14 +736,201 @@ describe("assembleDeliveryPrompt", () => {
    * would invite an answer invented to fit the question.
    */
   it("asks a first delivery to describe what the manual covers, not what changed", () => {
-    const p = assembleDeliveryPrompt("bridge-manual", "summarise-first", "1.0.0", null);
+    const p = assembleDeliveryPrompt("bridge-manual", "summarise-first", "1.0.0", null, bridge);
     expect(p).toContain("CUBRE");
     expect(p).not.toContain("git log");
   });
 
-  it("says the archiving and the stamping are already done", () => {
-    const p = assembleDeliveryPrompt("m", "summarise-first", "1.0.0", null);
-    expect(p).toContain("deliveries/m/");
-    expect(p).toContain("Falta la descripción");
+  /**
+   * The version on the cover is read from the highest change-log row, so a row
+   * written after the build would ship a PDF whose own history is blank.
+   */
+  it("puts the row and its commit BEFORE the build", () => {
+    const p = assembleDeliveryPrompt("m", "summarise-first", "1.0.0", null, bridge);
+    const row = p.indexOf("Escribí la fila");
+    const commit = p.indexOf("Commiteá esa fila");
+    const deliver = p.indexOf("deliver m");
+    expect(row).toBeGreaterThan(-1);
+    expect(commit).toBeGreaterThan(row);
+    expect(deliver).toBeGreaterThan(commit);
+  });
+
+  it("names the exact target, so the agent cannot deliver the other document", () => {
+    const p = assembleDeliveryPrompt("broadlineavida", "summarise-first", "1.6.0", null, {
+      axis: "tenant",
+      value: "mv",
+    });
+    expect(p).toContain("--axis tenant=mv");
+    expect(p).not.toContain("tenant=med");
+  });
+
+  /**
+   * The owner already confirmed the delivery in the wizard, with this version
+   * and this document. An agent that asks again is asking them to authorise the
+   * same irreversible act twice, which teaches them to wave it through.
+   */
+  it("says the authorisation was already given", () => {
+    const p = assembleDeliveryPrompt("m", "summarise-first", "1.0.0", null, bridge);
+    expect(p).toContain("ya autorizó");
+  });
+
+  it("tells the agent to stop rather than push through a refusal", () => {
+    const p = assembleDeliveryPrompt("m", "summarise-since", "1.1.0", "abc1234", bridge);
+    expect(p).toContain("PARÁ");
+  });
+});
+
+describe("readDeliverableDocs", () => {
+  /** A manual with an axis, targets, a change log, and whatever is in output/. */
+  const withManual = (
+    root: string,
+    id: string,
+    opts: {
+      readonly axis: string;
+      readonly values: readonly { id: string; name: string }[];
+      readonly rows: string;
+      readonly built?: readonly string[];
+    },
+  ) => {
+    mkdirSync(join(root, "manuals", id, "sections"), { recursive: true });
+    writeFileSync(
+      join(root, "manuals", id, "manual.config.yaml"),
+      [
+        `manual:`,
+        `  title: Manual de ${id}`,
+        `axes:`,
+        `  ${opts.axis}:`,
+        `    values:`,
+        ...opts.values.map((v) => `      - id: ${v.id}\n        name: ${v.name}`),
+        `targets:`,
+        ...opts.values.map((v) => `  - ${opts.axis}: ${v.id}`),
+        `output:`,
+        `  dir: output`,
+        `  filename: "manual-{${opts.axis}}-v{contentVersion}.pdf"`,
+        ``,
+      ].join("\n"),
+    );
+    writeFileSync(
+      join(root, "manuals", id, "sections", "99-historial.yaml"),
+      [`blocks:`, `  - id: log`, `    type: change-log`, `    props:`, `      rows:`, opts.rows, ``].join(
+        "\n",
+      ),
+    );
+    if (opts.built !== undefined) {
+      mkdirSync(join(root, "manuals", id, "output"), { recursive: true });
+      for (const f of opts.built) writeFileSync(join(root, "manuals", id, "output", f), "");
+    }
+  };
+
+  it("offers one document per target, not one per manual", () => {
+    const root = repo();
+    withManual(root, "uno", {
+      axis: "tenant",
+      values: [
+        { id: "mv", name: "Movilidad" },
+        { id: "med", name: "Medellín" },
+      ],
+      rows: `        - id: r1\n          version: 1.0.0`,
+    });
+    const { docs } = readDeliverableDocs(root);
+    expect(docs.map((d) => `${d.manualId}:${d.axisValue}`)).toEqual(["uno:mv", "uno:med"]);
+  });
+
+  /**
+   * broadlineavida's real shape. `mv` was handed a module `med` never received,
+   * so their tables genuinely differ — and a picker showing `med` the version it
+   * never got would be offering to archive the wrong document under it.
+   */
+  it("narrows each document's history by the rows' own selectors", () => {
+    const root = repo();
+    withManual(root, "dos", {
+      axis: "tenant",
+      values: [
+        { id: "mv", name: "Movilidad" },
+        { id: "med", name: "Medellín" },
+      ],
+      rows: [
+        `        - id: r1`,
+        `          version: 1.4.7`,
+        `        - id: r2`,
+        `          version: 1.5.0`,
+        `          when:`,
+        `            tenant: [mv]`,
+      ].join("\n"),
+    });
+    const { docs } = readDeliverableDocs(root);
+    const mv = docs.find((d) => d.axisValue === "mv");
+    const med = docs.find((d) => d.axisValue === "med");
+    expect(mv?.printing).toBe("1.5.0");
+    expect(med?.printing).toBe("1.4.7");
+    expect(med?.rows).toHaveLength(1);
+  });
+
+  it("reports each target's own newest working build", () => {
+    const root = repo();
+    withManual(root, "tres", {
+      axis: "tenant",
+      values: [
+        { id: "mv", name: "Movilidad" },
+        { id: "med", name: "Medellín" },
+      ],
+      rows: `        - id: r1\n          version: 1.0.0`,
+      built: ["manual-mv-trabajo-09.pdf", "manual-med-trabajo-08.pdf"],
+    });
+    const { docs } = readDeliverableDocs(root);
+    expect(docs.find((d) => d.axisValue === "mv")?.work).toBe(9);
+    expect(docs.find((d) => d.axisValue === "med")?.work).toBe(8);
+  });
+
+  it("reports nothing built rather than guessing a number", () => {
+    const root = repo();
+    withManual(root, "cuatro", {
+      axis: "tenant",
+      values: [{ id: "mv", name: "Movilidad" }],
+      rows: `        - id: r1\n          version: 1.0.0`,
+    });
+    expect(readDeliverableDocs(root).docs[0]?.work).toBeNull();
+  });
+
+  /**
+   * A manual missing from the list without explanation reads as a bug, and the
+   * operator's next move is to go looking for one.
+   */
+  it("says why a manual with no change log was left out", () => {
+    const root = repo();
+    mkdirSync(join(root, "manuals", "sin-log"), { recursive: true });
+    writeFileSync(
+      join(root, "manuals", "sin-log", "manual.config.yaml"),
+      `manual:\n  title: Catálogo\naxes:\n  tenant:\n    values:\n      - id: mv\n        name: MV\ntargets:\n  - tenant: mv\n`,
+    );
+    const { docs, skipped } = readDeliverableDocs(root);
+    expect(docs).toEqual([]);
+    expect(skipped).toEqual([{ id: "sin-log", why: "no tiene Historial de cambios" }]);
+  });
+
+  it("says why a manual without a single axis was left out", () => {
+    const root = repo();
+    withManual(root, "cinco", {
+      axis: "tenant",
+      values: [{ id: "mv", name: "Movilidad" }],
+      rows: `        - id: r1\n          version: 1.0.0`,
+    });
+    // Two axes: one filename and one figure set need a single value, so nothing
+    // can say which document a target names. See `soleAxis`.
+    const config = join(root, "manuals", "cinco", "manual.config.yaml");
+    writeFileSync(
+      config,
+      `manual:\n  title: Cinco\naxes:\n  tenant:\n    values:\n      - id: mv\n        name: MV\n  role:\n    values:\n      - id: admin\n        name: Admin\ntargets:\n  - tenant: mv\n    role: admin\noutput:\n  dir: output\n  filename: "m.pdf"\n`,
+    );
+    expect(readDeliverableDocs(root).skipped).toEqual([
+      { id: "cinco", why: "no declara exactamente un eje" },
+    ]);
+  });
+
+  it("is empty, not a crash, in a repo with no manuals directory", () => {
+    expect(readDeliverableDocs(mkdtempSync(join(tmpdir(), "wizard-")))).toEqual({
+      docs: [],
+      skipped: [],
+    });
   });
 });
