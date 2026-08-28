@@ -67,6 +67,32 @@ const RULE_GREY = "#A6A6A6";
 const CELL_FILL = "#B4C6E7";
 const NOTICE_INK = "#262626";
 
+/**
+ * The ghost ring the reference sets behind the lockup, as a background image.
+ *
+ * A BACKGROUND, not an element: the band itself is painted by a pseudo-element
+ * on the page box, and only a pseudo-element can sit under the margin boxes that
+ * carry the type. Layering it into that same paint keeps it there without a node
+ * anything else could reflow.
+ *
+ * Measured on the reference: the lightening runs from roughly 1 to 6.5 per cent
+ * of the width and is cut by the band top and bottom, so the circle is larger
+ * than the band is tall and rides half outside it.
+ *
+ * Encoded by hand rather than base64: the angle brackets and the hash are the
+ * only characters a data URI cannot take raw, and a readable SVG is worth more
+ * here than a shorter line.
+ */
+const GHOST_RING =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E" +
+  "%3Cg fill='none' stroke='%23FFFFFF' stroke-width='4.2' opacity='0.11'%3E" +
+  "%3Ccircle cx='20' cy='20' r='17'/%3E%3C/g%3E" +
+  "%3Cg fill='%23FFFFFF' opacity='0.11'%3E" +
+  "%3Crect x='12.6' y='4.4' width='2.8' height='18.8'/%3E" +
+  "%3Ccircle cx='14' cy='23' r='4.6'/%3E" +
+  "%3Ccircle cx='25.6' cy='16' r='4.6'/%3E" +
+  "%3Crect x='24.2' y='16' width='2.8' height='19.6'/%3E%3C/g%3E%3C/svg%3E\")";
+
 /** The cover band: navy on the left, teal on the right. */
 const COVER_BAND = "linear-gradient(90deg, #273262 0%, #285272 28%, #27667B 54%, #278787 78%, #339A8C 100%)";
 /** The interior band: the cover's, reversed — teal on the left, navy on the right. */
@@ -168,13 +194,15 @@ ${fontFaces}
   right: 0;
   top: 0;
   height: ${BAND};
-  background: ${HEAD_BAND};
+  /* The ring first, so it paints ON the gradient rather than under it. Sized to
+     the band's height and hung half outside it, as the reference has it. */
+  background: ${GHOST_RING} no-repeat -27pt 1.5pt / 66pt 66pt, ${HEAD_BAND};
   z-index: 0;
   pointer-events: none;
 }
 .pagedjs_opener_page .pagedjs_pagebox::before {
   height: ${OPENER_BAND};
-  background: ${OPEN_BAND};
+  background: ${GHOST_RING} no-repeat -27pt -7pt / 66pt 66pt, ${OPEN_BAND};
 }
 .pagedjs_cover_page .pagedjs_pagebox::before { content: none; }
 
