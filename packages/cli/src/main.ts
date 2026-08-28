@@ -1316,7 +1316,16 @@ async function deliverManual(
     }
 
     const pdf = outputFilename(config, target, targetVersion);
-    expected.set(value, [pdf, pdf.replace(/\.pdf$/, ".docx")]);
+    const files = [pdf, pdf.replace(/\.pdf$/, ".docx")];
+    // The release notes join the delivery only when the version HAS any. Adding
+    // the name unconditionally would make every ordinary delivery fail on a file
+    // that was never meant to exist: `planDelivery` reports a name it cannot
+    // find as missing, and the delivery stops. A version with no notes is the
+    // normal case — see `loadReleaseNotes`.
+    if (existsSync(releaseNotesFile(manualDir, targetVersion))) {
+      files.push(releaseNotesFilename(pdf));
+    }
+    expected.set(value, files);
   }
   if (version === undefined) {
     console.error("\nno hay targets que entregar con los filtros dados.");
@@ -1330,6 +1339,25 @@ async function deliverManual(
   // in this run, rather than found in a directory and assumed to match.
   console.log(`  construyendo el documento oficial v${version}`);
   await build(manualDir, filters, false, false, true, version);
+
+  // Built HERE too, and for the same reason: the file archived has to be the one
+  // this run produced from the commit the proof names, rather than one found in
+  // `output/` and assumed to match.
+  if (existsSync(releaseNotesFile(manualDir, version))) {
+    console.log(`  construyendo las notas de versión v${version}`);
+    const notes = await buildReleaseNotes(manualDir, filters, version);
+    if (notes !== 0) {
+      console.error(
+        [
+          ``,
+          `las notas de versión ${version} no se construyeron, y la entrega para acá.`,
+          `  Archivar el manual sin ellas dejaría la fila con una prueba incompleta de`,
+          `  lo que el cliente recibió, y eso es peor que no entregar.`,
+        ].join("\n"),
+      );
+      return 1;
+    }
+  }
 
   const { plan, missing } = planDelivery(outDir, version, expected);
   if (missing.length > 0) {

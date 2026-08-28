@@ -1173,6 +1173,22 @@ export function assembleDeliveryPrompt(
           `lo que este manual CUBRE, no lo que cambió.`,
         ];
 
+  // Release notes are a LATER delivery's business only. A first delivery has no
+  // range to read, and a version whose row already exists runs no agent at all —
+  // the wizard never reaches this prompt for one.
+  const notes =
+    kind === "summarise-since"
+      ? [
+          `1b. Mirá si esa misma vuelta le debe NOTAS DE VERSIÓN al cliente, que son`,
+          `   un documento aparte y responden otra pregunta: qué cambió en el`,
+          `   PRODUCTO, no en el manual. Cargá la skill \`release-notes\`; ella dice`,
+          `   cómo se decide, y la respuesta sale del trailer \`Producto:\` de cada`,
+          `   commit del rango, nunca de inferir. Si ninguno declara \`nuevo\` ni`,
+          `   \`cambio\`, NO hay notas: decilo y seguí. Una actualización sin novedad`,
+          `   funcional es un hecho real, no un documento a llenar.`,
+        ]
+      : [];
+
   return [
     ...head,
     ``,
@@ -1184,10 +1200,11 @@ export function assembleDeliveryPrompt(
     `1. Escribí la fila ${version} en el Historial de cambios, con su fecha y su`,
     `   descripción. Cargá la skill \`delivery-summary\` y seguila: es la que dice`,
     `   qué le importa a un cliente y qué es ruido nuestro.`,
-    `2. Commiteá esa fila. Tiene que estar en un commit ANTES del build oficial,`,
-    `   porque la prueba de entrega guarda el commit del que salió el documento y`,
-    `   la fila es parte del documento. El comando del paso 3 se niega a arrancar`,
-    `   con el árbol sucio, así que sin este commit no hay entrega.`,
+    ...notes,
+    `2. Commiteá la fila${kind === "summarise-since" ? " y las notas, si las hubo" : ""}. Tiene que estar en un commit ANTES del`,
+    `   build oficial, porque la prueba de entrega guarda el commit del que salió`,
+    `   el documento y la fila es parte del documento. El comando del paso 3 se`,
+    `   niega a arrancar con el árbol sucio, así que sin este commit no hay entrega.`,
     `3. Corré la entrega. Construye el oficial, lo archiva, sella la prueba y`,
     `   COMMITEA EL SELLO ella misma — no hay un cuarto paso:`,
     `      node packages/cli/src/main.ts deliver ${manualId} \\`,

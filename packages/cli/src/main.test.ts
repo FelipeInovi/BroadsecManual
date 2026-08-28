@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { join } from "node:path";
 import type { ManualNode } from "@broadsec-manual/blocks";
 import {
   assertChangeLog,
@@ -14,6 +15,7 @@ import {
   parseAxisFilters,
   parseOutPath,
   primaryAxis,
+  releaseNotesFile,
   run,
   type ManualConfig,
   type TargetImages,
@@ -618,5 +620,22 @@ describe("deliveryProofFor", () => {
     ]);
     expect(deliveryProofFor([broken], "3.0.0", "mv")).toBeUndefined();
     expect(deliveryProofFor([broken], "3.1.0", "mv")).toBeUndefined();
+  });
+});
+
+describe("releaseNotesFile", () => {
+  it("keys the notes by version, inside the manual", () => {
+    // Inside the manual so they share its axis, targets, theme and change log.
+    // The filename is what ties them to a version, rather than a field that
+    // could disagree with the row.
+    expect(releaseNotesFile("manuals/bridge-manual", "1.1.0")).toBe(
+      join("manuals/bridge-manual", "release-notes", "v1.1.0.yaml"),
+    );
+  });
+
+  it("does not collapse versions that differ only in the patch", () => {
+    const a = releaseNotesFile("m", "1.1.0");
+    const b = releaseNotesFile("m", "1.1.10");
+    expect(a).not.toBe(b);
   });
 });

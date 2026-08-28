@@ -748,10 +748,33 @@ describe("assembleDeliveryPrompt", () => {
    * The version on the cover is read from the highest change-log row, so a row
    * written after the build would ship a PDF whose own history is blank.
    */
+  /**
+   * Release notes belong to a LATER delivery only: a first one has no range to
+   * read, and a version whose row already exists never reaches this prompt.
+   */
+  it("asks for release notes on a later delivery, and never on a first", () => {
+    const later = assembleDeliveryPrompt("m", "summarise-since", "1.1.0", "abc1234", bridge);
+    const first = assembleDeliveryPrompt("m", "summarise-first", "1.0.0", null, bridge);
+    expect(later).toContain("release-notes");
+    expect(later).toContain("Producto:");
+    expect(first).not.toContain("release-notes");
+  });
+
+  it("puts the notes step between the row and its commit, so both land together", () => {
+    const p = assembleDeliveryPrompt("m", "summarise-since", "1.1.0", "abc1234", bridge);
+    expect(p.indexOf("1b.")).toBeGreaterThan(p.indexOf("Escribí la fila"));
+    expect(p.indexOf("2. Commiteá")).toBeGreaterThan(p.indexOf("1b."));
+  });
+
+  it("says an update with no product news gets no document at all", () => {
+    const p = assembleDeliveryPrompt("m", "summarise-since", "1.1.0", "abc1234", bridge);
+    expect(p).toContain("NO hay notas");
+  });
+
   it("puts the row and its commit BEFORE the build", () => {
     const p = assembleDeliveryPrompt("m", "summarise-first", "1.0.0", null, bridge);
     const row = p.indexOf("Escribí la fila");
-    const commit = p.indexOf("Commiteá esa fila");
+    const commit = p.indexOf("2. Commiteá");
     const deliver = p.indexOf("deliver m");
     expect(row).toBeGreaterThan(-1);
     expect(commit).toBeGreaterThan(row);
