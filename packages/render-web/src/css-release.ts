@@ -97,6 +97,7 @@ export function releaseStylesheet(t: Tokens, project: string): string {
     content: "${safeProject}";
     color: #FFFFFF;
     font: 10pt ${FACE};
+    text-transform: uppercase;
     letter-spacing: 1.9pt;
     vertical-align: middle;
     text-align: right;
@@ -165,6 +166,17 @@ export function releaseStylesheet(t: Tokens, project: string): string {
 .pagedjs_opener_page .pagedjs_page_content { padding-top: ${CONTENT_TOP}; }
 
 /* ---- running header: Inovisec's lockup -------------------------------- */
+/* KNOWN DEFECT, and this is the state of the diagnosis.
+   The footer's third line — the word Confidencial — also prints faintly inside
+   the opener band, centred, near the top of the first content page. Tried and
+   ruled out: margin collapse escaping the zero-height host (changed the seal's
+   margin to padding, no effect), and taking the host out of the flow entirely
+   with position:absolute off the sheet (no effect either). So it is not the
+   original element leaking through its host. Next suspect is the paginator
+   placing the running element into more than one margin box on a page whose top
+   margin it has been told to grow. Left at the repo's own pattern rather than
+   at a workaround that did not work. Cosmetic: faint, on the band, and the
+   footer itself is correct on every page. */
 .rh-host, .rf-host { height: 0; overflow: hidden; }
 .rh {
   position: running(rh);
@@ -196,7 +208,14 @@ export function releaseStylesheet(t: Tokens, project: string): string {
 }
 .rf__title { font-weight: 600; }
 .rf__row { display: flex; justify-content: space-between; }
-.rf__seal { text-align: center; font-weight: 600; margin-top: 3.5pt; }
+.rf__seal {
+  text-align: center;
+  font-weight: 600;
+  /* PADDING, NOT MARGIN. A margin here collapses out through the zero-height
+     host that keeps the running element out of the flow, and carried the word
+     "Confidencial" onto the top of the first content page. */
+  padding-top: 3.5pt;
+}
 /* THE ONE THING HERE NOT YET VERIFIED AGAINST A REAL RENDER.
    The page number belongs on the footer's SECOND line, so it cannot be its own
    margin box: those are a single row and would sit beside all three lines
@@ -265,6 +284,7 @@ body {
   line-height: 1;
   color: #FFFFFF;
   white-space: nowrap;
+  text-transform: uppercase;
 }
 .cover__project b { font-weight: 600; letter-spacing: 1.1pt; }
 .cover__project span { font-weight: 300; letter-spacing: 2.4pt; }

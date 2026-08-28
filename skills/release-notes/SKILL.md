@@ -65,11 +65,19 @@ Read the **diffs** of the commits that do declare a change: the trailer says
 
 ## When you write nothing
 
-Stop and report, rather than filling the document:
+**Nothing here applies when the change-log row already exists.** Then `deliver`
+stamps it and no agent is involved at all — not `delivery-summary`, and not you.
+A version whose row was written earlier is the SIMPLEST delivery in this
+repository, not a special case: every manual sits in exactly that state today.
+If you were invoked anyway, say so and stop.
+
+Beyond that, stop and report rather than filling the document:
 
 - No commit in the range declares `nuevo` or `cambio`.
 - The range is empty, or the anchor commit is not in the history.
 - Every declared change turns out, in its diff, to be about the manual.
+- This is a FIRST delivery. There is nothing to diff against, and describing
+  what the manual covers is `delivery-summary`'s job, not a set of notes.
 
 An update with no product news is a real thing. Say so; the wizard decides.
 

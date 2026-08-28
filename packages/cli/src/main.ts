@@ -23,7 +23,7 @@ import {
   type LabelCitation,
   type PendingDeclaration,
 } from "@broadsec-manual/core";
-import { renderHtml, pagedRuntime } from "@broadsec-manual/render-web";
+import { renderHtml, renderReleaseNotes, pagedRuntime } from "@broadsec-manual/render-web";
 import {
   renderDocx,
   type CoverData,
@@ -37,7 +37,7 @@ import { soleAxis } from "./axis.ts";
 import { commitFile, headCommit, isDirty } from "./git.ts";
 import { archive, planDelivery, stampFile, unstampFile } from "./deliver.ts";
 import { changeLogSectionFile, proofFor, type ChangeLogRowLike } from "./delivery-state.ts";
-import { nextWorkNumber, workStamp } from "./naming.ts";
+import { nextWorkNumber, releaseNotesFilename, workStamp } from "./naming.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
 import { DEFAULT_PENDING_INSTRUCTION, pendingTable } from "./pending-table.ts";
@@ -1079,6 +1079,141 @@ async function buildDocx(
 }
 
 /**
+ * The footer's first line, the same on every product's notes.
+ *
+ * Transcribed from the reference rather than composed, because it names what the
+ * DOCUMENT is, not which product it is about — the product is already in the
+ * band above it and on the line below.
+ */
+const RELEASE_FOOTER_TITLE = "Actualización – nuevas características";
+
+/**
+ * The office that issues these notes.
+ *
+ * A constant rather than a field in `manual.config.yaml`: one template for every
+ * product means one issuing office, and putting it per manual would invite four
+ * copies of the same address to drift.
+ */
+const ISSUING_OFFICE = {
+  org: "Inovisec Colombia S.A.S.",
+  lines: ["Calle 80 N 11 – 42, Bogotá, Colombia", "Teléfono: (601) 6407772"],
+  email: "oficinabog@inovisec.com",
+} as const;
+
+const MONTHS = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+] as const;
+
+/**
+ * The month the cover prints, as the reference prints it: "Agosto, 2026".
+ *
+ * Taken from the clock rather than from the change-log row, because the row's
+ * date is when the version was DECLARED and this is when the document was made.
+ * They are usually the same day and the difference only shows when they are not.
+ */
+function releaseMonth(now = new Date()): string {
+  return `${MONTHS[now.getMonth()]}, ${now.getFullYear()}`;
+}
+
+/**
+ * Where a version's release notes live, if it has any.
+ *
+ * One file per delivered version, inside the manual — so the notes share its
+ * axis, its targets, its theme and its change log. The version they report is
+ * the row's, never a number of their own, and the filename is what ties the two
+ * together without a field that could disagree.
+ */
+export function releaseNotesFile(manualDir: string, version: string): string {
+  return join(manualDir, "release-notes", `v${version}.yaml`);
+}
+
+/**
+ * The release notes for one version, or null when that version has none.
+ *
+ * NULL IS THE ORDINARY ANSWER, not a failure. A first delivery has nothing to
+ * diff against, a version whose row already existed runs no agent at all, and an
+ * update that changed nothing an operator can see is a real thing rather than a
+ * document to fill. All three arrive here as an absent file.
+ *
+ * Loads ONE file rather than a directory, unlike `loadDocument`: these notes are
+ * three or four pages with a single level-1 section, so a folder that sorts would
+ * be machinery with nothing to order.
+ */
+function loadReleaseNotes(
+  manualDir: string,
+  config: ManualConfig,
+  version: string,
+): { doc: ManualDocument; warnings: readonly ContentWarning[] } | null {
+  const file = releaseNotesFile(manualDir, version);
+  if (!existsSync(file)) return null;
+  const rel = `release-notes/v${version}.yaml`;
+  const loaded = loadSection(readFileSync(file, "utf8"), rel, catalog);
+  return {
+    doc: { manualId: config.manual.id, version, children: [loaded.node] },
+    warnings: loaded.warnings,
+  };
+}
+
+/**
+ * Build the release notes for one version, one file per target.
+ *
+ * Its own path from end to end, sharing only the config: `renderReleaseNotes` is
+ * a different renderer from the manuals', for the reason recorded in
+ * `packages/render-web/src/release.ts`.
+ */
+async function buildReleaseNotes(
+  manualDir: string,
+  filters: ReadonlyMap<string, string>,
+  version: string,
+): Promise<number> {
+  const { config, targets } = loadManual(manualDir, filters);
+  const notes = loadReleaseNotes(manualDir, config, version);
+  if (notes === null) {
+    console.error(
+      [
+        ``,
+        `${config.manual.id} no tiene notas de versión para ${version}.`,
+        `  Se esperaba release-notes/v${version}.yaml. Las notas se escriben en el`,
+        `  paso 1 de una entrega y sólo cuando hay un cambio de producto que`,
+        `  reportar — ver la skill \`release-notes\`.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+  for (const w of notes.warnings) console.log(`  ! ${w.message}`);
+
+  const outDir = join(manualDir, config.output.dir);
+  mkdirSync(outDir, { recursive: true });
+  const axis = primaryAxis(config);
+  const polyfill = pagedRuntime();
+
+  for (const target of targets) {
+    const value = requireAxisValue(target, axis);
+    const manual = assemble(notes.doc, target, catalog);
+    const name = releaseNotesFilename(outputFilename(config, target, version));
+    const htmlPath = join(outDir, name.replace(/\.docx$/, ".html"));
+    const pdfPath = join(outDir, name.replace(/\.docx$/, ".pdf"));
+
+    const html = renderReleaseNotes(manual, {
+      footerTitle: RELEASE_FOOTER_TITLE,
+      polyfill,
+      cover: {
+        project: config.manual.product,
+        title: "Nuevas Características Habilitadas",
+        lede: config.manual.lede ?? "",
+        date: releaseMonth(),
+        contact: ISSUING_OFFICE,
+      },
+    });
+    writeFileSync(htmlPath, html, "utf8");
+    const { pages } = await printToPdf(htmlPath, pdfPath);
+    console.log(`  ${axis}=${value} ${pages} page(s) -> ${basename(pdfPath)}`);
+  }
+  return 0;
+}
+
+/**
  * Promote a manual to an official delivery: render it, archive it, stamp it.
  *
  * RENDERS THE OFFICIAL DOCUMENT ITSELF rather than looking for one. Ordinary
@@ -1637,7 +1772,8 @@ export async function run(argv: readonly string[]): Promise<number> {
       command !== "extract" &&
       command !== "deliver" &&
       command !== "undeliver" &&
-      command !== "capture") ||
+      command !== "capture" &&
+      command !== "release-notes") ||
     !manualId
   ) {
     console.error(
@@ -1646,6 +1782,7 @@ export async function run(argv: readonly string[]): Promise<number> {
         `       broadsec-manual undeliver <manual> ${axisFlags} --version <x.y.z> --not-handed-over\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
+        `       broadsec-manual release-notes <manual> ${axisFlags} --version <x.y.z>\n` +
         `       broadsec-manual labels <manual>\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
@@ -1718,6 +1855,24 @@ ${drift.length} change(s) since the previous map:`);
         for (const line of drift) console.log(`    ${line}`);
       }
       return 0;
+    }
+
+    if (command === "release-notes") {
+      const at = rest.indexOf("--version");
+      const version = at === -1 ? undefined : rest[at + 1];
+      if (version === undefined || !/^\d+\.\d+\.\d+$/.test(version)) {
+        console.error(
+          [
+            ``,
+            `release-notes necesita --version <x.y.z>.`,
+            `  Las notas son de UNA versión entregada, y su número sale de la fila`,
+            `  del historial — no de un contador.`,
+          ].join("\n"),
+        );
+        return 1;
+      }
+      console.log(`building notas de versión ${manualId} v${version}`);
+      return await buildReleaseNotes(manualDir, filters, version);
     }
 
     if (command === "capture") {
