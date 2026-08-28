@@ -124,7 +124,11 @@ export function releaseStylesheet(t: Tokens, project: string): string {
    height. */
 @page opener {
   margin-top: ${OPENER_BAND};
-  @top-right { content: none; }
+  /* Both marks sit at the TOP of the taller band, clear of the section title
+     that occupies its lower half. Centred — which is right for the ordinary
+     69pt band — they would land 77pt down, exactly on the title. */
+  @top-left { vertical-align: top; padding-top: 16pt; }
+  @top-right { vertical-align: top; padding-top: 20pt; }
 }
 
 /* ---- the band: ONE rectangle, not three --------------------------------
@@ -193,6 +197,16 @@ export function releaseStylesheet(t: Tokens, project: string): string {
 .rf__title { font-weight: 600; }
 .rf__row { display: flex; justify-content: space-between; }
 .rf__seal { text-align: center; font-weight: 600; margin-top: 3.5pt; }
+/* THE ONE THING HERE NOT YET VERIFIED AGAINST A REAL RENDER.
+   The page number belongs on the footer's SECOND line, so it cannot be its own
+   margin box: those are a single row and would sit beside all three lines
+   instead of inside one. The counter is therefore resolved inside the running
+   element. The paginator processes a margin box's subtree after pagination, so
+   it should resolve here too — but "should" is not "checked", and the first
+   real render is where this either prints a number or prints nothing. If it
+   comes out empty, the fix is to drop the number out of the running element and
+   into @bottom-right, and accept it sitting beside the block rather than in it. */
+.rf__page::after { content: counter(page); }
 
 /* ---- body ------------------------------------------------------------- */
 body {
@@ -204,12 +218,35 @@ body {
   print-color-adjust: exact;
 }
 
-/* ---- cover ------------------------------------------------------------ */
+/* ---- cover ------------------------------------------------------------
+   VERTICAL OFFSETS ARE IN POINTS, horizontal ones in per cent, and mixing the
+   two was the second thing that broke this page.
+
+   The reference was measured in cqw — hundredths of its 2100px WIDTH — because
+   that is what makes a layout scale with the sheet. Written back as top: %
+   those numbers silently changed meaning: a percentage on top resolves against
+   the container's HEIGHT. The legal notice sat at 104.5, which is a legitimate
+   place on a page taller than it is wide and is off the bottom of one measured
+   the other way. Converted once, at 595pt of width: cqw x 5.95 = pt.
+
+   ANCHORED TO THE PAGE, not sized in viewport units.
+
+   The first version said height: 100vh, and the whole cover came out blank: in
+   this paginator a vh is a fraction of the BROWSER viewport, not of the sheet,
+   so the cover measured whatever window the render happened to use and every
+   percentage below resolved against that. The text was laid out far past the
+   bottom of the page and clipped away. Nothing failed — the markup was correct
+   and the classes were all present, which is exactly why the tests passed while
+   the page was empty.
+
+   Positioning it against the paginator's own page area makes every percentage
+   below a fraction of the SHEET, which is what they were measured as. */
+.pagedjs_cover_page .pagedjs_area { position: relative; }
 .cover {
   page: cover;
   break-after: page;
-  position: relative;
-  height: 100vh;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
   color: ${INK};
 }
@@ -223,7 +260,7 @@ body {
 .cover__project {
   position: absolute;
   left: 7.14%;
-  top: 5.1%;
+  top: 30.3pt;
   font-size: 17pt;
   line-height: 1;
   color: #FFFFFF;
@@ -236,7 +273,7 @@ body {
   position: absolute;
   left: 71.14%;
   width: 22%;
-  top: 6.5%;
+  top: 38.7pt;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -254,7 +291,7 @@ body {
 .cover__eyebrow {
   position: absolute;
   left: 13.9%;
-  top: 21.1%;
+  top: 125.5pt;
   font-size: 25pt;
   font-weight: 700;
   line-height: 1;
@@ -263,7 +300,7 @@ body {
 .cover__title {
   position: absolute;
   left: 13.9%;
-  top: 25.5%;
+  top: 158.5pt;
   font-size: 12.2pt;
   font-weight: 400;
   line-height: 1.2;
@@ -273,7 +310,7 @@ body {
 .cover__rule {
   position: absolute;
   left: 13.9%;
-  top: 30.38%;
+  top: 180.8pt;
   width: 51.8%;
   height: 1.7pt;
   background: ${COVER_RULE};
@@ -281,7 +318,7 @@ body {
 .cover__lede {
   position: absolute;
   left: 13.9%;
-  top: 31.5%;
+  top: 187.4pt;
   font-size: 9pt;
   line-height: 12pt;
   margin: 0;
@@ -289,7 +326,7 @@ body {
 .cover__date {
   position: absolute;
   left: 13.9%;
-  top: 42.9%;
+  top: 255.3pt;
   font-size: 9pt;
   line-height: 1;
   margin: 0;
@@ -297,7 +334,7 @@ body {
 .cover__contact {
   position: absolute;
   left: 13.9%;
-  top: 70.8%;
+  top: 421.3pt;
   font-size: 9pt;
   line-height: 12.7pt;
 }
@@ -307,7 +344,7 @@ body {
   position: absolute;
   left: 26.5%;
   right: 26.5%;
-  top: 104.5%;
+  top: 621.8pt;
   font-family: ${FACE_NOTICE};
   font-size: 5.7pt;
   line-height: 8pt;
@@ -320,7 +357,7 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 7.6%;
+  bottom: 45.2pt;
   text-align: center;
   font-size: 10.2pt;
   font-weight: 600;
@@ -332,7 +369,7 @@ body {
   position: absolute;
   left: 14.5%;
   right: 8.5%;
-  bottom: 6.3%;
+  bottom: 37.5pt;
   height: 0.5pt;
   background: rgba(255, 255, 255, 0.4);
 }
@@ -340,7 +377,7 @@ body {
   position: absolute;
   left: 7.5%;
   right: 7.5%;
-  bottom: 2.2%;
+  bottom: 13.1pt;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -389,34 +426,32 @@ body {
 }
 
 /* ---- section opener ---------------------------------------------------
-   The band is the page's top margin, so the title goes in a margin box rather
-   than in the flow: that is what puts it INSIDE the band. */
-.section-header {
-  page: opener;
-  break-before: page;
-  height: 0;
-  overflow: hidden;
-  margin: 0;
-}
-.section-header__title {
-  position: running(so);
+   THE WHOLE MODULE claims the named page, not just its heading. Wrapping only
+   the heading gave the opener a page of its own and pushed the content onto the
+   next one. That wrapper is the reason these notes have their own renderer: the
+   same div added to the manuals' renderSection stopped margins collapsing
+   between modules and shifted their text by a fraction of a pixel.
+
+   The band IS the page's top margin, so the title rises into it with a negative
+   margin. Measured: the title sits 77pt from the top of the sheet, the margin is
+   155pt, and the content box starts CONTENT_TOP below that. */
+.module { page: opener; break-before: page; }
+.opener {
+  margin: -61pt 0 46pt;
   font-size: 17pt;
   font-weight: 600;
   line-height: 1;
   color: #FFFFFF;
-  margin: 0;
   display: flex;
   gap: 7pt;
   align-items: baseline;
   white-space: nowrap;
+  break-after: avoid;
 }
-.section-header__title b { color: ${TEAL_BRIGHT}; font-weight: 600; }
-@page opener {
-  @bottom-left { content: element(so); vertical-align: top; }
-}
+.opener b { color: ${TEAL_BRIGHT}; font-weight: 600; }
 
 /* ---- subsections and prose ------------------------------------------- */
-.subsection-header {
+.subsection {
   font-size: 12.7pt;
   font-weight: 600;
   line-height: 1.2;
@@ -427,7 +462,7 @@ body {
 }
 /* Measured: the FIRST subsection after the validity table gets a wider gap than
    the ones between subsections. Using one value for both pushed the page down. */
-.term-list + .subsection-header { margin-top: 33pt; }
+.term-list + .subsection { margin-top: 33pt; }
 
 /* The hanging indent, and it is inverted: the first line starts at the margin,
    every following line 5.96% of the width further in. Measured off the
