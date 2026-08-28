@@ -255,3 +255,83 @@ export async function shootFirstPage(
     await browser.close();
   }
 }
+
+/**
+ * The two chrome bands of a set of release notes, as images.
+ *
+ * WHY IMAGES. Word's header takes a solid `shading` fill and nothing else — see
+ * `runningHeader` in `render-docx` — so the band's gradient cannot survive as
+ * OOXML. It can survive as a picture, and Word places one in a header without
+ * complaint. The alternative was a flat colour, which loses most of what makes
+ * the document look like Inovisec's.
+ *
+ * SHOT OFF THE PAGINATED PAGES rather than composed here, so the lockup, the
+ * project name and the section title arrive already drawn, in their measured
+ * positions, from the same stylesheet the PDF used. Composing a second version
+ * of the band for Word would be a second thing to keep in sync.
+ *
+ * `ordinary` comes from the index page and `opener` from the first content page,
+ * which is why this needs a document that has both. A set of notes always does:
+ * cover, contents, content.
+ */
+export async function shootBands(
+  htmlPath: string,
+  ordinaryPt: number,
+  openerPt: number,
+  scale = 3,
+  timeoutMs = 120000,
+): Promise<{ readonly ordinary: Raster; readonly opener: Raster }> {
+  const { PAGED_DONE_FLAG, PAGED_ERROR_FLAG } = await import("@broadsec-manual/render-web");
+  const browser = await puppeteer.launch({
+    executablePath: findChrome(),
+    headless: true,
+    args: ["--disable-gpu", "--no-sandbox", "--allow-file-access-from-files"],
+  });
+  try {
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: scale });
+    await page.goto(pathToFileURL(htmlPath).href, { waitUntil: "networkidle0", timeout: timeoutMs });
+    await page.waitForFunction(
+      `window["${PAGED_DONE_FLAG}"] !== null || window["${PAGED_ERROR_FLAG}"] !== null`,
+      { timeout: timeoutMs, polling: 200 },
+    );
+    const failure = await page.evaluate(
+      (flag) => (globalThis as unknown as Record<string, string | null>)[flag],
+      PAGED_ERROR_FLAG,
+    );
+    if (failure) throw new Error(`pagination failed while shooting the bands: ${failure}`);
+
+    const sheets = await page.$$(".pagedjs_page");
+    if (sheets.length < 3) {
+      throw new Error(
+        `release notes need a cover, contents and content to shoot both bands; ` +
+          `this document paginated to ${sheets.length} page(s)`,
+      );
+    }
+    const width = await page.evaluate(() => {
+      const doc = (globalThis as unknown as { document: any }).document;
+      return doc.querySelector(".pagedjs_page").clientWidth as number;
+    });
+
+    // A point is 96/72 CSS pixels. The clip is in CSS pixels, unscaled: the
+    // device scale factor multiplies the OUTPUT, not the coordinates.
+    const px = (pt: number): number => Math.round((pt * 96) / 72);
+    const shoot = async (el: (typeof sheets)[number], heightPt: number): Promise<Raster> => {
+      const box = await el.boundingBox();
+      if (box === null) throw new Error("a paginated page has no box to clip against");
+      const heightPx = px(heightPt);
+      const data = await page.screenshot({
+        type: "png",
+        clip: { x: box.x, y: box.y, width: box.width, height: heightPx },
+      });
+      return { widthPx: width, heightPx, type: "png", data: new Uint8Array(data) };
+    };
+
+    return {
+      ordinary: await shoot(sheets[1] as (typeof sheets)[number], ordinaryPt),
+      opener: await shoot(sheets[2] as (typeof sheets)[number], openerPt),
+    };
+  } finally {
+    await browser.close();
+  }
+}

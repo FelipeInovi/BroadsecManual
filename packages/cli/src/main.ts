@@ -26,12 +26,13 @@ import {
 import { renderHtml, renderReleaseNotes, pagedRuntime } from "@broadsec-manual/render-web";
 import {
   renderDocx,
+  renderReleaseDocx,
   type CoverData,
   type DocxAssetResolver,
 } from "@broadsec-manual/render-docx";
 import { themes, isThemeName, type Tokens } from "@broadsec-manual/tokens";
 import { printToPdf } from "./chrome.ts";
-import { rasterise, shootFirstPage } from "./raster.ts";
+import { rasterise, shootBands, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
 import { commitFile, headCommit, isDirty } from "./git.ts";
@@ -1208,7 +1209,34 @@ async function buildReleaseNotes(
     });
     writeFileSync(htmlPath, html, "utf8");
     const { pages } = await printToPdf(htmlPath, pdfPath);
-    console.log(`  ${axis}=${value} ${pages} page(s) -> ${basename(pdfPath)}`);
+
+    // The Word file is the deliverable; the PDF exists so these can be shot off
+    // a paginated page. The cover arrives as one picture of the whole sheet, and
+    // the two bands as pictures too — Word's header takes a solid fill and
+    // nothing else, so a gradient cannot survive as OOXML.
+    const cover = await shootFirstPage(htmlPath);
+    const bands = await shootBands(htmlPath, 69, 155);
+    const asset = (r: { data: Uint8Array; widthPx: number; heightPx: number }) => ({
+      data: r.data,
+      type: "png" as const,
+      widthPx: r.widthPx,
+      heightPx: r.heightPx,
+      pending: false,
+    });
+    const docx = await renderReleaseDocx(manual, {
+      coverImage: asset(cover),
+      bands: { ordinary: asset(bands.ordinary), opener: asset(bands.opener) },
+      footerTitle: RELEASE_FOOTER_TITLE,
+      project: config.manual.product,
+      title: "Nuevas Características Habilitadas",
+      // A literal for the same reason as ISSUING_OFFICE: one template for every
+      // product means one issuer, and a per-manual field would invite four
+      // copies of the same name to drift.
+      vendor: ISSUING_OFFICE.org,
+    });
+    const docxPath = join(outDir, name);
+    writeFileSync(docxPath, docx);
+    console.log(`  ${axis}=${value} ${pages} page(s) -> ${basename(docxPath)}`);
   }
   return 0;
 }
