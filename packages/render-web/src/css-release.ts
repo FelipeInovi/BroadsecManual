@@ -417,7 +417,7 @@ body {
   position: absolute;
   left: 26.5%;
   right: 26.5%;
-  top: 621.8pt;
+  top: 681pt;
   font-family: ${FACE_NOTICE};
   font-size: 5.7pt;
   line-height: 8pt;
