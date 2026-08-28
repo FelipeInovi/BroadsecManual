@@ -103,15 +103,22 @@ const OPEN_BAND = "linear-gradient(90deg, #37A28E 0%, #288386 14%, #125477 33%, 
 const COVER_RULE = "linear-gradient(90deg, #3AAFA0 0%, #2C8A85 43%, #2A4E7A 57%, #262E5E 100%)";
 
 /**
- * Poppins first, then the faces frozen in the tokens.
+ * Faces that ship with Office, deliberately — no bundled family here.
  *
- * Poppins now TRAVELS WITH THE DOCUMENT — see `fontFaces` below and `POPPINS` in
- * the tokens. Naming a face without shipping it was the bug this fixes: the PDF
- * fell through to Century Gothic without a word, and the reader never knew the
- * document was not the one that had been approved. The rest of the chain stays
- * as the honest fallback if a face ever fails to load.
+ * This used to name Poppins and carry the files with the document. That is
+ * exact in the PDF, which embeds what it prints, and exact in desktop Word,
+ * which reads embedded fonts. Word on the web does not read them: it drops
+ * Poppins for whatever it likes, and the reader gets a document that was never
+ * approved without knowing it.
+ *
+ * So the family is the whole control, and the choice is the one the manuals
+ * already made in `tokens/src/index.ts` for the same reason. Century Gothic is
+ * the geometric face Office ships — the nearest relative to Poppins that is
+ * actually there — and it carries the display sizes. Arial sets the text.
  */
-const FACE = "Poppins, 'Century Gothic', 'Avenir Next', Arial, sans-serif";
+const FACE = "Arial, Helvetica, sans-serif";
+/** The geometric display face, for anything the reader reads as a title. */
+const FACE_DISPLAY = "'Century Gothic', 'Avenir Next', Arial, sans-serif";
 /** Arial for the legal notice, which the reference sets apart the same way. */
 const FACE_NOTICE = "Arial, Helvetica, sans-serif";
 
@@ -122,17 +129,9 @@ function escapeCssString(value: string): string {
     .replace(/<\/(style)/gi, "<\\/$1");
 }
 
-/**
- * @font-face declarations for the bundled faces, or nothing.
- *
- * PASSED IN, never read here: only the CLI may touch a disk. Absent, the chain
- * falls through to Century Gothic — the document is then close rather than
- * exact, and never broken.
- */
-export function releaseStylesheet(t: Tokens, project: string, fontFaces = ""): string {
+export function releaseStylesheet(t: Tokens, project: string): string {
   const safeProject = escapeCssString(project);
   return `
-${fontFaces}
 @page {
   size: ${t.page.size};
   margin: ${BAND} ${MARGIN_CHROME} ${MARGIN_BOTTOM};
@@ -330,6 +329,7 @@ body {
 .cover__wave--bottom { bottom: 0; }
 
 .cover__project {
+  font-family: ${FACE_DISPLAY};
   position: absolute;
   left: 7.14%;
   top: 30.3pt;
@@ -353,6 +353,7 @@ body {
 }
 .cover__mark { width: 44pt; height: 44pt; display: block; }
 .cover__wordmark {
+  font-family: ${FACE_DISPLAY};
   font-size: 23pt;
   font-weight: 300;
   letter-spacing: 1.9pt;
@@ -362,6 +363,7 @@ body {
 }
 
 .cover__eyebrow {
+  font-family: ${FACE_DISPLAY};
   position: absolute;
   left: 13.9%;
   top: 125.5pt;
@@ -371,6 +373,7 @@ body {
   margin: 0;
 }
 .cover__title {
+  font-family: ${FACE_DISPLAY};
   position: absolute;
   left: 13.9%;
   top: 158.5pt;
@@ -427,6 +430,7 @@ body {
 .cover__notice b { display: block; font-weight: 400; letter-spacing: 0.1pt; }
 
 .cover__tag {
+  font-family: ${FACE_DISPLAY};
   position: absolute;
   left: 0;
   right: 0;
@@ -463,6 +467,7 @@ body {
 /* ---- table of contents ------------------------------------------------ */
 .toc { break-after: page; }
 .toc__title {
+  font-family: ${FACE_DISPLAY};
   font-size: 14pt;
   font-weight: 400;
   line-height: 1.15;
@@ -510,6 +515,7 @@ body {
    155pt, and the content box starts CONTENT_TOP below that. */
 .module { page: opener; break-before: page; }
 .opener {
+  font-family: ${FACE_DISPLAY};
   margin: -61pt 0 46pt;
   padding-left: 0;
   font-size: 17pt;
@@ -526,6 +532,7 @@ body {
 
 /* ---- subsections and prose ------------------------------------------- */
 .subsection {
+  font-family: ${FACE_DISPLAY};
   font-size: 12.7pt;
   font-weight: 600;
   line-height: 1.2;

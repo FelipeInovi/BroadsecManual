@@ -48,17 +48,18 @@ const CELL_FILL = "B4C6E7";
 const CALLOUT_FILL = "EDF6F5";
 
 /**
- * ONE NAME, because Word has no fallback chain — a document names a face and the
- * reading machine either has it or substitutes something arbitrary.
+ * Faces that ship with Office, so the two deliverables stay the same document.
  *
- * Poppins, and it TRAVELS INSIDE THE FILE — see `fonts` in the options. Naming
- * it before the file was bundled would have handed the client a document set in
- * whatever their Word picked, which is why this said Century Gothic until the
- * faces were in the repository. If `fonts` ever arrives empty the name still
- * resolves on a machine that happens to have Poppins, and falls back to Word's
- * own substitution on one that does not.
+ * Word resolves ONE name — it has no fallback chain — and the reading machine
+ * either has that face or substitutes something of its own choosing. Embedding
+ * would fix that on the desktop, and did, but Word on the web ignores embedded
+ * fonts entirely, so a bundled family reaches some readers as a face nobody
+ * approved. Naming what Office already carries is the only answer that holds
+ * everywhere. Same reasoning, same two faces, as `tokens/src/index.ts`.
  */
-const FACE = "Poppins";
+const FACE = "Arial";
+/** The geometric display face, for anything the reader reads as a title. */
+const FACE_DISPLAY = "Century Gothic";
 
 const MARGIN_X_PT = 83;
 const MARGIN_BOTTOM_PT = 72;
@@ -79,16 +80,6 @@ export interface ReleaseDocxOptions {
   readonly project: string;
   readonly title: string;
   readonly vendor: string;
-  /**
-   * The faces to embed, so the document carries its own type.
-   *
-   * THIS IS WHAT MAKES NAMING POPPINS HONEST. Word has no fallback chain: a
-   * document names a face and the reading machine either has it or substitutes
-   * something arbitrary. Embedded, the client opens the document we approved
-   * rather than an approximation of it. Absent, `FACE` still resolves — Century
-   * Gothic ships with Office — and the document is close rather than exact.
-   */
-  readonly fonts?: readonly { readonly name: string; readonly data: Buffer }[];
 }
 
 const face = (size: string, bold = false, color = INK_BODY) => ({
@@ -96,6 +87,12 @@ const face = (size: string, bold = false, color = INK_BODY) => ({
   size: halfPoints(size),
   bold,
   color,
+});
+
+/** The same run, set in the display face. */
+const display = (size: string, bold = false, color = INK_BODY) => ({
+  ...face(size, bold, color),
+  font: FACE_DISPLAY,
 });
 
 /** `**bold**` is the only inline markup, and it is the same rule everywhere. */
@@ -276,7 +273,7 @@ function renderNode(node: ManualNode, depth: number, manual: ResolvedManual): re
       spacing: { before: twips("19pt"), after: twips("11pt") },
       indent: { left: twips("36pt") },
       keepNext: true,
-      children: [new TextRun({ text: `${n}. ${title}`, ...face("12.7pt", true) })],
+      children: [new TextRun({ text: `${n}. ${title}`, ...display("12.7pt", true) })],
     }),
     ...children,
   ];
@@ -297,7 +294,7 @@ function toc(manual: ResolvedManual): readonly Paragraph[] {
   return [
     new Paragraph({
       spacing: { before: 0, after: twips("19pt") },
-      children: [new TextRun({ text: "Contenido", ...face("14pt", false, "3478B7") })],
+      children: [new TextRun({ text: "Contenido", ...display("14pt", false, "3478B7") })],
     }),
     ...sections.flatMap((s) => [
       line(s, 1),
@@ -322,7 +319,6 @@ export async function renderReleaseDocx(
     description: o.title,
     // Embedded, so the client opens the document that was approved rather than
     // an approximation of it. The four weights are the ones the layout declares.
-    ...(o.fonts === undefined || o.fonts.length === 0 ? {} : { fonts: [...o.fonts] }),
     sections: [
       // The cover: no margin and no furniture, exactly like the stylesheet's
       // `@page cover`. It arrives as one picture of the whole sheet.

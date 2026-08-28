@@ -65,13 +65,6 @@ export interface ReleaseOptions {
   readonly polyfill?: string;
   /** Page geometry. Only `page.size` is read; the palette here is its own. */
   readonly theme?: Tokens;
-  /**
-   * `@font-face` rules for the bundled faces, already built by the caller.
-   *
-   * The renderer cannot read a disk, so the bytes arrive as CSS. Omitted, the
-   * document falls through to Century Gothic — close, never broken.
-   */
-  readonly fontFaces?: string;
 }
 
 /**
@@ -388,7 +381,7 @@ export function renderReleaseNotes(manual: ResolvedManual, o: ReleaseOptions): s
   return `<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <title>Release ${esc(o.cover.project)} — ${esc(o.cover.title)}</title>
-<style>${releaseStylesheet(theme, o.cover.project, o.fontFaces ?? "")}</style>
+<style>${releaseStylesheet(theme, o.cover.project)}</style>
 </head><body>
 ${renderCover(o.cover)}
 ${renderRunning(o.cover, o.footerTitle)}

@@ -30,7 +30,7 @@ import {
   type CoverData,
   type DocxAssetResolver,
 } from "@broadsec-manual/render-docx";
-import { themes, isThemeName, POPPINS, poppinsPath, type Tokens } from "@broadsec-manual/tokens";
+import { themes, isThemeName, type Tokens } from "@broadsec-manual/tokens";
 import { printToPdf } from "./chrome.ts";
 import { rasterise, shootBands, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
@@ -1118,31 +1118,6 @@ function releaseMonth(now = new Date()): string {
 }
 
 /**
- * The bundled faces, read once: as CSS for the page and as bytes for Word.
- *
- * READ HERE because only the CLI may touch a disk — the renderers are handed
- * what they need. The same four files serve both, which is what stops the two
- * documents drifting into different type.
- *
- * The CSS carries them as data URIs rather than as file URLs: the paginated HTML
- * is a self-contained document, and a `url(file://...)` would break the moment
- * it was copied anywhere.
- */
-function bundledFonts(): { readonly css: string; readonly docx: readonly { name: string; data: Buffer }[] } {
-  const faces: string[] = [];
-  const docx: { name: string; data: Buffer }[] = [];
-  for (const { weight, file } of POPPINS) {
-    const bytes = readFileSync(poppinsPath(file));
-    faces.push(
-      `@font-face{font-family:"Poppins";font-style:normal;font-weight:${weight};` +
-        `font-display:block;src:url(data:font/ttf;base64,${bytes.toString("base64")}) format("truetype")}`,
-    );
-    docx.push({ name: "Poppins", data: bytes });
-  }
-  return { css: faces.join("\n"), docx };
-}
-
-/**
  * Where a version's release notes live, if it has any.
  *
  * One file per delivered version, inside the manual — so the notes share its
@@ -1213,7 +1188,6 @@ async function buildReleaseNotes(
   mkdirSync(outDir, { recursive: true });
   const axis = primaryAxis(config);
   const polyfill = pagedRuntime();
-  const fonts = bundledFonts();
 
   for (const target of targets) {
     const value = requireAxisValue(target, axis);
@@ -1225,7 +1199,6 @@ async function buildReleaseNotes(
     const html = renderReleaseNotes(manual, {
       footerTitle: RELEASE_FOOTER_TITLE,
       polyfill,
-      fontFaces: fonts.css,
       cover: {
         project: config.manual.product,
         title: "Nuevas Características Habilitadas",
@@ -1256,7 +1229,6 @@ async function buildReleaseNotes(
       footerTitle: RELEASE_FOOTER_TITLE,
       project: config.manual.product,
       title: "Nuevas Características Habilitadas",
-      fonts: fonts.docx,
       // A literal for the same reason as ISSUING_OFFICE: one template for every
       // product means one issuer, and a per-manual field would invite four
       // copies of the same name to drift.
