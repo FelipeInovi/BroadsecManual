@@ -196,13 +196,13 @@ ${fontFaces}
   height: ${BAND};
   /* The ring first, so it paints ON the gradient rather than under it. Sized to
      the band's height and hung half outside it, as the reference has it. */
-  background: ${GHOST_RING} no-repeat -27pt 1.5pt / 66pt 66pt, ${HEAD_BAND};
+  background: ${GHOST_RING} no-repeat -1pt 1.5pt / 66pt 66pt, ${HEAD_BAND};
   z-index: 0;
   pointer-events: none;
 }
 .pagedjs_opener_page .pagedjs_pagebox::before {
   height: ${OPENER_BAND};
-  background: ${GHOST_RING} no-repeat -27pt -7pt / 66pt 66pt, ${OPEN_BAND};
+  background: ${GHOST_RING} no-repeat -1pt -7pt / 66pt 66pt, ${OPEN_BAND};
 }
 .pagedjs_cover_page .pagedjs_pagebox::before { content: none; }
 
