@@ -34,8 +34,23 @@ import type { Tokens } from "@broadsec-manual/tokens";
 const BAND = "69pt";
 /** The opener band, which is the same band grown to hold a section title: 502px. */
 const OPENER_BAND = "155pt";
+/**
+ * TWO MARGINS, and separating them is what lets the chrome reach the edge.
+ *
+ * A margin box cannot cross the page margin, so with one margin of 83pt the
+ * lockup and the project name sat 84pt and 98pt in — measured on the reference,
+ * they belong at 22pt and 11pt. Trying to drag them out with negative margins
+ * and a fixed width made the row overflow its box: the project name printed
+ * twice, once clipped at the band's foot and once cut off at the paper's edge.
+ *
+ * So the PAGE margin is small — the chrome's margin — and the text column
+ * indents itself back to where it was measured. Nothing in the body moves.
+ */
+const MARGIN_CHROME = "22pt";
 /** Text starts at 13.9% of the width and ends at 86.05%. Symmetrical. */
 const MARGIN_X = "83pt";
+/** What the text adds back on top of the page's own small margin. */
+const TEXT_INDENT = "61pt";
 /** Room for the footer's rule and its three lines. */
 const MARGIN_BOTTOM = "72pt";
 /** Between the band and the first thing on an ordinary page. */
@@ -94,11 +109,11 @@ export function releaseStylesheet(t: Tokens, project: string, fontFaces = ""): s
 ${fontFaces}
 @page {
   size: ${t.page.size};
-  margin: ${BAND} ${MARGIN_X} ${MARGIN_BOTTOM};
+  margin: ${BAND} ${MARGIN_CHROME} ${MARGIN_BOTTOM};
 
   /* The band is painted on the page box, not here — see the note below. These
      boxes only carry type, so they stay transparent. */
-  @top-left { content: element(rh); }
+  @top-left { content: element(rh); vertical-align: middle; }
   @top-center { content: ""; }
   @top-right {
     content: "${safeProject}";
@@ -133,8 +148,8 @@ ${fontFaces}
 @page opener {
   margin-top: ${OPENER_BAND};
   /* Both marks sit at the TOP of the taller band, clear of the section title
-     that occupies its lower half. Centred — which is right for the ordinary
-     69pt band — they would land 77pt down, exactly on the title. */
+     that occupies its lower half. Centred — right for the ordinary 69pt band —
+     they would land 77pt down, exactly on the title. */
   @top-left { vertical-align: top; padding-top: 16pt; }
   @top-right { vertical-align: top; padding-top: 20pt; }
 }
@@ -168,9 +183,10 @@ ${fontFaces}
 .pagedjs_margin-top-left-corner-holder,
 .pagedjs_margin-top-right-corner-holder { position: relative; z-index: 1; background: none; }
 
-.pagedjs_page_content { padding-top: ${CONTENT_TOP}; }
-.pagedjs_cover_page .pagedjs_page_content { padding-top: 0; }
-.pagedjs_opener_page .pagedjs_page_content { padding-top: ${CONTENT_TOP}; }
+/* The text column indents itself back to the margin it was measured at. */
+.pagedjs_page_content { padding: ${CONTENT_TOP} ${TEXT_INDENT} 0; }
+.pagedjs_cover_page .pagedjs_page_content { padding: 0; }
+.pagedjs_opener_page .pagedjs_page_content { padding: ${CONTENT_TOP} ${TEXT_INDENT} 0; }
 
 /* ---- running header: Inovisec's lockup -------------------------------- */
 /* KNOWN DEFECT, and this is the state of the diagnosis.
@@ -185,21 +201,20 @@ ${fontFaces}
    at a workaround that did not work. Cosmetic: faint, on the band, and the
    footer itself is correct on every page. */
 .rh-host, .rf-host { height: 0; overflow: hidden; }
-.rh {
-  position: running(rh);
-  display: flex;
-  align-items: center;
-  gap: 5pt;
-  white-space: nowrap;
-}
-.rh__mark { width: 21pt; height: 21pt; flex: none; }
-.rh__word {
-  font-family: ${FACE};
-  font-size: 13pt;
-  font-weight: 300;
-  letter-spacing: 1.1pt;
-  color: #FFFFFF;
-}
+/* ONE PICTURE, so there is no layout for the paginator to restyle.
+
+   The lockup was a flex row of a ring and a word, and the paginator restyles a
+   running element as a BLOCK when it copies it into the margin box: the flex
+   lost its arrangement and the word wrapped under the ring, reading as a stray
+   copy of the mark rather than as one lockup split in two. Raising specificity
+   did not win either. An svg places its pieces by coordinates, and coordinates
+   survive being restyled.
+
+   The project name keeps its own margin box: a margin box shrinks to what it
+   holds, so two boxes each sized by their own content is what lets both reach
+   the paper's edge — which the small page margin above makes possible. */
+.rh { position: running(rh); }
+.rh__lockup { width: 109pt; height: 23pt; display: block; }
 
 /* ---- running footer: rule, then three lines -------------------------- */
 .rf {
@@ -212,6 +227,9 @@ ${fontFaces}
   font-size: 8pt;
   line-height: 11.5pt;
   text-align: left;
+  /* The footer belongs to the text column, not to the chrome: on the reference
+     its rule runs from 13.67% to 86.29%, the same measure as the body. */
+  margin: 0 ${TEXT_INDENT};
 }
 .rf__title { font-weight: 600; }
 .rf__row { display: flex; justify-content: space-between; }
@@ -465,6 +483,7 @@ body {
 .module { page: opener; break-before: page; }
 .opener {
   margin: -61pt 0 46pt;
+  padding-left: 0;
   font-size: 17pt;
   font-weight: 600;
   line-height: 1;

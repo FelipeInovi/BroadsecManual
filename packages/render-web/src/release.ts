@@ -94,18 +94,31 @@ const plain = (inline: readonly Inline[]): string =>
 /**
  * Inovisec's mark, DRAWN rather than loaded.
  *
- * The file the manuals use — `assets/brand/mark.png` — is teal, and on every
- * band in these notes the mark has to be white. A raster cannot be recoloured,
- * so the ring is geometry: a stroked circle and two pins, measured off that
- * same file.
+ * The file the manuals use is teal, and on every band here the mark has to be
+ * white; a raster cannot be recoloured, so the ring is geometry.
  */
-const inovisecRing = (cls: string, fill: string): string =>
-  `<svg class="${cls}" viewBox="0 0 100 100" aria-hidden="true">` +
-  `<circle cx="50" cy="50" r="42.5" fill="none" stroke="${fill}" stroke-width="10.5"/>` +
-  `<rect x="31.5" y="11" width="7" height="47" fill="${fill}"/>` +
-  `<circle cx="35" cy="57.5" r="11.5" fill="${fill}"/>` +
-  `<circle cx="64" cy="40" r="11.5" fill="${fill}"/>` +
-  `<rect x="60.5" y="40" width="7" height="49" fill="${fill}"/></svg>`;
+const ring = (fill: string): string =>
+  `<circle cx="20" cy="20" r="17" fill="none" stroke="${fill}" stroke-width="4.2"/>` +
+  `<rect x="12.6" y="4.4" width="2.8" height="18.8" fill="${fill}"/>` +
+  `<circle cx="14" cy="23" r="4.6" fill="${fill}"/>` +
+  `<circle cx="25.6" cy="16" r="4.6" fill="${fill}"/>` +
+  `<rect x="24.2" y="16" width="2.8" height="19.6" fill="${fill}"/>`;
+
+/**
+ * The whole lockup as ONE SVG — ring and word together.
+ *
+ * NOT two elements in a flex row, and that is the point. Once the paginator
+ * copies a running element into a margin box it restyles it as a block, so the
+ * flex lost and the word wrapped under the ring: it read as a stray copy of the
+ * mark rather than as one lockup broken in two. Raising specificity did not win
+ * either. A single SVG has no layout for the paginator to change — its two
+ * pieces are placed by coordinates, and coordinates survive anything.
+ */
+const inovisecLockup = (): string =>
+  `<svg class="rh__lockup" viewBox="0 0 190 40" aria-label="Inovisec">` +
+  `<g>${ring("#FFFFFF")}</g>` +
+  `<text x="56" y="27.5" fill="#FFFFFF" font-size="19" letter-spacing="1.6"` +
+  ` font-weight="300">INOVISEC</text></svg>`;
 
 /**
  * The project name as a wordmark: its trailing digits in a heavier weight.
@@ -153,12 +166,7 @@ const coverWaves = (): string =>
   ` fill="#3DBABA"/>` +
   `<path d="M0,48 L294,48 C455,48 570,192 735,192 L2100,192 L2100,480 L0,480 Z"` +
   ` fill="url(#rnBot)"/>` +
-  `<g opacity=".07" transform="translate(30,150) scale(3.45)">` +
-  `<circle cx="50" cy="50" r="42.5" fill="none" stroke="#FFFFFF" stroke-width="10.5"/>` +
-  `<rect x="31.5" y="11" width="7" height="47" fill="#FFFFFF"/>` +
-  `<circle cx="35" cy="57.5" r="11.5" fill="#FFFFFF"/>` +
-  `<circle cx="64" cy="40" r="11.5" fill="#FFFFFF"/>` +
-  `<rect x="60.5" y="40" width="7" height="49" fill="#FFFFFF"/></g></svg>`;
+  `<g opacity=".07" transform="translate(30,150) scale(8.6)">${ring("#FFFFFF")}</g></svg>`;
 
 /** The three ways to reach the office, as the reference prints them. */
 const REACH: readonly { readonly icon: string; readonly text: string }[] = [
@@ -196,7 +204,7 @@ function renderCover(c: ReleaseCoverData): string {
     coverWaves(),
     `<span class="cover__project">${projectMark(c.project)}</span>`,
     `<div class="cover__lockup">`,
-    inovisecRing("cover__mark", "#FFFFFF"),
+    `<svg class="cover__mark" viewBox="0 0 40 40" aria-hidden="true">${ring("#FFFFFF")}</svg>`,
     `<span class="cover__wordmark">INOVISEC</span>`,
     `</div>`,
     `<p class="cover__eyebrow">Release</p>`,
@@ -239,10 +247,14 @@ function renderCover(c: ReleaseCoverData): string {
  */
 function renderRunning(c: ReleaseCoverData, footerTitle: string): string {
   return (
-    `<div class="rh-host"><div class="rh">` +
-    inovisecRing("rh__mark", "#FFFFFF") +
-    `<span class="rh__word">INOVISEC</span>` +
-    `</div></div>` +
+    // The lockup rides in a running element and the project name in its own
+    // margin box, and that is not a preference: a margin box SHRINKS TO ITS
+    // CONTENT. Putting both in one row gave it 245px to work with, the two did
+    // not fit on a line, and the project name wrapped underneath — which looked
+    // exactly like a stray copy leaking out of the host. Two boxes, each sized
+    // by what it holds, and the page's own small margin is what lets them reach
+    // the paper's edge.
+    `<div class="rh-host"><div class="rh">${inovisecLockup()}</div></div>` +
     `<div class="rf-host"><div class="rf">` +
     `<div class="rf__title">${esc(footerTitle)}</div>` +
     `<div class="rf__row"><span>Inovisec &ndash; ${esc(c.project)}</span>` +
