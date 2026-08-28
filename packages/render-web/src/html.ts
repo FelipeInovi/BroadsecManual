@@ -12,6 +12,7 @@ import { tokens } from "@broadsec-manual/tokens";
 import type { Tokens } from "@broadsec-manual/tokens";
 import { stylesheet } from "./css.ts";
 import { bridgeStylesheet } from "./css-bridge.ts";
+import { releaseStylesheet } from "./css-release.ts";
 
 export interface CoverData {
   readonly brand: string;
@@ -27,6 +28,29 @@ export interface CoverData {
    * stays unable to touch a disk.
    */
   readonly mark?: string;
+  /**
+   * The product this document is about, for the top band of release notes.
+   *
+   * THE ONE THING THAT VARIES BETWEEN PRODUCTS in that template, and it sits
+   * where the reference document carried a partner's mark. Keeping it a
+   * parameter rather than a per-product stylesheet is what stops a template
+   * multiplying: a new manual inherits the layout and contributes a name.
+   *
+   * Absent on a manual cover, which shows the brand instead.
+   */
+  readonly project?: string;
+  /**
+   * The issuing office, printed on a release-notes cover.
+   *
+   * `org` prints bold, `lines` follow as written, `email` becomes a link. Data
+   * rather than a formatted string so the renderer decides the emphasis and the
+   * caller cannot smuggle markup in.
+   */
+  readonly contact?: {
+    readonly org: string;
+    readonly lines: readonly string[];
+    readonly email: string;
+  };
 }
 
 export interface RenderOptions {
@@ -70,7 +94,23 @@ export interface RenderOptions {
    * caller that has no opinion renders exactly as before.
    */
   readonly theme?: Tokens;
+  /**
+   * WHICH KIND OF DOCUMENT this is, which is not the same question as which
+   * brand it wears.
+   *
+   * The two stylesheets before this one are chosen by `theme.cover.sheet` — a
+   * property of the BRAND, because until now every document was a manual and
+   * only the brand varied. Release notes are a different document over the same
+   * brand: they carry Inovisec's identity for every product, so nothing about
+   * them can be derived from a brand field.
+   *
+   * Omitted means `manual`, so every existing caller renders exactly as before.
+   */
+  readonly document?: DocumentKind;
 }
+
+/** The kinds of document this renderer knows how to lay out. */
+export type DocumentKind = "manual" | "release-notes";
 
 const esc = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -493,8 +533,18 @@ function runningHeader(header: string): string {
   );
 }
 
-const sheetFor = (t: Tokens, header: string): string =>
-  t.cover.sheet === "bridge" ? bridgeStylesheet(t, header) : stylesheet(t, header);
+/**
+ * Which stylesheet lays this document out.
+ *
+ * The DOCUMENT KIND is asked first, and only then the brand. Release notes wear
+ * Inovisec's identity for every product, so there is no brand field that could
+ * select them — see `RenderOptions.document`. Everything else falls through to
+ * the brand split that was here before, unchanged.
+ */
+const sheetFor = (t: Tokens, header: string, o: RenderOptions): string => {
+  if (o.document === "release-notes") return releaseStylesheet(t, o.cover.project ?? "");
+  return t.cover.sheet === "bridge" ? bridgeStylesheet(t, header) : stylesheet(t, header);
+};
 
 /**
  * The cover title, with its last word dropped onto its own line in bold.
@@ -604,7 +654,7 @@ export function renderHtml(manual: ResolvedManual, o: RenderOptions): string {
   return `<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
 <title>${esc(o.cover.brand)} — ${esc(o.cover.title)}</title>
-<style>${sheetFor(o.theme ?? tokens, o.header)}</style>
+<style>${sheetFor(o.theme ?? tokens, o.header, o)}</style>
 </head><body>
 ${renderCover(o.cover, o.theme ?? tokens, o.header)}
 ${renderToc(manual)}
