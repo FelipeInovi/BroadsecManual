@@ -371,3 +371,6 @@ export const isThemeName = (v: unknown): v is ThemeName =>
 /** The default, so existing callers and tests keep working unchanged. */
 export const tokens = themes.broadsec;
 export type Tokens = ReturnType<typeof build>;
+
+/** Bundled font files. Paths only — reading a disk is the CLI's job. */
+export * from "./fonts.ts";

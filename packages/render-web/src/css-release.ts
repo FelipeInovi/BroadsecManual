@@ -64,12 +64,11 @@ const COVER_RULE = "linear-gradient(90deg, #3AAFA0 0%, #2C8A85 43%, #2A4E7A 57%,
 /**
  * Poppins first, then the faces frozen in the tokens.
  *
- * The reference is set in a licensed geometric. Poppins is the closest thing to
- * it under a licence we can embed, and embedding is what makes the .docx render
- * the same on the client's machine — see `fonts` in `render-docx`. Until the
- * file is bundled the chain falls through to Century Gothic, which ships with
- * Office and is geometric too: the document is then close rather than exact,
- * and never broken.
+ * Poppins now TRAVELS WITH THE DOCUMENT — see `fontFaces` below and `POPPINS` in
+ * the tokens. Naming a face without shipping it was the bug this fixes: the PDF
+ * fell through to Century Gothic without a word, and the reader never knew the
+ * document was not the one that had been approved. The rest of the chain stays
+ * as the honest fallback if a face ever fails to load.
  */
 const FACE = "Poppins, 'Century Gothic', 'Avenir Next', Arial, sans-serif";
 /** Arial for the legal notice, which the reference sets apart the same way. */
@@ -82,9 +81,17 @@ function escapeCssString(value: string): string {
     .replace(/<\/(style)/gi, "<\\/$1");
 }
 
-export function releaseStylesheet(t: Tokens, project: string): string {
+/**
+ * @font-face declarations for the bundled faces, or nothing.
+ *
+ * PASSED IN, never read here: only the CLI may touch a disk. Absent, the chain
+ * falls through to Century Gothic — the document is then close rather than
+ * exact, and never broken.
+ */
+export function releaseStylesheet(t: Tokens, project: string, fontFaces = ""): string {
   const safeProject = escapeCssString(project);
   return `
+${fontFaces}
 @page {
   size: ${t.page.size};
   margin: ${BAND} ${MARGIN_X} ${MARGIN_BOTTOM};

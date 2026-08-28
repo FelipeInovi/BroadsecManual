@@ -47,13 +47,14 @@ const CALLOUT_FILL = "EDF6F5";
  * ONE NAME, because Word has no fallback chain — a document names a face and the
  * reading machine either has it or substitutes something arbitrary.
  *
- * Century Gothic until Poppins is bundled. Poppins is the closer match to the
- * reference and is what the PDF uses, but naming it here before the font file
- * travels inside the .docx would hand the client a document set in whatever
- * their Word picked. Century Gothic ships with Office, so it always resolves.
- * Switch this line when `fonts:` is populated — see `renderReleaseDocx`.
+ * Poppins, and it TRAVELS INSIDE THE FILE — see `fonts` in the options. Naming
+ * it before the file was bundled would have handed the client a document set in
+ * whatever their Word picked, which is why this said Century Gothic until the
+ * faces were in the repository. If `fonts` ever arrives empty the name still
+ * resolves on a machine that happens to have Poppins, and falls back to Word's
+ * own substitution on one that does not.
  */
-const FACE = "Century Gothic";
+const FACE = "Poppins";
 
 const MARGIN_X_PT = 83;
 const MARGIN_BOTTOM_PT = 72;
@@ -74,6 +75,16 @@ export interface ReleaseDocxOptions {
   readonly project: string;
   readonly title: string;
   readonly vendor: string;
+  /**
+   * The faces to embed, so the document carries its own type.
+   *
+   * THIS IS WHAT MAKES NAMING POPPINS HONEST. Word has no fallback chain: a
+   * document names a face and the reading machine either has it or substitutes
+   * something arbitrary. Embedded, the client opens the document we approved
+   * rather than an approximation of it. Absent, `FACE` still resolves — Century
+   * Gothic ships with Office — and the document is close rather than exact.
+   */
+  readonly fonts?: readonly { readonly name: string; readonly data: Buffer }[];
 }
 
 const face = (size: string, bold = false, color = INK_BODY) => ({
@@ -305,6 +316,9 @@ export async function renderReleaseDocx(
     title: `Release ${o.project} — ${o.title}`,
     creator: o.vendor,
     description: o.title,
+    // Embedded, so the client opens the document that was approved rather than
+    // an approximation of it. The four weights are the ones the layout declares.
+    ...(o.fonts === undefined || o.fonts.length === 0 ? {} : { fonts: [...o.fonts] }),
     sections: [
       // The cover: no margin and no furniture, exactly like the stylesheet's
       // `@page cover`. It arrives as one picture of the whole sheet.
