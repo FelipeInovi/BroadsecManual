@@ -4,6 +4,7 @@ import {
   Document,
   Footer,
   Header,
+  HorizontalPositionRelativeFrom,
   ImageRun,
   Packer,
   PageNumber,
@@ -13,6 +14,7 @@ import {
   TableCell,
   TableRow,
   TextRun,
+  VerticalPositionRelativeFrom,
   WidthType,
 } from "docx";
 import type { BlockNode, ManualNode, ResolvedManual, SectionNode } from "@broadsec-manual/blocks";
@@ -334,6 +336,24 @@ export async function renderReleaseDocx(
                 transformation: {
                   width: A4.widthPt * (96 / 72),
                   height: A4.heightPt * (96 / 72),
+                },
+                // ANCHORED TO THE PAGE, NOT INLINE. Inline, the picture is the
+                // content of a line, and a line is always the picture plus the
+                // font's leading — so a picture exactly as tall as the sheet
+                // never fits, and Word pushes the whole cover onto page two,
+                // leaving the first page blank. Anchored, it takes no line
+                // height at all and lands at the sheet's own origin.
+                floating: {
+                  horizontalPosition: {
+                    relative: HorizontalPositionRelativeFrom.PAGE,
+                    offset: 0,
+                  },
+                  verticalPosition: {
+                    relative: VerticalPositionRelativeFrom.PAGE,
+                    offset: 0,
+                  },
+                  behindDocument: true,
+                  allowOverlap: true,
                 },
               }),
             ],
