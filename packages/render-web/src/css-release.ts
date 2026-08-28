@@ -249,7 +249,10 @@ ${fontFaces}
   position: running(rf);
   border-top: 0.5pt solid ${RULE_GREY};
   padding-top: 7pt;
-  width: 100%;
+  /* The margin subtracts from the width; without this the block keeps the full
+     measure AND gets pushed right, so the rule ran off the sheet and the seal
+     centred itself 40pt too far right. */
+  width: calc(100% - ${TEXT_INDENT} - ${TEXT_INDENT});
   color: ${INK};
   font-family: ${FACE};
   font-size: 8pt;
@@ -269,15 +272,12 @@ ${fontFaces}
      "Confidencial" onto the top of the first content page. */
   padding-top: 3.5pt;
 }
-/* THE ONE THING HERE NOT YET VERIFIED AGAINST A REAL RENDER.
-   The page number belongs on the footer's SECOND line, so it cannot be its own
+/* The page number belongs on the footer's SECOND line, so it cannot be its own
    margin box: those are a single row and would sit beside all three lines
    instead of inside one. The counter is therefore resolved inside the running
-   element. The paginator processes a margin box's subtree after pagination, so
-   it should resolve here too — but "should" is not "checked", and the first
-   real render is where this either prints a number or prints nothing. If it
-   comes out empty, the fix is to drop the number out of the running element and
-   into @bottom-right, and accept it sitting beside the block rather than in it. */
+   element, and the paginator does resolve it there — verified in a real render.
+   It read as missing for a while, but that was the width defect above pushing
+   it off the sheet, not the counter failing. */
 .rf__page::after { content: counter(page); }
 
 /* ---- body ------------------------------------------------------------- */
