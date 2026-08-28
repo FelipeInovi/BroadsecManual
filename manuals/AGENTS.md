@@ -96,12 +96,13 @@ restate them, because a rule stated twice is a rule that drifts.
 | `source-extraction` | Getting facts out of the product |
 | `source-assets` | Taking images from the product's own asset files |
 
-Two more exist and are **not** part of that set, because they apply only when a
+Three more exist and are **not** part of that set, because they apply only when a
 condition holds:
 
 | Skill | Read it only when |
 |---|---|
 | `delivery-summary` | A version is being promoted to an official delivery and its change-log row has no description yet. The wizard invokes it and says which of its two modes applies; it is never read while authoring content, because it writes about the manual rather than about the product. |
+| `release-notes` | The same delivery, when it is a LATER one and at least one commit of the range declares a product change in its `Producto:` trailer. Writes a separate Word document about what changed in the PRODUCT — a different question from `delivery-summary`'s, over the same range, so the two run together. Never for a first delivery, for a row that already exists, or when no commit declares a change. |
 | `manual-import` | The product ships a legacy manual that has to be migrated. A manual built from the product directly never needs it, and Broadsec's own import is long done — so this is the cold path, and its detail has not been audited the way the five above have. Treat what it says beyond the seven step headings as unverified. |
 
 ## Authoring rules
@@ -354,6 +355,15 @@ handed over — so the first delivery of each is a version its table already
 declares. There is nothing to summarise and no agent runs; the row is stamped and
 that is all. Only a version with NO row needs one written, and writing it is
 judgement (`delivery-summary`).
+
+**A LATER delivery may also owe the client release notes**, and that is a second
+document rather than a longer row. It answers a different question — what changed
+in the PRODUCT, not in the manual — so it reads the same commit range through a
+different filter and is written in the same step (`release-notes`). It is emitted
+only when at least one commit of the range declares a product change in its
+`Producto:` trailer: a first delivery has nothing to diff, a row that already
+exists runs no agent at all, and an update that changed nothing an operator can
+see is a real thing rather than a document to fill.
 
 ### The change log is written by hand, and that is deliberate
 
