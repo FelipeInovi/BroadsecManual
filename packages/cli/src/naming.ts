@@ -55,6 +55,39 @@ export function nextWorkNumber(names: readonly string[]): number {
 }
 
 /**
+ * The release notes that accompany one official document.
+ *
+ * Derived from the document's own name rather than composed from the config, so
+ * the two cannot drift: whatever axis value and version the manual carries, its
+ * notes carry the same ones and sort beside it in `deliveries/`.
+ *
+ * ALWAYS `.docx`, whatever came in. The manual is a PDF and a Word file; the
+ * notes are Word only, by decision — they are read and forwarded inside the
+ * client's organisation rather than printed, and one format is one fewer thing
+ * to keep identical. Taking the extension from the input instead would produce a
+ * `…-notas-de-version.pdf` the delivery would then look for and never find.
+ *
+ * Deliberately NOT symmetrical with `draftFilename`, which preserves the
+ * extension because a draft is the same document with a marker on it. This is a
+ * different document.
+ *
+ * THE EXTENSION IS RECOGNISED, NOT ASSUMED TO BE THE LAST DOT. Every name here
+ * carries a semver, so the last dot is usually the one inside `v1.1.0` — cutting
+ * there turned `…-v1.1.0` into `…-v1.1-notas-de-version.docx` and silently
+ * dropped the patch number. Only a short run of letters counts as an extension;
+ * `0` does not. `draftFilename` has the same shape and is not fixed here because
+ * it is only ever handed a name that ends in one, but the hazard is the same.
+ */
+const EXTENSION = /^[a-z]{2,5}$/i;
+
+export function releaseNotesFilename(officialName: string): string {
+  const dot = officialName.lastIndexOf(".");
+  const isExtension = dot > 0 && EXTENSION.test(officialName.slice(dot + 1));
+  const stem = isExtension ? officialName.slice(0, dot) : officialName;
+  return `${stem}-notas-de-version.docx`;
+}
+
+/**
  * The highest working number among files naming one axis value.
  *
  * Matched on the axis value bounded by separators, never by bare inclusion:

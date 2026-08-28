@@ -1,5 +1,41 @@
 import { describe, expect, it } from "vitest";
-import { newestWorkNumberFor, nextWorkNumber, workNumberIn, workStamp } from "./naming.ts";
+import {
+  newestWorkNumberFor,
+  nextWorkNumber,
+  releaseNotesFilename,
+  workNumberIn,
+  workStamp,
+} from "./naming.ts";
+
+describe("releaseNotesFilename", () => {
+  it("names the notes after the document they accompany, so the two sort together", () => {
+    expect(releaseNotesFilename("manual-operador-bridge-todas-las-agencias-v1.1.0.pdf")).toBe(
+      "manual-operador-bridge-todas-las-agencias-v1.1.0-notas-de-version.docx",
+    );
+  });
+
+  it("is .docx even when handed the Word file, because there is only one format", () => {
+    expect(releaseNotesFilename("manual-operador-mv-v1.1.0.docx")).toBe(
+      "manual-operador-mv-v1.1.0-notas-de-version.docx",
+    );
+  });
+
+  it("takes the LAST dot, so a version number is not mistaken for an extension", () => {
+    expect(releaseNotesFilename("manual-operador-mv-v1.10.2.pdf")).toBe(
+      "manual-operador-mv-v1.10.2-notas-de-version.docx",
+    );
+  });
+
+  it("still produces a .docx from a name with no extension at all", () => {
+    expect(releaseNotesFilename("manual-operador-mv-v1.1.0")).toBe(
+      "manual-operador-mv-v1.1.0-notas-de-version.docx",
+    );
+  });
+
+  it("leaves a leading dot alone rather than eating the whole name", () => {
+    expect(releaseNotesFilename(".hidden")).toBe(".hidden-notas-de-version.docx");
+  });
+});
 
 describe("workStamp", () => {
   it("pads to two digits so a folder listing sorts the way it reads", () => {
