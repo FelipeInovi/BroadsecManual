@@ -383,6 +383,12 @@ body {
   line-height: 1;
   margin: 0;
 }
+/* The version number, lighter than the word it follows, the same way the
+   project name carries its digits in a weight of their own. A number set at the
+   weight of a headline stops being a number and becomes part of the word. */
+.cover__version {
+  font-weight: 300;
+}
 .cover__title {
   font-family: ${FACE_DISPLAY};
   position: absolute;

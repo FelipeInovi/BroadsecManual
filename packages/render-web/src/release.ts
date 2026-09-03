@@ -43,11 +43,21 @@ export interface ReleaseCoverData {
    * product: a new manual inherits this layout and contributes a name.
    */
   readonly project: string;
+  /**
+   * The version these notes report, printed beside "Release".
+   *
+   * ON THE PAGE, not only in the filename: a reader opens the document, not the
+   * directory it arrived in, and nothing else on the cover identified which
+   * delivery this is. It is the change-log row's version — the same one the
+   * manual beside it prints — because the build takes both from one argument.
+   */
+  readonly version: string;
   /** The line under "Release" — what this delivery is. */
   readonly title: string;
-  /** One sentence naming the platform the changes landed in. */
+  /** One sentence naming what this version brings, written by the notes. */
   readonly lede: string;
-  /** "Agosto, 2026" — a month, not a full date, as the reference prints it. */
+  /** "3 de septiembre de 2026" — the day included, so two notes a fortnight
+   * apart are not both stamped with the same month. */
   readonly date: string;
   readonly contact?: ReleaseContact;
 }
@@ -200,7 +210,12 @@ function renderCover(c: ReleaseCoverData): string {
     `<svg class="cover__mark" viewBox="0 0 40 40" aria-hidden="true">${ring("#FFFFFF")}</svg>`,
     `<span class="cover__wordmark">INOVISEC</span>`,
     `</div>`,
-    `<p class="cover__eyebrow">Release</p>`,
+    // The version rides in the eyebrow rather than taking a line of its own: the
+    // cover is measured off the reference top to bottom, and a new element would
+    // have to displace something that was placed. "Release" alone left room on
+    // its line and the number is what the word was missing.
+    `<p class="cover__eyebrow">Release <span class="cover__version">` +
+      `${esc(c.version)}</span></p>`,
     `<p class="cover__title">${esc(c.title)}</p>`,
     `<div class="cover__rule"></div>`,
     `<p class="cover__lede">${esc(c.lede)}</p>`,

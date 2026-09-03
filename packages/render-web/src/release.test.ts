@@ -38,9 +38,10 @@ const options = (project = "BRIDGE360", contact?: typeof CONTACT): ReleaseOption
   footerTitle: "Actualización – nuevas características",
   cover: {
     project,
+    version: "1.1.0",
     title: "Nuevas Características Habilitadas",
     lede: "Características nuevas disponibles en la plataforma",
-    date: "Agosto, 2026",
+    date: "3 de septiembre de 2026",
     ...(contact === undefined ? {} : { contact }),
   },
 });
@@ -93,6 +94,27 @@ describe("cover", () => {
     const out = body(render(CONTENT));
     expect(out).toContain('class="cover__mark"');
     expect(out).toContain('stroke="#FFFFFF"');
+  });
+
+  it("names the version it reports, which nothing else on the page did", () => {
+    // Not the filename's job: a reader opens the document, not the directory.
+    // Two sets of notes a fortnight apart were otherwise told apart by their
+    // date alone.
+    expect(body(render(CONTENT))).toContain("1.1.0");
+  });
+
+  it("rides with the eyebrow, so the version is read as part of the headline", () => {
+    const out = body(render(CONTENT));
+    const at = out.indexOf("cover__eyebrow");
+    expect(out.slice(at, out.indexOf("</p>", at))).toContain("1.1.0");
+  });
+
+  it("escapes it, because it reaches the page as an argument like any other", () => {
+    const out = renderReleaseNotes(manual(CONTENT), {
+      ...options(),
+      cover: { ...options().cover, version: '1.0<script>' },
+    });
+    expect(out).not.toContain("<script>");
   });
 });
 

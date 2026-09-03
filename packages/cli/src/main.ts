@@ -1247,6 +1247,9 @@ async function buildReleaseNotes(
       polyfill,
       cover: {
         project: config.manual.product,
+        // The version being delivered, and the same argument the manual beside
+        // these notes is built from — so the two cannot name different ones.
+        version,
         title: "Nuevas Características Habilitadas",
         // The NOTES' standfirst, not the manual's. See `releaseLede`.
         lede: notes.lede,
