@@ -67,6 +67,12 @@ children:
         - id: historial.tabla.1-0-0
           version: 1.0.0
           date: 2026-02-28
+          delivered:
+            med:
+              commit: 15c2821bfcd8ad8a309af1037539a668b9bea3ea
+              files:
+                manual-operador-med-v1.0.0.pdf: 8affd38b7c0c04c6859f30a0bbedb61be9791422ed748e31040081bbf67951ed
+                manual-operador-med-v1.0.0.docx: 4fbd16d393c6aa90de6822124cd560979243223bd2c1742c3489dc144f97d57b
           description: >-
             Versión actual documentada en este manual. Incluye mejoras en
             interfaz, Call AI, Fuerzas en Campo y Security Dashboard.
