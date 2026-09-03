@@ -19,31 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 240,
-    "delivered": 239,
-    "pending": 1
+    "delivered": 240,
+    "pending": 0
   },
-  "pending": [
-    {
-      "slot": "bot.pmv-gestion.paso.elegir",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "bot.pmv-gestion.paso.elegir",
-          "blockType": "procedure",
-          "shows": "Elija cómo retirarlo si está corriendo"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/bot.pmv-gestion.paso.elegir.png",
-        "override": "<tenant>/bot.pmv-gestion.paso.elegir.png"
-      }
-    }
-  ],
+  "pending": [],
   "delivered": [
     {
       "slot": "introduccion.fig",
@@ -3845,6 +3824,22 @@
       ],
       "files": [
         "_common/bot.pmv-gestion.paso.desactivar.png"
+      ]
+    },
+    {
+      "slot": "bot.pmv-gestion.paso.elegir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-gestion.paso.elegir",
+          "blockType": "procedure",
+          "shows": "Elija cómo retirarlo si está corriendo"
+        }
+      ],
+      "files": [
+        "_common/bot.pmv-gestion.paso.elegir.png"
       ]
     },
     {
