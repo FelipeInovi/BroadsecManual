@@ -104,22 +104,29 @@ lede: >-
   etapa de pruebas y cierre de casos directamente desde la lista.
 children:
   - kind: block
-    type: release-scope
+    id: notas.vigencia
+    type: term-list
     props:
-      module: Módulo de Comando y Control
-      effective: 2026-08-07
+      entries:
+        - id: notas.vigencia.1
+          term: Módulo de Comando y Control
+          definition: Actualización efectiva desde el 7 de agosto de 2026.
 
   - kind: section
     id: notas.menu
     title: Menú de navegación
     children:
       - kind: block
+        id: notas.menu.p1
         type: prose
         props:
           text: >-
             Se implementó una actualización visual en el menú; no obstante,
             las funcionalidades se mantienen sin cambios.
 ```
+
+**Every node carries an `id`**, blocks included — `loadNode` refuses a file
+without one. Key them off the section: `notas.menu`, `notas.menu.p1`.
 
 Blocks available to you — no others, and do not improvise a layout:
 
