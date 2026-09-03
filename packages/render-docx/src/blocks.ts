@@ -740,7 +740,15 @@ function opener(node: SectionNode, n: string, ctx: Ctx): readonly (Paragraph | T
   const children: Paragraph[] = [];
   const inner = ctx.l.contentWidthPt - ctx.m.openerPad.left - ctx.m.openerPad.right;
 
-  if (kicker !== "" || n !== "") {
+  // A brand without a ghosted ordinal has no ordinal to place, and the tab stop
+  // exists only to throw that glyph at the right edge. Folding the missing face
+  // into `ordinal` keeps the whole line conditional: with no kicker either, the
+  // paragraph is not emitted at all, rather than emitted empty — which would
+  // still hold `space.md` open at the top of every pier.
+  const ghost = ctx.f.sectionGhost;
+  const ordinal = ghost === undefined ? "" : n;
+
+  if (kicker !== "" || ordinal !== "") {
     children.push(
       new Paragraph({
         spacing: { after: twips("5pt"), line: twips(ctx.t.space.md), lineRule: LineRuleType.EXACTLY },
@@ -748,7 +756,9 @@ function opener(node: SectionNode, n: string, ctx: Ctx): readonly (Paragraph | T
         keepNext: true,
         children: [
           ...(kicker === "" ? [] : [run(kicker, ctx.f.sectionKicker)]),
-          ...(n === "" ? [] : [run("\t", ctx.f.sectionKicker), run(n, ctx.f.sectionGhost)]),
+          ...(ordinal === "" || ghost === undefined
+            ? []
+            : [run("\t", ctx.f.sectionKicker), run(ordinal, ghost)]),
         ],
       }),
     );

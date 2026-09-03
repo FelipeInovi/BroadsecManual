@@ -82,6 +82,12 @@ export function faces(t: Tokens) {
   const mono = family(t.font.mono);
   const ground = t.cover.background;
 
+  // `solid`, not `requireSolid`: a brand may switch this ornament OFF, and
+  // `broadsec` does. Word has no transparent fill, so an absent ghost is an
+  // absent RUN — see `sectionGhost` below and `opener` in blocks.ts. The same
+  // shape `deck` already uses for the running header's rule.
+  const ghost = solid(t.sectionHeader.ghost, ground);
+
   return {
     prose: {
       font: sans,
@@ -138,14 +144,24 @@ export function faces(t: Tokens) {
       size: halfPoints(t.sectionHeader.subtitleSize),
       color: requireSolid(t.sectionHeader.subtitleColor),
     },
-    /** The ghosted ordinal: the accent at low alpha, flattened over the pier. */
-    sectionGhost: {
-      font: display,
-      size: halfPoints(t.sectionHeader.ghostSize),
-      color: requireSolid(t.sectionHeader.ghost, ground),
-      bold: true,
-      characterSpacing: twips("-3pt"),
-    },
+    /**
+     * The ghosted ordinal: the accent at low alpha, flattened over the pier.
+     *
+     * ABSENT, not paler, when the brand switches it off. Falling back to a
+     * colour would print an ornament on a brand that deliberately has none,
+     * which is a worse answer than the crash this replaces.
+     */
+    ...(ghost === undefined
+      ? {}
+      : {
+          sectionGhost: {
+            font: display,
+            size: halfPoints(t.sectionHeader.ghostSize),
+            color: ghost,
+            bold: true,
+            characterSpacing: twips("-3pt"),
+          },
+        }),
     subsectionTitle: {
       font: display,
       size: halfPoints(t.subsectionHeader.titleSize),

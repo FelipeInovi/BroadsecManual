@@ -306,6 +306,37 @@ describe("the running header and footer", () => {
   });
 });
 
+/**
+ * A brand may switch an ornament OFF, and the Word renderer has to survive it.
+ *
+ * `broadsec` declares `ghostNumber: "transparent"` — it has no ghosted ordinal
+ * behind its section openers — while `bridge` sets one at 15% alpha. Word has no
+ * transparent fill, so the answer is not a paler colour: it is no run at all.
+ */
+describe("a theme with its ornaments switched off", () => {
+  const off = options({ theme: themes.broadsec, cover: { ...options().cover, brand: "BROADSEC" } });
+
+  it("renders at all, rather than refusing over a colour that is meant to be absent", async () => {
+    await expect(renderDocx(manual, off)).resolves.toBeInstanceOf(Uint8Array);
+  });
+
+  it("still carries the document its reader came for", async () => {
+    // NOT the cover title: `textCover` splits it at the last space into two
+    // runs, so "Manual de operador" is never one string in the XML.
+    const xml = await documentXml(off);
+    expect(xml).toContain("BROADSEC");
+    expect(xml).toContain("Un párrafo con ");
+  });
+
+  it("drops the ordinal's run rather than printing it in some other colour", async () => {
+    // 76pt of display type is the ghost and nothing else on the page: matching
+    // its SIZE proves the run is gone, where matching a colour could not.
+    const ghostSize = 'w:sz w:val="152"';
+    expect(await documentXml(options())).toContain(ghostSize);
+    expect(await documentXml(off)).not.toContain(ghostSize);
+  });
+});
+
 describe("images", () => {
   it("embeds each distinct picture once and references it", async () => {
     const zip = await renderDocx(manual, options());
