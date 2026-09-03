@@ -1130,6 +1130,40 @@ export function releaseNotesFile(manualDir: string, version: string): string {
 }
 
 /**
+ * The standfirst the notes print under their title, read from the file itself.
+ *
+ * A TOP-LEVEL KEY, read from the raw mapping the way `loadSection` reads
+ * `pending` and `labels`: it is something the FILE says about itself rather than
+ * a block on the page, and the AST has no place for it.
+ *
+ * NOT `manual.lede`, which is what this used to take and what makes it worth a
+ * function. That field describes what the product IS — one permanent sentence,
+ * identical in every version and already on the manual's own cover — where the
+ * reader of a set of notes expects to be told what THIS version brings.
+ *
+ * REQUIRED, and its absence stops the build rather than printing an empty line.
+ * These notes reach a client beside an official delivery; a cover whose
+ * standfirst is missing is not a smaller document, it is a broken one, and the
+ * moment to find that out is here rather than in the client's hands.
+ */
+export function releaseLede(raw: unknown, file: string): string {
+  const top = (typeof raw === "object" && raw !== null ? raw : {}) as Record<string, unknown>;
+  const id = typeof top["id"] === "string" ? top["id"] : "release-notes";
+  const declared = top["lede"];
+  const lede = typeof declared === "string" ? declared.trim() : "";
+  if (lede === "") {
+    throw new ContentError(
+      file,
+      id,
+      `these notes declare no \`lede\`, and the cover has nowhere to print what ` +
+        `this version brings. Add a top-level \`lede:\` naming what the reader ` +
+        `will find below, in one sentence — see the \`release-notes\` skill.`,
+    );
+  }
+  return lede;
+}
+
+/**
  * The release notes for one version, or null when that version has none.
  *
  * NULL IS THE ORDINARY ANSWER, not a failure. A first delivery has nothing to
@@ -1145,13 +1179,15 @@ function loadReleaseNotes(
   manualDir: string,
   config: ManualConfig,
   version: string,
-): { doc: ManualDocument; warnings: readonly ContentWarning[] } | null {
+): { doc: ManualDocument; lede: string; warnings: readonly ContentWarning[] } | null {
   const file = releaseNotesFile(manualDir, version);
   if (!existsSync(file)) return null;
   const rel = `release-notes/v${version}.yaml`;
-  const loaded = loadSection(readFileSync(file, "utf8"), rel, catalog);
+  const source = readFileSync(file, "utf8");
+  const loaded = loadSection(source, rel, catalog);
   return {
     doc: { manualId: config.manual.id, version, children: [loaded.node] },
+    lede: releaseLede(parseYaml(source), rel),
     warnings: loaded.warnings,
   };
 }
@@ -1202,7 +1238,8 @@ async function buildReleaseNotes(
       cover: {
         project: config.manual.product,
         title: "Nuevas Características Habilitadas",
-        lede: config.manual.lede ?? "",
+        // The NOTES' standfirst, not the manual's. See `releaseLede`.
+        lede: notes.lede,
         date: releaseMonth(),
         contact: ISSUING_OFFICE,
       },

@@ -99,6 +99,9 @@ the manual — never three.
 ```yaml
 id: notas
 title: Actualización
+lede: >-
+  Actualización visual del menú de navegación, nuevo módulo Bridge of Things en
+  etapa de pruebas y cierre de casos directamente desde la lista.
 children:
   - kind: block
     type: release-scope
@@ -136,9 +139,29 @@ Leave its `from` off. Declaring a citation would send the label checker looking
 for the module's name in the product's source, and this text is ours, not a
 label the product shows.
 
-Numbering, the table of contents and the cover are **generated**. Never write an
-ordinal, a page number or an anchor. See `block-authoring` for the catalogue's
-rules and `tenant-conditioning` for `when`.
+Numbering, the table of contents and the rest of the cover are **generated**.
+Never write an ordinal, a page number or an anchor. See `block-authoring` for
+the catalogue's rules and `tenant-conditioning` for `when`.
+
+## The `lede` — the one line of the cover you write
+
+**Required. The build refuses notes without it**, because a cover with no
+standfirst reaches the client as a broken document rather than a shorter one.
+
+It is the sentence printed under the title, and it names **what the reader will
+find below** — this version's changes, in one breath, before the sections spell
+them out.
+
+- **Not what the product is.** "Plataforma de gestión de incidentes…" is the
+  manual's standfirst: permanent, identical in every version, and already on the
+  manual's own cover. Here it tells the reader nothing.
+- **Not what the manual incorporated.** That is the change-log row, and
+  `delivery-summary` writes it. These notes report the PRODUCT.
+- **One sentence**, naming the changes, in the order the sections take them.
+- Same register as the body: Spanish, neutral and formal, no third party named.
+
+> Actualización visual del menú de navegación, nuevo módulo Bridge of Things en
+> etapa de pruebas y cierre de casos directamente desde la lista.
 
 ## How the prose reads
 

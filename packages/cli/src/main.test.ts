@@ -15,6 +15,7 @@ import {
   parseAxisFilters,
   parseOutPath,
   primaryAxis,
+  releaseLede,
   releaseNotesFile,
   run,
   type ManualConfig,
@@ -637,5 +638,50 @@ describe("releaseNotesFile", () => {
     const a = releaseNotesFile("m", "1.1.0");
     const b = releaseNotesFile("m", "1.1.10");
     expect(a).not.toBe(b);
+  });
+});
+
+describe("releaseLede", () => {
+  const file = "release-notes/v1.1.0.yaml";
+
+  it("takes the standfirst the notes declare about themselves", () => {
+    const lede = releaseLede({ id: "notas", lede: "Menú nuevo y cierre desde la lista." }, file);
+    expect(lede).toBe("Menú nuevo y cierre desde la lista.");
+  });
+
+  it("trims it, because a block scalar carries the newline it was folded on", () => {
+    expect(releaseLede({ lede: "  Dos cambios visibles.\n" }, file)).toBe("Dos cambios visibles.");
+  });
+
+  it("refuses notes that declare none", () => {
+    // The cover would otherwise print the manual's standfirst — a sentence about
+    // what the product IS, identical in every version — where the reader expects
+    // what THIS version brings.
+    expect(() => releaseLede({ id: "notas" }, file)).toThrow(/lede/);
+  });
+
+  it("refuses a blank one, which is the same absence written differently", () => {
+    expect(() => releaseLede({ lede: "   \n " }, file)).toThrow(/lede/);
+  });
+
+  it("refuses one that is not a sentence", () => {
+    expect(() => releaseLede({ lede: ["a", "b"] }, file)).toThrow(/lede/);
+    expect(() => releaseLede({ lede: 3 }, file)).toThrow(/lede/);
+  });
+
+  it("names the file and points at the skill that writes it", () => {
+    let message = "";
+    try {
+      releaseLede({}, file);
+    } catch (error) {
+      message = formatCliError(error);
+    }
+    expect(message).toContain(file);
+    expect(message).toContain("skill");
+  });
+
+  it("refuses a file that is not a mapping at all", () => {
+    expect(() => releaseLede(null, file)).toThrow(/lede/);
+    expect(() => releaseLede("notas", file)).toThrow(/lede/);
   });
 });
