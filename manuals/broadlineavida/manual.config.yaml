@@ -1,4 +1,4 @@
-# Broadsec SIMM — operator manual.
+# Broadsec — operator manual.
 #
 # `tenant` values mirror the ids used by the product itself
 # (`src/render/config/<id>.config.ts`). They are re-derived by `extract`;
@@ -10,7 +10,14 @@ manual:
   id: broadlineavida
   source: broadlineavida
   title: Manual de operador
-  product: Broadsec SIMM
+  # THE MARK, not a catalogue entry. It is what the covers, the running header
+  # and the release notes' band all print — upper-cased by the stylesheets — so
+  # it has to be the name the reader sees on the screen, and that name is
+  # Broadsec. The manual's own prose already said only "Broadsec" throughout
+  # ("la plataforma Broadsec", "el módulo de Incidentes (Broadsec)"); this field
+  # was the one place still carrying the longer form, and it printed it on
+  # every page.
+  product: Broadsec
   # SemVer of the manual content.
   # NOT WHAT THE MANUAL PRINTS. What it prints is the highest row of this
   # manual's change log, per target — see `deliveredVersion` in
