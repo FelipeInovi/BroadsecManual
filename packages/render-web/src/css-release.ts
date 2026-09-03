@@ -383,12 +383,6 @@ body {
   line-height: 1;
   margin: 0;
 }
-/* The version number, lighter than the word it follows, the same way the
-   project name carries its digits in a weight of their own. A number set at the
-   weight of a headline stops being a number and becomes part of the word. */
-.cover__version {
-  font-weight: 300;
-}
 .cover__title {
   font-family: ${FACE_DISPLAY};
   position: absolute;
@@ -421,6 +415,17 @@ body {
   position: absolute;
   left: 13.9%;
   top: 255.3pt;
+  font-size: 9pt;
+  line-height: 1;
+  margin: 0;
+}
+/* One 12pt line below the date — the step the standfirst above already uses,
+   rather than a gap chosen by eye. Same size and colour: the two lines answer
+   the same question and read as one block. */
+.cover__version {
+  position: absolute;
+  left: 13.9%;
+  top: 267.3pt;
   font-size: 9pt;
   line-height: 1;
   margin: 0;

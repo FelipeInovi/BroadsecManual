@@ -210,16 +210,15 @@ function renderCover(c: ReleaseCoverData): string {
     `<svg class="cover__mark" viewBox="0 0 40 40" aria-hidden="true">${ring("#FFFFFF")}</svg>`,
     `<span class="cover__wordmark">INOVISEC</span>`,
     `</div>`,
-    // The version rides in the eyebrow rather than taking a line of its own: the
-    // cover is measured off the reference top to bottom, and a new element would
-    // have to displace something that was placed. "Release" alone left room on
-    // its line and the number is what the word was missing.
-    `<p class="cover__eyebrow">Release <span class="cover__version">` +
-      `${esc(c.version)}</span></p>`,
+    `<p class="cover__eyebrow">Release</p>`,
     `<p class="cover__title">${esc(c.title)}</p>`,
     `<div class="cover__rule"></div>`,
     `<p class="cover__lede">${esc(c.lede)}</p>`,
     `<p class="cover__date">${esc(c.date)}</p>`,
+    // LABELLED, and below the date rather than in the headline. The two answer
+    // the same question — which delivery is this — so they read as one block,
+    // and a bare "1.1.0" on a cover is a number the reader has to guess at.
+    `<p class="cover__version">Versión ${esc(c.version)}</p>`,
     contact === undefined
       ? ""
       : `<div class="cover__contact"><b>Contacto:</b><b>${esc(contact.org)}</b>` +

@@ -103,10 +103,15 @@ describe("cover", () => {
     expect(body(render(CONTENT))).toContain("1.1.0");
   });
 
-  it("rides with the eyebrow, so the version is read as part of the headline", () => {
+  it("labels it, because a bare number on a cover is not self-explanatory", () => {
+    expect(body(render(CONTENT))).toContain("Versión 1.1.0");
+  });
+
+  it("sits below the date, and leaves the headline the one word it had", () => {
     const out = body(render(CONTENT));
-    const at = out.indexOf("cover__eyebrow");
-    expect(out.slice(at, out.indexOf("</p>", at))).toContain("1.1.0");
+    const eyebrow = out.indexOf("cover__eyebrow");
+    expect(out.slice(eyebrow, out.indexOf("</p>", eyebrow))).not.toContain("1.1.0");
+    expect(out.indexOf("cover__version")).toBeGreaterThan(out.indexOf("cover__date"));
   });
 
   it("escapes it, because it reaches the page as an argument like any other", () => {
