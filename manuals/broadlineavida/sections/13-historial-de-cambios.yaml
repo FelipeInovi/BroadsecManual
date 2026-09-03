@@ -74,6 +74,12 @@ children:
         - id: historial.tabla.1-1-0
           version: 1.1.0
           date: 2026-08-26
+          delivered:
+            mv:
+              commit: cb6f0ebcf1d88b96c106064732324022dd7ae42b
+              files:
+                manual-operador-mv-v1.1.0.pdf: 5692efaa8e4825972dbd4560f891308a81b603014a0980b997570e9f5170cc2b
+                manual-operador-mv-v1.1.0.docx: bcb3f0649641123b76b1eb4ed9b99c1cf9da53956aa95517d78227d7b5af13f7
           # Same selector as the module this row announces. See the note above.
           when:
             tenant: [mv, demo]
