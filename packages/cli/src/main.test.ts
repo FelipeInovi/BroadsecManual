@@ -15,6 +15,7 @@ import {
   parseAxisFilters,
   parseOutPath,
   primaryAxis,
+  releaseDate,
   releaseLede,
   releaseNotesFile,
   run,
@@ -638,6 +639,26 @@ describe("releaseNotesFile", () => {
     const a = releaseNotesFile("m", "1.1.0");
     const b = releaseNotesFile("m", "1.1.10");
     expect(a).not.toBe(b);
+  });
+});
+
+describe("releaseDate", () => {
+  it("names the day, because two sets of notes can share a month", () => {
+    expect(releaseDate(new Date(2026, 7, 7))).toBe("7 de agosto de 2026");
+  });
+
+  it("keeps the month lowercase, which is what Spanish does inside a date", () => {
+    expect(releaseDate(new Date(2026, 11, 24))).toBe("24 de diciembre de 2026");
+  });
+
+  it("does not pad the day, because no one writes 07 de agosto", () => {
+    expect(releaseDate(new Date(2026, 0, 1))).toBe("1 de enero de 2026");
+  });
+
+  it("distinguishes two dates inside one month, which is the whole point", () => {
+    const first = releaseDate(new Date(2026, 7, 7));
+    const second = releaseDate(new Date(2026, 7, 21));
+    expect(first).not.toBe(second);
   });
 });
 

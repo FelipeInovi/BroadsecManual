@@ -1102,19 +1102,29 @@ const ISSUING_OFFICE = {
 } as const;
 
 const MONTHS = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ] as const;
 
 /**
- * The month the cover prints, as the reference prints it: "Agosto, 2026".
+ * The date the cover prints: "7 de agosto de 2026".
+ *
+ * THE DAY, not just the month, and the reference is what this departs from. Two
+ * sets of notes can share a month — a fix a fortnight after a release is the
+ * ordinary case, not the odd one — and a cover naming only "Agosto, 2026" gives
+ * the reader nothing to tell them apart with. The version is not on the cover
+ * either; the day is what distinguishes one from the next.
+ *
+ * The month is LOWERCASE because Spanish writes it that way inside a date. It
+ * was capitalised while it stood alone at the head of the line, which is a
+ * different position and a different rule.
  *
  * Taken from the clock rather than from the change-log row, because the row's
  * date is when the version was DECLARED and this is when the document was made.
  * They are usually the same day and the difference only shows when they are not.
  */
-function releaseMonth(now = new Date()): string {
-  return `${MONTHS[now.getMonth()]}, ${now.getFullYear()}`;
+export function releaseDate(now = new Date()): string {
+  return `${now.getDate()} de ${MONTHS[now.getMonth()]} de ${now.getFullYear()}`;
 }
 
 /**
@@ -1240,7 +1250,7 @@ async function buildReleaseNotes(
         title: "Nuevas Características Habilitadas",
         // The NOTES' standfirst, not the manual's. See `releaseLede`.
         lede: notes.lede,
-        date: releaseMonth(),
+        date: releaseDate(),
         contact: ISSUING_OFFICE,
       },
     });
