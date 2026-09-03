@@ -104,6 +104,24 @@ const GHOST_RING =
   "%3Ccircle cx='25.6' cy='16' r='4.6'/%3E" +
   "%3Crect x='24.2' y='16' width='2.8' height='19.6'/%3E%3C/g%3E%3C/svg%3E\")";
 
+/* --- where the ghost ring sits -------------------------------------------
+ * ITS CENTRE IS THE MEASURE, never its top-left corner, and the offsets below
+ * are derived rather than written. The ring is the sharp logo enlarged, so the
+ * only position with a reason is a shared centre; a `background-position`
+ * anchors at the corner, so any resize typed by hand walks that centre off by
+ * half the difference. Guarded by css-release.test.ts.
+ */
+/** Across. 25% up from the 66pt it was — it now spills past the band, on purpose. */
+const GHOST_SIZE = 82.5;
+/** The sharp logo's centre, measured on the reference. */
+const GHOST_X = 32;
+/** Its centre down the ordinary band, and down the taller opener band. */
+const GHOST_Y = 34.5;
+const GHOST_Y_OPENER = 26;
+/** `background-position` from a centre: the corner is half a ring back. */
+const ghostAt = (y: number): string =>
+  `${GHOST_X - GHOST_SIZE / 2}pt ${y - GHOST_SIZE / 2}pt / ${GHOST_SIZE}pt ${GHOST_SIZE}pt`;
+
 /** The cover band: navy on the left, teal on the right. */
 const COVER_BAND = "linear-gradient(90deg, #273262 0%, #285272 28%, #27667B 54%, #278787 78%, #339A8C 100%)";
 /** The interior band: the cover's, reversed — teal on the left, navy on the right. */
@@ -204,15 +222,15 @@ export function releaseStylesheet(t: Tokens, project: string): string {
   right: 0;
   top: 0;
   height: ${BAND};
-  /* The ring first, so it paints ON the gradient rather than under it. Sized to
-     the band's height and hung half outside it, as the reference has it. */
-  background: ${GHOST_RING} no-repeat -1pt 1.5pt / 66pt 66pt, ${HEAD_BAND};
+  /* The ring first, so it paints ON the gradient rather than under it. Larger
+     than the band is tall and hung half outside it, as the reference has it. */
+  background: ${GHOST_RING} no-repeat ${ghostAt(GHOST_Y)}, ${HEAD_BAND};
   z-index: 0;
   pointer-events: none;
 }
 .pagedjs_opener_page .pagedjs_pagebox::before {
   height: ${OPENER_BAND};
-  background: ${GHOST_RING} no-repeat -1pt -7pt / 66pt 66pt, ${OPEN_BAND};
+  background: ${GHOST_RING} no-repeat ${ghostAt(GHOST_Y_OPENER)}, ${OPEN_BAND};
 }
 .pagedjs_cover_page .pagedjs_pagebox::before { content: none; }
 

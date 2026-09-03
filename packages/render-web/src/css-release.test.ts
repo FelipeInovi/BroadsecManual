@@ -45,6 +45,19 @@ describe("releaseStylesheet", () => {
     expect(releaseStylesheet(tokens, "X")).toContain(".pagedjs_pagebox::before");
   });
 
+  it("keeps the ghost ring on the sharp logo's centre, on both bands", () => {
+    // The ring is the same mark enlarged, so the only position with a reason is
+    // a shared centre — see the commit that moved it off the sheet's edge. It
+    // has been resized since, and a resize anchored at the top-left corner
+    // silently walks the centre off. This is what makes growing it safe.
+    const css = releaseStylesheet(tokens, "X");
+    const found = [...css.matchAll(/no-repeat (-?[\d.]+)pt (-?[\d.]+)pt \/ ([\d.]+)pt/g)];
+    expect(found).toHaveLength(2);
+    for (const [, x, , size] of found) {
+      expect(Number(x) + Number(size) / 2).toBeCloseTo(32, 5);
+    }
+  });
+
   it("wraps the cover's standfirst where the rule above it ends", () => {
     // Absolutely positioned and left at its natural width, the standfirst ran to
     // the paper's right margin while the rule above it stopped at half the page.
