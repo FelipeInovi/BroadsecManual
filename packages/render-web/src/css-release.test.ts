@@ -44,4 +44,19 @@ describe("releaseStylesheet", () => {
     // restarting at its own left edge.
     expect(releaseStylesheet(tokens, "X")).toContain(".pagedjs_pagebox::before");
   });
+
+  it("wraps the cover's standfirst where the rule above it ends", () => {
+    // Absolutely positioned and left at its natural width, the standfirst ran to
+    // the paper's right margin while the rule above it stopped at half the page.
+    // The ragged edge read as a mistake because it was one: the eye takes the
+    // rule as the column, so the text has to honour it.
+    const css = releaseStylesheet(tokens, "X");
+    const widthOf = (selector: string): string | undefined => {
+      const at = css.indexOf(`${selector} {`);
+      const block = css.slice(at, css.indexOf("}", at));
+      return /width:\s*([^;]+);/.exec(block)?.[1]?.trim();
+    };
+    expect(widthOf(".cover__lede")).toBe(widthOf(".cover__rule"));
+    expect(widthOf(".cover__lede")).toBeDefined();
+  });
 });

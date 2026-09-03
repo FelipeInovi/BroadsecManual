@@ -55,6 +55,17 @@ const TEXT_INDENT = "61pt";
 const MARGIN_BOTTOM = "72pt";
 /** Between the band and the first thing on an ordinary page. */
 const CONTENT_TOP = "16pt";
+/**
+ * The cover's short column: the rule under the title, and the standfirst below
+ * it. Measured off the reference, where the rule stops just past half the sheet.
+ *
+ * ONE CONSTANT because the two must agree. The standfirst had no width at all
+ * and, being absolutely positioned, ran to the paper's right margin while the
+ * rule stopped here — and a rule is read as the column it draws, so the text
+ * overshooting it looked like a mistake rather than a measure. Guarded by
+ * css-release.test.ts.
+ */
+const COVER_COLUMN = "51.8%";
 
 /* --- palette, sampled from the reference -------------------------------- */
 const INK = "#002060";
@@ -387,7 +398,7 @@ body {
   position: absolute;
   left: 13.9%;
   top: 180.8pt;
-  width: 51.8%;
+  width: ${COVER_COLUMN};
   height: 1.7pt;
   background: ${COVER_RULE};
 }
@@ -395,6 +406,7 @@ body {
   position: absolute;
   left: 13.9%;
   top: 187.4pt;
+  width: ${COVER_COLUMN};
   font-size: 9pt;
   line-height: 12pt;
   margin: 0;
