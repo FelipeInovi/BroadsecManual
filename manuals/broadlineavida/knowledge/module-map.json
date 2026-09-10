@@ -44,7 +44,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 629
+          "line": 630
         }
       },
       "absentFrom": [
@@ -64,7 +64,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 686
+          "line": 687
         }
       },
       "absentFrom": [
@@ -84,7 +84,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 682
+          "line": 683
         }
       },
       "absentFrom": [
@@ -104,7 +104,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 648
+          "line": 649
         }
       },
       "absentFrom": [
@@ -124,7 +124,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 649
+          "line": 650
         }
       },
       "absentFrom": [
@@ -144,7 +144,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 683
+          "line": 684
         }
       },
       "absentFrom": [
@@ -164,7 +164,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 684
+          "line": 685
         }
       },
       "absentFrom": [
@@ -184,7 +184,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 653
+          "line": 654
         }
       },
       "absentFrom": [
@@ -204,7 +204,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 654
+          "line": 655
         }
       },
       "absentFrom": [
@@ -224,7 +224,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 655
+          "line": 656
         }
       },
       "absentFrom": [
@@ -244,7 +244,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 685
+          "line": 686
         }
       },
       "absentFrom": [
@@ -264,11 +264,11 @@
       "values": {
         "med": {
           "value": true,
-          "line": 584
+          "line": 585
         },
         "mv": {
           "value": true,
-          "line": 29
+          "line": 31
         }
       },
       "absentFrom": [
@@ -288,83 +288,6 @@
       "values": {
         "amva": {
           "value": false,
-          "line": 47
-        },
-        "ant": {
-          "value": false,
-          "line": 80
-        },
-        "demo": {
-          "value": true,
-          "line": 82
-        },
-        "dev": {
-          "value": true,
-          "line": 82
-        },
-        "lv": {
-          "value": true,
-          "line": 82
-        },
-        "med": {
-          "value": false,
-          "line": 813
-        },
-        "mv": {
-          "value": true,
-          "line": 83
-        }
-      },
-      "enabledFor": [
-        "demo",
-        "dev",
-        "lv",
-        "mv"
-      ]
-    },
-    {
-      "flag": "canCreateAgentsModule",
-      "values": {
-        "amva": {
-          "value": false,
-          "line": 54
-        },
-        "ant": {
-          "value": false,
-          "line": 87
-        },
-        "demo": {
-          "value": true,
-          "line": 89
-        },
-        "dev": {
-          "value": true,
-          "line": 89
-        },
-        "lv": {
-          "value": false,
-          "line": 90
-        },
-        "med": {
-          "value": false,
-          "line": 821
-        },
-        "mv": {
-          "value": true,
-          "line": 90
-        }
-      },
-      "enabledFor": [
-        "demo",
-        "dev",
-        "mv"
-      ]
-    },
-    {
-      "flag": "canSeeBoT",
-      "values": {
-        "amva": {
-          "value": false,
           "line": 48
         },
         "ant": {
@@ -380,7 +303,7 @@
           "line": 83
         },
         "lv": {
-          "value": false,
+          "value": true,
           "line": 83
         },
         "med": {
@@ -389,7 +312,46 @@
         },
         "mv": {
           "value": true,
-          "line": 84
+          "line": 85
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "lv",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canCreateAgentsModule",
+      "values": {
+        "amva": {
+          "value": false,
+          "line": 55
+        },
+        "ant": {
+          "value": false,
+          "line": 88
+        },
+        "demo": {
+          "value": true,
+          "line": 90
+        },
+        "dev": {
+          "value": true,
+          "line": 90
+        },
+        "lv": {
+          "value": false,
+          "line": 91
+        },
+        "med": {
+          "value": false,
+          "line": 822
+        },
+        "mv": {
+          "value": true,
+          "line": 92
         }
       },
       "enabledFor": [
@@ -399,7 +361,7 @@
       ]
     },
     {
-      "flag": "canSeeForcesInField",
+      "flag": "canSeeBoT",
       "values": {
         "amva": {
           "value": false,
@@ -427,7 +389,45 @@
         },
         "mv": {
           "value": true,
+          "line": 86
+        }
+      },
+      "enabledFor": [
+        "demo",
+        "dev",
+        "mv"
+      ]
+    },
+    {
+      "flag": "canSeeForcesInField",
+      "values": {
+        "amva": {
+          "value": false,
+          "line": 50
+        },
+        "ant": {
+          "value": false,
+          "line": 83
+        },
+        "demo": {
+          "value": true,
           "line": 85
+        },
+        "dev": {
+          "value": true,
+          "line": 85
+        },
+        "lv": {
+          "value": false,
+          "line": 85
+        },
+        "med": {
+          "value": false,
+          "line": 816
+        },
+        "mv": {
+          "value": true,
+          "line": 87
         }
       },
       "enabledFor": [
@@ -441,31 +441,31 @@
       "values": {
         "amva": {
           "value": false,
-          "line": 19
+          "line": 20
         },
         "ant": {
           "value": false,
-          "line": 19
+          "line": 20
         },
         "demo": {
           "value": false,
-          "line": 19
+          "line": 20
         },
         "dev": {
           "value": false,
-          "line": 19
+          "line": 20
         },
         "lv": {
           "value": true,
-          "line": 19
+          "line": 20
         },
         "med": {
           "value": false,
-          "line": 567
+          "line": 568
         },
         "mv": {
           "value": false,
-          "line": 19
+          "line": 20
         }
       },
       "enabledFor": [
@@ -556,31 +556,31 @@
       "values": {
         "amva": {
           "value": false,
-          "line": 18
+          "line": 19
         },
         "ant": {
           "value": false,
-          "line": 18
+          "line": 19
         },
         "demo": {
           "value": false,
-          "line": 18
+          "line": 19
         },
         "dev": {
           "value": false,
-          "line": 18
+          "line": 19
         },
         "lv": {
           "value": false,
-          "line": 18
+          "line": 19
         },
         "med": {
           "value": false,
-          "line": 566
+          "line": 567
         },
         "mv": {
           "value": false,
-          "line": 18
+          "line": 19
         }
       },
       "enabledFor": []
@@ -705,31 +705,31 @@
       "values": {
         "amva": {
           "value": true,
-          "line": 17
+          "line": 18
         },
         "ant": {
           "value": true,
-          "line": 17
+          "line": 18
         },
         "demo": {
           "value": true,
-          "line": 17
+          "line": 18
         },
         "dev": {
           "value": true,
-          "line": 17
+          "line": 18
         },
         "lv": {
           "value": true,
-          "line": 17
+          "line": 18
         },
         "med": {
           "value": true,
-          "line": 565
+          "line": 566
         },
         "mv": {
           "value": false,
-          "line": 17
+          "line": 18
         }
       },
       "enabledFor": [
@@ -771,6 +771,42 @@
         "mv": {
           "value": true,
           "line": 16
+        }
+      },
+      "enabledFor": [
+        "mv"
+      ]
+    },
+    {
+      "flag": "canViewFilterTrafficDetails",
+      "values": {
+        "amva": {
+          "value": false,
+          "line": 17
+        },
+        "ant": {
+          "value": false,
+          "line": 17
+        },
+        "demo": {
+          "value": false,
+          "line": 17
+        },
+        "dev": {
+          "value": false,
+          "line": 17
+        },
+        "lv": {
+          "value": false,
+          "line": 17
+        },
+        "med": {
+          "value": false,
+          "line": 565
+        },
+        "mv": {
+          "value": true,
+          "line": 17
         }
       },
       "enabledFor": [
@@ -857,31 +893,31 @@
       "values": {
         "amva": {
           "value": false,
-          "line": 20
+          "line": 21
         },
         "ant": {
           "value": false,
-          "line": 20
+          "line": 21
         },
         "demo": {
           "value": false,
-          "line": 20
+          "line": 21
         },
         "dev": {
           "value": false,
-          "line": 20
+          "line": 21
         },
         "lv": {
           "value": true,
-          "line": 20
+          "line": 21
         },
         "med": {
           "value": false,
-          "line": 568
+          "line": 569
         },
         "mv": {
           "value": false,
-          "line": 20
+          "line": 21
         }
       },
       "enabledFor": [
@@ -893,31 +929,31 @@
       "values": {
         "amva": {
           "value": false,
-          "line": 21
+          "line": 22
         },
         "ant": {
           "value": false,
-          "line": 22
+          "line": 23
         },
         "demo": {
           "value": false,
-          "line": 21
+          "line": 22
         },
         "dev": {
           "value": true,
-          "line": 21
+          "line": 22
         },
         "lv": {
           "value": false,
-          "line": 22
+          "line": 23
         },
         "med": {
           "value": false,
-          "line": 569
+          "line": 570
         },
         "mv": {
           "value": true,
-          "line": 22
+          "line": 24
         }
       },
       "enabledFor": [
@@ -930,7 +966,7 @@
       "values": {
         "amva": {
           "value": true,
-          "line": 42
+          "line": 43
         }
       },
       "absentFrom": [
@@ -950,11 +986,11 @@
       "values": {
         "demo": {
           "value": false,
-          "line": 91
+          "line": 92
         },
         "dev": {
           "value": false,
-          "line": 91
+          "line": 92
         }
       },
       "absentFrom": [
@@ -971,19 +1007,19 @@
       "values": {
         "amva": {
           "value": true,
-          "line": 23
+          "line": 24
         },
         "demo": {
           "value": false,
-          "line": 23
+          "line": 24
         },
         "dev": {
           "value": false,
-          "line": 23
+          "line": 24
         },
         "med": {
           "value": true,
-          "line": 570
+          "line": 571
         }
       },
       "absentFrom": [
@@ -1001,15 +1037,15 @@
       "values": {
         "amva": {
           "value": true,
-          "line": 26
+          "line": 27
         },
         "med": {
           "value": true,
-          "line": 576
+          "line": 577
         },
         "mv": {
           "value": true,
-          "line": 23
+          "line": 25
         }
       },
       "absentFrom": [
@@ -1029,7 +1065,7 @@
       "values": {
         "amva": {
           "value": true,
-          "line": 41
+          "line": 42
         }
       },
       "absentFrom": [
@@ -1049,7 +1085,7 @@
       "values": {
         "med": {
           "value": true,
-          "line": 816
+          "line": 817
         }
       },
       "absentFrom": [
@@ -1069,15 +1105,15 @@
       "values": {
         "amva": {
           "value": true,
-          "line": 22
+          "line": 23
         },
         "demo": {
           "value": false,
-          "line": 22
+          "line": 23
         },
         "dev": {
           "value": false,
-          "line": 22
+          "line": 23
         }
       },
       "absentFrom": [
@@ -1095,7 +1131,7 @@
       "values": {
         "amva": {
           "value": true,
-          "line": 25
+          "line": 26
         }
       },
       "absentFrom": [
@@ -1114,7 +1150,18 @@
   "references": [
     {
       "file": "src/render/components/AddObservation.tsx",
-      "line": 134,
+      "line": 106,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "...(config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AddObservation.tsx",
+      "line": 137,
       "codes": [
         "ANT"
       ],
@@ -1125,7 +1172,7 @@
     },
     {
       "file": "src/render/components/AddObservation.tsx",
-      "line": 146,
+      "line": 149,
       "codes": [
         "AMVA"
       ],
@@ -1136,7 +1183,7 @@
     },
     {
       "file": "src/render/components/AddObservation.tsx",
-      "line": 172,
+      "line": 181,
       "codes": [
         "MV"
       ],
@@ -1147,13 +1194,24 @@
     },
     {
       "file": "src/render/components/AddObservation.tsx",
-      "line": 180,
+      "line": 189,
       "codes": [
         "MV"
       ],
       "polarity": "positive",
       "kind": "inline",
       "text": "config.name === \"MV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/AddObservation.tsx",
+      "line": 191,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": ": config.name === \"LV\"",
       "confidence": "high"
     },
     {
@@ -1236,7 +1294,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 535,
+      "line": 536,
       "codes": [
         "MV"
       ],
@@ -1247,18 +1305,29 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 536,
+      "line": 537,
       "codes": [
         "AMVA"
       ],
       "polarity": "negative",
       "kind": "inline",
-      "text": "config.name !== \"AMVA\"",
+      "text": "config.name !== \"AMVA\" &&",
       "confidence": "high"
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 870,
+      "line": 538,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "config.name !== \"LV\"",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CaseFiltering.tsx",
+      "line": 874,
       "codes": [
         "DEMO"
       ],
@@ -1269,7 +1338,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 1149,
+      "line": 1153,
       "codes": [
         "MV"
       ],
@@ -1280,7 +1349,7 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 1218,
+      "line": 1222,
       "codes": [
         "MV"
       ],
@@ -1291,13 +1360,24 @@
     },
     {
       "file": "src/render/components/CaseFiltering.tsx",
-      "line": 1504,
+      "line": 1508,
       "codes": [
         "DEMO"
       ],
       "polarity": "positive",
       "kind": "inline",
       "text": "{config.name === \"DEMO\" && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/CustomTag.tsx",
+      "line": 619,
+      "codes": [
+        "ANT"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "if (config.name === \"ANT\") {",
       "confidence": "high"
     },
     {
@@ -1412,6 +1492,39 @@
       "confidence": "low"
     },
     {
+      "file": "src/render/components/GoogleMap/InfoWindows/MobileInfoWindow.tsx",
+      "line": 311,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "className={`flex items-center gap-1 ${config.name === \"MV\" && \"pb-3\"}`}",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/InfoWindows/MobileInfoWindow.tsx",
+      "line": 322,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "positive",
+      "kind": "inline",
+      "text": "{config.name === \"MV\" && endowmentMap[\"vehicle\"]?.value && (",
+      "confidence": "high"
+    },
+    {
+      "file": "src/render/components/GoogleMap/InfoWindows/MobileInfoWindow.tsx",
+      "line": 362,
+      "codes": [
+        "MV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "{config.name !== \"MV\" &&",
+      "confidence": "high"
+    },
+    {
       "file": "src/render/components/Header.tsx",
       "line": 86,
       "codes": [
@@ -1446,7 +1559,7 @@
     },
     {
       "file": "src/render/components/HistoryDispatchAgents.tsx",
-      "line": 40,
+      "line": 41,
       "codes": [
         "MV",
         "DEMO"
@@ -1939,6 +2052,17 @@
       "confidence": "high"
     },
     {
+      "file": "src/render/pages/Dashboard/OfficerDispatchDetail.tsx",
+      "line": 313,
+      "codes": [
+        "LV"
+      ],
+      "polarity": "negative",
+      "kind": "inline",
+      "text": "config.name !== \"LV\" ? (",
+      "confidence": "high"
+    },
+    {
       "file": "src/render/pages/Login/hooks/useLogin.ts",
       "line": 17,
       "codes": [
@@ -2087,7 +2211,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsCharts.tsx",
-      "line": 348,
+      "line": 366,
       "codes": [
         "MED"
       ],
@@ -2098,7 +2222,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsCharts.tsx",
-      "line": 351,
+      "line": 369,
       "codes": [
         "MED"
       ],
@@ -2109,7 +2233,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsCharts.tsx",
-      "line": 353,
+      "line": 371,
       "codes": [
         "MED"
       ],
@@ -2120,7 +2244,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsCharts.tsx",
-      "line": 728,
+      "line": 746,
       "codes": [
         "DEMO"
       ],
@@ -2131,7 +2255,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsCharts.tsx",
-      "line": 729,
+      "line": 747,
       "codes": [
         "MV"
       ],
@@ -2142,7 +2266,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsCharts.tsx",
-      "line": 730,
+      "line": 748,
       "codes": [
         "LV"
       ],
@@ -2153,7 +2277,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsFilters.tsx",
-      "line": 644,
+      "line": 730,
       "codes": [
         "MV"
       ],
@@ -2164,7 +2288,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsFilters.tsx",
-      "line": 645,
+      "line": 731,
       "codes": [
         "MV"
       ],
@@ -2175,7 +2299,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsFilters.tsx",
-      "line": 725,
+      "line": 811,
       "codes": [
         "MV"
       ],
@@ -2186,7 +2310,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsFilters.tsx",
-      "line": 726,
+      "line": 812,
       "codes": [
         "MV"
       ],
@@ -2197,7 +2321,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsFilters.tsx",
-      "line": 1241,
+      "line": 1331,
       "codes": [
         "LV"
       ],
@@ -2208,7 +2332,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsFilters.tsx",
-      "line": 1386,
+      "line": 1476,
       "codes": [
         "MV"
       ],
@@ -2219,7 +2343,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsPage.tsx",
-      "line": 824,
+      "line": 829,
       "codes": [
         "LV"
       ],
@@ -2230,7 +2354,7 @@
     },
     {
       "file": "src/render/pages/Reports/ReportsPage.tsx",
-      "line": 847,
+      "line": 852,
       "codes": [
         "MV"
       ],
