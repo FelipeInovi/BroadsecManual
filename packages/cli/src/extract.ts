@@ -150,12 +150,6 @@ type PolarityCounts = Record<(typeof POLARITIES)[number], number>;
  */
 const gateKey = (r: AxisReference): string => `${r.file}|${r.codes.join(",")}|${r.kind}`;
 
-/** `AddObservation.tsx — MV (inline)` */
-function describeGate(key: string): string {
-  const [file, codes, kind] = key.split("|");
-  return `${file} — ${codes} (${kind})`;
-}
-
 /** `positive, negative x2` — what the gate decides, and in how many places. */
 function summarise(counts: PolarityCounts): string {
   return POLARITIES.filter((p) => counts[p] > 0)
@@ -163,15 +157,204 @@ function summarise(counts: PolarityCounts): string {
     .join(", ");
 }
 
-function gates(m: PreviousMap): Map<string, PolarityCounts> {
-  const out = new Map<string, PolarityCounts>();
+/** Everything one gate key carries: its identity fields, plus the tally of every reference sharing that key. */
+interface GateGroup {
+  readonly file: string;
+  readonly codes: readonly string[];
+  readonly kind: AxisReference["kind"];
+  readonly counts: PolarityCounts;
+}
+
+function gateGroups(m: PreviousMap | ModuleMap): Map<string, GateGroup> {
+  const out = new Map<string, GateGroup>();
   for (const r of m.references) {
     const key = gateKey(r);
-    const row = out.get(key) ?? { positive: 0, negative: 0, mixed: 0 };
-    row[r.polarity] += 1;
-    out.set(key, row);
+    const existing = out.get(key);
+    const counts = existing?.counts ?? { positive: 0, negative: 0, mixed: 0 };
+    counts[r.polarity] += 1;
+    out.set(key, { file: r.file, codes: r.codes, kind: r.kind, counts });
   }
   return out;
+}
+
+/**
+ * A fact that names something a module could have declared it documents —
+ * `documents.paths` joins a `gate` fact by `file`, `documents.flags` joins a
+ * `capability` fact by `flag` (see `packages/cli/src/coverage.ts`).
+ */
+export type JoinableFact =
+  | {
+      readonly kind: "capability";
+      readonly change: "added" | "removed" | "changed";
+      readonly flag: string;
+      readonly was?: readonly string[];
+      readonly now?: readonly string[];
+    }
+  | {
+      readonly kind: "gate";
+      readonly change: "added" | "removed" | "changed";
+      readonly file: string;
+      readonly codes: readonly string[];
+      readonly gateKind: AxisReference["kind"];
+      readonly was?: string;
+      readonly now?: string;
+    };
+
+/**
+ * A fact no module documents, because it is true of the whole manual.
+ *
+ * Separated in the TYPE rather than filtered at runtime: a consumer that only
+ * accepts `JoinableFact[]` cannot be handed a `ManualWideFact` by mistake —
+ * that would be a type error instead of a judgement somebody has to remember
+ * to make (see `packages/cli/src/coverage.ts`, `joinCoverage`).
+ */
+export type ManualWideFact =
+  | { readonly kind: "axis-changed"; readonly before: string; readonly after: string }
+  | {
+      readonly kind: "axis-value";
+      readonly change: "added" | "removed";
+      readonly axis: string;
+      readonly id: string;
+    };
+
+export type DriftFact = JoinableFact | ManualWideFact;
+
+/**
+ * Every drift item `diffMaps` reports today, as structured facts rather than
+ * pre-rendered strings — so a module's `documents:` can join against `file`
+ * or `flag` directly instead of parsing a sentence back apart.
+ *
+ * Emission order matches `diffMaps`'s today, exactly, because that order is
+ * part of the additivity proof (MUF-302): axis values added then removed;
+ * capabilities by iterating `after` for added/changed, then `before` for
+ * removed; gates the same way.
+ */
+export function diffFacts(rawBefore: PreviousMap, after: ModuleMap): readonly DriftFact[] {
+  const before = normalizeMap(rawBefore);
+
+  // A map repointed at a different axis is not a diff, it is a different
+  // question: every value and every gate below it means something else, so
+  // pairing them up would produce a page of changes describing nothing that
+  // happened. An absent axis is not a change — see `normalizeMap`.
+  if (before.axis !== undefined && before.axis !== after.axis) {
+    return [{ kind: "axis-changed", before: before.axis, after: after.axis }];
+  }
+
+  const axis = after.axis;
+  const out: DriftFact[] = [];
+
+  const ids = (m: PreviousMap | ModuleMap) => new Set(m.values.map((v) => v.id));
+  for (const id of ids(after)) {
+    if (!ids(before).has(id)) out.push({ kind: "axis-value", change: "added", axis, id });
+  }
+  for (const id of ids(before)) {
+    if (!ids(after).has(id)) out.push({ kind: "axis-value", change: "removed", axis, id });
+  }
+
+  const byFlag = (m: PreviousMap | ModuleMap) => new Map(m.capabilities.map((c) => [c.flag, c]));
+  const b = byFlag(before);
+  const a = byFlag(after);
+  for (const [flag, row] of a) {
+    const old = b.get(flag);
+    if (!old) {
+      out.push({ kind: "capability", change: "added", flag, now: row.enabledFor });
+      continue;
+    }
+    const was = old.enabledFor.join(",");
+    const now = row.enabledFor.join(",");
+    if (was !== now) {
+      out.push({
+        kind: "capability",
+        change: "changed",
+        flag,
+        was: old.enabledFor,
+        now: row.enabledFor,
+      });
+    }
+  }
+  for (const flag of b.keys()) if (!a.has(flag)) out.push({ kind: "capability", change: "removed", flag });
+
+  const gatesBefore = gateGroups(before);
+  const gatesAfter = gateGroups(after);
+  for (const [key, now] of gatesAfter) {
+    const was = gatesBefore.get(key);
+    if (!was) {
+      out.push({
+        kind: "gate",
+        change: "added",
+        file: now.file,
+        codes: now.codes,
+        gateKind: now.kind,
+        now: summarise(now.counts),
+      });
+      continue;
+    }
+    const wasText = summarise(was.counts);
+    const nowText = summarise(now.counts);
+    if (wasText !== nowText) {
+      out.push({
+        kind: "gate",
+        change: "changed",
+        file: now.file,
+        codes: now.codes,
+        gateKind: now.kind,
+        was: wasText,
+        now: nowText,
+      });
+    }
+  }
+  for (const [key, was] of gatesBefore) {
+    if (!gatesAfter.has(key)) {
+      out.push({
+        kind: "gate",
+        change: "removed",
+        file: was.file,
+        codes: was.codes,
+        gateKind: was.kind,
+      });
+    }
+  }
+
+  return out;
+}
+
+/**
+ * Render one `DriftFact` as `diffMaps` renders it today. Byte-identical is the
+ * additivity proof (MUF-302) — if one string moves by a character, the
+ * refactor is rejected, not the test.
+ */
+export function describeDrift(fact: DriftFact): string {
+  if (fact.kind === "axis-changed") {
+    return (
+      `axis changed: ${fact.before} -> ${fact.after} — every value and gate below ` +
+      `it answers a different question, so nothing under it was compared. ` +
+      `Review the content's tagging against the new axis in full.`
+    );
+  }
+
+  if (fact.kind === "axis-value") {
+    return `${fact.axis} ${fact.change}: ${fact.id}`;
+  }
+
+  if (fact.kind === "capability") {
+    if (fact.change === "added") {
+      return `capability added: ${fact.flag} (on for ${fact.now?.join(", ") || "nobody"})`;
+    }
+    if (fact.change === "changed") {
+      return (
+        `capability changed: ${fact.flag} was on for [${fact.was?.join(",") || "nobody"}], ` +
+        `now [${fact.now?.join(",") || "nobody"}] — content tagged on this may be wrong`
+      );
+    }
+    return `capability removed: ${fact.flag}`;
+  }
+
+  const gate = `${fact.file} — ${fact.codes.join(",")} (${fact.gateKind})`;
+  if (fact.change === "added") return `gating added: ${gate} — ${fact.now}`;
+  if (fact.change === "changed") {
+    return `gating changed: ${gate} — was ${fact.was}, now ${fact.now} — content tagged on this may be wrong`;
+  }
+  return `gating removed: ${gate}`;
 }
 
 /**
@@ -188,71 +371,12 @@ function gates(m: PreviousMap): Map<string, PolarityCounts> {
  *
  * Every line names the axis. `deployment added: supervisor` at a manual
  * conditioned on permissions is the same lie as printing that word on a cover.
+ *
+ * Kept as the exported name, signature and output (ADR-004): this line is
+ * simultaneously the design and the additivity proof for `diffFacts`/`describeDrift`.
  */
 export function diffMaps(rawBefore: PreviousMap, after: ModuleMap): readonly string[] {
-  const before = normalizeMap(rawBefore);
-  const out: string[] = [];
-
-  // A map repointed at a different axis is not a diff, it is a different
-  // question: every value and every gate below it means something else, so
-  // pairing them up would produce a page of changes describing nothing that
-  // happened. An absent axis is not a change — see `normalizeMap`.
-  if (before.axis !== undefined && before.axis !== after.axis) {
-    return [
-      `axis changed: ${before.axis} -> ${after.axis} — every value and gate below ` +
-        `it answers a different question, so nothing under it was compared. ` +
-        `Review the content's tagging against the new axis in full.`,
-    ];
-  }
-
-  const axis = after.axis;
-
-  const ids = (m: PreviousMap | ModuleMap) => new Set(m.values.map((v) => v.id));
-  for (const id of ids(after)) if (!ids(before).has(id)) out.push(`${axis} added: ${id}`);
-  for (const id of ids(before)) if (!ids(after).has(id)) out.push(`${axis} removed: ${id}`);
-
-  const byFlag = (m: PreviousMap | ModuleMap) => new Map(m.capabilities.map((c) => [c.flag, c]));
-  const b = byFlag(before);
-  const a = byFlag(after);
-  for (const [flag, row] of a) {
-    const old = b.get(flag);
-    if (!old) {
-      out.push(`capability added: ${flag} (on for ${row.enabledFor.join(", ") || "nobody"})`);
-      continue;
-    }
-    const was = old.enabledFor.join(",");
-    const now = row.enabledFor.join(",");
-    if (was !== now) {
-      out.push(
-        `capability changed: ${flag} was on for [${was || "nobody"}], now [${now || "nobody"}] ` +
-          `— content tagged on this may be wrong`,
-      );
-    }
-  }
-  for (const flag of b.keys()) if (!a.has(flag)) out.push(`capability removed: ${flag}`);
-
-  const gatesBefore = gates(before);
-  const gatesAfter = gates(after);
-  for (const [key, now] of gatesAfter) {
-    const was = gatesBefore.get(key);
-    if (!was) {
-      out.push(`gating added: ${describeGate(key)} — ${summarise(now)}`);
-      continue;
-    }
-    const wasText = summarise(was);
-    const nowText = summarise(now);
-    if (wasText !== nowText) {
-      out.push(
-        `gating changed: ${describeGate(key)} — was ${wasText}, now ${nowText} ` +
-          `— content tagged on this may be wrong`,
-      );
-    }
-  }
-  for (const key of gatesBefore.keys()) {
-    if (!gatesAfter.has(key)) out.push(`gating removed: ${describeGate(key)}`);
-  }
-
-  return out;
+  return diffFacts(rawBefore, after).map(describeDrift);
 }
 
 export interface ExtractResult {

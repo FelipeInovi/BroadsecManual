@@ -3,7 +3,15 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AxisReference, CapabilityRow } from "@broadsec-manual/extract";
-import { diffMaps, extract, normalizeMap, type ModuleMap } from "./extract.ts";
+import {
+  describeDrift,
+  diffFacts,
+  diffMaps,
+  extract,
+  normalizeMap,
+  type DriftFact,
+  type ModuleMap,
+} from "./extract.ts";
 
 const ref = (over: Partial<AxisReference> = {}): AxisReference => ({
   file: "src/render/components/AddObservation.tsx",
@@ -171,6 +179,122 @@ describe("diffMaps — axis gates", () => {
     const out = report(before, after);
     expect(out).toContain("gating added");
     expect(out).toContain("gating removed");
+  });
+});
+
+// --- diffFacts / describeDrift — MUF-301, MUF-302, MUF-307 -----------------
+//
+// `diffMaps` is redefined as `diffFacts(...).map(describeDrift)` (ADR-004).
+// Every `diffMaps` expectation above must keep passing UNCHANGED against
+// that redefinition — this is the additivity proof for the whole drift
+// layer (MUF-302), not a separate concern from the shape assertions below.
+
+describe("diffFacts — diffMaps is diffFacts(...).map(describeDrift), byte-identical", () => {
+  it("produces the identical string array as diffMaps for a mix of every change kind", () => {
+    const before = map({
+      values: [...map().values, { id: "med", code: "MED", source: "med.config.ts:2" }],
+      capabilities: [cap({ flag: "staying", enabledFor: ["mv"] }), cap({ flag: "leaving" })],
+      references: [ref({ file: "src/render/components/Gone.tsx" }), ref({ polarity: "negative" })],
+    });
+    const after = map({
+      capabilities: [
+        cap({ flag: "staying", enabledFor: ["mv", "med"] }),
+        cap({ flag: "arriving", enabledFor: ["mv"] }),
+      ],
+      references: [ref({ polarity: "positive" })],
+    });
+
+    expect(diffFacts(before, after).map(describeDrift)).toEqual(diffMaps(before, after));
+    // Not a vacuous fixture: assert real content moved, so the equality above
+    // is actually exercising every branch (added/removed/changed x3 kinds).
+    expect(diffMaps(before, after).length).toBeGreaterThan(0);
+  });
+
+  it("produces the identical single-entry array as diffMaps when the axis itself changed", () => {
+    const before = map({ axis: "tenant", references: [ref()] });
+    const after = map({
+      axis: "permission",
+      values: [{ id: "propia", code: "propia", source: "x.ts:1" }],
+      references: [],
+    });
+
+    expect(diffFacts(before, after).map(describeDrift)).toEqual(diffMaps(before, after));
+    expect(diffMaps(before, after)).toHaveLength(1);
+  });
+
+  it("produces the identical empty array as diffMaps when nothing moved", () => {
+    const same = map({ capabilities: [cap()], references: [ref()] });
+    expect(diffFacts(same, same).map(describeDrift)).toEqual(diffMaps(same, same));
+    expect(diffMaps(same, same)).toEqual([]);
+  });
+});
+
+describe("diffFacts — fact shapes (MUF-301)", () => {
+  it("returns one fact with kind 'axis-changed' when the axis itself changed, and nothing else", () => {
+    const before = map({ axis: "tenant" });
+    const after = map({ axis: "permission", values: [] });
+    const facts = diffFacts(before, after);
+    expect(facts).toHaveLength(1);
+    expect(facts[0]).toEqual({ kind: "axis-changed", before: "tenant", after: "permission" });
+  });
+
+  it("returns an axis-value fact carrying the axis name and the value id, never a file or a flag", () => {
+    const after = map({
+      values: [...map().values, { id: "med", code: "MED", source: "med.config.ts:2" }],
+    });
+    const facts = diffFacts(map(), after);
+    const value = facts.find((f) => f.kind === "axis-value");
+    expect(value).toEqual({ kind: "axis-value", change: "added", axis: "tenant", id: "med" });
+  });
+
+  it("returns a capability fact carrying the flag, never a file", () => {
+    const after = map({ capabilities: [cap()] });
+    const facts = diffFacts(map(), after);
+    const capFact = facts.find((f) => f.kind === "capability");
+    expect(capFact).toMatchObject({ kind: "capability", change: "added", flag: "canSeeBoT" });
+    expect(capFact).not.toHaveProperty("file");
+  });
+
+  it("returns a gate fact carrying the file, the codes and the gate kind — MUF-301's join key", () => {
+    const after = map({
+      references: [ref({ file: "src/render/pages/Dashboard/CallAI.tsx", codes: ["MED"] })],
+    });
+    const facts = diffFacts(map(), after);
+    const gateFact = facts.find((f) => f.kind === "gate");
+    expect(gateFact).toMatchObject({
+      kind: "gate",
+      change: "added",
+      file: "src/render/pages/Dashboard/CallAI.tsx",
+      codes: ["MED"],
+      gateKind: "inline",
+    });
+    // The rendered line is exactly what today's diffMaps prints for this gate.
+    expect(describeDrift(gateFact as DriftFact)).toBe(diffMaps(map(), after)[0]);
+  });
+});
+
+describe("diffFacts — MUF-307: the capability separator asymmetry must not be normalised away", () => {
+  // `extract.ts:220` prints `enabledFor.join(", ")` (comma-space) for `added`.
+  // No existing test exercised `added` with two-or-more `enabledFor` values —
+  // only `changed` pinned a multi-value separator (`:72`, "now [mv,med]").
+  it("prints a comma-space separator for an added capability naming two or more values", () => {
+    const after = map({ capabilities: [cap({ enabledFor: ["mv", "med"] })] });
+    const out = report(map(), after);
+    expect(out).toContain("on for mv, med");
+    expect(out).not.toContain("on for mv,med");
+  });
+
+  // `extract.ts:223-224` prints `enabledFor.join(",")` (comma, no space) for
+  // `changed` — the existing test at `:66-73` already pins this string, this
+  // one exists to make the CONTRAST with the `added` case above explicit and
+  // independently checkable, so a refactor cannot normalise either into the
+  // other without failing a test that names the asymmetry.
+  it("keeps the changed separator (comma, no space) distinct from the added separator above", () => {
+    const before = map({ capabilities: [cap({ enabledFor: ["mv"] })] });
+    const after = map({ capabilities: [cap({ enabledFor: ["mv", "med"] })] });
+    const out = report(before, after);
+    expect(out).toContain("now [mv,med]");
+    expect(out).not.toContain("now [mv, med]");
   });
 });
 

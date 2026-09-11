@@ -68,11 +68,11 @@ SUGGESTION, not CRITICAL.
 
 ## Phase 3 — Commit 3 (needs `DocumentsDeclaration` from Phase 1): `refactor(cli): drift becomes facts, and its report becomes their description`
 
-- [ ] 3.1 RED — `packages/cli/src/extract.test.ts`: new `diffFacts` cases incl. MUF-307 separator pin (`added` → `", "`, `changed` → `","`, `extract.ts:220` vs `:223-224`); every existing `diffMaps` expectation must stay green, unchanged
-- [ ] 3.2 GREEN — `packages/cli/src/extract.ts`: `DriftFact`/`JoinableFact`/`ManualWideFact`, `diffFacts`, `describeDrift`; `diffMaps = diffFacts(...).map(describeDrift)` (ADR-004)
-- [ ] 3.3 RED — `packages/cli/src/coverage.test.ts`: `covered`/`clean`/`unknown` states, multi-module match reported under every matching module, per-entry `matched` counts, `joinable` flag, stale-baseline key, wording assertion (never "unaffected")
-- [ ] 3.4 GREEN — `packages/cli/src/coverage.ts`: `joinCoverage(modules, facts)` → `EntryMatch`/`ModuleCoverage`/`CoverageReport` (ADR-007)
-- [ ] 3.5 Verify + commit
+- [x] 3.1 RED — `packages/cli/src/extract.test.ts`: new `diffFacts` cases incl. MUF-307 separator pin (`added` → `", "`, `changed` → `","`, `extract.ts:220` vs `:223-224`); every existing `diffMaps` expectation must stay green, unchanged
+- [x] 3.2 GREEN — `packages/cli/src/extract.ts`: `DriftFact`/`JoinableFact`/`ManualWideFact`, `diffFacts`, `describeDrift`; `diffMaps = diffFacts(...).map(describeDrift)` (ADR-004)
+- [x] 3.3 RED — `packages/cli/src/coverage.test.ts`: `covered`/`clean`/`unknown` states, multi-module match reported under every matching module, per-entry `matched` counts, `joinable` flag, stale-baseline key, wording assertion (never "unaffected")
+- [x] 3.4 GREEN — `packages/cli/src/coverage.ts`: `joinCoverage(modules, facts, context)` → `EntryMatch`/`ModuleCoverage`/`CoverageReport` (ADR-007)
+- [x] 3.5 Verify + commit — 813/813, 9/9, commit pending
 
 ## Phase 4 — Commit 4 (needs Phases 1–3; heaviest — apply 4a/4b split if diff >~400 lines): `feat(cli): the update flow points at a module and at its drift`
 
