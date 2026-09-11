@@ -21,7 +21,9 @@ import {
   assembleUpdatePrompt,
   readDeliverableDocs,
   readBuildableManuals,
+  readModuleStates,
   BUILD_KINDS,
+  type UpdateScope,
 } from "./wizard.ts";
 
 const answers = (over: Partial<WizardAnswers> = {}): WizardAnswers => ({
@@ -444,6 +446,7 @@ describe("readManualStates", () => {
       map?: boolean;
       images?: { pending: number; total: number };
       state?: boolean;
+      baselines?: Record<string, { productCommit: string; verifiedAt: string }>;
     } = {},
   ): void {
     const dir = join(root, "manuals", id);
@@ -468,6 +471,12 @@ describe("readManualStates", () => {
       );
     }
     if (opts.state) writeFileSync(join(dir, "ESTADO.md"), "# Estado\n");
+    if (opts.baselines) {
+      writeFileSync(
+        join(dir, "baselines.json"),
+        JSON.stringify({ source: opts.source ?? "", modules: opts.baselines }),
+      );
+    }
   }
 
   it("is empty when nothing has been started, instead of throwing", () => {
@@ -500,6 +509,7 @@ describe("readManualStates", () => {
         pending: 3,
         totalImages: 10,
         hasState: true,
+        baselines: null,
       },
     ]);
   });
@@ -532,6 +542,24 @@ describe("readManualStates", () => {
     withManual(root, "alfa", { source: "a" });
     expect(readManualStates(root).map((s) => s.id)).toEqual(["alfa", "zeta"]);
   });
+
+  // `baselines` is `null` for a manual nobody has stamped yet — absent is not
+  // zero, the same discipline `pending` already uses (ADR-009).
+  it("reports baselines as null when baselines.json does not exist", () => {
+    const root = repo();
+    withManual(root, "m", { source: "a", sections: ["07-a.yaml"] });
+    expect(readManualStates(root)[0]?.baselines).toBeNull();
+  });
+
+  it("counts verified modules out of every section file, from baselines.json", () => {
+    const root = repo();
+    withManual(root, "m", {
+      source: "a",
+      sections: ["07-a.yaml", "12-b.yaml"],
+      baselines: { "sections/07-a.yaml": { productCommit: "abc", verifiedAt: "2026-01-01" } },
+    });
+    expect(readManualStates(root)[0]?.baselines).toEqual({ verified: 1, total: 2 });
+  });
 });
 
 describe("describeState", () => {
@@ -544,6 +572,7 @@ describe("describeState", () => {
     pending: 2,
     totalImages: 10,
     hasState: true,
+    baselines: null,
     ...over,
   });
 
@@ -564,6 +593,14 @@ describe("describeState", () => {
     expect(describeState(state({ hasState: false }))).toContain("sin ESTADO.md");
     expect(describeState(state({ hasState: true }))).toContain("con ESTADO.md");
   });
+
+  it("says nothing has been stamped when baselines is null, rather than a zero", () => {
+    expect(describeState(state({ baselines: null }))).toContain("sin baselines");
+  });
+
+  it("reports how many modules are verified out of how many exist", () => {
+    expect(describeState(state({ baselines: { verified: 1, total: 2 } }))).toContain("1/2");
+  });
 });
 
 describe("assembleContinuationPrompt", () => {
@@ -576,6 +613,7 @@ describe("assembleContinuationPrompt", () => {
     pending: 16,
     totalImages: 240,
     hasState: true,
+    baselines: null,
     ...over,
   });
 
@@ -712,6 +750,7 @@ describe("the creation prompt hands off to the continuation prompt", () => {
         pending: 0,
         totalImages: 1,
         hasState: true,
+        baselines: null,
       }),
     ]) {
       expect(text).toContain("manuals/AGENTS.md");
@@ -1098,6 +1137,7 @@ describe("assembleUpdatePrompt", () => {
     pending: 1,
     totalImages: 240,
     hasState: true,
+    baselines: null,
   };
 
   /**
@@ -1180,5 +1220,99 @@ describe("assembleUpdatePrompt", () => {
     expect(blocked).toContain("(ninguna declarada)");
     expect(blocked).toContain("NO existe");
     expect(blocked).toContain("todavía no se exportaron pedidos");
+  });
+
+  // ADR-009: an optional THIRD parameter, defaulting to whole-manual scope, so
+  // every call above — all of them two-argument — keeps compiling and keeps
+  // producing exactly what it produces today.
+  describe("the optional scope parameter (ADR-009)", () => {
+    const moduleScope: UpdateScope = { kind: "module", file: "sections/09-security-dashboard.yaml" };
+
+    it("names the module by its FILE, never by a number", () => {
+      const p = assembleUpdatePrompt(state, "x", moduleScope);
+      expect(p).toContain("sections/09-security-dashboard.yaml");
+      // The numbering is assigned per target at assembly time (invariant 2);
+      // a module-scoped prompt must never spell out an ordinal.
+      expect(p).not.toMatch(/módulo\s+\d+\b/);
+    });
+
+    it('says an undeclared module\'s coverage is "unknown", never "unaffected"', () => {
+      const p = assembleUpdatePrompt(state, "x", moduleScope);
+      expect(p).toContain("unknown");
+      expect(p).not.toContain("unaffected");
+    });
+
+    it("orders the agent's first acts extract, then documents, then verified", () => {
+      const p = assembleUpdatePrompt(state, "x", moduleScope);
+      const extractAt = p.indexOf("extract");
+      const documentsAt = p.indexOf("documents");
+      const verifiedAt = p.indexOf("verified");
+      expect(extractAt).toBeGreaterThan(-1);
+      expect(extractAt).toBeLessThan(documentsAt);
+      expect(documentsAt).toBeLessThan(verifiedAt);
+    });
+
+    it("produces byte-identical output for the default (whole-manual) scope", () => {
+      const withoutThird = assembleUpdatePrompt(state, "Agregá el módulo de reportes.");
+      const withDefault = assembleUpdatePrompt(state, "Agregá el módulo de reportes.", {
+        kind: "manual",
+      });
+      expect(withDefault).toBe(withoutThird);
+    });
+  });
+});
+
+describe("readModuleStates", () => {
+  function withSection(root: string, manualId: string, file: string, content: string): void {
+    const dir = join(root, "manuals", manualId, "sections");
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, file), content);
+  }
+
+  it("is empty when the manual has no sections directory", () => {
+    const root = repo();
+    mkdirSync(join(root, "manuals", "m"), { recursive: true });
+    expect(readModuleStates(root, "m")).toEqual([]);
+  });
+
+  it("lists every section file as a module, sorted", () => {
+    const root = repo();
+    withSection(root, "m", "12-b.yaml", "id: b\n");
+    withSection(root, "m", "07-a.yaml", "id: a\n");
+    expect(readModuleStates(root, "m").map((s) => s.file)).toEqual([
+      "sections/07-a.yaml",
+      "sections/12-b.yaml",
+    ]);
+  });
+
+  it("reports whether a module declares `documents:` at all — never its validity", () => {
+    const root = repo();
+    withSection(root, "m", "07-a.yaml", "id: a\ndocuments:\n  flags:\n    - canSeeBoT\n");
+    withSection(root, "m", "12-b.yaml", "id: b\n");
+    const states = readModuleStates(root, "m");
+    expect(states.find((s) => s.file === "sections/07-a.yaml")?.documented).toBe(true);
+    expect(states.find((s) => s.file === "sections/12-b.yaml")?.documented).toBe(false);
+  });
+
+  it("reports a module's baseline, or null when never verified", () => {
+    const root = repo();
+    withSection(root, "m", "07-a.yaml", "id: a\n");
+    writeFileSync(
+      join(root, "manuals", "m", "baselines.json"),
+      JSON.stringify({
+        source: "producto",
+        modules: { "sections/07-a.yaml": { productCommit: "abc123", verifiedAt: "2026-01-01" } },
+      }),
+    );
+    expect(readModuleStates(root, "m")[0]?.baseline?.productCommit).toBe("abc123");
+  });
+
+  // `readModuleStates` deliberately reads the raw YAML top level rather than
+  // calling `loadSection` — a picker that crashes on a bad block prop is a
+  // picker nobody can use to fix that section (ADR-009).
+  it("survives a section with an invalid block prop", () => {
+    const root = repo();
+    withSection(root, "m", "07-a.yaml", "id: a\ntype: prose\nbogusProp: true\n");
+    expect(() => readModuleStates(root, "m")).not.toThrow();
   });
 });

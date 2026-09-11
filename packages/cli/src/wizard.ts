@@ -33,6 +33,7 @@ import {
 } from "./delivery-state.ts";
 import { newestWorkNumberFor, nextWorkNumber, workStamp } from "./naming.ts";
 import { soleAxis } from "./axis.ts";
+import { readBaselines, type Baseline } from "./baselines.ts";
 
 /**
  * Agent CLIs this wizard can hand the prompt to.
@@ -47,6 +48,18 @@ const AGENTS: readonly { readonly command: string; readonly label: string }[] = 
 
 /** How much of the manual this run attempts. */
 export type Scope = "spike" | "module" | "full";
+
+/**
+ * What an UPDATE is scoped to — never reuses `Scope` above (ADR-009): every
+ * `Scope` value is a creation-path verb ("spike", "full manual from scratch"),
+ * meaningless for a manual whose pipeline is already proven and delivered.
+ *
+ * A discriminated union, so "a module update with no module named" is
+ * unrepresentable rather than an invariant nobody enforces.
+ */
+export type UpdateScope =
+  | { readonly kind: "manual" }
+  | { readonly kind: "module"; readonly file: string }; // `sections/NN-….yaml` — ADR-001
 
 /**
  * Which visual identity the manual is delivered in.
@@ -253,6 +266,12 @@ export interface ManualState {
   readonly pending: number | null;
   readonly totalImages: number | null;
   readonly hasState: boolean;
+  /**
+   * How many modules have a recorded baseline, out of how many exist. `null`
+   * when `baselines.json` does not exist — nothing has been stamped yet.
+   * Absent is not zero: the same discipline `pending` already uses above.
+   */
+  readonly baselines: { readonly verified: number; readonly total: number } | null;
 }
 
 /** Every manual on disk, with the state the repository can derive for it. */
@@ -287,6 +306,21 @@ export function readManualStates(repoRoot: string): ManualState[] {
       totalImages = counts?.total ?? null;
     }
 
+    // Read rather than computed by walking every module's `documents:` — the
+    // count `baselines.json` itself carries is what `verified` wrote, and
+    // recomputing it here from `sections/` alone would drift the moment a
+    // module is renamed (ADR-001's stale-key case).
+    const baselinesFile = join(dir, "baselines.json");
+    const baselines = existsSync(baselinesFile)
+      ? {
+          verified: Object.keys(
+            (JSON.parse(readFileSync(baselinesFile, "utf8")) as { modules?: Record<string, unknown> })
+              .modules ?? {},
+          ).length,
+          total: sections,
+        }
+      : null;
+
     out.push({
       id,
       title: config.manual?.title ?? id,
@@ -296,9 +330,61 @@ export function readManualStates(repoRoot: string): ManualState[] {
       pending,
       totalImages,
       hasState: existsSync(join(dir, STATE_FILE)),
+      baselines,
     });
   }
   return out;
+}
+
+/** One section file's derived state, for the update flow's scope picker. */
+export interface ModuleState {
+  /** `sections/<name>.yaml` — ADR-001's module id. */
+  readonly file: string;
+  /** Whether the section declares `documents:` at all — never whether it is valid. */
+  readonly documented: boolean;
+  /** `null` when this module has never been verified. */
+  readonly baseline: Baseline | null;
+}
+
+/**
+ * Every section file's state, read straight off disk.
+ *
+ * Deliberately does NOT call `loadSection`: that would drag `catalog` and full
+ * block validation into a picker, and `loadSection` throws `ContentError` on
+ * an invalid prop. A picker that crashes because a section has a bad prop is a
+ * picker nobody can use to fix that section (ADR-009) — so this reads the raw
+ * YAML top level only, the same idiom `readManualStates` uses for
+ * `manual.config.yaml`. The consequence is stated rather than hidden: this
+ * count is UNVALIDATED, and `documents <manual>` is where it gets validated.
+ */
+export function readModuleStates(repoRoot: string, manualId: string): ModuleState[] {
+  const manualDir = join(repoRoot, "manuals", manualId);
+  const sectionsDir = join(manualDir, "sections");
+  if (!existsSync(sectionsDir)) return [];
+
+  const baselineFile = readBaselines(manualDir);
+
+  return readdirSync(sectionsDir)
+    .filter((f) => f.endsWith(".yaml"))
+    .sort()
+    .map((f) => {
+      const file = `sections/${f}`;
+      let documented = false;
+      try {
+        const raw = parseYaml(readFileSync(join(sectionsDir, f), "utf8"));
+        documented =
+          typeof raw === "object" && raw !== null && (raw as Record<string, unknown>)["documents"] !== undefined;
+      } catch {
+        // An unparseable section is not this picker's problem to raise —
+        // `build` and `documents` already report it loudly.
+        documented = false;
+      }
+      return {
+        file,
+        documented,
+        baseline: baselineFile?.modules[file] ?? null,
+      };
+    });
 }
 
 /** One line of derived state, for the picker. Information, never a decision. */
@@ -311,6 +397,11 @@ export function describeState(s: ManualState): string {
   if (s.pending !== null) {
     parts.push(s.pending === 0 ? "imágenes completas" : `${s.pending} imagen(es) pendiente(s)`);
   }
+  parts.push(
+    s.baselines === null
+      ? "sin baselines.json — ningún módulo verificado todavía"
+      : `${s.baselines.verified}/${s.baselines.total} módulo(s) verificado(s)`,
+  );
   parts.push(s.hasState ? `con ${STATE_FILE}` : `sin ${STATE_FILE}`);
   return parts.join(" · ");
 }
@@ -1647,8 +1738,39 @@ async function askParagraph(
  * Distinct from `assembleContinuationPrompt`, which ends by asking the agent to
  * PROPOSE the next step. Here the step is already decided, so the prompt hands
  * over an instruction rather than asking for one.
+ *
+ * `scope` is optional and defaults to whole-manual (ADR-009), so every call
+ * from before this parameter existed keeps compiling and keeps producing
+ * exactly what it produced — the omitted third argument adds nothing.
  */
-export function assembleUpdatePrompt(s: ManualState, instruction: string): string {
+export function assembleUpdatePrompt(
+  s: ManualState,
+  instruction: string,
+  scope: UpdateScope = { kind: "manual" },
+): string {
+  // Only for a MODULE scope: nothing is added for whole-manual, which is what
+  // keeps every pre-existing two-argument call byte-identical.
+  const scopeBlock: readonly string[] =
+    scope.kind === "module"
+      ? [
+          `## El alcance: un módulo, no el manual entero`,
+          ``,
+          `Este pedido es sobre \`${scope.file}\` — nombralo siempre por ese archivo,`,
+          `nunca por un número: la numeración la asigna el build por target, y un`,
+          `módulo puede no existir para todos los que se generan.`,
+          ``,
+          `Antes de tocar nada: corré \`extract <manual>\` y después \`documents`,
+          `<manual>\`, y leé la deriva de ESE módulo antes de editar. Si no declara`,
+          `\`documents:\`, ese reporte lo marca como cobertura "unknown" — que`,
+          `nadie lo haya declarado no dice que nada cambió ahí, así que nunca es lo`,
+          `mismo que un módulo sin novedades.`,
+          ``,
+          `Al terminar, \`verified <manual> --module ${scope.file}\` es el último`,
+          `paso, solo para este módulo, y solo si Daniel ya vio la deriva atendida.`,
+          ``,
+        ]
+      : [];
+
   return [
     `Actualizar \`${s.id}\`, un manual que este repositorio ya tiene escrito.`,
     ``,
@@ -1678,6 +1800,7 @@ export function assembleUpdatePrompt(s: ManualState, instruction: string): strin
     instruction,
     "```",
     ``,
+    ...scopeBlock,
     `## Con qué te vas a encontrar`,
     ``,
     `  Id del manual      ${s.id}`,
@@ -1719,10 +1842,18 @@ export function assembleUpdatePrompt(s: ManualState, instruction: string): strin
   ].join("\n");
 }
 
+/** One module option's `detail`, for the scope step's picker (MUF-502/MUF-505). */
+function describeModuleState(m: ModuleState): string {
+  const baseline = m.baseline === null ? "nunca verificado" : `verificado en ${m.baseline.productCommit}`;
+  const coverage = m.documented ? "declara documents:" : "cobertura unknown — no declara documents:";
+  return `${baseline} · ${coverage}`;
+}
+
 /**
  * Ask an agent for a specific update to a manual.
  *
- * Three questions: which manual, what to do, and who does it. The manual is the
+ * Four questions now, not three: which manual, how much of it (the whole
+ * manual, or one module), what to do, and who does it. The manual is the
  * unit because that is what a manual IS on disk — its own config, sections,
  * assets, `AGENTS.md` and `ESTADO.md`. Targets are build-time conditioning, not
  * something you author against: a change may end up tagged for one deployment,
@@ -1743,9 +1874,21 @@ async function updateFlow(
     })),
   );
 
-  const instruction = await askParagraph(rl, `Paso 2 — ¿qué hay que hacer en ${picked.id}?`);
+  // New step (MUF-501), disk-only (MUF-503: no `extract` runs here) — the
+  // wizard POINTS at a module, it never re-derives what changed inside it.
+  const moduleStates = readModuleStates(repoRoot, picked.id);
+  const scope = await select<UpdateScope>(rl, "Paso 2 — ¿todo el manual, o un módulo?", [
+    { label: "el manual entero", value: { kind: "manual" } },
+    ...moduleStates.map((m) => ({
+      label: m.file,
+      detail: describeModuleState(m),
+      value: { kind: "module", file: m.file } as UpdateScope,
+    })),
+  ]);
 
-  ui(bold("Paso 3 — esto es lo que se le va a pedir"));
+  const instruction = await askParagraph(rl, `Paso 3 — ¿qué hay que hacer en ${picked.id}?`);
+
+  ui(bold("Paso 4 — esto es lo que se le va a pedir"));
   ui("");
   for (const line of instruction.split("\n")) ui(`   ${dim("|")} ${line}`);
   ui("");
@@ -1757,6 +1900,6 @@ async function updateFlow(
     rl,
     repoRoot,
     `.broadsec-manual/actualizar-${picked.id}.md`,
-    assembleUpdatePrompt(picked, instruction),
+    assembleUpdatePrompt(picked, instruction, scope),
   );
 }

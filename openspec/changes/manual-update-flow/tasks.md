@@ -76,11 +76,11 @@ SUGGESTION, not CRITICAL.
 
 ## Phase 4 — Commit 4 (needs Phases 1–3; heaviest — apply 4a/4b split if diff >~400 lines): `feat(cli): the update flow points at a module and at its drift`
 
-- [ ] 4.1 RED — `packages/cli/src/main.test.ts`: `run(["documents"])` no manual id → 2; usage text names all 11 commands
-- [ ] 4.2 GREEN (4a) — `packages/cli/src/main.ts`: `loadDocument`/`loadManual` carry `documents`; `documents <manual>` command (MUF-101..104, MUF-306); allow-list gains `documents`/`verified`
-- [ ] 4.3 RED — `packages/cli/src/wizard.test.ts`: the 4 existing 2-arg `assembleUpdatePrompt` assertions (`:1091-1180`) pass untouched; module-scope prompt names the file, never a number; undeclared module says "unknown", never "unaffected"; ordering `extract`→`documents`→`verified`; `readModuleStates` describe block; `ManualState` literal edits at `:493`, `:538`, `:570`, `:1092`
-- [ ] 4.4 GREEN (4b) — `packages/cli/src/wizard.ts`: `UpdateScope`; `assembleUpdatePrompt(s, instruction, scope = {kind:"manual"})`; `readModuleStates`; `ManualState.baselines`; `describeState` clause; `updateFlow` gains scope step (new step 2), renumbers rest
-- [ ] 4.5 Verify + commit (or split 4a then 4b per design §5 if oversized)
+- [x] 4.1 RED — `packages/cli/src/main.test.ts`: `run(["documents"])` no manual id → 2; usage text names all 11 commands
+- [x] 4.2 GREEN (4a) — `packages/cli/src/main.ts`: `loadDocument`/`loadManual` carry `documents`; `documents <manual>` command (MUF-101..104, MUF-306); allow-list gains `documents`/`verified`
+- [x] 4.3 RED — `packages/cli/src/wizard.test.ts`: the 4 existing 2-arg `assembleUpdatePrompt` assertions (`:1091-1180`) pass untouched; module-scope prompt names the file, never a number; undeclared module says "unknown", never "unaffected"; ordering `extract`→`documents`→`verified`; `readModuleStates` describe block; `ManualState` literal edits at `:493`, `:538`, `:570`, `:1092`
+- [x] 4.4 GREEN (4b) — `packages/cli/src/wizard.ts`: `UpdateScope`; `assembleUpdatePrompt(s, instruction, scope = {kind:"manual"})`; `readModuleStates`; `ManualState.baselines`; `describeState` clause; `updateFlow` gains scope step (new step 2), renumbers rest
+- [x] 4.5 Verify + commit — split 4a/4b per design §5 (combined diff was 560 lines, over the ~400 budget): 4a (main.ts + extract.ts + their tests) 273 lines; 4b (wizard.ts + its tests) 287 lines. 831/831 tests, 9/9 type-check
 
 ## Phase 5 — Commit 5 (needs Phases 1 and 4; no test — verified by command output): `docs: the harness learns what a module documents, and 07 and 12 declare it`
 
