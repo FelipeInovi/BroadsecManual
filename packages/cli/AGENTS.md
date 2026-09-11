@@ -25,6 +25,7 @@ the authority if they ever disagree.
 | `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
 | `awaiting <manual>` | Write `awaiting-product.json`: the parts of the product that are on screen but unfinished, which the manual documents around without naming. Declared by a section's `pending` list — never rendered |
 | `labels <manual>` | Hold every UI label the manual QUOTES against the line it was copied from, per a section's `labels` list. Needs the source checked out; reports, never blocks |
+| `verified <manual> --module <sections/NN-....yaml>` | Record which product commit ONE module was verified against, in `manuals/<manual>/baselines.json`. Refuses on a dirty or unreadable product checkout, or an unknown `--module`, writing nothing either way. No `--all` — one run stamps exactly one module |
 
 Every command takes the axis filters `[--tenant <id>] [--axis <name>=<value> …]`
 except `extract`, which is per-manual and not per-target.
@@ -36,6 +37,7 @@ except `extract`, which is per-manual and not per-target.
 | `--docx` | `build` | Also write the manual as a Word document beside the PDF |
 | `--out <path>` | `images` | Where to write the request document |
 | `--only <slot,…>` | `capture` | Restrict the run to named slots |
+| `--module <sections/NN-....yaml>` | `verified` | The one module being stamped — required, and there is no `--all` |
 
 ### Commands this file used to claim, and where they went
 

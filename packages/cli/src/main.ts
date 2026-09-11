@@ -36,6 +36,7 @@ import { rasterise, shootBands, shootFirstPage } from "./raster.ts";
 import { extract, sourceRootFor } from "./extract.ts";
 import { soleAxis } from "./axis.ts";
 import { commitFile, headCommit, isDirty } from "./git.ts";
+import { stampBaseline } from "./baselines.ts";
 import { archive, planDelivery, stampFile, unstampFile } from "./deliver.ts";
 import { changeLogSectionFile, proofFor, type ChangeLogRowLike } from "./delivery-state.ts";
 import { nextWorkNumber, releaseNotesFilename, workStamp } from "./naming.ts";
@@ -1879,7 +1880,8 @@ export async function run(argv: readonly string[]): Promise<number> {
       command !== "deliver" &&
       command !== "undeliver" &&
       command !== "capture" &&
-      command !== "release-notes") ||
+      command !== "release-notes" &&
+      command !== "verified") ||
     !manualId
   ) {
     console.error(
@@ -1890,6 +1892,7 @@ export async function run(argv: readonly string[]): Promise<number> {
         `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual release-notes <manual> ${axisFlags} --version <x.y.z>\n` +
         `       broadsec-manual labels <manual>\n` +
+        `       broadsec-manual verified <manual> --module <sections/NN-....yaml>\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
         `  capture  shoot pending figures off the running product, per\n` +
@@ -1919,7 +1922,11 @@ export async function run(argv: readonly string[]): Promise<number> {
         `  awaiting write awaiting-product.json: the parts of the product that are\n` +
         `           on screen but unfinished, which the manual documents around\n` +
         `           without naming. Declared by a section's \`pending\` list — the\n` +
-        `           manual itself never mentions any of it.\n\n` +
+        `           manual itself never mentions any of it.\n` +
+        `  verified record which product commit a module was verified against, in\n` +
+        `           manuals/<manual>/baselines.json. Stamps exactly ONE module per\n` +
+        `           run — no --all — and refuses on a dirty or unreadable product\n` +
+        `           checkout, writing nothing.\n\n` +
         `       broadsec-manual new\n` +
         `  new      interactive: collect which product, what to call its manual and\n` +
         `           how much to attempt, then print the prompt that starts the work.\n` +
@@ -2012,6 +2019,72 @@ ${drift.length} change(s) since the previous map:`);
       for (const line of labelLines(report)) console.log(line);
       // Reports, never blocks: what a renamed label should now say is a
       // judgement about the product, not something this command decides.
+      return 0;
+    }
+
+    if (command === "verified") {
+      // `--all` is matched explicitly and refused loudly. `parseAxisFilters`
+      // ignores flags it does not recognise, so an unhandled `--all` would be
+      // silently dropped and the operator would believe every module was
+      // stamped. The correct order is extract -> surface drift -> decide per
+      // module -> stamp that module, and one extraction must never stamp ten
+      // modules (ADR-005).
+      if (rest.includes("--all")) {
+        console.error(
+          "\nverified takes exactly one --module <sections/NN-....yaml>, never --all.\n" +
+            "  The correct order is extract -> surface drift -> decide per module ->\n" +
+            "  stamp that module. One run must never stamp more than one.",
+        );
+        return 1;
+      }
+
+      const moduleAt = rest.indexOf("--module");
+      const module = moduleAt === -1 ? undefined : rest[moduleAt + 1];
+      if (!module) {
+        console.error("\nverified needs --module <sections/NN-....yaml> — the module being verified.");
+        return 1;
+      }
+
+      const sectionsDir = join(manualDir, "sections");
+      const knownModules = existsSync(sectionsDir)
+        ? readdirSync(sectionsDir)
+            .filter((f) => f.endsWith(".yaml"))
+            .map((f) => `sections/${f}`)
+        : [];
+      if (!knownModules.includes(module)) {
+        console.error(`\nno such section file: ${module}`);
+        return 1;
+      }
+
+      const { sourceId, sourceRoot } = sourceRootFor(process.cwd(), manualId);
+
+      const dirty = isDirty(sourceRoot);
+      if (dirty !== false) {
+        const why = dirty === null ? " — git could not answer" : "";
+        console.error(
+          [
+            ``,
+            `the product checkout has uncommitted changes${why}.`,
+            `  A baseline promises a commit that actually describes what was read.`,
+            `  A wrong one is worse than none, so nothing is written.`,
+          ].join("\n"),
+        );
+        return 1;
+      }
+      const commit = headCommit(sourceRoot);
+      if (commit === null) {
+        console.error(
+          "\ncannot read the product checkout's HEAD commit, and without it a baseline " +
+            "would name a commit nobody read.",
+        );
+        return 1;
+      }
+
+      stampBaseline(manualDir, sourceId, module, {
+        productCommit: commit,
+        verifiedAt: new Date().toISOString().slice(0, 10),
+      });
+      console.log(`  ${module} verified at ${commit}`);
       return 0;
     }
 

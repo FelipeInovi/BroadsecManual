@@ -1,6 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { ManualNode } from "@broadsec-manual/blocks";
+import { readBaselines } from "./baselines.ts";
 import {
   assertChangeLog,
   deliveryProofFor,
@@ -704,5 +708,177 @@ describe("releaseLede", () => {
   it("refuses a file that is not a mapping at all", () => {
     expect(() => releaseLede(null, file)).toThrow(/lede/);
     expect(() => releaseLede("notas", file)).toThrow(/lede/);
+  });
+});
+
+/**
+ * `verified <manual> --module <sections/NN-....yaml>` — records which product
+ * commit a module was verified against. Every scenario runs against a
+ * throwaway repository root, chdir'd into for the duration of the call: `run`
+ * resolves `manualDir` and the product checkout off `process.cwd()`, exactly
+ * as every other command does.
+ */
+describe("verified", () => {
+  const MODULE = "sections/07-interfaz-general.yaml";
+  const roots: string[] = [];
+
+  const gitInit = (dir: string): void => {
+    execFileSync("git", ["-C", dir, "init", "-q"]);
+    execFileSync("git", ["-C", dir, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", dir, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", dir, "add", "-A"]);
+    execFileSync("git", ["-C", dir, "commit", "-q", "-m", "seed"]);
+  };
+
+  /** A repository root with one manual, one registered source, and a product checkout. */
+  const repoRoot = (product: "clean" | "dirty" | "detached" | "none"): string => {
+    const root = mkdtempSync(join(tmpdir(), "verified-"));
+    roots.push(root);
+    mkdirSync(join(root, "sources"), { recursive: true });
+    mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    writeFileSync(
+      join(root, "manuals", "un-manual", "manual.config.yaml"),
+      "manual:\n  source: producto\n",
+    );
+    writeFileSync(join(root, "manuals", "un-manual", "sections", "07-interfaz-general.yaml"), "id: s\ntitle: S\nchildren: []\n");
+    writeFileSync(
+      join(root, "sources", "registry.yaml"),
+      [
+        "version: 1",
+        "sources:",
+        "  producto:",
+        "    name: Producto",
+        "    path: ./producto",
+        "    extract:",
+        "      components: src",
+        "      pages: src",
+        "",
+      ].join("\n"),
+    );
+
+    const productDir = join(root, "producto");
+    mkdirSync(productDir, { recursive: true });
+    writeFileSync(join(productDir, "seed.txt"), "seed\n");
+
+    if (product !== "none") {
+      gitInit(productDir);
+      if (product === "dirty") writeFileSync(join(productDir, "seed.txt"), "dirty\n");
+      if (product === "detached") {
+        const head = execFileSync("git", ["-C", productDir, "rev-parse", "HEAD"], {
+          encoding: "utf8",
+        }).trim();
+        execFileSync("git", ["-C", productDir, "checkout", "-q", "--detach", head]);
+      }
+    }
+    return root;
+  };
+
+  const runIn = async (root: string, argv: readonly string[]): Promise<number> => {
+    const cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return await run(argv);
+    } finally {
+      process.chdir(cwd);
+    }
+  };
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it("with no manual id falls through to usage and returns 2", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await run(["verified"])).toBe(2);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses with no --module", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await runIn(repoRoot("clean"), ["verified", "un-manual"])).toBe(1);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses --all loudly rather than silently ignoring it (ADR-005)", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await runIn(repoRoot("clean"), ["verified", "un-manual", "--all"])).toBe(1);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses a --module naming a section file that does not exist, before touching baselines.json", async () => {
+    const root = repoRoot("clean");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, [
+        "verified",
+        "un-manual",
+        "--module",
+        "sections/99-does-not-exist.yaml",
+      ]);
+      expect(code).toBe(1);
+      expect(existsSync(join(root, "manuals", "un-manual", "baselines.json"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses on a dirty product checkout, writing nothing (S-2)", async () => {
+    const root = repoRoot("dirty");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["verified", "un-manual", "--module", MODULE]);
+      expect(code).toBe(1);
+      expect(existsSync(join(root, "manuals", "un-manual", "baselines.json"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it('refuses when the product checkout is not a repository — "cannot tell" is never read as clean (S-2)', async () => {
+    const root = repoRoot("none");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["verified", "un-manual", "--module", MODULE]);
+      expect(code).toBe(1);
+      expect(existsSync(join(root, "manuals", "un-manual", "baselines.json"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("succeeds on a clean checkout and stamps exactly the named module", async () => {
+    const root = repoRoot("clean");
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["verified", "un-manual", "--module", MODULE]);
+      expect(code).toBe(0);
+      const baselines = readBaselines(join(root, "manuals", "un-manual"));
+      expect(baselines?.source).toBe("producto");
+      expect(baselines?.modules[MODULE]?.productCommit).toMatch(/^[0-9a-f]{40}$/);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  // The one place the exploration's language and the code's actual behaviour
+  // diverge (S-3): a detached HEAD is a successful read, not a refusal.
+  it("succeeds on a detached HEAD with a clean tree", async () => {
+    const root = repoRoot("detached");
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["verified", "un-manual", "--module", MODULE]);
+      expect(code).toBe(0);
+    } finally {
+      logSpy.mockRestore();
+    }
   });
 });
