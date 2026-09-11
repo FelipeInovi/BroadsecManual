@@ -5,3 +5,4 @@ export * from "./assemble.ts";
 export * from "./slots.ts";
 export * from "./pending.ts";
 export * from "./labels.ts";
+export * from "./documents.ts";

@@ -8,6 +8,13 @@ import type {
 } from "@broadsec-manual/blocks";
 import type { PendingDeclaration } from "./pending.ts";
 import { labelSites, type LabelCitation, type LabelSite } from "./labels.ts";
+import {
+  classifyPath,
+  FLAG_PATTERN,
+  type DocumentedFlag,
+  type DocumentedPath,
+  type DocumentsDeclaration,
+} from "./documents.ts";
 
 /**
  * Authoring format for the pipeline spike: YAML mirroring the AST.
@@ -274,6 +281,14 @@ export interface LoadedSection {
    * business reaching a renderer.
    */
   readonly labels: readonly LabelCitation[];
+  /**
+   * Which parts of the product this section says it describes.
+   *
+   * ABSENT and EMPTY are different, and absent is the load-bearing one: a
+   * file that declares nothing has UNKNOWN coverage, not none. `documents: {}`
+   * is a `ContentError`, for the same reason an empty `pending.covers` is.
+   */
+  readonly documents?: DocumentsDeclaration;
 }
 
 /** Fields every entry must carry. A half-filled one is the prose it replaces. */
@@ -389,6 +404,106 @@ function parsePending(
   }
 
   return out;
+}
+
+const EMPTY_DOCUMENTS_MESSAGE =
+  "`documents` needs at least one entry under `paths:` or `flags:`, or it points " +
+  'at nothing — and omitting the `documents:` key entirely is the honest way to ' +
+  'say "unknown".';
+
+/**
+ * Parse a section's `documents:` declaration.
+ *
+ * A mapping with `paths:`/`flags:` sub-keys — never a flat list, and never
+ * classified by shape at this boundary the way `pending`/`labels` are: the
+ * sub-key a string appears under decides path-vs-flag, and a mistyped path
+ * (`AppRoutes` meant as `AppRoutes.tsx`) is refused rather than silently
+ * reclassified. See `documents.ts` (`classifyPath`, `FLAG_PATTERN`) for the
+ * shape rules within `paths:`/`flags:` themselves.
+ */
+function parseDocuments(
+  node: Record<string, unknown>,
+  file: string,
+  sectionId: string,
+): DocumentsDeclaration | undefined {
+  const raw = node["documents"];
+  if (raw === undefined) return undefined;
+
+  if (Array.isArray(raw) || typeof raw !== "object" || raw === null) {
+    throw new ContentError(
+      file,
+      sectionId,
+      "`documents` must be a mapping with two optional sub-keys, `paths:` and " +
+        "`flags:` — never a flat list. A path joins by file; a flag joins by " +
+        "capability flag.",
+    );
+  }
+  const mapping = raw as Record<string, unknown>;
+
+  const base = node["sourceBase"];
+  if (base !== undefined && typeof base !== "string") {
+    throw new ContentError(file, sectionId, "`sourceBase` must be a string path prefix");
+  }
+
+  const rawPaths = mapping["paths"];
+  if (rawPaths !== undefined && !Array.isArray(rawPaths)) {
+    throw new ContentError(file, sectionId, "`documents.paths` must be a list of strings");
+  }
+  const rawFlags = mapping["flags"];
+  if (rawFlags !== undefined && !Array.isArray(rawFlags)) {
+    throw new ContentError(file, sectionId, "`documents.flags` must be a list of strings");
+  }
+
+  const pathsList = Array.isArray(rawPaths) ? rawPaths : [];
+  const flagsList = Array.isArray(rawFlags) ? rawFlags : [];
+  if (pathsList.length === 0 && flagsList.length === 0) {
+    throw new ContentError(file, sectionId, EMPTY_DOCUMENTS_MESSAGE);
+  }
+
+  const paths: DocumentedPath[] = [];
+  for (const item of pathsList) {
+    if (typeof item !== "string") {
+      throw new ContentError(file, sectionId, "every `documents` entry must be a string");
+    }
+    const colonAt = item.lastIndexOf(":");
+    if (colonAt > 0 && /^\d+$/.test(item.slice(colonAt + 1))) {
+      throw new ContentError(
+        file,
+        sectionId,
+        `\`documents.paths\` entry "${item}" carries a \`:<line>\` suffix. Gate ` +
+          "identity is deliberately never line-based, so a line could not narrow " +
+          "a join that has no line to match on.",
+      );
+    }
+    const classified = classifyPath(item);
+    if (!classified) {
+      throw new ContentError(
+        file,
+        sectionId,
+        `\`documents.paths\` entry "${item}" does not look like a path — it must ` +
+          "contain `/` or `.`. A bare identifier belongs under `flags:` instead.",
+      );
+    }
+    paths.push({ ...classified, path: `${base ?? ""}${classified.path}` });
+  }
+
+  const flags: DocumentedFlag[] = [];
+  for (const item of flagsList) {
+    if (typeof item !== "string") {
+      throw new ContentError(file, sectionId, "every `documents` entry must be a string");
+    }
+    if (!FLAG_PATTERN.test(item)) {
+      throw new ContentError(
+        file,
+        sectionId,
+        `\`documents.flags\` entry "${item}" must match a capability-flag identifier, ` +
+          "not a path.",
+      );
+    }
+    flags.push({ flag: item });
+  }
+
+  return { declaredIn: file, section: sectionId, paths, flags };
 }
 
 /** Every id in a parsed subtree, so `covers` can be resolved within its section. */
@@ -542,7 +657,7 @@ export function loadSection(
   // from the AST, so `loadNode` never saw it.
   const top = (typeof raw === "object" && raw !== null ? raw : {}) as Record<string, unknown>;
   if (node.kind !== "section") {
-    for (const key of ["pending", "labels", "sourceBase"]) {
+    for (const key of ["pending", "labels", "sourceBase", "documents"]) {
       if (top[key] !== undefined) {
         throw new ContentError(
           file,
@@ -557,10 +672,12 @@ export function loadSection(
 
   const ownIds = new Set<string>();
   idsWithin(node, ownIds);
+  const documents = parseDocuments(top, file, node.id);
   return {
     node,
     warnings,
     pending: parsePending(top, file, node.id, ownIds),
     labels: parseLabels(top, file, node.id, labelSites(node, catalog)),
+    ...(documents ? { documents } : {}),
   };
 }
