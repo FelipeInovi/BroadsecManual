@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AxisReference, CapabilityRow } from "@broadsec-manual/extract";
 import {
+  buildModuleMap,
   describeDrift,
   diffFacts,
   diffMaps,
@@ -504,5 +505,35 @@ describe("extract — the map says which axis it describes", () => {
 
   it("refuses a manual that declares no axis at all", () => {
     expect(() => extract(workingRepo(""), "un-manual")).toThrow(/no axes/);
+  });
+});
+
+// --- the fresh computation `documents` needs, without extract()'s write ----
+//
+// `documents <manual>` (MUF-101/102) needs a just-computed map to diff against
+// the persisted one, but must write nothing (ADR-008). `extract()` always
+// writes, so the map-building half has to be reachable on its own.
+
+describe("buildModuleMap", () => {
+  it("computes the same map extract() would, and writes nothing", () => {
+    const root = workingRepo(byTenant);
+    const built = buildModuleMap(root, "un-manual");
+    expect(existsSync(mapFile(root))).toBe(false);
+    expect(built.map.axis).toBe("tenant");
+    expect(built.map.values.map((v) => v.id)).toEqual(["mv"]);
+  });
+
+  it("carries the sourceRoot and the scan roots relative to it, for coverage.ts's join", () => {
+    const root = workingRepo(byTenant);
+    const built = buildModuleMap(root, "un-manual");
+    expect(built.sourceRoot.endsWith("producto")).toBe(true);
+    expect(built.scanRoots).toEqual(["src", "src"]);
+  });
+
+  it("still lets extract() write the map it always did, unchanged", () => {
+    const root = workingRepo(byTenant);
+    const { map: m } = extract(root, "un-manual");
+    expect(existsSync(mapFile(root))).toBe(true);
+    expect(m.axis).toBe("tenant");
   });
 });

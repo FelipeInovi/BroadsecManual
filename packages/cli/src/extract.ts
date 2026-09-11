@@ -385,13 +385,6 @@ export interface ExtractResult {
   readonly outPath: string;
 }
 
-/**
- * Run the extraction for one manual.
- *
- * Takes the MANUAL id rather than the source id, matching `build` and `images`,
- * and reads which source it documents from its own config. One manual documents
- * one product; the reverse is not guaranteed.
- */
 /** A manual's source product, resolved through the registry. */
 export interface ResolvedSource {
   readonly sourceId: string;
@@ -442,7 +435,37 @@ export function sourceRootFor(repoRoot: string, manualId: string): ResolvedSourc
   return { sourceId, sourceRoot, entry };
 }
 
-export function extract(repoRoot: string, manualId: string): ExtractResult {
+/**
+ * A freshly-computed map, plus what a caller needs to interpret its facts —
+ * without the write `extract()` always does.
+ *
+ * `documents <manual>` (MUF-101/102) needs exactly this: a just-computed map
+ * to diff against the persisted one, so it can report today's drift. It must
+ * write nothing (ADR-008), so the map-building half of `extract()` has to be
+ * reachable on its own rather than only through the function that also writes.
+ */
+export interface BuiltMap {
+  readonly map: ModuleMap;
+  readonly sourceId: string;
+  /** Absolute path to the product checkout. READ-ONLY. */
+  readonly sourceRoot: string;
+  /**
+   * The scanned directories, relative to `sourceRoot` — e.g.
+   * `["src/render/components", "src/render/pages"]`. Relative because
+   * `AxisReference.file` and every `DocumentedPath` are relative, and
+   * `coverage.ts`'s join compares them as such.
+   */
+  readonly scanRoots: readonly string[];
+}
+
+/**
+ * Read the product and compute this manual's map, fresh, without writing it.
+ *
+ * Everything `extract()` does up through building `map` — nothing after. Kept
+ * as one function so `extract()` and `documents` can never compute two
+ * different maps for what is supposed to be the same fact.
+ */
+export function buildModuleMap(repoRoot: string, manualId: string): BuiltMap {
   const manualDir = join(repoRoot, "manuals", manualId);
   const manualConfig = parseYaml(readFileSync(join(manualDir, "manual.config.yaml"), "utf8")) as {
     axes?: Record<string, { values?: Array<{ id?: string }> }>;
@@ -499,9 +522,10 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
 
   // --- axis references in code ---------------------------------------------
   const codes = configs.map((c) => c.code);
-  const scanRoots = [entry.extract.components, entry.extract.pages].map((p) => join(sourceRoot, p));
+  const relativeScanRoots = [entry.extract.components, entry.extract.pages];
+  const absoluteScanRoots = relativeScanRoots.map((p) => join(sourceRoot, p));
   const references: AxisReference[] = [];
-  for (const root of scanRoots) {
+  for (const root of absoluteScanRoots) {
     for (const file of walkFiles(root)) {
       const rel = relative(sourceRoot, file).split(sep).join(posix.sep);
       references.push(...findTenantReferences(rel, readFileSync(file, "utf8"), codes));
@@ -525,6 +549,20 @@ export function extract(repoRoot: string, manualId: string): ExtractResult {
     references,
     ...(mismatch.length > 0 ? { registryMismatch: mismatch } : {}),
   };
+
+  return { map, sourceId, sourceRoot, scanRoots: relativeScanRoots };
+}
+
+/**
+ * Run the extraction for one manual.
+ *
+ * Takes the MANUAL id rather than the source id, matching `build` and `images`,
+ * and reads which source it documents from its own config. One manual documents
+ * one product; the reverse is not guaranteed.
+ */
+export function extract(repoRoot: string, manualId: string): ExtractResult {
+  const { map } = buildModuleMap(repoRoot, manualId);
+  const manualDir = join(repoRoot, "manuals", manualId);
 
   const outPath = join(manualDir, "knowledge", "module-map.json");
   const drift = existsSync(outPath)

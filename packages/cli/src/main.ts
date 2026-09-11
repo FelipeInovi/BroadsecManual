@@ -19,6 +19,7 @@ import {
   loadSection,
   ContentError,
   type ContentWarning,
+  type DocumentsDeclaration,
   type ImageSlotUse,
   type LabelCitation,
   type PendingDeclaration,
@@ -33,10 +34,20 @@ import {
 import { themes, isThemeName, type Tokens } from "@broadsec-manual/tokens";
 import { printToPdf } from "./chrome.ts";
 import { rasterise, shootBands, shootFirstPage } from "./raster.ts";
-import { extract, sourceRootFor } from "./extract.ts";
+import {
+  buildModuleMap,
+  describeDrift,
+  diffFacts,
+  extract,
+  sourceRootFor,
+  type JoinableFact,
+  type ManualWideFact,
+  type PreviousMap,
+} from "./extract.ts";
+import { joinCoverage, type ModuleInput } from "./coverage.ts";
 import { soleAxis } from "./axis.ts";
 import { commitFile, headCommit, isDirty } from "./git.ts";
-import { stampBaseline } from "./baselines.ts";
+import { readBaselines, stampBaseline } from "./baselines.ts";
 import { archive, planDelivery, stampFile, unstampFile } from "./deliver.ts";
 import { changeLogSectionFile, proofFor, type ChangeLogRowLike } from "./delivery-state.ts";
 import { nextWorkNumber, releaseNotesFilename, workStamp } from "./naming.ts";
@@ -159,6 +170,7 @@ function loadDocument(
   warnings: ContentWarning[];
   pending: PendingDeclaration[];
   labels: LabelCitation[];
+  documents: DocumentsDeclaration[];
 } {
   const dir = join(manualDir, "sections");
   const files = readdirSync(dir)
@@ -167,12 +179,17 @@ function loadDocument(
   const warnings: ContentWarning[] = [];
   const pending: PendingDeclaration[] = [];
   const labels: LabelCitation[] = [];
+  // Only the modules that DECLARE `documents:` — sparse, like `pending` and
+  // `labels`. A module's absence from this list, not an entry with an empty
+  // value, is what "unknown coverage" means (MUF-003).
+  const documents: DocumentsDeclaration[] = [];
   const children: ManualNode[] = files.map((f) => {
     const loaded = loadSection(readFileSync(join(dir, f), "utf8"), `sections/${f}`, catalog);
     warnings.push(...loaded.warnings);
     // Beside the tree, never in it. See `PendingDeclaration`.
     pending.push(...loaded.pending);
     labels.push(...loaded.labels);
+    if (loaded.documents) documents.push(loaded.documents);
     return loaded.node;
   });
   const ids = new Set<string>();
@@ -198,6 +215,7 @@ function loadDocument(
     warnings,
     pending,
     labels,
+    documents,
   };
 }
 
@@ -745,6 +763,8 @@ interface LoadedManual {
   /** Where each quoted UI label was copied from. Not conditioned: a label the
    * product renamed is wrong in every document that shows it. */
   readonly labels: readonly LabelCitation[];
+  /** Which modules declare `documents:`, and what. Sparse — see `loadDocument`. */
+  readonly documents: readonly DocumentsDeclaration[];
   readonly targets: readonly BuildTarget[];
   readonly figuresDir: string;
   /**
@@ -773,7 +793,7 @@ function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): Lo
     throw new ContentError(configFile, "manual.config", `invalid manual configuration — ${detail}`);
   }
   const config = parsed.data;
-  const { doc, warnings, pending, labels } = loadDocument(manualDir, config);
+  const { doc, warnings, pending, labels, documents } = loadDocument(manualDir, config);
 
   const targets = config.targets.filter((t) =>
     [...filters.entries()].every(([axis, value]) => t[axis] === value),
@@ -789,6 +809,7 @@ function loadManual(manualDir: string, filters: ReadonlyMap<string, string>): Lo
     warnings,
     pending,
     labels,
+    documents,
     targets,
     figuresDir: join(manualDir, "assets", "figures"),
     coverMark: readCoverMark(manualDir),
@@ -1881,6 +1902,7 @@ export async function run(argv: readonly string[]): Promise<number> {
       command !== "undeliver" &&
       command !== "capture" &&
       command !== "release-notes" &&
+      command !== "documents" &&
       command !== "verified") ||
     !manualId
   ) {
@@ -1892,6 +1914,7 @@ export async function run(argv: readonly string[]): Promise<number> {
         `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual release-notes <manual> ${axisFlags} --version <x.y.z>\n` +
         `       broadsec-manual labels <manual>\n` +
+        `       broadsec-manual documents <manual>\n` +
         `       broadsec-manual verified <manual> --module <sections/NN-....yaml>\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n\n` +
@@ -1923,6 +1946,11 @@ export async function run(argv: readonly string[]): Promise<number> {
         `           on screen but unfinished, which the manual documents around\n` +
         `           without naming. Declared by a section's \`pending\` list — the\n` +
         `           manual itself never mentions any of it.\n` +
+        `  documents\n` +
+        `           report each module's coverage of today's drift against its\n` +
+        `           \`documents:\` declaration — covered, clean, or unknown, never\n` +
+        `           \"unaffected\". Needs the source checked out; reports, never\n` +
+        `           blocks.\n` +
         `  verified record which product commit a module was verified against, in\n` +
         `           manuals/<manual>/baselines.json. Stamps exactly ONE module per\n` +
         `           run — no --all — and refuses on a dirty or unreadable product\n` +
@@ -2019,6 +2047,106 @@ ${drift.length} change(s) since the previous map:`);
       for (const line of labelLines(report)) console.log(line);
       // Reports, never blocks: what a renamed label should now say is a
       // judgement about the product, not something this command decides.
+      return 0;
+    }
+
+    if (command === "documents") {
+      // Reports, never blocks (ADR-008): the join is read-only, and every
+      // finding below is something for a human to decide, never a build
+      // failure. Grouped right after `labels` — the other verification
+      // command that needs the source checked out and never writes.
+      console.log(`checking documents: coverage for ${manualId} against the product`);
+
+      const { documents } = loadManual(manualDir, filters);
+      const byModule = new Map(documents.map((d) => [d.declaredIn, d]));
+
+      const sectionsDir = join(manualDir, "sections");
+      const moduleFiles = existsSync(sectionsDir)
+        ? readdirSync(sectionsDir)
+            .filter((f) => f.endsWith(".yaml"))
+            .sort()
+            .map((f) => `sections/${f}`)
+        : [];
+
+      // A fresh read of the product, diffed against the persisted map — the
+      // same drift `extract` would show if run right now — but nothing here
+      // writes it (ADR-008's "documents writes nothing").
+      const { map: freshMap, sourceRoot, scanRoots } = buildModuleMap(process.cwd(), manualId);
+      const mapPath = join(manualDir, "knowledge", "module-map.json");
+      const previous: PreviousMap = existsSync(mapPath)
+        ? (JSON.parse(readFileSync(mapPath, "utf8")) as PreviousMap)
+        : { source: freshMap.source, values: [], capabilities: [], references: [] };
+      const facts = diffFacts(previous, freshMap);
+      const joinable = facts.filter(
+        (f): f is JoinableFact => f.kind === "capability" || f.kind === "gate",
+      );
+      const manualWide = facts.filter(
+        (f): f is ManualWideFact => f.kind === "axis-changed" || f.kind === "axis-value",
+      );
+
+      const baselineFile = readBaselines(manualDir);
+      const baselineKeys = baselineFile ? Object.keys(baselineFile.modules) : [];
+
+      const modules: ModuleInput[] = moduleFiles.map((file) => ({
+        module: file,
+        documents: byModule.get(file),
+        baseline: baselineFile?.modules[file] ?? null,
+      }));
+
+      const report = joinCoverage(modules, joinable, { manualWide, scanRoots, baselineKeys });
+
+      // MUF-101/MUF-102: a declared path or flag that no longer answers, held
+      // directly against the checked-out product — never blocking.
+      for (const [file, decl] of byModule) {
+        for (const entry of decl.paths) {
+          if (entry.kind === "glob") continue; // a glob has no one path to check for absence
+          if (!existsSync(join(sourceRoot, entry.path))) {
+            console.log(`  ! ${file}: declared path "${entry.path}" is gone from the product`);
+          }
+        }
+        const knownFlags = new Set(freshMap.capabilities.map((c) => c.flag));
+        for (const entry of decl.flags) {
+          if (!knownFlags.has(entry.flag)) {
+            console.log(
+              `  ! ${file}: declared flag "${entry.flag}" is absent from the capability matrix`,
+            );
+          }
+        }
+      }
+
+      if (report.manualWide.length > 0) {
+        console.log(`\n${report.manualWide.length} manual-wide change(s):`);
+        for (const fact of report.manualWide) console.log(`  ${describeDrift(fact)}`);
+      }
+
+      console.log(`\nper-module coverage:`);
+      for (const m of report.modules) {
+        const baseline = m.baseline
+          ? `verified at ${m.baseline.productCommit}`
+          : "never verified";
+        if (m.state === "unknown") {
+          // MUF-306: never "unaffected" — repeats the full current fact list,
+          // never a bare count, so silence about a module is never read as
+          // "nothing changed here".
+          console.log(`  ${m.module}: unknown coverage (declares no \`documents:\`) — ${baseline}`);
+          for (const fact of joinable) console.log(`    ${describeDrift(fact)}`);
+          continue;
+        }
+        console.log(`  ${m.module}: ${m.state} — ${baseline}`);
+        for (const fact of m.facts) console.log(`    ${describeDrift(fact)}`);
+      }
+
+      if (report.undeclared.length > 0) {
+        // MUF-103: the reverse index — a drift fact no module's `documents:` claims.
+        console.log(`\n${report.undeclared.length} fact(s) under undeclared coverage:`);
+        for (const fact of report.undeclared) console.log(`  ${describeDrift(fact)}`);
+      }
+
+      if (report.staleBaselines.length > 0) {
+        console.log(`\nstale baselines.json entries (no matching section file):`);
+        for (const key of report.staleBaselines) console.log(`  ${key}`);
+      }
+
       return 0;
     }
 

@@ -900,3 +900,53 @@ describe("verified", () => {
     }
   });
 });
+
+/**
+ * `documents <manual>` — reports each module's coverage of today's drift
+ * (MUF-101..104, MUF-306). Full behaviour is verified against the real
+ * product in slice 5's manual smoke test; here the CLI wiring itself is
+ * pinned, matching `verified`'s own wiring tests.
+ */
+describe("documents", () => {
+  it("with no manual id falls through to usage and returns 2", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await run(["documents"])).toBe(2);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+});
+
+describe("usage text", () => {
+  // MUF-810: the allow-list at `main.ts:1873-1884` gains `documents` and
+  // `verified`, drops none of the nine it already had.
+  it("names all 11 commands", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await run([])).toBe(2);
+      const printed = errorSpy.mock.calls.map((call) => String(call[0])).join("\n");
+      for (const command of [
+        "build",
+        "images",
+        "awaiting",
+        "labels",
+        "extract",
+        "deliver",
+        "undeliver",
+        "capture",
+        "release-notes",
+      ]) {
+        expect(printed).toContain(command);
+      }
+      // Checked as an invocation line, not the bare word: "documents" already
+      // appears in unrelated prose ("...which the manual documents around"),
+      // so a substring match on the word alone would pass before either
+      // command exists.
+      expect(printed).toContain("broadsec-manual documents <manual>");
+      expect(printed).toContain("broadsec-manual verified <manual>");
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+});
