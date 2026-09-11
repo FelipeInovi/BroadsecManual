@@ -796,10 +796,18 @@ describe("verified", () => {
     }
   });
 
-  it("refuses with no --module", async () => {
+  // The message is the discriminating signal: an unknown `--module` also
+  // returns 1 (`no such section file: …`), so asserting the code alone cannot
+  // tell "the `!module` guard ran" apart from "the guard was removed and
+  // `module` fell through as `undefined` to the unknown-module check". Only
+  // the wording pins which branch actually refused.
+  it("refuses with no --module, naming the missing flag rather than an unknown module", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
       expect(await runIn(repoRoot("clean"), ["verified", "un-manual"])).toBe(1);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("needs --module"))).toBe(true);
+      expect(messages.some((m) => m.includes("no such section file"))).toBe(false);
     } finally {
       errorSpy.mockRestore();
     }
@@ -870,13 +878,23 @@ describe("verified", () => {
   });
 
   // The one place the exploration's language and the code's actual behaviour
-  // diverge (S-3): a detached HEAD is a successful read, not a refusal.
-  it("succeeds on a detached HEAD with a clean tree", async () => {
+  // diverge (S-3): a detached HEAD is a successful read, not a refusal. Code
+  // 0 alone would also pass if `verified` silently wrote no commit or a wrong
+  // one — matching the rigor of the clean-checkout test above, this asserts
+  // the STAMPED commit is exactly the detached HEAD's sha, not merely that
+  // something was written.
+  it("succeeds on a detached HEAD with a clean tree, stamping that exact commit", async () => {
     const root = repoRoot("detached");
+    const productDir = join(root, "producto");
+    const headSha = execFileSync("git", ["-C", productDir, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim();
     const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
     try {
       const code = await runIn(root, ["verified", "un-manual", "--module", MODULE]);
       expect(code).toBe(0);
+      const baselines = readBaselines(join(root, "manuals", "un-manual"));
+      expect(baselines?.modules[MODULE]?.productCommit).toBe(headSha);
     } finally {
       logSpy.mockRestore();
     }
