@@ -382,16 +382,28 @@ before any write.
 
 **MUF-301 — `diffFacts` shape.** `diffFacts(before, after): readonly DriftFact[]`
 returns one entry per drift item `diffMaps` reports today, each carrying at
-minimum a `kind: "axis-value" | "capability" | "gate"` discriminator plus
-whichever of `file`, `flag`, `codes` applies to that kind, and a human `text`
-field. `file` is present exactly on `kind: "gate"` entries (gates are keyed by
-`file|codes|kind`, `extract.ts:151`); `flag` is present exactly on
+minimum a `kind` discriminator plus whichever of `file`, `flag`, `codes` applies
+to that kind. `file` is present exactly on `kind: "gate"` entries (gates are
+keyed by `file|codes|kind`, `extract.ts:151`); `flag` is present exactly on
 `kind: "capability"` entries; axis-value entries carry neither.
+
+**A fact carries NO `text` field.** The human sentence is derived by
+`describeDrift(fact)`, never stored on the fact — see ADR-004 for the type.
+Storing it would give the same sentence two homes, which is the duplication this
+change exists to remove, and would reduce `diffMaps = diffFacts(...).map(describeDrift)`
+to `map(f => f.text)`, making the refactor pointless. The authoritative shapes
+are ADR-004's `JoinableFact` and `ManualWideFact`, which also split joinable
+from manual-wide facts structurally; this requirement's `kind` list is
+subordinate to them.
 
 > Given the same two maps used in today's `diffMaps` gate-added test case
 > When `diffFacts` runs
-> Then it returns one fact with `kind: "gate"`, a `file` equal to the gate's
-> file, and a `text` equal to today's `diffMaps` line for that gate.
+> Then it returns one fact with `kind: "gate"` and a `file` equal to the gate's
+> file, and `describeDrift` of that fact equals today's `diffMaps` line for it.
+
+*Reconciled 2026-09-11: an earlier revision of this requirement asked for a
+`text` field on the fact, contradicting ADR-004. ADR-004 wins, for the reasons
+stated above. The implementation in commit `6b89d43` follows ADR-004.*
 
 **MUF-302 — `diffMaps` is `diffFacts(...).map(describe)`, byte-identical.**
 Every existing `diffMaps` test in `packages/cli/src/extract.test.ts` passes

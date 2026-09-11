@@ -938,9 +938,13 @@ awaiting, images, labels, capture, release-notes, extract.
 
 ## 5. The five work-unit commits
 
-Direct commits on `main`, per `work-unit-commits`: one clear purpose each, tests
-in the same commit as the behaviour they verify, docs with the user-visible change
-they explain, and a rollback that removes no unrelated work. **No PRs, no push.**
+Commits on the branch `feat/manual-update-flow`, per `work-unit-commits`: one
+clear purpose each, tests in the same commit as the behaviour they verify, docs
+with the user-visible change they explain, and a rollback that removes no
+unrelated work. **No PRs, no push, no merge to `main`.** (Owner decision,
+2026-09-11: this section originally said "direct commits on `main`", which
+predates the branch split. `main` stays parked at `adbe8ee` so the branch can be
+tested in isolation.)
 Every commit leaves `pnpm test` green and `pnpm -r type-check` 9/9.
 
 ### Commit 1 — `feat(core): a section can declare which product paths it documents`
