@@ -150,9 +150,14 @@ describe("joinCoverage — the three states (MUF-306)", () => {
     expect(report.modules[0]?.state).toBe("clean");
   });
 
-  // Every module's `state` is drawn from a closed set. Guards against a
-  // future refactor widening `state` to a plain `string` and reintroducing
-  // "unaffected" — the exact word MUF-306 forbids.
+  // Every module's `state` is drawn from a closed set TypeScript already
+  // enforces, so this alone cannot catch MUF-306's real target: the printed
+  // word "unaffected" reaching an operator's terminal. That word is never
+  // even a candidate value here — `joinCoverage` emits no prose at all, only
+  // this three-state union; the CLI's actual printed wording is pinned
+  // against the real output in `main.test.ts`'s `documents` describe block.
+  // Kept as a cheap guard against a future refactor widening `state` to a
+  // plain `string` and reintroducing the word as a valid state.
   it("never reports a module's state as \"unaffected\"", () => {
     const modules = [module_({ documents: undefined })];
     const report = joinCoverage(modules, [gateFact()], context());

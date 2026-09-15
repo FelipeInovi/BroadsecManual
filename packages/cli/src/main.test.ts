@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { ManualNode } from "@broadsec-manual/blocks";
-import { readBaselines } from "./baselines.ts";
+import { readBaselines, stampBaseline } from "./baselines.ts";
 import {
   assertChangeLog,
   deliveryProofFor,
@@ -903,17 +903,276 @@ describe("verified", () => {
 
 /**
  * `documents <manual>` — reports each module's coverage of today's drift
- * (MUF-101..104, MUF-306). Full behaviour is verified against the real
- * product in slice 5's manual smoke test; here the CLI wiring itself is
- * pinned, matching `verified`'s own wiring tests.
+ * (MUF-101..104, MUF-306), including ADR-007's per-entry match counts and
+ * unjoinable-path annotation. `documents`'s real-product correctness against
+ * `broadlineavida` is separately verified in slice 5's manual smoke test;
+ * here the CLI's ACTUAL PRINTED OUTPUT is pinned against a small, real (if
+ * synthetic) product checkout — reusing `verified`'s existing temp-repo/git
+ * harness idiom rather than building a new fixture.
  */
-describe("documents", () => {
+describe("documents <manual>", () => {
+  const roots: string[] = [];
+
+  /**
+   * A repository root with one manual (three sections, one per join state)
+   * and one registered source with a real tenant config and two gate
+   * references: one inside a declared path (joinable, claimed), one left
+   * undeclared by every module so it surfaces under "undeclared coverage"
+   * (MUF-103).
+   */
+  const repoRoot = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "documents-"));
+    roots.push(root);
+
+    mkdirSync(join(root, "sources"), { recursive: true });
+    writeFileSync(
+      join(root, "sources", "registry.yaml"),
+      [
+        "version: 1",
+        "sources:",
+        "  producto:",
+        "    name: Producto",
+        "    path: ./producto",
+        "    framework: react-vite-ts",
+        "    extract:",
+        "      tenantConfigs: src/config/*.config.ts",
+        "      components: src/components",
+        "      pages: src/pages",
+        "",
+      ].join("\n"),
+    );
+
+    const configDir = join(root, "producto", "src", "config");
+    mkdirSync(configDir, { recursive: true });
+    writeFileSync(
+      join(configDir, "mv.config.ts"),
+      'export default {\n  name: "MV",\n  canSeeBoT: true,\n}\n',
+    );
+    const componentsDir = join(root, "producto", "src", "components");
+    mkdirSync(componentsDir, { recursive: true });
+    // Declared by module 01, inside the scanned `src/components` root —
+    // joinable, and claims the gate fact it produces.
+    writeFileSync(join(componentsDir, "Panel.tsx"), 'if (config.name === "MV") show()\n');
+    // Declared by NO module — surfaces under "undeclared coverage" (MUF-103).
+    writeFileSync(join(componentsDir, "Extra.tsx"), 'if (config.name === "MV") show()\n');
+
+    mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    writeFileSync(
+      join(root, "manuals", "un-manual", "manual.config.yaml"),
+      [
+        "manual:",
+        "  id: un-manual",
+        "  title: Un Manual",
+        "  product: Producto",
+        "  contentVersion: 0.1.0",
+        "  source: producto",
+        "axes:",
+        "  tenant:",
+        "    values:",
+        "      - id: mv",
+        "        name: MV",
+        "targets:",
+        "  - tenant: mv",
+        "output:",
+        "  dir: output",
+        "  filename: x.pdf",
+        "",
+      ].join("\n"),
+    );
+    // `covered`: one joinable path (matches), one path OUTSIDE the scanned
+    // roots (unjoinable — ADR-007), one flag that matches.
+    writeFileSync(
+      join(root, "manuals", "un-manual", "sections", "01-covered.yaml"),
+      [
+        "id: s1",
+        "title: S1",
+        "children: []",
+        "documents:",
+        "  paths:",
+        "    - src/components/Panel.tsx",
+        "    - routes/AppRoutes.tsx",
+        "  flags:",
+        "    - canSeeBoT",
+        "",
+      ].join("\n"),
+    );
+    // `clean`: declares a flag absent from the capability matrix (MUF-102).
+    writeFileSync(
+      join(root, "manuals", "un-manual", "sections", "02-flag-gone.yaml"),
+      ["id: s2", "title: S2", "children: []", "documents:", "  flags:", "    - neverExistedFlag", ""].join(
+        "\n",
+      ),
+    );
+    // `unknown`: declares no `documents:` at all.
+    writeFileSync(
+      join(root, "manuals", "un-manual", "sections", "03-unknown.yaml"),
+      ["id: s3", "title: S3", "children: []", ""].join("\n"),
+    );
+
+    return root;
+  };
+
+  const runIn = async (root: string, argv: readonly string[]): Promise<number> => {
+    const cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return await run(argv);
+    } finally {
+      process.chdir(cwd);
+    }
+  };
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
   it("with no manual id falls through to usage and returns 2", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
       expect(await run(["documents"])).toBe(2);
     } finally {
       errorSpy.mockRestore();
+    }
+  });
+
+  it("MUF-101: reports a declared path gone from the product, never blocking", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["documents", "un-manual"]);
+      const printed = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
+      expect(code).toBe(0);
+      expect(printed).toContain('declared path "routes/AppRoutes.tsx" is gone from the product');
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("MUF-102: reports a declared flag absent from the capability matrix, never blocking", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["documents", "un-manual"]);
+      const printed = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
+      expect(code).toBe(0);
+      expect(printed).toContain(
+        'declared flag "neverExistedFlag" is absent from the capability matrix',
+      );
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("MUF-103: a drift fact no module declares surfaces under undeclared coverage", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["documents", "un-manual"]);
+      const printed = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
+      expect(printed).toContain("undeclared coverage");
+      expect(printed).toContain("src/components/Extra.tsx");
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("MUF-104: reports each module's baseline state, verified vs never verified", async () => {
+    const root = repoRoot();
+    stampBaseline(join(root, "manuals", "un-manual"), "producto", "sections/01-covered.yaml", {
+      productCommit: "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      verifiedAt: "2024-01-01T00:00:00.000Z",
+    });
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["documents", "un-manual"]);
+      const printed = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
+      expect(printed).toContain(
+        "sections/01-covered.yaml: covered — verified at deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+      );
+      expect(printed).toContain("sections/02-flag-gone.yaml: clean — never verified");
+      expect(printed).toContain(
+        "sections/03-unknown.yaml: unknown coverage (declares no `documents:`) — never verified",
+      );
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it('MUF-306: the three module states print, and the word "unaffected" never appears', async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["documents", "un-manual"]);
+      const printed = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
+      expect(printed).toContain("sections/01-covered.yaml: covered — never verified");
+      expect(printed).toContain("sections/02-flag-gone.yaml: clean — never verified");
+      expect(printed).toContain("sections/03-unknown.yaml: unknown coverage");
+      expect(printed).not.toContain("unaffected");
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  // Discriminating on purpose: a count-style assertion ("3 facts") would pass
+  // even if the handler printed a bare number instead of the full list MUF-306
+  // requires. This walks the exact console.log sequence and counts the
+  // 4-space-indented fact lines directly under the `unknown` module's header.
+  it("MUF-306: an unknown module repeats the full current fact list, never a bare count", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["documents", "un-manual"]);
+      const lines = logSpy.mock.calls.map((c) => String(c[0]));
+      const at = lines.findIndex((l) => l.includes("sections/03-unknown.yaml: unknown coverage"));
+      expect(at).toBeGreaterThan(-1);
+      const block: string[] = [];
+      for (let i = at + 1; i < lines.length && lines[i]?.startsWith("    "); i++) {
+        block.push(lines[i] as string);
+      }
+      // Three joinable facts exist in this fixture (2 gates + 1 capability) —
+      // the full list, one line per fact, never a count summary.
+      expect(block.length).toBe(3);
+      expect(block.some((l) => /^\s*\d+\s+facts?\b/.test(l))).toBe(false);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  // CRITICAL-1 (ADR-007): `joinCoverage` already computes `joinable`/`matched`
+  // per entry — this is the test that would have caught it being silently
+  // dropped from the printed report, never reaching an operator.
+  it("ADR-007: annotates a module whose declared paths partly lie outside the scanned roots", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["documents", "un-manual"]);
+      const printed = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
+      expect(printed).toContain(
+        "1 of this module's 2 declared paths lie outside the scanned roots " +
+          "(`src/components`, `src/pages`), so drift in them cannot be reported today",
+      );
+      expect(printed).toContain("source-extraction");
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("ADR-007: reports each entry's matched count and kind, sorted descending", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["documents", "un-manual"]);
+      const lines = logSpy.mock.calls.map((c) => String(c[0]));
+      expect(lines).toContain("    src/components/Panel.tsx (file) — 1 of 3 facts");
+      expect(lines).toContain("    canSeeBoT (flag) — 1 of 3 facts");
+      expect(lines).toContain("    routes/AppRoutes.tsx (file) — 0 of 3 facts");
+      // Descending by `matched`: the two 1-of-3 entries sort ahead of the
+      // unmatched, unjoinable 0-of-3 entry.
+      const panelAt = lines.indexOf("    src/components/Panel.tsx (file) — 1 of 3 facts");
+      const appRoutesAt = lines.indexOf("    routes/AppRoutes.tsx (file) — 0 of 3 facts");
+      expect(appRoutesAt).toBeGreaterThan(panelAt);
+    } finally {
+      logSpy.mockRestore();
     }
   });
 });

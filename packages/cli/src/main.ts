@@ -44,7 +44,7 @@ import {
   type ManualWideFact,
   type PreviousMap,
 } from "./extract.ts";
-import { joinCoverage, type ModuleInput } from "./coverage.ts";
+import { joinCoverage, type EntryMatch, type ModuleInput } from "./coverage.ts";
 import { soleAxis } from "./axis.ts";
 import { commitFile, headCommit, isDirty } from "./git.ts";
 import { readBaselines, stampBaseline } from "./baselines.ts";
@@ -2050,6 +2050,32 @@ ${drift.length} change(s) since the previous map:`);
       return 0;
     }
 
+    /**
+     * ADR-007: `N of this module's M declared paths lie outside the scanned
+     * roots …, so drift in them cannot be reported today`. `undefined` when
+     * every declared path is joinable — flags are always joinable (a
+     * capability fact never comes from a scanned file), so they never
+     * contribute to this count.
+     */
+    function unjoinableNote(entries: readonly EntryMatch[], scanRoots: readonly string[]): string | undefined {
+      const pathEntries = entries.filter((e) => "path" in e.entry);
+      const unjoinable = pathEntries.filter((e) => !e.joinable);
+      if (unjoinable.length === 0) return undefined;
+      const roots = scanRoots.map((root) => `\`${root}\``).join(", ");
+      return (
+        `${unjoinable.length} of this module's ${pathEntries.length} declared paths lie ` +
+        `outside the scanned roots (${roots}), so drift in them cannot be reported today ` +
+        "— see `source-extraction`, steps 3 and 5."
+      );
+    }
+
+    /** `src/render/components/ (directory) — 48 of 61 facts` (ADR-007). */
+    function describeEntry(entry: EntryMatch, totalFacts: number): string {
+      const label =
+        "flag" in entry.entry ? `${entry.entry.flag} (flag)` : `${entry.entry.path} (${entry.entry.kind})`;
+      return `${label} — ${entry.matched} of ${totalFacts} facts`;
+    }
+
     if (command === "documents") {
       // Reports, never blocks (ADR-008): the join is read-only, and every
       // finding below is something for a human to decide, never a build
@@ -2133,7 +2159,18 @@ ${drift.length} change(s) since the previous map:`);
           continue;
         }
         console.log(`  ${m.module}: ${m.state} — ${baseline}`);
+        // ADR-007: a module whose declared paths are partly (or entirely)
+        // outside the scanned roots must never read as unqualified `clean` —
+        // this leads a `clean` module with no joinable entry at all.
+        const note = unjoinableNote(m.entries, scanRoots);
+        if (note) console.log(`    ${note}`);
         for (const fact of m.facts) console.log(`    ${describeDrift(fact)}`);
+        // ADR-007: every entry is reported with its matched count and its
+        // kind, sorted descending, so an over-broad declaration is legible —
+        // a number beside a total is a judgement the reader can make and a
+        // constant in the code cannot.
+        const sortedEntries = [...m.entries].sort((a, b) => b.matched - a.matched);
+        for (const entry of sortedEntries) console.log(`    ${describeEntry(entry, joinable.length)}`);
       }
 
       if (report.undeclared.length > 0) {
