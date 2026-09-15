@@ -422,7 +422,7 @@ subordinate to them.
 
 *Reconciled 2026-09-11: an earlier revision of this requirement asked for a
 `text` field on the fact, contradicting ADR-004. ADR-004 wins, for the reasons
-stated above. The implementation in commit `6b89d43` follows ADR-004.*
+stated above. The implementation in commit `c043226` follows ADR-004.*
 
 **MUF-302 — `diffMaps` is `diffFacts(...).map(describe)`, byte-identical.**
 Every existing `diffMaps` test in `packages/cli/src/extract.test.ts` passes
