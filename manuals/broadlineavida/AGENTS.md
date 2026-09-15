@@ -38,10 +38,15 @@ row, the step, the fragment.
 | Route-level gating | `AppRoutes.tsx` → `allowedProjects` |
 | Element-level gating | Inline tenant comparisons in components |
 | Exact UI wording | i18n catalogue (`locales/translations/es.json`) |
+| Which product paths a module documents | that section's `documents:` |
 
-All of it reaches content through `knowledge/module-map.json`. Never read the
-product's source to write a sentence — read the map, and fix the extractor if
-the map is missing something.
+All of it reaches content through `knowledge/module-map.json`, with one
+exception: `documents:` declares which product paths and flags a module
+CLAIMS to cover, never a fact the content itself asserts, so it is not read
+off the map — it is a section's own declaration, checked against the map's
+facts by `broadsec-manual documents <manual>`. Never read the product's
+source to write a sentence — read the map, and fix the extractor if the map
+is missing something.
 
 ## Which images the product ships — read this before requesting captures
 

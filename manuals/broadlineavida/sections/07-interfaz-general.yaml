@@ -12,6 +12,14 @@ id: interfaz-general
 title: Interfaz General
 subtitle: Componentes del Home
 
+# Resolved through knowledge/module-map.json's `references[].file`, which
+# names `src/render/components/LayersMap.tsx` for every row-level citation
+# below — never by reading the product for this seeding (design ADR-010).
+sourceBase: src/render/
+documents:
+  paths:
+    - components/LayersMap.tsx
+
 children:
   - id: interfaz-general.intro
     type: prose

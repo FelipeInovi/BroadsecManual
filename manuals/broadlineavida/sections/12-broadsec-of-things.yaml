@@ -24,6 +24,23 @@ subtitle: Gestión de dispositivos en campo
 when:
   tenant: [mv, demo]
 
+# Resolved from the header's source list (lines 8-11), not from the product:
+# `AppRoutes.tsx` -> sources/registry.yaml:27 (extract.routes); the PMV and
+# BoT page paths -> sources/registry.yaml:32 (extract.pages); the i18n file ->
+# sources/registry.yaml:30 (extract.i18n). Design ADR-010 records that
+# `routes/AppRoutes.tsx` and `locales/translations/es.json` lie outside the
+# two scanned roots (`components/`, `pages/`) and so are UNJOINABLE — expected,
+# not a defect; `documents <manual>` annotates it. No `flags:` declared here:
+# whether this module documents `canSeeBoT` is a content judgement left to
+# whoever re-grounds the module (design ADR-010, "What could not be determined").
+sourceBase: src/render/
+documents:
+  paths:
+    - routes/AppRoutes.tsx
+    - pages/PMV/PMVPage.tsx
+    - pages/BroadsecOfThings/*.tsx
+    - locales/translations/es.json
+
 children:
   - id: bot.intro
     type: prose

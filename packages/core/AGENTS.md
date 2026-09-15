@@ -10,7 +10,7 @@ The pipeline engine: everything between authored content and a renderer.
 | `condition` | Drop nodes whose `when` selector excludes the build target |
 | `resolve` | Assign numbering, resolve `ref` targets and `uiLabel` keys |
 | `validate` | Enforce the invariants; report actionable errors |
-| `drift` | Compare declared facts against the extracted `module-map.json` |
+| `documents` | A section's `documents:` key — which product paths and flags it claims — is parsed here. The join against the extracted `module-map.json`'s facts does NOT happen here: `packages/extract` cannot import `core`, so the join lives in `packages/cli/src/coverage.ts` |
 
 Output is a `ResolvedManual`. Renderers take it from there.
 

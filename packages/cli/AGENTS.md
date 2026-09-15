@@ -12,8 +12,8 @@ renderer reaching for the manual's data. A renderer that opens anything under
 
 ## Commands
 
-There are **four**. The dispatch is `main.ts:854` — treat it, not this table, as
-the authority if they ever disagree.
+There are **eleven**. The dispatch is `run` at `main.ts:1862` — treat it, not
+this table, as the authority if they ever disagree.
 
 | Command | Does |
 |---|---|
@@ -25,10 +25,12 @@ the authority if they ever disagree.
 | `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
 | `awaiting <manual>` | Write `awaiting-product.json`: the parts of the product that are on screen but unfinished, which the manual documents around without naming. Declared by a section's `pending` list — never rendered |
 | `labels <manual>` | Hold every UI label the manual QUOTES against the line it was copied from, per a section's `labels` list. Needs the source checked out; reports, never blocks |
+| `documents <manual>` | Hold every module's declared `documents:` (paths and flags) against the checked-out product and the extracted drift: reports declared-but-gone entries, drifted-but-undeclared facts, each module's `covered`/`clean`/`unknown` state, per-entry match counts, and an annotation for any entry outside the scanned roots. Needs the source checked out; reports, never blocks; writes nothing |
 | `verified <manual> --module <sections/NN-....yaml>` | Record which product commit ONE module was verified against, in `manuals/<manual>/baselines.json`. Refuses on a dirty or unreadable product checkout, or an unknown `--module`, writing nothing either way. No `--all` — one run stamps exactly one module |
 
 Every command takes the axis filters `[--tenant <id>] [--axis <name>=<value> …]`
-except `extract`, which is per-manual and not per-target.
+except `extract`, `documents` and `verified`, which are per-manual — and, for
+`verified`, per-module via `--module` — rather than per-target.
 
 | Flag | On | Does |
 |---|---|---|
@@ -45,6 +47,12 @@ except `extract`, which is per-manual and not per-target.
 which reports the diff against the previous map. `catalog` was to serve the
 block gallery; the gallery ships instead as the manual `manuals/_catalog`, built
 by `build` like any other.
+
+`documents` is **not** `coverage`. `coverage` was designed to answer three
+questions this repository never built the code for — dead content, thin
+tenants, cross-target references — and stays unbuilt and unclaimed. `documents`
+answers a different question: whether a module's declared `documents:` still
+matches the product. Do not read its shipping as `coverage` having shipped.
 
 Do not re-add any of them to this table before the code exists. A command table
 that lists intentions is how an agent ends up invoking a command that is not

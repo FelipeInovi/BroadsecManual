@@ -177,9 +177,19 @@ flags, and deployment gates. A gate is identified by file, deployment codes and
 kind — **never by line or text**, so moving a gate down the file or rewording a
 line that decides the same thing reports nothing. What it reports is a gate
 appearing, disappearing, or changing polarity, which is the case that most
-directly invalidates tenant tagging already written.
+directly invalidates tenant tagging already written. `diffMaps` is built from
+`diffFacts`, the same structured drift at fact granularity — `diffMaps` is
+`diffFacts(...).map(describeDrift)`, so the two never disagree.
 
 Modules and elements are not compared, because they are not emitted.
+
+**This diff is not the end of the story for a manual that already has
+content.** A raw drift list tells you the product changed; it does not tell
+you which module that change belongs to, or whether anyone already looked at
+it. That join — declared coverage, per-module baselines, the order in which to
+extract, decide and stamp — is a separate procedure, owned by the
+`manual-update` skill. Extracting a fresh map is step one of that procedure,
+not the whole of it.
 
 ## Output shape
 

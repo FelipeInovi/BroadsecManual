@@ -35,6 +35,11 @@ source repo  ──▶  knowledge  ──▶  content  ──▶  render
    references, and assigns all numbering.
 4. **Render** — the resolved AST goes to a target renderer.
 
+A **module** is one `sections/<name>.yaml` file — the unit a section's
+`documents:` key declares coverage for, `verified` stamps a baseline against,
+and the wizard's update flow scopes an edit to. See `packages/cli/AGENTS.md`
+for the commands that operate on it.
+
 ## The four invariants
 
 These are the load-bearing rules of the whole system. Breaking any one of them
@@ -86,7 +91,7 @@ packages/
   render-docx/      AST → .docx
   render-pdf/       Unused — read its AGENTS.md before touching it
   catalog/          Unused — the gallery ships today as `manuals/_catalog`
-  cli/              broadsec-manual build | images | capture | extract
+  cli/              broadsec-manual — eleven commands, see packages/cli/AGENTS.md
 skills/             Agent Skills (agentskills.io spec) — portable, vendor-neutral
 ```
 
@@ -109,11 +114,11 @@ pnpm type-check          # tsc --noEmit across the workspace
 pnpm test                # vitest
 ```
 
-The CLI lives in `packages/cli`. Four commands take a manual id — `build`,
-`images`, `capture`, `extract` — and run as
-`node packages/cli/src/main.ts <command> <manual>`.
+The CLI lives in `packages/cli`. Eleven commands take a manual id and run as
+`node packages/cli/src/main.ts <command> <manual>` — see `packages/cli/AGENTS.md`
+for the full table rather than a second copy of it here.
 
-A fifth, `new`, takes none. It is an interactive wizard a person runs to start
+A twelfth, `new`, takes none. It is an interactive wizard a person runs to start
 or resume a manual: it collects what the repository cannot derive, assembles a
 prompt, and hands that off. Nothing downstream invokes it, and the prompt it
 produces reads as if a human wrote it — so an agent receiving that prompt needs

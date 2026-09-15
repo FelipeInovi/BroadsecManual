@@ -23,8 +23,10 @@ A module that names six sections and explains two is not a partial module — it
 is a broken one. The reader cannot tell that four sections were skipped; they
 conclude those sections do not matter, or that the manual is wrong.
 
-Before writing, list the submodules from `knowledge/module-map.json` (or, until
-the map exists, from the product's own navigation). That list is the checklist.
+Before writing, list the submodules from the product's own navigation.
+`knowledge/module-map.json` does not emit a module or element list today — see
+`source-extraction`, step 6: "Modules and elements are not compared, because
+they are not emitted" — so the navigation, not the map, is the checklist.
 Cover it or state explicitly why an item is out of scope.
 
 ## Every module and every submodule opens with an overview figure

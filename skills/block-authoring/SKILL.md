@@ -90,6 +90,11 @@ Only if you own the catalogue, and only after the structure is agreed. The
 catalogue is closed — nine types, decided in this repository — so a tenth is a
 versioned change to a contract every manual depends on, never a convenience.
 
+This closed-catalogue rule governs **blocks**. A section's file-level keys —
+`pending`, `labels`, `sourceBase`, `documents` — are not blocks: they are
+things a content file says about itself, parsed outside the AST, and adding
+one is a `core`/`cli` change, not a catalogue change.
+
 1. One file per type in `packages/blocks/src/catalog/`.
 2. Fully specified Zod schema. No `z.any()`.
 3. A `description` written for whoever must choose between block types.
