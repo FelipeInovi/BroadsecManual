@@ -1,6 +1,6 @@
 ---
 name: manual-update
-description: Procedure for updating a manual that already exists against product drift — extract a fresh module map, surface which modules a change touches through their `documents:` declarations, decide per module, then stamp only that module's baseline. Use when a product has changed since a manual was last verified, when asked to "update module N" or "check a manual for drift", when running `extract`/`documents`/`verified` on an existing manual, or when the wizard's update flow hands off a scoped prompt.
+description: Procedure for updating a manual that already exists against product drift — surface which modules a change touches through their `documents:` declarations, decide per module, then stamp only that module's baseline. `extract` (refreshing the whole-manual module map) is a separate, deliberate act and does not belong in this per-module loop. Use when a product has changed since a manual was last verified, when asked to "update module N" or "check a manual for drift", when running `extract`/`documents`/`verified` on an existing manual, or when the wizard's update flow hands off a scoped prompt.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
@@ -16,12 +16,29 @@ it documents has moved on. It does not cover getting facts out of the product
 
 ## The one rule everything below follows
 
-**extract → surface drift → decide per module → stamp that module.**
+**documents (surfaces drift) → decide per module → stamp that module.**
 
 There is no shortcut past "decide". Nothing in this pipeline can stamp a
 module's baseline without a preceding read of its current drift, and no
 command stamps more than one module per run. Skipping the decision is not
 possible by construction — see `packages/cli/AGENTS.md`'s `verified` row.
+
+`extract` is **not** in that sequence. Refreshing `knowledge/module-map.json`
+is a separate, deliberate, whole-manual act — never a step you run on the way
+to updating one or a few modules. `extract` rewrites the map for every module
+at once, so running it in the middle of a scoped update overwrites the
+persisted map with the post-edit state and silently discards the drift every
+other, not-yet-reviewed module was carrying. Run it on its own, when you
+specifically want a fresh map for the whole manual, and treat everything
+below as starting from whatever map already exists on disk.
+
+*Corrected 2026-09-15: this rule previously opened with `extract`, and step 1
+below instructed running it before `documents`. Found empirically — running
+that exact sequence for a single-module update left `documents` reporting
+zero drift for every module afterward, because `extract` had already
+overwritten the map with the fresh, post-edit state. See
+`openspec/changes/manual-update-flow/spec.md`'s reconciliation ruling 5 and
+`openspec/changes/manual-update-flow/design.md` ADR-009 item 4.*
 
 ## Vocabulary
 
@@ -35,17 +52,7 @@ possible by construction — see `packages/cli/AGENTS.md`'s `verified` row.
 
 ## The procedure
 
-### 1. Extract
-
-```
-node packages/cli/src/main.ts extract <manual>
-```
-
-Regenerates `knowledge/module-map.json` and reports what changed since the
-last map. Writes no baseline — see `source-extraction` for what this step
-actually does and its hard rules (read-only, provenance, never infer gating).
-
-### 2. Surface drift, per module
+### 1. Surface drift, per module
 
 ```
 node packages/cli/src/main.ts documents <manual>
@@ -55,7 +62,8 @@ Reports, for every module: `covered` (declares `documents:` and at least one
 drift fact matched), `clean` (declares `documents:`, nothing matched), or
 `unknown` (declares no `documents:` — the full current drift list prints
 under it, never a bare count). Also reports declared-but-gone paths and flags,
-and drift nobody declared ("undeclared coverage").
+and drift nobody declared ("undeclared coverage"). Read-only — it never
+touches `knowledge/module-map.json`.
 
 **Read the unjoinable-entry annotation before trusting a `clean` module.** The
 extractor scans only two roots (components, pages). A module whose declared
@@ -68,7 +76,7 @@ A directory or glob entry with a high `matched` count relative to the
 module's total facts is a coarse declaration, not necessarily real coverage —
 the report sorts entries by match count for exactly this judgement.
 
-### 3. Decide, per module
+### 2. Decide, per module
 
 This is a human judgement, not a command. For each module `documents` flagged
 (covered, or undeclared coverage that should belong to it), read the actual
@@ -86,7 +94,7 @@ drift and decide: does this change the manual's content?
   `sources/registry.yaml`'s `extract` paths, never by reading the product
   directly for this step.
 
-### 4. Stamp, only the module just decided
+### 3. Stamp, only the module just decided
 
 ```
 node packages/cli/src/main.ts verified <manual> --module sections/NN-....yaml
@@ -98,13 +106,34 @@ only after the drift for that specific module has actually been read and
 acted on; stamping is a record that a human looked, not a formality to clear
 after any edit.
 
+## Refreshing the map (separate, whole-manual — not part of the loop above)
+
+```
+node packages/cli/src/main.ts extract <manual>
+```
+
+Regenerates `knowledge/module-map.json` for the WHOLE manual and reports what
+changed since the last map. Writes no baseline — see `source-extraction` for
+what this step actually does and its hard rules (read-only against the
+product, provenance, never infer gating).
+
+**Never run this in the middle of a per-module update.** It rewrites the
+persisted map for every module at once, so a `documents <manual>` run
+immediately after will compare against the just-regenerated map — meaning
+any module you have not yet reviewed loses its drift silently, not just the
+one you are working on. Run it on its own, before starting a session of
+per-module updates if you suspect the map is stale, never between step 1 and
+step 3 above.
+
 ## Using the wizard
 
 `pnpm manuales` → the update flow offers a scope step: the whole manual, or
 one `sections/*.yaml` file, each option showing that module's baseline and
-`documents:` coverage state (read from disk, no extraction run). The
-assembled prompt still tells the receiving agent to run steps 1–2 itself
-before editing anything — the wizard points, it does not run `extract`.
+`documents:` coverage state (read from disk, no extraction run). For a
+module-scoped update, the assembled prompt tells the receiving agent to run
+`documents <manual>` — never `extract` — as its first act, and explains why
+`extract` is out of scope; the wizard points, it does not run either
+command itself.
 
 ## What this skill does not cover
 

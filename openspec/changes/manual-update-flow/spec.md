@@ -48,6 +48,19 @@ at the original `sdd-spec`/`sdd-design` parallel run):
    separate "N manual-wide change(s):" heading instead. Reconciled inline at
    MUF-303 and MUF-305, this revision.
 
+A fifth correction is not a spec/design divergence at all — spec, design and
+the harness all agreed on the same wrong prescription, and the owner found it
+empirically by running the flow, not by comparing documents:
+
+5. **Per-module update ordering** (§6, MUF-503, MUF-504, MUF-506) — an
+   earlier revision instructed the agent to run `extract` before `documents`
+   as a scoped update's first acts. Running that sequence live showed
+   `extract` overwrites `knowledge/module-map.json` for the whole manual,
+   discarding the unread drift of every module not being edited in that run.
+   `documents` — read-only, and the command that joins drift to a module —
+   must run first, and `extract` does not belong in the per-module loop at
+   all. Corrected inline at MUF-503, MUF-504 and MUF-506, this revision.
+
 This document specifies WHAT must be true after `manual-update-flow` lands. It
 does not choose data structures, function names, or file layouts inside
 `packages/` — that is `sdd-design`'s job. Where a requirement needs a concrete,
@@ -632,7 +645,8 @@ only (MUF-202), no `extract` run.
 existing contract that "it POINTS; it does not instruct"
 (`wizard.ts:333-348`, cited in proposal §3.6): no step in `updateFlow` invokes
 `extract`. The assembled prompt (MUF-504) instructs the agent to run
-`extract` and `documents` as its own first act.
+`documents` as its own first act — never `extract`, which the reconciled
+MUF-504 below excludes from a scoped update entirely.
 
 > Given the wizard's scope step is displayed
 > When it renders every module's baseline and coverage detail
@@ -654,7 +668,20 @@ existing call compiles and every existing assertion
 > Given `assembleUpdatePrompt(state, "x", "sections/09-security-dashboard.yaml")`
 > When it runs
 > Then the assembled prompt names that module specifically as the scope, and
-> instructs the agent to run `extract` and `documents` before editing.
+> instructs the agent to run `documents` — never `extract` — before editing.
+
+*Reconciled 2026-09-15: an earlier revision of this scenario, and of MUF-503
+and MUF-506, instructed the agent to run `extract` before `documents` as the
+per-module update's first acts. Corrected after the owner ran the flow live:
+`extract` regenerates `knowledge/module-map.json` for the WHOLE manual on
+every run, so invoking it inside a single-module update overwrites the
+persisted map with the fresh one and silently discards the unread drift of
+every OTHER module — observed directly, a `documents <manual>` run
+immediately after an `extract` reported zero drift for all ten modules, not
+only the one being edited. `documents` is read-only and is the command that
+joins drift to a module, so it must run first; `extract` is a deliberate,
+manual-wide refresh and does not belong in a scoped update's loop at all.
+See `skills/manual-update/SKILL.md` for the corrected procedure.*
 
 **MUF-505 — a module with a `null` baseline or no `documents:` is presented,
 never hidden or skipped.** Every module appears as a selectable option
@@ -667,10 +694,10 @@ regardless of its baseline or coverage state; MUF-502's wording rule
 > plainly.
 
 **MUF-506 — empty drift is stated, not hidden.** When the assembled prompt's
-instruction to run `extract`/`documents` would (per the agent's own run)
-encounter zero drift for the chosen scope, the wizard-authored parts of the
-prompt say so is possible and expected — the prompt never asserts drift
-exists. (The wizard itself never runs `extract`, so it cannot know in
+instruction to run `documents` would (per the agent's own run) encounter
+zero drift for the chosen scope, the wizard-authored parts of the prompt say
+so is possible and expected — the prompt never asserts drift exists. (The
+wizard itself never runs `extract` or `documents`, so it cannot know in
 advance whether drift will be empty; this requirement is about the prompt's
 wording not presupposing non-empty drift, not about the wizard computing the
 answer.)
@@ -835,3 +862,4 @@ is named as such rather than smuggled in here.
 | ~~S-1's classification grammar is a spec-time addition, not literally in the proposal~~ — RESOLVED, superseded | The orchestrator ruled `sdd-design`'s ADR-002 mapping schema (`paths:`/`flags:` sub-keys) wins over this spec's original flat-list-by-shape grammar. This revision carries that schema into S-1 and MUF-001/003/004. No longer an open divergence |
 | MUF-304 (multi-module match reporting) specifies "report under every matching module plus a note," but the proposal's own Risk row 4 only commits to "report the match count per entry" — this spec's phrasing is a reasonable but not verbatim reading | Design phase should confirm the exact reporting shape against proposal Risk row 4 |
 | ~~MUF-303/MUF-305 filed every `axis-value` fact under "undeclared coverage", contradicting ADR-004's `ManualWideFact` exclusion~~ — RESOLVED, design wins (ruling 4) | Found by the change-level verify gate, unreconciled at the time. ADR-004 wins for the reason recorded at MUF-303's and MUF-305's inline "Reconciled" notes; the shipped code (`main.ts:2143-2145`) already prints axis-value facts under "N manual-wide change(s):", never "undeclared coverage". `main.test.ts` now pins the routing end-to-end |
+| ~~MUF-503/MUF-504/MUF-506 instructed a scoped update to run `extract` before `documents`~~ — RESOLVED, corrected empirically (ruling 5) | Found by the owner running the wizard's own prescribed sequence live: `extract` rewrites `knowledge/module-map.json` for the whole manual, so running it inside a single-module update discarded every other module's unread drift. None of the four fresh-context gates this change already passed caught it, because each exercised `documents` in isolation rather than the documented sequence. `wizard.test.ts` now pins `documents` before `verified` and forbids `extract` preceding `documents` |

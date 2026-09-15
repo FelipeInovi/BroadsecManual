@@ -791,12 +791,26 @@ off disk, never a restatement of a rule that lives in an `AGENTS.md` or a skill.
    never has been. Read off disk, not asserted.
 3. **Whether that module declares `documents:`**, and if not, that its coverage
    is **unknown** — explicitly not "unaffected".
-4. **The ordering, as the agent's first act**: run `extract <manual>`, then
-   `documents <manual>`, and read the drift before editing anything. The wizard
-   does not run `extract` itself: `readManualStates` is disk-only
-   (`wizard.ts:259-302`, touching the map only via `existsSync` at `:294`), and a
-   mutating extraction inside a picker is the ordering hazard itself
-   (`explore.md:251-267`).
+4. **The ordering, as the agent's first act**: run `documents <manual>` and
+   read that module's drift before editing anything. The wizard does not run
+   `extract` or `documents` itself: `readManualStates` is disk-only
+   (`wizard.ts:259-302`, touching the map only via `existsSync` at `:294`).
+   `extract` does **not** belong in this per-module sequence at all — it
+   rewrites `knowledge/module-map.json` for the WHOLE manual, so running it
+   inside a scoped update discards the unread drift of every other module.
+   Refreshing the map is a deliberate, manual-wide act, never a step a scoped
+   update's prompt should instruct.
+
+   *Corrected 2026-09-15: this item originally read "run `extract <manual>`,
+   then `documents <manual>`", i.e. `extract` as the agent's first act. Found
+   empirically — the owner ran that exact sequence for a single-module
+   update and a following `documents <manual>` reported no drift at all, for
+   every module, because `extract` had already overwritten the map with the
+   post-edit state. `documents` is the read-only command that joins drift to
+   a module, so it runs alone as the first act; `extract` is out of the
+   per-module loop entirely, not merely reordered. See
+   `skills/manual-update/SKILL.md` for the corrected procedure and
+   `openspec/changes/manual-update-flow/spec.md` reconciliation ruling 5.*
 5. **The stamping rule**: `verified <manual> --module <file>` is the last act,
    only for the module whose drift was actually addressed, and only if the owner
    has seen it. Proposing a stamp nobody has seen is the same class of act as
@@ -818,8 +832,9 @@ The new commands' own output is English, matching `extract` and `labels`
 `assembleUpdatePrompt` assertions (`:1109-1180`) pass untouched, proving the
 third parameter is optional; new assertions that a `module` scope names the file
 and never a number, that an undeclared module's prompt says `unknown` and never
-`unaffected`, and that the prompt names `extract` before `documents` before
-`verified`. `readModuleStates` gets its own describe block beside
+`unaffected`, and that the prompt names `documents` before `verified` and never
+instructs `extract` to run before `documents` (corrected 2026-09-15 — see item 4
+above). `readModuleStates` gets its own describe block beside
 `readManualStates` (`:435`), including a section file with an invalid block prop,
 which it must survive.
 
@@ -1054,6 +1069,7 @@ stall after 4 leaves a working report and an unseeded manual, which reports
 | Commit 4 touches `wizard.ts`, where the whole creation flow lives | commit 4 | optional third parameter, so no existing caller changes; the four existing assertions are the pin |
 | Commit 4 exceeds 400 lines | commit 4 | the 4a/4b split is pre-decided above |
 | The `documents` rename (D1) diverges from the proposal's success criteria | review | flagged in §0 with an exact revert cost |
+| ~~ADR-009 item 4 told the assembled prompt to run `extract` before `documents` as a scoped update's first act~~ — RESOLVED, corrected empirically | live use, all four per-phase gates and the change-level verify gate | none caught it at design/review time, because every gate exercised `documents` in isolation; found only by running the prescribed sequence against a real manual. Corrected in ADR-009 item 4, `wizard.ts`'s scope block, `wizard.test.ts`'s ordering assertion, and `skills/manual-update/SKILL.md` — 2026-09-15 |
 
 ## 7. What could not be determined
 

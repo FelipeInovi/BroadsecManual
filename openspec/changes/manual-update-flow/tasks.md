@@ -145,6 +145,65 @@ Verify (fresh-context, this batch): `pnpm test` 840/840, `pnpm -r type-check`
 9/9, both green. `git status --short` shows only the intended files. No push,
 no PR, no merge — `main` stays parked at `adbe8ee`.
 
+## Phase 7 — Remediation commit: a post-verify defect none of the four gates caught
+
+Found by the owner, live, running the exact sequence the change's own
+documentation prescribed: `node packages/cli/src/main.ts documents
+broadlineavida` reported 3 undeclared-coverage facts; `extract broadlineavida`
+printed the same 3 facts AND overwrote `knowledge/module-map.json`;
+`documents broadlineavida` immediately after reported **nothing at all, for
+every module** — `extract` had already stamped the map with the post-drift
+state, so the next diff was empty. Two shipped artifacts told the operator to
+run exactly that destructive sequence: `wizard.ts`'s assembled per-module
+prompt (`extract` then `documents`) and `skills/manual-update/SKILL.md`'s
+one-line procedure and numbered steps (same order).
+
+- [x] 7.1 **Lesson, recorded plainly**: four fresh-context gates (Phases 1-4's
+  per-phase gates plus the change-level verify gate before archive) all
+  exercised `documents` in isolation. None of them ran the sequence the
+  change's own documentation told an operator to run. A gate that checks a
+  command's own correctness is not the same as a gate that checks whether the
+  *documented procedure* is safe to follow — this defect lived entirely in
+  the second category, and nothing in this change's review process targeted
+  it.
+- [x] 7.2 Fixed the order and removed `extract` from the per-module loop
+  entirely (not merely reordered — `extract` rewrites the map for the WHOLE
+  manual, so it cannot run inside a scoped update without discarding drift
+  for every module not being edited): `packages/cli/src/wizard.ts`'s
+  `scopeBlock` now instructs `documents <manual>` as the first act and
+  explicitly says `extract` does not belong in this flow.
+- [x] 7.3 RED — `packages/cli/src/wizard.test.ts`'s `"the optional scope
+  parameter (ADR-009)"` describe block had an assertion pinning the WRONG
+  order (`extract` → `documents` → `verified`). Rewrote it to pin
+  `documents` before `verified` and to fail if `extract` is ever instructed
+  to run before `documents`; observed genuine RED against the unmodified
+  `wizard.ts` — `AssertionError: expected false to be true` at the
+  `extractAt === -1 || extractAt > documentsAt` assertion (`extract` was
+  found before `documents`, confirming the old prescription).
+- [x] 7.4 GREEN — after the `wizard.ts` fix, the same test and the full
+  `wizard.test.ts` file (157 tests) pass.
+- [x] 7.5 `skills/manual-update/SKILL.md` — rewrote the one-line procedure and
+  renumbered the steps: `documents` → decide → stamp is the per-module loop;
+  `extract` moved to its own "Refreshing the map (separate, whole-manual)"
+  section with an explicit warning against running it mid-update, plus an
+  updated frontmatter `description` and "Using the wizard" section.
+- [x] 7.6 Swept for other artifacts prescribing the same order:
+  `openspec/changes/manual-update-flow/spec.md` (MUF-503/504/506, corrected
+  inline, plus reconciliation ruling 5 and a new Risks row),
+  `openspec/changes/manual-update-flow/design.md` (ADR-009 item 4, its
+  "Tests" paragraph, and a new Risks row), and `manuals/AGENTS.md`'s
+  `manual-update` row (the ordering summary and the `extract`-is-separate
+  clarification). `packages/cli/AGENTS.md`, the root `AGENTS.md`, and the
+  other eight skills were checked and did not prescribe this order.
+- [x] 7.7 Live verification against `broadlineavida` with the corrected
+  sequence, reverted before commit (see report for the exact output).
+
+Verify (this batch): `pnpm test` 840/840, `pnpm -r type-check` 9/9, both
+green. `documents broadlineavida` confirmed to still report the same 3
+capability facts after the fix, with any map write reverted via
+`git checkout --` and `git status` clean before commit. No push, no PR, no
+merge — `main` stays parked at `adbe8ee`.
+
 ## Dependencies
 
 Phase 1 ⟂ Phase 2 (parallel-safe, no shared files) → Phase 3 (needs 1) →

@@ -1242,14 +1242,20 @@ describe("assembleUpdatePrompt", () => {
       expect(p).not.toContain("unaffected");
     });
 
-    it("orders the agent's first acts extract, then documents, then verified", () => {
+    it("orders the agent's first act as documents, never extract, and stamps last with verified", () => {
       const p = assembleUpdatePrompt(state, "x", moduleScope);
-      const extractAt = p.indexOf("extract");
       const documentsAt = p.indexOf("documents");
       const verifiedAt = p.indexOf("verified");
-      expect(extractAt).toBeGreaterThan(-1);
-      expect(extractAt).toBeLessThan(documentsAt);
+      const extractAt = p.indexOf("extract");
+      expect(documentsAt).toBeGreaterThan(-1);
+      expect(verifiedAt).toBeGreaterThan(-1);
       expect(documentsAt).toBeLessThan(verifiedAt);
+      // `extract` left the per-module loop — it rewrites the whole-manual
+      // map and would discard drift for every module not yet reviewed — so
+      // it must never be instructed to run before `documents` in a scoped
+      // update. It may still be mentioned afterward (to warn the agent off
+      // it), but never as the first act.
+      expect(extractAt === -1 || extractAt > documentsAt).toBe(true);
     });
 
     it("produces byte-identical output for the default (whole-manual) scope", () => {
