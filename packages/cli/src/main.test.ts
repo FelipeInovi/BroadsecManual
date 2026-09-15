@@ -1182,6 +1182,44 @@ describe("documents <manual>", () => {
       logSpy.mockRestore();
     }
   });
+
+  // CRITICAL-1 (ADR-004, spec MUF-303/MUF-305): an `axis-value` fact is a
+  // `ManualWideFact` — it has neither a `file` nor a `flag`, so no module's
+  // `documents:` can ever join it, and ADR-004 excludes `ManualWideFact`
+  // structurally from `CoverageReport.undeclared`. It must print under its
+  // own "N manual-wide change(s):" heading, never under "undeclared
+  // coverage". This fixture's product has one tenant config (`mv.config.ts`)
+  // and no prior `knowledge/module-map.json`, so `diffFacts` reports an
+  // `axis-value: "added"` fact for `mv` on every run in this describe block —
+  // exercised here for the first time; no earlier test named it.
+  it("CRITICAL-1 (ADR-004): an axis-value fact prints under manual-wide, never under undeclared coverage", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["documents", "un-manual"]);
+      const lines = logSpy.mock.calls.map((c) => String(c[0]));
+
+      const manualWideAt = lines.findIndex((l) => l.includes("manual-wide change(s):"));
+      expect(manualWideAt).toBeGreaterThan(-1);
+      expect(lines[manualWideAt + 1]).toBe("  tenant added: mv");
+
+      // Discriminates the routing rather than merely asserting presence: the
+      // old (contradicted) spec reading would print this same line under
+      // "undeclared coverage" instead, and `printed.includes("tenant added:
+      // mv")` alone would pass either way. Walk the "undeclared coverage"
+      // block specifically and assert the fact is absent from it.
+      const undeclaredAt = lines.findIndex((l) => l.includes("fact(s) under undeclared coverage:"));
+      if (undeclaredAt > -1) {
+        const undeclaredBlock: string[] = [];
+        for (let i = undeclaredAt + 1; i < lines.length && lines[i]?.startsWith("  "); i++) {
+          undeclaredBlock.push(lines[i] as string);
+        }
+        expect(undeclaredBlock).not.toContain("tenant added: mv");
+      }
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
 });
 
 describe("usage text", () => {

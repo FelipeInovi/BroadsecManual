@@ -12,7 +12,7 @@ renderer reaching for the manual's data. A renderer that opens anything under
 
 ## Commands
 
-There are **eleven**. The dispatch is `run` at `main.ts:1862` — treat it, not
+There are **eleven**. The dispatch is `run` at `main.ts:1884` — treat it, not
 this table, as the authority if they ever disagree.
 
 | Command | Does |
@@ -25,8 +25,9 @@ this table, as the authority if they ever disagree.
 | `extract <manual>` | Read the source product and regenerate `knowledge/module-map.json`, reporting what changed since the last map |
 | `awaiting <manual>` | Write `awaiting-product.json`: the parts of the product that are on screen but unfinished, which the manual documents around without naming. Declared by a section's `pending` list — never rendered |
 | `labels <manual>` | Hold every UI label the manual QUOTES against the line it was copied from, per a section's `labels` list. Needs the source checked out; reports, never blocks |
-| `documents <manual>` | Hold every module's declared `documents:` (paths and flags) against the checked-out product and the extracted drift: reports declared-but-gone entries, drifted-but-undeclared facts, each module's `covered`/`clean`/`unknown` state, per-entry match counts, and an annotation for any entry outside the scanned roots. Needs the source checked out; reports, never blocks; writes nothing |
+| `documents <manual>` | Hold every module's declared `documents:` (paths and flags) against the checked-out product and the extracted drift: reports declared-but-gone entries, drifted-but-undeclared facts, each module's `covered`/`clean`/`unknown` state, per-entry match counts, and an annotation for any entry outside the scanned roots. A drift fact with neither a file nor a flag (an axis added or removed) is manual-wide — reported under its own heading, never under "undeclared coverage". Needs the source checked out; reports, never blocks; writes nothing |
 | `verified <manual> --module <sections/NN-....yaml>` | Record which product commit ONE module was verified against, in `manuals/<manual>/baselines.json`. Refuses on a dirty or unreadable product checkout, or an unknown `--module`, writing nothing either way. No `--all` — one run stamps exactly one module |
+| `release-notes <manual> --version <N.N.N>` | Render one delivered version's release notes from `manuals/<manual>/release-notes/v<N.N.N>.yaml`, one file per target — its own renderer, separate from the manual's (`render-web/src/release.ts`). Refuses without a parseable `--version` |
 
 Every command takes the axis filters `[--tenant <id>] [--axis <name>=<value> …]`
 except `extract`, `documents` and `verified`, which are per-manual — and, for

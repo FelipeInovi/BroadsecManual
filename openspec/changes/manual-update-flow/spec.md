@@ -29,6 +29,25 @@ and is not reopened. A third, non-conflicting gate-review finding is folded in
 as new requirement MUF-307 (§4): a missing test that must pin a byte-level
 separator asymmetry the design flags in ADR-004.
 
+Two more spec/design divergences surfaced later, each independently, in
+post-implementation gate reviews rather than in the original parallel run
+above. Each is resolved the same way — **design wins** — with its own inline
+"Reconciled" note at the requirement it touches, rather than being folded into
+the numbered list above (that list is specifically the two divergences found
+at the original `sdd-spec`/`sdd-design` parallel run):
+
+3. **`DriftFact` carries no `text` field** (§4, MUF-301) — an earlier revision
+   of this requirement asked for a `text` field stored on the fact; ADR-004
+   types the fact with no `text` field and derives the sentence via
+   `describeDrift` instead. Reconciled inline at MUF-301.
+4. **Axis-value fact reporting** (§4, MUF-303, MUF-305) — an earlier revision
+   of these requirements filed every `axis-value` fact under "undeclared
+   coverage"; ADR-004 types `axis-value` and `axis-changed` as
+   `ManualWideFact`, structurally excluded from `CoverageReport.undeclared:
+   readonly JoinableFact[]`, and the shipped code prints them under a
+   separate "N manual-wide change(s):" heading instead. Reconciled inline at
+   MUF-303 and MUF-305, this revision.
+
 This document specifies WHAT must be true after `manual-update-flow` lands. It
 does not choose data structures, function names, or file layouts inside
 `packages/` — that is `sdd-design`'s job. Where a requirement needs a concrete,
@@ -425,7 +444,7 @@ module, per drift fact:
 | `gate` | `directory` | fact's `file` starts with the entry's path |
 | `gate` | `glob` | fact's `file` matches the entry's glob pattern |
 | `capability` | `flag` | fact's `flag` equals the entry, exact string match |
-| `axis-value` | — | never matched by any `documents:` entry kind; always reported under "undeclared coverage" for every axis-value fact, because no module declares an axis value the way it declares a path or a flag |
+| `axis-value` | — | never matched by any `documents:` entry kind, because no module declares an axis value the way it declares a path or a flag; structurally excluded from "undeclared coverage" as well — see the reconciled reading below |
 
 > Given module `X` declares `documents: {paths: ["src/render/components/"]}`
 > and a drift fact with `kind: "gate"`,
@@ -437,6 +456,23 @@ module, per drift fact:
 > and a drift fact `{ kind: "capability", flag: "canViewFilterTrafficDetails" }`
 > When the join runs
 > Then module `X` is reported `covered` with that fact attributed to it.
+
+*Reconciled 2026-09-15: an earlier revision of this table's `axis-value` row
+read "always reported under 'undeclared coverage' for every axis-value fact",
+contradicting ADR-004. ADR-004 wins, for the same reason it already won for
+MUF-301 (see the Reconciliation note, ruling 4): `diffFacts` returns
+`DriftFact = JoinableFact | ManualWideFact`, and `axis-value` (with
+`axis-changed`) is typed as `ManualWideFact` — a fact with neither a `file`
+nor a `flag`, which cannot be joined to a module's `documents:` by
+construction. ADR-004 excludes `ManualWideFact` from "undeclared coverage"
+structurally (`CoverageReport.undeclared: readonly JoinableFact[]`) rather
+than filtering it at runtime, for the reason ADR-004 states: filing every
+axis-value fact under "no module declared this" would be technically true
+and practically noise, reproducing the lesson `imageRequests`' orphan set
+already paid for. The shipped code
+(`packages/cli/src/main.ts:2143-2145`) prints `report.manualWide` under its
+own "N manual-wide change(s):" heading, never under "undeclared coverage".
+MUF-305, below, restates the count invariant to match.*
 
 **MUF-304 — a multi-module match reports the fact under every matching
 module, never picks one.** When a drift fact matches more than one module's
@@ -451,19 +487,38 @@ entry").
 > When the join runs
 > Then the drift fact appears under both `X` and `Y`'s reports.
 
-**MUF-305 — an unmatched drift fact is reported, never dropped.** Every drift
-fact not matched by any module's `documents:` (§4.3's rule, plus every
-`axis-value` fact by construction) appears under "undeclared coverage"
-(MUF-103). The reverse is also true: the count of (per-module attributed
-facts) + (undeclared facts) equals the total fact count from `diffFacts`,
-with facts counted once per module they match (a multi-matched fact is not
-double-subtracted from "undeclared").
+**MUF-305 — an unmatched drift fact is reported, never dropped.** Every
+`JoinableFact` not matched by any module's `documents:` (§4.3's rule) appears
+under "undeclared coverage" (MUF-103). Every `ManualWideFact` — every
+`axis-value` and `axis-changed` fact, by construction (MUF-303) — is never a
+candidate for "undeclared coverage" at all; it appears under its own
+"N manual-wide change(s):" heading instead (ADR-004). The reverse is also
+true, restated per category rather than as one pooled total: the count of
+(per-module attributed `JoinableFact`s) + (undeclared `JoinableFact`s) equals
+the total `JoinableFact` count from `diffFacts`, with facts counted once per
+module they match (a multi-matched fact is not double-subtracted from
+"undeclared"); separately, every `ManualWideFact` `diffFacts` returns appears
+under "manual-wide". Across both headings, none of `diffFacts`' output is
+silently absent from the report.
 
-> Given `diffFacts` returns N facts, and M of them match at least one
-> module's `documents:`
+> Given `diffFacts` returns N `JoinableFact`s and P `ManualWideFact`s, and M
+> of the `JoinableFact`s match at least one module's `documents:`
 > When `documents` runs
-> Then exactly `N - M` facts appear under "undeclared coverage", and none are
-> silently absent from the report.
+> Then exactly `N - M` `JoinableFact`s appear under "undeclared coverage",
+> all P `ManualWideFact`s appear under "manual-wide" and never under
+> "undeclared coverage", and none of the N + P facts are silently absent from
+> the report.
+
+*Reconciled 2026-09-15: an earlier revision of this requirement counted
+`axis-value` facts into the pooled "N - M under undeclared coverage"
+invariant, contradicting ADR-004 for the reason recorded at MUF-303's table
+(reconciliation ruling 4). This is the fourth "design wins" reconciliation in
+this change. The implementation already follows ADR-004
+(`packages/cli/src/coverage.ts`'s `joinCoverage` passes `context.manualWide`
+straight through to `report.manualWide`, and computes `undeclared` only from
+its `JoinableFact[]` argument) — this reconciliation and the accompanying
+`packages/cli/src/main.test.ts` coverage close the gap between that shipped
+behaviour and what this spec asserted.*
 
 **MUF-306 — the three-state module report.** For every module, `documents`
 reports exactly one of:
@@ -779,3 +834,4 @@ is named as such rather than smuggled in here.
 | ~~MUF-901 adopted from the proposal's default~~ — RESOLVED, no longer a risk | Settled by the orchestrator: the definition of done is NOT amended by this change. Slice 5 adds no bullet to `skills/module-completeness/SKILL.md`. See §9 |
 | ~~S-1's classification grammar is a spec-time addition, not literally in the proposal~~ — RESOLVED, superseded | The orchestrator ruled `sdd-design`'s ADR-002 mapping schema (`paths:`/`flags:` sub-keys) wins over this spec's original flat-list-by-shape grammar. This revision carries that schema into S-1 and MUF-001/003/004. No longer an open divergence |
 | MUF-304 (multi-module match reporting) specifies "report under every matching module plus a note," but the proposal's own Risk row 4 only commits to "report the match count per entry" — this spec's phrasing is a reasonable but not verbatim reading | Design phase should confirm the exact reporting shape against proposal Risk row 4 |
+| ~~MUF-303/MUF-305 filed every `axis-value` fact under "undeclared coverage", contradicting ADR-004's `ManualWideFact` exclusion~~ — RESOLVED, design wins (ruling 4) | Found by the change-level verify gate, unreconciled at the time. ADR-004 wins for the reason recorded at MUF-303's and MUF-305's inline "Reconciled" notes; the shipped code (`main.ts:2143-2145`) already prints axis-value facts under "N manual-wide change(s):", never "undeclared coverage". `main.test.ts` now pins the routing end-to-end |

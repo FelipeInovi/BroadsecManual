@@ -92,6 +92,59 @@ SUGGESTION, not CRITICAL.
 
 **Phase 5 / Commit 5 done. All five phases of `manual-update-flow` are complete on `feat/manual-update-flow`.**
 
+## Phase 6 — Remediation commit (post change-level verify gate, 1 CRITICAL + 2 WARNING)
+
+Fresh-context change-level verify gate before archive (range `adbe8ee..74d4833`)
+found one new CRITICAL and two new WARNINGs, none blocking on prior gates
+because none scoped their review to these classes of defect. Scope held
+strictly to the three findings — nothing else touched.
+
+- [x] 6.1 **CRITICAL-1** — spec.md MUF-303's table and MUF-305's scenario
+  disagreed with design.md ADR-004 on axis-value fact reporting: spec said
+  every `axis-value` fact is always reported under "undeclared coverage";
+  ADR-004 types `axis-value`/`axis-changed` as `ManualWideFact`, structurally
+  excluded from `CoverageReport.undeclared: readonly JoinableFact[]`, and the
+  shipped code (`main.ts:2143-2145`) already prints them under a separate
+  "N manual-wide change(s):" heading. Resolved: **design wins**, the fourth
+  such ruling in this change (see spec.md's Reconciliation note, rulings 3
+  and 4) — reconciled inline at MUF-303's table and MUF-305's requirement
+  text/scenario, each with its own "Reconciled 2026-09-15" note matching the
+  pattern MUF-301 already used. Risks table also updated.
+- [x] 6.2 **Test gap closed** — no test anywhere exercised an axis-value fact
+  end-to-end through `documents`. Added
+  `packages/cli/src/main.test.ts`'s `CRITICAL-1 (ADR-004)` test, reusing the
+  existing `documents <manual>` describe block's temp-repo/git-free harness
+  (the fixture's one tenant config with no prior `knowledge/module-map.json`
+  already produces an `axis-value: "added"` fact for `mv` on every run — no
+  new fixture needed). The assertion discriminates the routing (walks the
+  "undeclared coverage" block specifically and asserts the fact is absent
+  from it, rather than a bare `toContain`) — proved by temporarily merging
+  `report.manualWide` into the undeclared print path in `main.ts`
+  (simulating the old, contradicted spec reading), observing
+  `expected -1 to be greater than -1` (the "manual-wide change(s):" heading
+  never printed), then restoring the original routing. 840/840 tests
+  (839 + 1 new), 9/9 type-check.
+- [x] 6.3 **WARNING-1** — `packages/cli/AGENTS.md`'s commands table listed 10
+  rows against its own "eleven" header, permanently omitting
+  `release-notes <manual>` (pre-existing since before this branch). Added the
+  missing row, matching the table's shape and voice.
+- [x] 6.4 **WARNING-2** — `packages/cli/AGENTS.md:15`'s "corrected" dispatch
+  line (`main.ts:1862`, copied from design.md ADR-008 before Phase 4 shifted
+  the file ~250 lines) was itself stale; `run` is actually at `main.ts:1884`
+  (`rg -n "^export async function run\("`). Fixed. Re-derived every other
+  `file:line` reference and count claim in the five AGENTS.md files this
+  change touched (`AGENTS.md`, `packages/cli/AGENTS.md`,
+  `packages/core/AGENTS.md`, `manuals/AGENTS.md`,
+  `manuals/broadlineavida/AGENTS.md`) against HEAD: `packages/cli/AGENTS.md`
+  held the only `file:line` reference in the set (the one just fixed);
+  `AGENTS.md`'s "eleven"/"twelfth" command counts checked against the actual
+  11 manual-id-taking commands + `new` — correct, no change. No other stale
+  reference or count found.
+
+Verify (fresh-context, this batch): `pnpm test` 840/840, `pnpm -r type-check`
+9/9, both green. `git status --short` shows only the intended files. No push,
+no PR, no merge — `main` stays parked at `adbe8ee`.
+
 ## Dependencies
 
 Phase 1 ⟂ Phase 2 (parallel-safe, no shared files) → Phase 3 (needs 1) →
