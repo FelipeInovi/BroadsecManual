@@ -1170,7 +1170,14 @@ describe("documents <manual>", () => {
       // unmatched, unjoinable 0-of-3 entry.
       const panelAt = lines.indexOf("    src/components/Panel.tsx (file) — 1 of 3 facts");
       const appRoutesAt = lines.indexOf("    routes/AppRoutes.tsx (file) — 0 of 3 facts");
+      const flagAt = lines.indexOf("    canSeeBoT (flag) — 1 of 3 facts");
       expect(appRoutesAt).toBeGreaterThan(panelAt);
+      // This pair is the one that discriminates the sort. `joinCoverage` builds
+      // `entries` in declaration order — paths first, then flags — so the fixture
+      // reaches the printer as Panel(1), AppRoutes(0), canSeeBoT(1). Panel before
+      // AppRoutes holds either way; only sorting moves the flag ahead of the
+      // unmatched path. Drop the sort and this assertion is the one that fails.
+      expect(appRoutesAt).toBeGreaterThan(flagAt);
     } finally {
       logSpy.mockRestore();
     }
