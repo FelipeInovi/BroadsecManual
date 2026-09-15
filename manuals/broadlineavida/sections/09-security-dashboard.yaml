@@ -73,46 +73,216 @@ children:
               caption: "Filtro de rango de tiempo del dashboard."
               widthPercent: 70
 
+      # ReportsFilters.tsx:628 — this whole subsection is gated by
+      # `config.canViewComparisonDateRange`, rendered right after the main
+      # date-range controls (Grid/Menu ending line 627) and before the
+      # location filters (Box at line 708). `true` only in mv.config.ts:20
+      # (`false` in med.config.ts:568).
+      - id: dashboard.filtros.comparacion
+        title: Rango de Comparación
+        when:
+          tenant: [mv]
+        children:
+          - id: dashboard.filtros.comparacion.intro
+            type: prose
+            props:
+              text: >-
+                Permite comparar las métricas del período principal con las de
+                un segundo período, para contrastar la evolución de los
+                indicadores.
+          - id: dashboard.filtros.comparacion.acceso
+            type: prose
+            props:
+              text: >-
+                Se encuentra en el panel de Filtros, debajo del Rango de
+                tiempo.
+          - id: dashboard.filtros.comparacion.fig
+            type: figure
+            props:
+              caption: "Control de Rango de Comparación en el panel de Filtros."
+              widthPercent: 70
+          # reportsPage.comparisonRangeLinkedTooltip (es.json:1090) — "El
+          # rango de comparación sigue automáticamente al rango principal"
+          # reportsPage.comparisonRangeUnlinkedTooltip (es.json:1091) — "El
+          # rango de comparación es fijo. Haz clic para volver a vincularlo"
+          # dataStore.ts:24-33,59-60 — `comparisonRangeLinked` defaults to
+          # true; while linked, `comparisonDates` is derived from the main
+          # range (the period immediately preceding it, of equal length,
+          # via `deriveLinkedComparisonDates`/`getLastPeriod`). Editing the
+          # comparison dates by hand sets `comparisonRangeLinked` to false
+          # (ReportsFilters.tsx:695-701).
+          - id: dashboard.filtros.comparacion.vinculo
+            type: prose
+            props:
+              text: >-
+                De forma predeterminada, el rango de comparación está
+                vinculado al rango de tiempo principal: corresponde
+                automáticamente al período inmediatamente anterior, de igual
+                duración. Al editar sus fechas manualmente, el vínculo se
+                desactiva y el rango de comparación queda fijo.
+          # ReportsFilters.tsx:687-703 (CustomDateTimeRange, comparison dates)
+          # and 653-676 (ChainLinkIcon button) — the two controls this
+          # procedure operates.
+          - id: dashboard.filtros.comparacion.editar
+            type: procedure
+            props:
+              steps:
+                - id: dashboard.filtros.comparacion.paso.editar
+                  title: Edite las fechas de comparación
+                  text: >-
+                    Haga clic sobre el campo de fechas del **Rango de
+                    Comparación** y seleccione el nuevo período de inicio y
+                    fin. Esta acción desvincula el rango de comparación del
+                    rango de tiempo principal.
+                - id: dashboard.filtros.comparacion.paso.vincular
+                  title: Vuelva a vincular el rango de comparación
+                  text: >-
+                    Haga clic en el ícono de cadena, junto al título **Rango
+                    de Comparación**, para que vuelva a seguir
+                    automáticamente al rango de tiempo principal.
+          - id: dashboard.filtros.comparacion.resultado
+            type: prose
+            props:
+              text: >-
+                Al confirmarlo, el período de comparación queda activo y las
+                ventanas de datos del dashboard lo utilizan para contrastar
+                sus métricas con las del rango principal.
+          # filters.comparisonRange (es.json:1424) — "Rango de Comparación"
+          # FilterChips.tsx:236-259 — the active comparison range renders as
+          # a chip above the charts. Clicking it (`handleFilter`,
+          # FilterChips.tsx:43-48, case "comparison-dates-range") reopens
+          # this same date selector; it does not remove the comparison.
+          - id: dashboard.filtros.comparacion.chip
+            type: prose
+            props:
+              text: >-
+                Mientras el rango de comparación está activo, se muestra
+                como un chip identificado **Rango de Comparación** encima de
+                los gráficos del dashboard. Al hacer clic sobre él se reabre
+                el selector de fechas de comparación.
+
       - id: dashboard.filtros.ubicacion
         title: Ubicación
         children:
+          # ReportsFilters.tsx:757,839 — the Departamento and Ciudad filter
+          # blocks are gated by `config.canViewReportsFilterDepartment` /
+          # `canViewReportsFilterCity`, `true` only in med.config.ts:561-562
+          # (`false` in mv.config.ts:13-14).
           - id: dashboard.filtros.ubicacion.texto
             type: prose
             props:
               text: >-
-                Permite filtrar por Departamento, Ciudad, Zona, Comuna y/o
-                Barrio. Al seleccionar el Departamento se habilita la selección
-                de ciudades.
+                Permite filtrar por Departamento y Ciudad. Al seleccionar el
+                Departamento se habilita la selección de ciudades.
+            when:
+              tenant: [med]
           - id: dashboard.filtros.ubicacion.fig-depto
             type: figure
             props:
               caption: "Filtro de ubicación por Departamento y Ciudad."
               widthPercent: 91
+            when:
+              tenant: [med]
+          # The figure above shows controls this deployment does not render
+          # (mv.config.ts:13-14), so it is conditioned to med — and the
+          # submodule would be left without the overview figure that
+          # `module-completeness` requires of every submodule. This is that
+          # figure for mv: the same panel as it renders there, with Zona,
+          # Comuna y Barrio and no Departamento or Ciudad.
+          - id: dashboard.filtros.ubicacion.fig-zona
+            type: figure
+            props:
+              caption: "Filtro de ubicación por Zona, Comuna y Barrio."
+              widthPercent: 91
+            when:
+              tenant: [mv]
+          # Unconditioned: `canViewFilterZone`/`canViewFilterCommune`/
+          # `canViewFilterNeighborhood` are `true` for both mv.config.ts:15-17
+          # and med.config.ts:563-565 — this was not part of the change.
+          - id: dashboard.filtros.ubicacion.zona-texto
+            type: prose
+            props:
+              text: "Permite filtrar por Zona, Comuna y/o Barrio."
           - id: dashboard.filtros.ubicacion.zona
             type: prose
             props:
               text: >-
                 Al seleccionar la Zona se habilita la selección de Comuna y, tras
                 ella, la de Barrio.
+          # mv.config.ts:32-33 — `reportsDepartment: ["5"]` and
+          # `reportsCity: ["5001"]` ("Antioquia y Medellín, solo en el
+          # dashboard de reportes") preset the department/city the reports
+          # request uses (dataStore.ts:35-46, `getUserDepartment`/
+          # `getUserCity`), even though this deployment has no Departamento
+          # or Ciudad control to change them (mv.config.ts:13-14).
+          - id: dashboard.filtros.ubicacion.alcance-mv
+            type: prose
+            props:
+              text: >-
+                En este despliegue, los reportes muestran únicamente los
+                casos de Antioquia y Medellín; no se ofrece un control para
+                modificar este alcance.
+            when:
+              tenant: [mv]
 
       - id: dashboard.filtros.variables
         title: Variables de Gestión
         children:
-          - id: dashboard.variables.emergencia
-            title: Tipo de Emergencia
+          # ReportsFilters.tsx:1195-1202 — this control (a DropDownReports)
+          # renders unconditionally for every tenant; only its title varies.
+          # `title={t(config.reportsEmergencyTypeLabel ||
+          # "reportsPage.emergencyType")}` (ReportsFilters.tsx:1198-1200).
+          # mv.config.ts:25 sets `reportsEmergencyTypeLabel:
+          # "reportsPage.filters.policeCode"`; no other tenant config sets
+          # that field, so every other deployment (med included) falls back
+          # to `reportsPage.emergencyType`. The AST's section node carries one
+          # title for every tenant that sees it — there is no per-tenant
+          # variant of `title` in the catalogue — so the two wordings are two
+          # tagged sibling subsections instead of one section with a
+          # conditioned title. This is the smallest split the catalogue
+          # allows; see the block-authoring skill on requesting a new block
+          # type before improvising further.
+          - id: dashboard.variables.emergencia.mv
+            # reportsPage.filters.policeCode (es.json:1199) — "Código Policial"
+            title: Código Policial
+            when:
+              tenant: [mv]
             children:
-              - id: dashboard.variables.emergencia.texto
+              - id: dashboard.variables.emergencia.mv.texto
                 type: prose
                 props:
                   text: "Muestra los tipos de emergencia y sus subcategorías."
-              - id: dashboard.variables.emergencia.fig
+              - id: dashboard.variables.emergencia.mv.fig
                 type: figure
                 props:
-                  caption: "Filtro por tipo de emergencia."
+                  caption: "Filtro por código policial."
                   widthPercent: 70
 
+          - id: dashboard.variables.emergencia.med
+            # reportsPage.emergencyType (es.json:1109) — "Tipo de Reporte"
+            title: Tipo de Reporte
+            when:
+              tenant: [med]
+            children:
+              - id: dashboard.variables.emergencia.med.texto
+                type: prose
+                props:
+                  text: "Muestra los tipos de emergencia y sus subcategorías."
+              - id: dashboard.variables.emergencia.med.fig
+                type: figure
+                props:
+                  caption: "Filtro por tipo de reporte."
+                  widthPercent: 70
+
+          # ReportsFilters.tsx:1427 — gated by `config.canViewFilterResponseForce`,
+          # `false` in mv.config.ts:21 and `true` in med.config.ts:569 (and in
+          # every other tenant config). The legacy manual carried this
+          # unconditioned; the audit found the tag inverted for this
+          # deployment pair — correct tag is med, not mv.
           - id: dashboard.variables.fuerzas
             title: Fuerzas de Respuesta
+            when:
+              tenant: [med]
             children:
               - id: dashboard.variables.fuerzas.texto
                 type: prose
@@ -124,44 +294,29 @@ children:
                   caption: "Filtro por fuerza de respuesta."
                   widthPercent: 70
 
-          - id: dashboard.variables.finalizacion
-            title: Tipo de Finalización
-            children:
-              - id: dashboard.variables.finalizacion.intro
-                type: prose
-                props:
-                  text: "Filtra los casos según cómo finalizaron."
-              - id: dashboard.variables.finalizacion.lista
-                type: term-list
-                props:
-                  entries:
-                    - id: dashboard.fin.positivo
-                      term: Positivo
-                      definition: El agente gestionó el caso.
-                    - id: dashboard.fin.desistimiento
-                      term: Desistimiento en el sitio
-                      definition: >-
-                        Se cancela la operación por causas de fuerza mayor ajenas
-                        al control.
-                    - id: dashboard.fin.negativo
-                      term: Negativo en el sitio
-                      definition: >-
-                        Al llegar el agente, el incidente ya había sido atendido o
-                        despejado.
-                    - id: dashboard.fin.falsa-alarma
-                      term: Falsa alarma en el sitio
-                      definition: Al llegar al sitio, la emergencia no existía.
-                    - id: dashboard.fin.fuera
-                      term: Fuera de Medellín
-                      definition: Emergencia fuera de la jurisdicción.
-              - id: dashboard.variables.finalizacion.fig
-                type: figure
-                props:
-                  caption: "Filtro por tipo de finalización."
-                  widthPercent: 70
+          # REMOVED — "Tipo de Finalización" (`dashboard.variables.finalizacion`,
+          # with its five-term list and figure). The control is gated by
+          # `config.canViewFilterCompletionType` (ReportsFilters.tsx:1484),
+          # which is `false` in ALL SEVEN tenant configs, so no deployment
+          # renders it and the manual was sending the operator to look for a
+          # filter that is not on their screen. The product did render it once:
+          # a real capture of it was delivered and is still in git history along
+          # with this content, so both are recoverable if the flag is ever
+          # switched back on. Removed on the owner's explicit instruction,
+          # 2026-09-15. Do NOT re-import it from the legacy document.
 
+          # ReportsFilters.tsx:1579 — this filter renders only when
+          # `config.name === "MV"`, an inline tenant check rather than a
+          # named `canView*` flag. The legacy manual carried this
+          # unconditioned; the audit found the tag inverted for this
+          # deployment pair — correct tag is mv, not med.
+          # reportsPage.filters.typeOfMobility (es.json:1198) — "Vehículos
+          # Involucrados". The legacy title "Tipo de Movilidad" was typed by
+          # hand instead of quoted from the product.
           - id: dashboard.variables.movilidad
-            title: Tipo de Movilidad
+            title: Vehículos Involucrados
+            when:
+              tenant: [mv]
             children:
               - id: dashboard.variables.movilidad.texto
                 type: prose
@@ -173,7 +328,154 @@ children:
               - id: dashboard.variables.movilidad.fig
                 type: figure
                 props:
-                  caption: "Filtro por tipo de movilidad."
+                  caption: "Filtro por vehículos involucrados."
+                  widthPercent: 70
+
+          # ReportsFilters.tsx:1634-1885 — six filter controls (checkbox
+          # lists via CheckboxFilterReports) rendered after the mobility
+          # filter (config.name === "MV", ReportsFilters.tsx:1579) and before
+          # the time-range controls (ReportsFilters.tsx:1914). Visible to mv
+          # only; the legacy manual never documented them.
+          - id: dashboard.variables.estado-caso
+            # reportsPage.filters.caseStates (es.json:1203) — "Estado del Caso"
+            title: Estado del Caso
+            when:
+              tenant: [mv]
+            children:
+              - id: dashboard.variables.estado-caso.texto
+                type: prose
+                props:
+                  text: >-
+                    Filtra los casos según su estado de gestión (por ejemplo,
+                    Caso Pendiente, En Camino, En Sitio o Caso Cerrado),
+                    mediante una lista de casillas de verificación con la
+                    opción **Todos** para seleccionarlas en conjunto.
+              - id: dashboard.variables.estado-caso.fig
+                type: figure
+                props:
+                  caption: "Filtro por estado del caso."
+                  widthPercent: 70
+
+          # ReportsFilters.tsx:1671 — same gate,
+          # `config.canViewFilterTrafficDetails`.
+          - id: dashboard.variables.tipo-caso
+            # reportsPage.filters.accidentTypes (es.json:1204) — "Tipo de Caso"
+            title: Tipo de Caso
+            when:
+              tenant: [mv]
+            children:
+              - id: dashboard.variables.tipo-caso.texto
+                type: prose
+                props:
+                  text: >-
+                    Filtra los casos según el tipo de accidente de tránsito
+                    registrado (por ejemplo, con heridos, solo con daños o con
+                    víctima fatal), mediante una lista de casillas de
+                    verificación con la opción **Todos** para seleccionarlas
+                    en conjunto.
+              - id: dashboard.variables.tipo-caso.fig
+                type: figure
+                props:
+                  caption: "Filtro por tipo de caso."
+                  widthPercent: 70
+
+          # ReportsFilters.tsx:1713 — same gate.
+          - id: dashboard.variables.clase-siniestro
+            # reportsPage.filters.roadAccidentClass (es.json:1205) — "Clase
+            # de Siniestro Vial"
+            title: Clase de Siniestro Vial
+            when:
+              tenant: [mv]
+            children:
+              - id: dashboard.variables.clase-siniestro.texto
+                type: prose
+                props:
+                  text: >-
+                    Filtra los casos según la clase de siniestro vial (por
+                    ejemplo, choque, caída de ocupante, atropello o
+                    volcamiento), mediante una lista de casillas de
+                    verificación con la opción **Todos** para seleccionarlas
+                    en conjunto.
+              - id: dashboard.variables.clase-siniestro.fig
+                type: figure
+                props:
+                  caption: "Filtro por clase de siniestro vial."
+                  widthPercent: 70
+
+          # ReportsFilters.tsx:1755 — same gate.
+          - id: dashboard.variables.recursos-asignados
+            # reportsPage.filters.assignedResources (es.json:1206) —
+            # "Recursos Asignados al Caso"
+            title: Recursos Asignados al Caso
+            when:
+              tenant: [mv]
+            children:
+              - id: dashboard.variables.recursos-asignados.texto
+                type: prose
+                props:
+                  text: >-
+                    Filtra los casos según los recursos asignados a su
+                    atención (por ejemplo, PMV, cámaras, grúa o motocicleta),
+                    mediante una lista de casillas de verificación con la
+                    opción **Todos** para seleccionarlas en conjunto.
+              - id: dashboard.variables.recursos-asignados.fig
+                type: figure
+                props:
+                  caption: "Filtro por recursos asignados al caso."
+                  widthPercent: 70
+
+          # ReportsFilters.tsx:1799 — same gate. Options load from the
+          # platform's own closed-reasons catalogue
+          # (useClosedReasonsList.ts:5-6, `GET /closed-reasons`), not from a
+          # fixed i18n list.
+          - id: dashboard.variables.motivo-cierre
+            # reportsPage.filters.closedReasons (es.json:1207) — "Motivo de
+            # Cierre"
+            title: Motivo de Cierre
+            when:
+              tenant: [mv]
+            children:
+              - id: dashboard.variables.motivo-cierre.texto
+                type: prose
+                props:
+                  text: >-
+                    Filtra los casos según su motivo de cierre, con las
+                    opciones cargadas desde el catálogo de motivos de cierre
+                    de la plataforma, mediante una lista de casillas de
+                    verificación con la opción **Todos** para seleccionarlas
+                    en conjunto.
+              - id: dashboard.variables.motivo-cierre.fig
+                type: figure
+                props:
+                  caption: "Filtro por motivo de cierre."
+                  widthPercent: 70
+
+          # ReportsFilters.tsx:1844 — gated by `config.canViewFilterStation`,
+          # `true` only in mv.config.ts:18 (`false` in every other tenant
+          # config, med.config.ts:566 included). Options load from the
+          # platform's own station catalogue (useStationCalltakerList.ts:16-18,
+          # `GET /station-calltaker`), filtered to exclude legacy station
+          # codes (ReportsFilters.tsx:197-202).
+          - id: dashboard.variables.estacion
+            # reportsPage.filters.stationCalltakerApex (es.json:1208) —
+            # "Estación"
+            title: Estación
+            when:
+              tenant: [mv]
+            children:
+              - id: dashboard.variables.estacion.texto
+                type: prose
+                props:
+                  text: >-
+                    Filtra los casos según la estación de despacho que los
+                    gestionó, con las opciones cargadas desde el catálogo de
+                    estaciones de la plataforma, mediante una lista de
+                    casillas de verificación con la opción **Todos** para
+                    seleccionarlas en conjunto.
+              - id: dashboard.variables.estacion.fig
+                type: figure
+                props:
+                  caption: "Filtro por estación."
                   widthPercent: 70
 
       - id: dashboard.filtros.tiempos
