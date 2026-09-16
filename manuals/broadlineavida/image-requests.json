@@ -18,11 +18,132 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 248,
+    "total": 254,
     "delivered": 248,
-    "pending": 0
+    "pending": 6
   },
-  "pending": [],
+  "pending": [
+    {
+      "slot": "fuerzas.barra.navegacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.navegacion",
+          "blockType": "icon-table",
+          "shows": "Atrás"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas.barra.navegacion.png",
+        "override": "<tenant>/fuerzas.barra.navegacion.png"
+      }
+    },
+    {
+      "slot": "fuerzas.estado.emergencia",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.emergencia",
+          "blockType": "icon-table",
+          "shows": "Emergencia"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas.estado.emergencia.png",
+        "override": "<tenant>/fuerzas.estado.emergencia.png"
+      }
+    },
+    {
+      "slot": "fuerzas.perfil.agente.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.agente.fig",
+          "blockType": "figure",
+          "shows": "Pestaña Agente del perfil."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas.perfil.agente.fig.png",
+        "override": "<tenant>/fuerzas.perfil.agente.fig.png"
+      }
+    },
+    {
+      "slot": "fuerzas.perfil.liberar.abrir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.liberar.abrir",
+          "blockType": "procedure",
+          "shows": "Abra el perfil del agente en emergencia"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas.perfil.liberar.abrir.png",
+        "override": "<tenant>/fuerzas.perfil.liberar.abrir.png"
+      }
+    },
+    {
+      "slot": "fuerzas.perfil.liberar.confirmar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.liberar.confirmar",
+          "blockType": "procedure",
+          "shows": "Confirme la liberación"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas.perfil.liberar.confirmar.png",
+        "override": "<tenant>/fuerzas.perfil.liberar.confirmar.png"
+      }
+    },
+    {
+      "slot": "fuerzas.turno-asignar.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.turno-asignar.fig",
+          "blockType": "figure",
+          "shows": "Pestaña Asignar del detalle del turno."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/fuerzas.turno-asignar.fig.png",
+        "override": "<tenant>/fuerzas.turno-asignar.fig.png"
+      }
+    }
+  ],
   "delivered": [
     {
       "slot": "introduccion.fig",
@@ -2575,8 +2696,7 @@
     {
       "slot": "fuerzas.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2592,8 +2712,7 @@
     {
       "slot": "fuerzas.barra.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2609,8 +2728,7 @@
     {
       "slot": "fuerzas.barra.buscar",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2626,8 +2744,7 @@
     {
       "slot": "fuerzas.barra.filtro",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2643,14 +2760,13 @@
     {
       "slot": "fuerzas.barra.agentes",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
           "nodeId": "fuerzas.barra.agentes",
           "blockType": "icon-table",
-          "shows": "Módulo de Agentes"
+          "shows": "Agentes"
         }
       ],
       "files": [
@@ -2660,14 +2776,13 @@
     {
       "slot": "fuerzas.barra.operaciones",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
           "nodeId": "fuerzas.barra.operaciones",
           "blockType": "icon-table",
-          "shows": "Módulo de Operaciones"
+          "shows": "Operaciones"
         }
       ],
       "files": [
@@ -2677,8 +2792,7 @@
     {
       "slot": "fuerzas.barra.anadir",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2694,8 +2808,7 @@
     {
       "slot": "fuerzas.barra.mapa",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2711,14 +2824,13 @@
     {
       "slot": "fuerzas.barra.home",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
           "nodeId": "fuerzas.barra.home",
           "blockType": "icon-table",
-          "shows": "Home"
+          "shows": "Inicio"
         }
       ],
       "files": [
@@ -2728,8 +2840,7 @@
     {
       "slot": "fuerzas.agentes.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2743,27 +2854,9 @@
       ]
     },
     {
-      "slot": "fuerzas.estado.no-disponible",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.estado.no-disponible",
-          "blockType": "icon-table",
-          "shows": "No disponible"
-        }
-      ],
-      "files": [
-        "_common/fuerzas.estado.no-disponible.png"
-      ]
-    },
-    {
       "slot": "fuerzas.estado.disponible",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2777,16 +2870,31 @@
       ]
     },
     {
+      "slot": "fuerzas.estado.no-disponible",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.estado.no-disponible",
+          "blockType": "icon-table",
+          "shows": "No Disponible"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.estado.no-disponible.png"
+      ]
+    },
+    {
       "slot": "fuerzas.estado.con-caso",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
           "nodeId": "fuerzas.estado.con-caso",
           "blockType": "icon-table",
-          "shows": "Con caso asignado"
+          "shows": "Asignado"
         }
       ],
       "files": [
@@ -2796,8 +2904,7 @@
     {
       "slot": "fuerzas.agentes.filtro.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2813,8 +2920,7 @@
     {
       "slot": "fuerzas.perfil.fig-acceso",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2830,8 +2936,7 @@
     {
       "slot": "fuerzas.perfil.fig-ubicacion",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2847,8 +2952,7 @@
     {
       "slot": "fuerzas.perfil.fig-turnos",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2864,8 +2968,7 @@
     {
       "slot": "fuerzas.perfil.fig-asignar",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2881,8 +2984,7 @@
     {
       "slot": "fuerzas.perfil.fig-confirmacion",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2898,8 +3000,7 @@
     {
       "slot": "fuerzas.perfil.fig-tarea",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2915,8 +3016,7 @@
     {
       "slot": "fuerzas.operaciones.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2932,14 +3032,13 @@
     {
       "slot": "fuerzas.turno.activo",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
           "nodeId": "fuerzas.turno.activo",
           "blockType": "icon-table",
-          "shows": "Indica que el agente está con un turno activo."
+          "shows": "Indica que el turno aún no ha finalizado: puede estar en curso o estar programado para más adelante. Los turnos en curso se distinguen además por el fondo resaltado de su fila."
         }
       ],
       "files": [
@@ -2949,8 +3048,7 @@
     {
       "slot": "fuerzas.turno.finalizado",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2966,8 +3064,7 @@
     {
       "slot": "fuerzas.operaciones.filtro.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -2983,8 +3080,7 @@
     {
       "slot": "fuerzas.operaciones.filtro.fig-rango",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3000,8 +3096,7 @@
     {
       "slot": "fuerzas.operaciones.resumen.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3017,8 +3112,7 @@
     {
       "slot": "fuerzas.operaciones.resumen.fig-recorrido",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3034,8 +3128,7 @@
     {
       "slot": "fuerzas.poligono.fig-incidente",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3051,8 +3144,7 @@
     {
       "slot": "fuerzas.poligono.fig-tarea",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3066,10 +3158,57 @@
       ]
     },
     {
+      "slot": "fuerzas.callai.fig-hist-tareas",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-hist-tareas",
+          "blockType": "figure",
+          "shows": "Acceso a la ficha desde el historial de tareas."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-hist-tareas.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-mapa-tarea",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-mapa-tarea",
+          "blockType": "figure",
+          "shows": "Acceso a la ficha de la tarea desde su ubicación en el mapa."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-mapa-tarea.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.callai.fig-resumen-tarea",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.callai.fig-resumen-tarea",
+          "blockType": "figure",
+          "shows": "Ficha de la tarea."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.callai.fig-resumen-tarea.png"
+      ]
+    },
+    {
       "slot": "fuerzas.callai.fig-hist-incidentes",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3085,8 +3224,7 @@
     {
       "slot": "fuerzas.callai.fig-mapa-incidente",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3102,8 +3240,7 @@
     {
       "slot": "fuerzas.callai.fig-resumen-incidente",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3117,61 +3254,9 @@
       ]
     },
     {
-      "slot": "fuerzas.callai.fig-hist-tareas",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-hist-tareas",
-          "blockType": "figure",
-          "shows": "Acceso a Call AI desde el historial de tareas."
-        }
-      ],
-      "files": [
-        "_common/fuerzas.callai.fig-hist-tareas.png"
-      ]
-    },
-    {
-      "slot": "fuerzas.callai.fig-mapa-tarea",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-mapa-tarea",
-          "blockType": "figure",
-          "shows": "Acceso a Call AI de la tarea desde la ubicación en el mapa."
-        }
-      ],
-      "files": [
-        "_common/fuerzas.callai.fig-mapa-tarea.png"
-      ]
-    },
-    {
-      "slot": "fuerzas.callai.fig-resumen-tarea",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.callai.fig-resumen-tarea",
-          "blockType": "figure",
-          "shows": "Resumen de Call AI de la tarea."
-        }
-      ],
-      "files": [
-        "_common/fuerzas.callai.fig-resumen-tarea.png"
-      ]
-    },
-    {
       "slot": "fuerzas.anadir.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3187,8 +3272,7 @@
     {
       "slot": "fuerzas.anadir.incidente.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3204,8 +3288,7 @@
     {
       "slot": "fuerzas.anadir.incidente.fig-confirmacion",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3221,8 +3304,7 @@
     {
       "slot": "fuerzas.anadir.tarea.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {
@@ -3238,8 +3320,7 @@
     {
       "slot": "fuerzas.home.fig",
       "neededBy": [
-        "mv",
-        "med"
+        "mv"
       ],
       "uses": [
         {

@@ -1,0 +1,37 @@
+{
+  "manual": "broadlineavida",
+  "contentVersion": "0.1.0",
+  "axis": "tenant",
+  "convention": {
+    "what": "Parts of the product that are on screen but not finished, which this manual therefore documents around without naming.",
+    "why": "Describing such a control as working lies to the reader; describing it as broken publishes a product defect inside a client-facing document. Neither is the author's call, so the manual waits.",
+    "whoActs": "Whoever finishes the product. An entry is closed by deleting its `pending` declaration from the section that declares it, once the content it withheld has been written.",
+    "declaredIn": "the `pending` list of a section under manuals/<manual>/sections/ — never in the rendered manual, which names none of this",
+    "notDone": "a section with an entry here is NOT complete by the module-completeness standard, and must not be counted as done"
+  },
+  "targetsCovered": [
+    "mv",
+    "med"
+  ],
+  "targetsConfigured": 2,
+  "counts": {
+    "gaps": 1,
+    "sections": 1
+  },
+  "awaiting": [
+    {
+      "id": "perfil-agente-paneles-vacios",
+      "affects": [
+        "mv"
+      ],
+      "section": "fuerzas-en-campo",
+      "declaredIn": "sections/10-fuerzas-en-campo.yaml",
+      "covers": [
+        "fuerzas.perfil.agente"
+      ],
+      "missing": "Los paneles Observaciones y Personas Asociadas de la pestaña Agente, y el contenido de Hoja de Vida.",
+      "because": "components/AgensDetailsTabs/Agent/AgentAditionalInfo.tsx:92-107 monta Observaciones y Personas Asociadas como `CustomDropdown` SIN hijos: los encabezados se despliegan y no hay nada detrás, para cualquier deployment y cualquier agente. Hoja de Vida (:45-91) sólo tiene texto para `config.name === \"DEMO\"` con `agentSelected.id === 200` o `229`, escrito a mano en el componente; para mv el panel abre vacío. Ninguno de los tres consulta dato alguno.",
+      "settles": "Que el producto conecte esos tres paneles a una consulta real, o que alguien decida retirarlos de la pantalla."
+    }
+  ]
+}
