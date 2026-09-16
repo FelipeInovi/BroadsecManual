@@ -103,7 +103,10 @@ state.
   the one deployment that does NOT group them — and mv is a build target, so
   the sentence shipped false. Dropped rather than split in two: the grouping is
   behaviour of the map, not of that layer, and a second row would mint a second
-  icon slot to say it. **Nothing documents the grouping now**; see Unresolved.
+  icon slot to say it. The CONTROL is not lost: 07 already documents it as
+  `mapa.ctrl.agrupar`, and `GroupinMarketsSwitch`
+  (`GlobalGoogleMap.tsx:468-472`) renders for every deployment. What
+  `agrupatedPins` decides is only the state the map OPENS in; see Unresolved.
 - **`07` declares `mapDataStore.ts` because it describes what that file
   decides.** It was the last fact under undeclared coverage in `documents
   broadlineavida`; with the declaration the report reaches zero.
@@ -180,15 +183,31 @@ state.
    just received, taken per module: declare what the section describes once
    somebody has read the product for it, and leave `verified` for whoever
    actually audits it.
-6. **Nothing documents that mv does not group incident pins.** The claim was
-   removed from 07's Incidentes row because it was false for mv (see Decided),
-   and it was not rewritten anywhere: pin clustering is behaviour of the map,
-   and no subsection describes the map's behaviour as opposed to its layers.
-   The difference is visible to an operator — the same incidents draw as one
-   badge per cluster in med and as individual pins in mv. **What settles it:**
-   deciding where map behaviour belongs (a subsection of 07's Mapa, or 08's
-   Mapa), then writing it once with `agrupatedPins` cited and tagged.
-7. **08 still declares no `documents:`.** It describes the Mapa, the Incidentes
+6. **`07`'s `mapa.controles` is a THIRD table for this screen, and its rows do
+   not match the images delivered for them.** It was not audited here — only
+   two of its six rows were opened, and both were wrong.
+   `mapa.ctrl.street-view` is captioned "Modo Street View", described as
+   "Cambia la vista del mapa a modo calle", and its delivered image is an
+   AERIAL view: that row is the `TypeMap.tsx` button (`hybrid`→`roadmap` is
+   precisely "modo calle"), not Street View, and 08 now describes the same
+   button as the satellite toggle. `mapa.ctrl.salir-street-view` does show
+   Street View — Google's "View on Google Maps" bar — so the pair splits one
+   control across two names, one of which belongs to a different control
+   entirely. The remaining four rows (`visualizacion`, `agrupar`,
+   `navegacion-3d`, `controles`) were NOT checked. **What settles it:** the
+   same treatment the layer table just had — read `GlobalGoogleMap.tsx` and
+   `TypeMap.tsx` row by row, then decide which of these controls belong to 07's
+   catalogue and which to 08's prose, so one control is not described twice
+   under two names.
+7. **The INITIAL grouping state differs by deployment and is not written
+   anywhere.** `agrupatedPins: config.name !== "MV"` (`mapDataStore.ts:70`) is
+   a starting value, not a capability: `GroupinMarketsSwitch`
+   (`GlobalGoogleMap.tsx:468-472`) lets any operator toggle it, and 07 already
+   documents the control as `mapa.ctrl.agrupar`. So mv simply opens with pins
+   ungrouped and every other deployment opens grouped. Minor, and deliberately
+   not written as a tagged sentence until somebody decides a manual should
+   describe default states at all. **What settles it:** that decision.
+8. **08 still declares no `documents:`.** It describes the Mapa, the Incidentes
    actions and the Filtros, and reports `unknown coverage`. Removing its layer
    table narrowed what it claims, which makes the declaration easier to write
    than it was. **What settles it:** the same per-module decision 09 and 07
