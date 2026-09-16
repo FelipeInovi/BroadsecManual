@@ -19,53 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 248,
-    "delivered": 246,
-    "pending": 2
+    "delivered": 248,
+    "pending": 0
   },
-  "pending": [
-    {
-      "slot": "mapa.capa.ars",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.ars",
-          "blockType": "icon-table",
-          "shows": "ARS"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.capa.ars.png",
-        "override": "<tenant>/mapa.capa.ars.png"
-      }
-    },
-    {
-      "slot": "mapa.capa.recorrido",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "mapa.capa.recorrido",
-          "blockType": "icon-table",
-          "shows": "Recorrido"
-        }
-      ],
-      "pendingFor": [
-        "mv",
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/mapa.capa.recorrido.png",
-        "override": "<tenant>/mapa.capa.recorrido.png"
-      }
-    }
-  ],
+  "pending": [],
   "delivered": [
     {
       "slot": "introduccion.fig",
@@ -335,6 +292,39 @@
       ],
       "files": [
         "_common/mapa/capa/camaras.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.ars",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.ars",
+          "blockType": "icon-table",
+          "shows": "ARS"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/ars.webp"
+      ]
+    },
+    {
+      "slot": "mapa.capa.recorrido",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.recorrido",
+          "blockType": "icon-table",
+          "shows": "Recorrido"
+        }
+      ],
+      "files": [
+        "_common/mapa/capa/recorrido.webp"
       ]
     },
     {

@@ -58,12 +58,20 @@ re-deriving them.
 
 | Table | Deliverable | Why |
 |---|---|---|
-| six map layers (`mapa.capa.*`) | **6 of 6** | The product's own `.webp`/`.png`, joined through `LayersMap.tsx` |
+| eight map layers (`mapa.capa.*`) | **8 of 8** | The product's own `.webp`/`.png`, joined through `LayersMap.tsx` |
 | six BoT sections (`bot.seccion.*`) | **6 of 6** | Tabler outline SVGs via `BOTSidebar.tsx`, recoloured |
 | six map controls (`mapa.ctrl.*`) | **0 of 6** | One MUI icon, one framework-white product SVG, four Google Maps native controls |
 | everything else in BoT (`bot.*`, 47 slots) | **0 of 47** | All figure-convention — screens, panels and procedure steps |
 
 **The first and third sit on the same page.** Judge per row, never per section.
+
+The layer table grew from six rows to eight when it became the manual's single
+layer catalogue, and both new rows were deliverable the same way. ARS is
+`layer_trafficlight.webp` (`LayersMap.tsx:8`, paired with
+`t("layers.traffic_lights")` at `:114-117`) and Recorrido is `layer_route.webp`
+(`:6`, paired with `t("layers.route")` at `:126-129`). Level-2 joins — asset and
+UI string in one object literal — and photographic `.webp`, so no recolouring.
+**Every image slot in this manual is now delivered: 248 of 248.**
 
 Sorting by convention settled BoT in one query: of its 47 slots, 12 are `figure`,
 28 are `procedure` steps and 7 are `field-list` items — not one `icon-table` row,
