@@ -742,3 +742,47 @@ recipes:
     clip: '[role="tab"]'
     clipUp: "div.w-full"
     viewport: { width: 1600, height: 900 }
+
+  # The Asignar tab of a shift detail. READ-ONLY, and the boundary matters here
+  # more than anywhere else in this file: mounting this tab renders a search box
+  # and a list of cases and nothing more (`DispatchTab.tsx` — its state is three
+  # `useState` calls). The dispatch itself needs a case to be SELECTED and then
+  # CONFIRMED in `InstaDispatchModal`. This recipe stops at the tab.
+  #
+  # The first row of the list is an ongoing shift, which is what makes the tab
+  # exist at all: `ShiftsDetailsTabs.tsx:96` renders it only while
+  # `statusShift !== "Finished"`.
+  #
+  # `screenIs` asks for the Asignar tab to be the SELECTED one
+  # (`aria-selected={page === 1}`, :105) rather than for text on the pane. The
+  # pane has no stable visible string — its only fixed label is the search
+  # box's `placeholder`, and this file's own rule says `::-p-text()` cannot see
+  # an attribute. A tab's selected state is a better gate than a caption
+  # anyway: it cannot be satisfied by the sibling tab still being up, which is
+  # exactly how bot.cctv.fig was once captured as PRT.
+  #
+  # `dataReady` asks for a ROW of the case list, not for the list. The
+  # difference is the whole gate: `AssignAgentMobilityCase.tsx:47-50` keeps only
+  # cases whose `case_state` is `case_open`, and its empty-state block at :52
+  # renders only `if (filteredCases.length === 0 && searchTerm)`. With no search
+  # term and no open case it falls through to :70 and renders
+  # `div.space-y-0.5` with NO children — a container that exists and holds
+  # nothing. A `dataReady` on the container would have passed and delivered a
+  # photograph of an empty pane.
+  #
+  # FIRST RUN FAILED HERE, and correctly: `screenIs` passed, so the clicks
+  # landed and the Asignar tab was selected; there simply were no open cases to
+  # dispatch at that moment. That is a state of Medellin's traffic, not a
+  # broken selector. Re-run when there are; an unshot slot costs nothing and a
+  # picture of an empty list would tell the operator this screen has nothing in
+  # it.
+  - slot: fuerzas.turno-asignar.fig
+    route: /#/home-shifts
+    steps:
+      - click: ".simplebar-content > div > div"
+      - click: "button::-p-text(Asignar)"
+    screenIs: '[role="tab"][aria-selected="true"]::-p-text(Asignar)'
+    dataReady: 'div.space-y-0\.5 > div'
+    clip: '[role="tab"]'
+    clipUp: "div.w-full"
+    viewport: { width: 1600, height: 900 }
