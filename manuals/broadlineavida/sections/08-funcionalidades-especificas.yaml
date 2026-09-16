@@ -45,19 +45,27 @@ children:
               description: >-
                 Información vial en tiempo real. Valida la dirección por Calle,
                 Carrera, Diagonal, etc.
+            # LayersMap.tsx:76 — the entry only exists when
+            # `config.name === "MV" || config.name === "DEMO"`.
             - id: func.capa.avl
               label: AVL
               description: >-
                 Muestra la ubicación de las fuerzas integradas para el monitoreo
                 y la coordinación de recursos.
+              when:
+                tenant: [mv, demo]
             - id: func.capa.mobile
               label: Mobile
               description: >-
                 Visualiza la ubicación de los agentes que operan desde la
                 aplicación Broadsec Mobile.
+            # LayersMap.tsx:138 — the entry only exists when
+            # `config.name === "MV"`.
             - id: func.capa.paneles
               label: Paneles
               description: Muestra todos los paneles disponibles en el mapa.
+              when:
+                tenant: [mv]
             - id: func.capa.satelital
               label: Satelital
               description: >-
@@ -165,8 +173,13 @@ children:
           caption: "Capa Mobile: ubicación de agentes móviles."
           widthPercent: 45
 
+  # LayersMap.tsx:76 — the AVL layer entry is built only when
+  # `config.name === "MV" || config.name === "DEMO"`, so no other deployment
+  # has this layer to describe.
   - id: funcionalidades.capa-avl
     title: Capa AVL
+    when:
+      tenant: [mv, demo]
     children:
       - id: funcionalidades.capa-avl.texto
         type: prose
@@ -183,8 +196,12 @@ children:
           caption: "Capa AVL: ubicación de fuerzas integradas."
           widthPercent: 90
 
+  # LayersMap.tsx:138 — the panels layer entry is built only when
+  # `config.name === "MV"`, so no other deployment has this layer to describe.
   - id: funcionalidades.capa-paneles
     title: Capa de Paneles
+    when:
+      tenant: [mv]
     children:
       - id: funcionalidades.capa-paneles.texto
         type: prose

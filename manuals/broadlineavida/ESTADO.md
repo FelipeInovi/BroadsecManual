@@ -34,6 +34,23 @@ state.
   own figure. Duplicating the prose is the cost; the alternative was printing a
   heading the operator cannot find on their own screen.
 
+- **`08-funcionalidades-especificas.yaml`'s map layers are tagged from the
+  product, not from `07`.** The file described the AVL and the Paneles layers
+  to every deployment while `07-interfaz-general.yaml` conditioned the same two
+  layers — one screen, two sections, one of them wrong, and `med`'s document was
+  the one carrying layers its deployment does not build. Both are now tagged
+  from `components/LayersMap.tsx` re-read directly: AVL is `[mv, demo]`
+  (`LayersMap.tsx:74-76`, `avlLayer !== undefined && setAvlLayer !== undefined
+  && (config.name === "MV" || config.name === "DEMO")`) and Paneles is `[mv]`
+  (`LayersMap.tsx:136-138`, the same guard with `config.name === "MV"`). The
+  citations were re-derived from the source rather than copied from `07`, which
+  is the only way a second document can confirm the first instead of inheriting
+  its mistakes. Four nodes carry the tag: the two `icon-table` rows and the two
+  standalone subsections. `mv` is unchanged at 82 pages and 236/247 images;
+  `med` drops to 57 pages and 178/179, five image slots fewer — three figures
+  plus the two icon-table rows, because **a row of an `icon-table` owns an image
+  slot of its own**.
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and
@@ -105,16 +122,19 @@ state.
    drift is the one instrumented to miss it. **What settles it:** an authoring
    decision, per module, on whether a legacy-port section declares coverage
    before or after it is re-grounded against the source.
-6. **`08-funcionalidades-especificas.yaml` documents map layers `med` cannot
-   see, and the owner deliberately deferred fixing it.** The file carries zero
-   `when:` tags in 1095 lines, so its Capa AVL and Capa de Paneles subsections
-   render for every deployment — while `07-interfaz-general.yaml` holds the real
-   conditions for the same layers, cited to the product: AVL is
-   `[mv, demo]` (`LayersMap.tsx:76`) and Paneles is `[mv]` (`LayersMap.tsx:138`).
-   Two sections describe one screen; one of them is true. `med`'s document
-   therefore explains two map layers its deployment does not have, which is what
-   invariant 4 exists to prevent. Surfaced on 2026-09-15 and consciously left
-   for later in favour of documenting the new reports filters in 09. **What
-   settles it:** tagging 08's layer subsections from 07's conditions — the
-   evidence is already gathered and cited, so this is authoring work, not
-   investigation.
+6. **`08` and `07` hold two different tables for one layer selector, and they
+   disagree on which layers exist.** Tagging AVL and Paneles fixed what `med`
+   was being shown wrongly, but it did not reconcile the two tables. `08` lists
+   a **Satelital** row and a **360°** row; neither is an entry of
+   `components/LayersMap.tsx`, which is the component that builds the selector.
+   Satellite views do exist in the product, but in other components
+   (`components/Forms/Agents/AgentMap.tsx`, `components/ModalSOS.tsx`,
+   `pages/PRT/utils.ts`), so these two rows describe either a different control
+   or a layer the selector no longer offers. `08` also omits four entries the
+   selector does build — Incidentes, Cámaras (`[mv]`), Semáforos (`[mv]`) and
+   Recorrido. `08`'s `mobile` row is likewise untagged where `07` conditions it
+   to `[lv, ant, mv, med, demo]`; harmless for the two built targets, wrong for
+   the other four. **What settles it:** deciding whether `08` keeps a layer
+   table at all, or defers to `07`'s and describes only the behaviour — then
+   re-grounding whatever survives against `LayersMap.tsx`. This is
+   investigation, not a tagging pass.
