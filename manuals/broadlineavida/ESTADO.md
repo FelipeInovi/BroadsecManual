@@ -19,6 +19,21 @@ state.
 - **The two deployments are `mv` and `med`, and both are build targets.** Their
   delivery histories are independent by design: the change log gives `mv` a row
   at 1.1.0 that `med` never receives.
+
+- **A figure may carry real operational data, including an agent's name and
+  plate.** Asked and answered by the owner on 2026-09-16, about
+  `fuerzas.perfil.agente.fig`, which shows an agent's full name, callsign, force
+  and assigned vehicle taken off the live mv deployment: *"esos datos son de
+  ellos mismos"*. The manual is delivered to the organisation whose agents these
+  are, so a capture returns their own records to them.
+
+  Written down because it is a judgement about a client-facing document that no
+  file in this repository can answer, and because every future capture run meets
+  it again — the dashboard figures already carry live case data, and the next
+  agent should not re-open the question or blur an image on its own initiative.
+  What this does NOT license is data belonging to somebody else: a capture taken
+  from one deployment and delivered to another would hand a client another
+  client's records, which is the `_common` folder's one real hazard.
 - **Which slots the product's own asset files could answer is settled**, per
   table, and the verdicts are in `AGENTS.md` under "Which images the product
   ships". They are not re-derived: the reasoning cost a full pass over the
