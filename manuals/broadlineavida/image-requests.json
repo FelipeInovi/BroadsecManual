@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 254,
+    "total": 253,
     "delivered": 248,
-    "pending": 6
+    "pending": 5
   },
   "pending": [
     {
@@ -41,26 +41,6 @@
       "deliverTo": {
         "shared": "_common/fuerzas.barra.navegacion.png",
         "override": "<tenant>/fuerzas.barra.navegacion.png"
-      }
-    },
-    {
-      "slot": "fuerzas.estado.emergencia",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.estado.emergencia",
-          "blockType": "icon-table",
-          "shows": "Emergencia"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.estado.emergencia.png",
-        "override": "<tenant>/fuerzas.estado.emergencia.png"
       }
     },
     {
@@ -2879,6 +2859,11 @@
           "nodeId": "fuerzas.estado.no-disponible",
           "blockType": "icon-table",
           "shows": "No Disponible"
+        },
+        {
+          "nodeId": "fuerzas.estado.emergencia",
+          "blockType": "icon-table",
+          "shows": "Emergencia"
         }
       ],
       "files": [

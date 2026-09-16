@@ -154,6 +154,19 @@ state.
   reader sees. The same reasoning kept `fuerzas.estado.con-caso` when its label
   became "Asignado".
 
+- **Two rows share one delivered image when the PRODUCT renders them
+  identically.** The new `Emergencia` row declares
+  `icon: fuerzas.estado.no-disponible` rather than a slot of its own.
+  `getStatusColorAgent` (`utils/auth/functions.ts:198-203`) returns the same
+  `#F44336` for `unavailable` and for `emergency`, and `CustomTagAgent.tsx:20-23`
+  adds the pulse and the second overlay only for `assigned` — so in the list the
+  two states are pixel for pixel alike. A capture of its own would have been a
+  second file showing an identical image, and taking it would have required
+  putting a real agent into emergency. The sharing agrees with the row's own
+  description, which tells the reader the two look the same and to use the
+  filter to separate them. Verified in the rendered output, not in a count: the
+  fourth row's `src` resolves to `_common/fuerzas.estado.no-disponible.png`.
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and

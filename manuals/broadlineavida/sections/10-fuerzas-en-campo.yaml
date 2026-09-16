@@ -255,6 +255,21 @@ children:
                 # propio que buscar.
                 - id: fuerzas.estado.emergencia
                   label: Emergencia
+                  # Shares the slot of the row above instead of asking for a
+                  # capture of its own, and that is a statement about the
+                  # product rather than a shortcut. `getStatusColorAgent`
+                  # (`utils/auth/functions.ts:198-203`) returns the SAME
+                  # `#F44336` for `unavailable` and for `emergency`, and
+                  # `CustomTagAgent.tsx:20-23` adds the pulse and the second
+                  # overlay only for `assigned` — so in the list the two states
+                  # render pixel for pixel alike. A capture of an agent in
+                  # emergency would be a different file showing an identical
+                  # image, and it would have required putting a real agent into
+                  # that state to take it.
+                  #
+                  # Sharing also agrees with the description below, which tells
+                  # the reader the two look the same and how to tell them apart.
+                  icon: fuerzas.estado.no-disponible
                   description: >-
                     El agente se encuentra en situación de emergencia. Se señala
                     con un punto rojo, igual que **No Disponible**; para
