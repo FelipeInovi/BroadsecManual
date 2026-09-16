@@ -183,22 +183,47 @@ state.
    just received, taken per module: declare what the section describes once
    somebody has read the product for it, and leave `verified` for whoever
    actually audits it.
-6. **`07`'s `mapa.controles` is a THIRD table for this screen, and its rows do
-   not match the images delivered for them.** It was not audited here — only
-   two of its six rows were opened, and both were wrong.
-   `mapa.ctrl.street-view` is captioned "Modo Street View", described as
-   "Cambia la vista del mapa a modo calle", and its delivered image is an
-   AERIAL view: that row is the `TypeMap.tsx` button (`hybrid`→`roadmap` is
-   precisely "modo calle"), not Street View, and 08 now describes the same
-   button as the satellite toggle. `mapa.ctrl.salir-street-view` does show
-   Street View — Google's "View on Google Maps" bar — so the pair splits one
-   control across two names, one of which belongs to a different control
-   entirely. The remaining four rows (`visualizacion`, `agrupar`,
-   `navegacion-3d`, `controles`) were NOT checked. **What settles it:** the
-   same treatment the layer table just had — read `GlobalGoogleMap.tsx` and
-   `TypeMap.tsx` row by row, then decide which of these controls belong to 07's
-   catalogue and which to 08's prose, so one control is not described twice
-   under two names.
+6. **`07`'s `mapa.controles` is AUDITED: three of its six rows are wrong, and
+   two real controls are missing.** Every row was opened and checked against
+   the controls the Home map actually renders, enumerated from the live DOM:
+   `Map camera controls` (which contains *rotate clockwise*, *rotate
+   counterclockwise* and **`tilt map`**), `Drag Pegman onto the map to open
+   Street View`, `Atenuar Mapa` with its `Opacidad del Mapa` slider, and
+   `Config`.
+
+   | Row | Delivered image | Verdict |
+   |---|---|---|
+   | `visualizacion` | the layer panel, opened | **wrong, twice over** |
+   | `agrupar` | a toggle switch | correct — `GroupinMarketsSwitch` |
+   | `street-view` | an aerial view | **wrong** — that is `TypeMap.tsx` |
+   | `salir-street-view` | Google's "View on Google Maps" bar | correct |
+   | `navegacion-3d` | the Street View pegman | **wrong** |
+   | `controles` | four arrows in a circle | correct — `Map camera controls` |
+
+   - **`visualizacion`** fails twice. Its image is the whole layer panel rather
+     than the icon its column asks for, and that panel is captioned
+     "Semáforos" — the label the product carried BEFORE the i18n moved to
+     "ARS" (`es.json:1335`; `LayersMap.tsx:285` renders `layer.tittle`, not
+     `layer.name`). It also shows six layers, missing Incidentes and Recorrido.
+     And what it depicts is the layer selector, which already has its own table
+     in `mapa.capas` — a third description of one control.
+   - **`street-view`** is the `TypeMap.tsx` button, which 08 now describes as
+     the satellite toggle. `hybrid`→`roadmap` is literally "modo calle", so the
+     row's own description gives it away.
+   - **`navegacion-3d`** shows the pegman, which OPENS Street View. The actual
+     3D control is `tilt map`, and it lives INSIDE `Map camera controls` — the
+     row `controles` already describes it. So these two rows are one control,
+     and this one's image belongs to Street View.
+   - **Not documented at all**: `Atenuar Mapa` with `Opacidad del Mapa`, both
+     the product's own, and `Config`.
+
+   Three of the six rows and one pending question therefore all concern Street
+   View, the satellite toggle and the 3D camera — three controls shared across
+   four names. **What settles it:** deciding which of them belong to 07's
+   catalogue and which to 08's prose, writing each once, and then reshooting
+   the images those rows keep. Nothing here is a tagging pass; every wrong row
+   has a delivered image that must be replaced, which makes it authoring plus
+   capture, not a correction.
 7. **The INITIAL grouping state differs by deployment and is not written
    anywhere.** `agrupatedPins: config.name !== "MV"` (`mapDataStore.ts:70`) is
    a starting value, not a capability: `GroupinMarketsSwitch`
