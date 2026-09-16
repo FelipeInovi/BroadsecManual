@@ -51,6 +51,25 @@ state.
   plus the two icon-table rows, because **a row of an `icon-table` owns an image
   slot of its own**.
 
+- **`09` declares coverage and is deliberately NOT stamped.** The two are
+  separate acts and only one of them was earned. `documents:` now names four
+  paths — `ReportsFilters.tsx`, `ReportsPage.tsx`, `ReportsCharts.tsx`,
+  `GoogleMap/ControlHeatMap.tsx`, one per subject the section describes — and
+  eleven flags. `verified` stays unstamped because it records the product
+  commit a HUMAN checked a module against, and only the filters were read
+  control by control; stamping would assert an audit of the Ventanas de Datos
+  and the Mapa de Calor that nobody performed. That is the same reasoning that
+  refused to stamp 07, applied to the module where it matters most.
+- **A capability fact joins by flag, and paths alone do not catch it.**
+  `coverage.ts` matches a `gate` fact by `file` against `documents.paths` and a
+  `capability` fact by `flag` against `documents.flags`. Declaring the
+  component that RENDERS a control therefore does not catch the flag that
+  switches it on in a tenant config, which lives in a file no section would
+  ever claim. 09 declared paths only at first and still reported its own three
+  capability facts as undeclared. With the flags added it reads `covered` and
+  claims them, and the manual-wide undeclared list drops from four facts to
+  one.
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and
@@ -117,14 +136,12 @@ state.
    imported only by `pages/EventHistory/EventHistoryPage.tsx`. **What settles
    it:** naming the components that render the Home top bar and the incident
    list, and adding them to the section's `documents:` paths alongside the map.
-5. **The module that describes the Security Dashboard cannot be checked against
-   the product.** `09-security-dashboard.yaml` declares no `documents:`, as do
-   04, 05, 06, 08, 10, 11 and 13 — the ports of the legacy document. The
-   product's real movement lands squarely in `src/render/pages/Reports/`, which
-   is exactly what 09 describes, so the one module that needed to surface this
-   drift is the one instrumented to miss it. **What settles it:** an authoring
-   decision, per module, on whether a legacy-port section declares coverage
-   before or after it is re-grounded against the source.
+5. **The other seven legacy ports still declare no coverage.** 09 now does —
+   see Decided — but 04, 05, 06, 08, 10, 11 and 13 report `unknown coverage`,
+   so drift can never reach them. **What settles it:** the same decision 09
+   just received, taken per module: declare what the section describes once
+   somebody has read the product for it, and leave `verified` for whoever
+   actually audits it.
 6. **`08` and `07` hold two different tables for one layer selector, and they
    disagree on which layers exist.** Tagging AVL and Paneles fixed what `med`
    was being shown wrongly, but it did not reconcile the two tables. `08` lists

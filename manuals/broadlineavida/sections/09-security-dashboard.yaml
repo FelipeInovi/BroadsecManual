@@ -10,6 +10,52 @@ id: security-dashboard
 title: Security Dashboard
 subtitle: Análisis y estadísticas en tiempo real
 
+# Named by reading the product, one path per subject this section describes —
+# not from the module map, which holds no reference into `pages/Reports/`.
+# Declaring coverage is not the same as claiming it was checked: this section
+# has NO baseline in baselines.json and is not to be stamped until someone has
+# read the last three against what the manual says of them. Only the filters
+# have been audited (control by control, against ReportsFilters.tsx). The
+# declaration exists so that drift in the other three can reach this module at
+# all — with no `documents:` it read `unknown coverage` while the product's
+# movement landed squarely here, which is how six undocumented filters went
+# unnoticed.
+sourceBase: src/render/
+documents:
+  paths:
+    # "Filtros" — audited.
+    - pages/Reports/ReportsFilters.tsx
+    # "Ventanas de Datos" — the widgets and the charts that fill them.
+    - pages/Reports/ReportsPage.tsx
+    - pages/Reports/ReportsCharts.tsx
+    # "Mapa de Calor" — ReportsCharts.tsx:9 imports it, and renders it at :1221.
+    - components/GoogleMap/ControlHeatMap.tsx
+  # A capability fact joins by FLAG, never by the file that reads it
+  # (`coverage.ts`, `matchesFlagEntry`) — so declaring ReportsFilters.tsx does
+  # not catch a flag flipping in a tenant config. Without these, the three
+  # capability facts standing today (canViewComparisonDateRange,
+  # canViewReportsFilterCity, canViewReportsFilterDepartment) report as
+  # undeclared while naming controls this very section documents.
+  flags:
+    - canViewComparisonDateRange
+    - canViewReportsFilterCity
+    - canViewReportsFilterDepartment
+    - canViewFilterZone
+    - canViewFilterCommune
+    - canViewFilterNeighborhood
+    - canViewFilterResponseForce
+    - canViewFilterTrafficDetails
+    - canViewFilterStation
+    # Governs the removed "Tipo de Finalización" control. Declared although
+    # nothing is written about it: this is the module the change would belong
+    # to if the flag were ever switched on, and a flag nobody claims reports as
+    # undeclared — which is the one state that guarantees nobody looks.
+    - canViewFilterCompletionType
+    # The "Tiempos de gestión" window, which this section documents for every
+    # deployment because the legacy said so. See the note at the top of the
+    # file: the module map has it on for `lv` alone and it was never reconciled.
+    - canViewTimeMetrics
+
 children:
   - id: dashboard.intro
     type: prose
