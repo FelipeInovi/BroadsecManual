@@ -54,6 +54,51 @@ describe("parseRecipes", () => {
     }
   });
 
+  // broadlineavida's `med` does not accept the account that signs into `mv`,
+  // and the two are separate builds rather than one URL with a parameter. With
+  // a single shared login the only way to reach the second is to edit the
+  // credentials file between runs — a step someone forgets once and then
+  // captures the wrong tenant with.
+  it("accepts a deployment carrying a login of its own", () => {
+    const withOwnAuth = {
+      ...deployments,
+      med: {
+        baseUrl: "https://medellin.inovisec.com/med",
+        verify: { route: "/#/dashboard", selector: 'img[alt="Project logo"]' },
+        auth: { ...target.auth, userEnv: "BROADSEC_CAPTURE_MED_USER" },
+      },
+    };
+    const parsed = parseRecipes({
+      version: 1,
+      target: { deployments: withOwnAuth, auth: target.auth },
+      recipes: [],
+    });
+    expect(isAttachTarget(parsed.target)).toBe(false);
+    if (!isAttachTarget(parsed.target)) {
+      expect(parsed.target.deployments["med"]?.auth?.userEnv).toBe("BROADSEC_CAPTURE_MED_USER");
+      // The ones that share it stay undefined, so the run can tell "use mine"
+      // from "use the target's" without comparing two objects.
+      expect(parsed.target.deployments["mv"]?.auth).toBeUndefined();
+    }
+  });
+
+  // The whole point of naming variables instead of values is that this file is
+  // committed. A per-deployment block is one more place a password could be
+  // typed, so it is held to the same shape as the shared one.
+  it("refuses a password written into a deployment's own login", () => {
+    const leaked = {
+      ...deployments,
+      med: {
+        baseUrl: "https://medellin.inovisec.com/med",
+        verify: { route: "/#/dashboard", selector: 'img[alt="Project logo"]' },
+        auth: { ...target.auth, password: "hunter2" },
+      },
+    };
+    expect(() =>
+      parseRecipes({ version: 1, target: { deployments: leaked, auth: target.auth }, recipes: [] }),
+    ).toThrow();
+  });
+
   // A run that cannot check it reached the right place before shooting would
   // deliver a whole batch of wrong images in one go.
   it("refuses a deployment with no reachability check", () => {

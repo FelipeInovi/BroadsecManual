@@ -70,6 +70,34 @@ target:
     # the pipeline can tell an old screen from a current one. `canSeeBoT` being
     # true here is exactly what makes that trap quiet. Kept only for figures
     # outside BoT, or for exercising the login path.
+    # The manual's OTHER build target. A separate deployment, not a parameter
+    # of mv: `VITE_NAME_PROJECT` is build-time (config/index.ts), so nothing in
+    # an mv URL can serve med.
+    #
+    # It has its own user directory — the account that signs into mv is not
+    # accepted here — so it carries its own `auth`. Variable NAMES only, as
+    # everywhere in this file.
+    #
+    # And its `verify` is the first in this file that actually proves WHICH
+    # TENANT answered, rather than only that something did. `logoImages[config.name]`
+    # renders on the dashboard (ReportsCharts.tsx:666-672, alt="Project logo"),
+    # and med's is medellin_logo where mv's is movilidad_logo — so pointing
+    # this at mv by mistake fails the gate instead of quietly capturing the
+    # wrong deployment. The note in capture.ts about the logo not rendering is
+    # true of /#/broadsec-of-things, not of /#/dashboard.
+    med:
+      baseUrl: https://medellin.inovisec.com/med
+      verify:
+        route: /#/dashboard
+        selector: 'img[alt="Project logo"][src*="medellin_logo"]'
+      auth:
+        route: /#/login
+        userEnv: BROADSEC_CAPTURE_MED_USER
+        passwordEnv: BROADSEC_CAPTURE_MED_PASSWORD
+        userSelector: 'input[name="email"]'
+        passwordSelector: 'input[name="password"]'
+        submitSelector: "#submit-button"
+        doneWhen: ".h-screen"
     demo:
       baseUrl: https://web.inovisec.com/lv
       verify:
@@ -552,14 +580,27 @@ recipes:
     dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Código Policial"]])'
     clip: '::-p-xpath(//*[normalize-space(text())="Código Policial"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
     viewport: { width: 1600, height: 900 }
-  # NO RECIPE, AND NONE IS POSSIBLE HERE — dashboard.variables.emergencia.med.fig
-  # is the SAME control under med's heading, "Tipo de Reporte"
-  # (reportsPage.emergencyType, es.json:1108), which is why the manual carries
-  # two tagged siblings. But `target.deployments` above declares only mv and
-  # demo, and one URL is one tenant: `VITE_NAME_PROJECT` is a BUILD-time
-  # variable, so no parameter on an mv URL can make it serve med. Shooting it
-  # needs med's own deployment declared and reachable — not a different
-  # selector.
+  # THE SAME CONTROL, UNDER MED'S HEADING. mv overrides it to "Código
+  # Policial" (`reportsEmergencyTypeLabel`, mv.config.ts:25); med.config.ts
+  # sets no override, so it falls back to `reportsPage.emergencyType` = "Tipo
+  # de Reporte" (es.json:1108). That is the whole reason the manual carries two
+  # tagged siblings and two slots for one filter.
+  #
+  # This recipe is its own tenant check: if the run ever pointed at mv, "Tipo
+  # de Reporte" would not be on the screen and the capture would fail rather
+  # than deliver mv's panel under med's caption.
+  #
+  # Scoped to the drawer like the rest — see motivo-cierre for what a bare
+  # title costs when a chart behind the drawer shares it.
+  - slot: dashboard.variables.emergencia.med.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-xpath(//*[contains(@class,"MuiDrawer-paper")]//*[normalize-space(text())="Tipo de Reporte"])'
+    screenIs: '::-p-text(Tipo de Reporte)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Tipo de Reporte"]])'
+    clip: '::-p-xpath(//*[contains(@class,"MuiDrawer-paper")]//*[normalize-space(text())="Tipo de Reporte"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
 
   # THE ONLY FILTER WHOSE TITLE IS NOT UNIQUE ON THIS SCREEN. The dashboard
   # behind the drawer draws a CHART also headed "Motivo de Cierre", as an

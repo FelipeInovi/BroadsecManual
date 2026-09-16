@@ -165,6 +165,19 @@ const deploymentSchema = z
      * product change, and the product repository is read-only.
      */
     verify: z.object({ route: z.string(), selector: selector("verify.selector") }).strict(),
+    /**
+     * A login of this deployment's own, when the shared one does not open it.
+     *
+     * One product can be served as several deployments with separate user
+     * directories — broadlineavida's `med` does not accept the account that
+     * signs into `mv`. Without this the only way to capture the second one is
+     * to edit the credentials file between runs, which is a step someone
+     * forgets once and then captures the wrong tenant with.
+     *
+     * Still only variable NAMES, for the reason `authSchema` gives: this file
+     * is committed.
+     */
+    auth: authSchema.optional(),
   })
   .strict();
 

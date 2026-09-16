@@ -212,7 +212,9 @@ export async function runCaptures(
         `product's setup gate and photograph that instead.`,
     );
   }
-  const auth = doc.target.auth;
+  // A deployment may carry its own login; most share the target's. Resolved
+  // here rather than at the call site so both modes below see one `auth`.
+  const auth = deployment.auth ?? doc.target.auth;
   const { user, password } = credentials(auth);
   const browser = await puppeteer.launch({
     executablePath: findChrome(),
