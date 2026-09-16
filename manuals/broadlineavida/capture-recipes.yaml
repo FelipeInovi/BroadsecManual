@@ -451,3 +451,195 @@ recipes:
   # tile ever shows is "mediaError: bufferAddCodecError" — so the clip returned
   # the error text instead of the transmission state. Not a selector problem.
   # Needs a headful run or a hand capture, like the mosaic.
+
+  # ==========================================================================
+  # SECURITY DASHBOARD — the filter drawer (section 09).
+  #
+  # THREE THINGS GATE EVERY RECIPE BELOW, and all three were found by reading
+  # the product rather than by a failed run.
+  #
+  # 1. THE FILTERS ARE NOT ON THE PAGE. They live in a MUI `Drawer` that opens
+  #    closed (`ReportsPage.tsx:623, 1289`). It has to be opened first, and the
+  #    button that opens it is a 30x32 `Box` with no text, no test id and no
+  #    aria-label — an `<img alt="Filter">` inside it is the only stable handle
+  #    (ReportsCharts.tsx:862-890).
+  #
+  # 2. THAT BUTTON DOES NOT EXIST UNTIL THE DATA DOES. `ReportsCharts` renders
+  #    only when `formatedDataForCharts` is non-null (ReportsPage.tsx:1308),
+  #    which needs `useReports` to have answered (:1192). So every recipe waits
+  #    on chart data BEFORE clicking anything.
+  #
+  # 3. ONLY ONE FILTER IS OPEN AT A TIME. Each is a `CheckboxFilterReports`
+  #    whose `expanded` is `accordionState === "<its key>"`, so opening one
+  #    closes the last (ReportsFilters.tsx:1637-1638). One recipe per filter,
+  #    each opening its own.
+  #
+  # `dataReady` asks for `aria-expanded="true"` ON THE SUMMARY THAT CARRIES
+  # THIS FILTER'S TITLE. A MUI Accordion keeps its details in the DOM while
+  # collapsed, so matching a checkbox would match a filter nobody opened — the
+  # "a box is not visibility" failure, which produces a confident clip of the
+  # wrong thing. `aria-expanded` is the only assertion here that means open.
+  #
+  # Titles are the i18n catalogue's, not the legacy manual's: es.json:1203-1208.
+  # READ-ONLY. Opening a drawer and expanding a panel change nothing. Not one
+  # checkbox is ticked, and no report is generated.
+
+  - slot: dashboard.variables.estado-caso.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-text(Estado del Caso)'
+    screenIs: '::-p-text(Estado del Caso)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Estado del Caso"]])'
+    clip: '::-p-xpath(//*[normalize-space(text())="Estado del Caso"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
+
+  # The five siblings of the one above. Identical shape, and only the title
+  # changes — they are the same component under the same accordion state.
+  # Accents are written as the catalogue has them ("Estación"): the file is
+  # UTF-8 and the match is literal, so dropping one to play safe is what breaks.
+  - slot: dashboard.variables.tipo-caso.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-text(Tipo de Caso)'
+    screenIs: '::-p-text(Tipo de Caso)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Tipo de Caso"]])'
+    clip: '::-p-xpath(//*[normalize-space(text())="Tipo de Caso"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: dashboard.variables.clase-siniestro.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-text(Clase de Siniestro Vial)'
+    screenIs: '::-p-text(Clase de Siniestro Vial)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Clase de Siniestro Vial"]])'
+    clip: '::-p-xpath(//*[normalize-space(text())="Clase de Siniestro Vial"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
+
+  - slot: dashboard.variables.recursos-asignados.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-text(Recursos Asignados al Caso)'
+    screenIs: '::-p-text(Recursos Asignados al Caso)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Recursos Asignados al Caso"]])'
+    clip: '::-p-xpath(//*[normalize-space(text())="Recursos Asignados al Caso"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
+  - slot: dashboard.variables.estacion.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-text(Estación)'
+    screenIs: '::-p-text(Estación)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Estación"]])'
+    clip: '::-p-xpath(//*[normalize-space(text())="Estación"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
+
+  # The emergency-type filter is a `DropDownReports`, but it is the same
+  # accordion underneath (`expanded={accordionState === "emergencySubTypes"}`,
+  # ReportsFilters.tsx:1196). On mv its heading comes from
+  # `config.reportsEmergencyTypeLabel` = reportsPage.filters.policeCode, which
+  # is "Código Policial" — NOT the default "Tipo de Reporte" that med reads.
+  # That is why the manual carries two tagged siblings and two slots.
+  - slot: dashboard.variables.emergencia.mv.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-text(Código Policial)'
+    screenIs: '::-p-text(Código Policial)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Código Policial"]])'
+    clip: '::-p-xpath(//*[normalize-space(text())="Código Policial"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
+  # NO RECIPE, AND NONE IS POSSIBLE HERE — dashboard.variables.emergencia.med.fig
+  # is the SAME control under med's heading, "Tipo de Reporte"
+  # (reportsPage.emergencyType, es.json:1108), which is why the manual carries
+  # two tagged siblings. But `target.deployments` above declares only mv and
+  # demo, and one URL is one tenant: `VITE_NAME_PROJECT` is a BUILD-time
+  # variable, so no parameter on an mv URL can make it serve med. Shooting it
+  # needs med's own deployment declared and reachable — not a different
+  # selector.
+
+  # NO RECIPE — dashboard.variables.motivo-cierre.fig could not be shot, and
+  # the reason is NOT the one it looks like. Six attempts, every one failing on
+  # the same gate, and the run that replaced the clip with `.MuiDrawer-paper`
+  # said "matched nothing": THE DRAWER IS CLOSED by the time the shot is taken,
+  # so the accordion was never expanded and no `aria-expanded` was ever going
+  # to appear. Clicking this title closes the drawer instead of opening the
+  # panel.
+  #
+  # Ruled out, each by a run of its own: it is not the fetched options list
+  # (`useClosedReasonsList`, ReportsFilters.tsx:193) — `isLoading` only swaps
+  # the accordion's CONTENT, never its title (CheboxFilterReports.tsx:77-92),
+  # and the drawer shows it populated at 0/13. It is not a slow network — the
+  # failure is identical every time. It is not a render race — opening a static
+  # filter first to spend a render changes nothing. It is not the viewport or
+  # the element sitting low in a scrolling drawer — 1600x1400 fails exactly
+  # like 1600x900, and Estación, which sits BELOW it, captures fine at 900.
+  #
+  # Every sibling above uses this identical shape and works, so the next step
+  # is a headful run to watch where that click actually lands, not another
+  # selector guess. Like bot.cctv.fn.estado, this slot stays pending.
+
+  # The Ubicación block, collapsed: its three rows are what the caption
+  # promises, and Comuna and Barrio legitimately read 0/0 until a Zona is
+  # chosen. Choosing one would be filtering — allowed — but it would also
+  # photograph a state no operator starts from.
+  - slot: dashboard.filtros.ubicacion.fig-zona
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+    screenIs: '::-p-text(Ubicación)'
+    dataReady: '::-p-text(Barrio)'
+    clip: '::-p-xpath(//*[normalize-space(text())="Ubicación"]/ancestor::*[.//*[normalize-space(text())="Barrio"]][1])'
+    viewport: { width: 1600, height: 900 }
+
+  # NO RECIPE — dashboard.filtros.ubicacion.fig-zona has no element to clip.
+  # Its caption promises Zona, Comuna AND Barrio, and the product renders the
+  # "Ubicación" heading as a SIBLING of the three filters, not their parent
+  # (ReportsFilters.tsx:727-739). The nearest ancestor holding both the heading
+  # and "Barrio" is the drawer itself, which is what a run delivered: the whole
+  # panel, plus the map behind it, for a caption about three rows.
+  #
+  # `clipUp` exists for the opposite problem — climbing TO a container the
+  # product does not name. Here the climb overshoots, and no selector expresses
+  # "these four siblings". Clipping the Zona accordion alone would answer two
+  # thirds of its own caption. Needs a hand capture, or a caption that promises
+  # what a single element shows.
+
+  # The comparison-range control whole: heading, link icon and the date field.
+  # Anchored on the heading and climbed to the block that also holds a time,
+  # because the block itself carries only generic Tailwind classes.
+  - slot: dashboard.filtros.comparacion.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+    screenIs: '::-p-text(Rango de Comparación)'
+    dataReady: '::-p-text(Rango de Comparación)'
+    clip: '::-p-xpath(//*[normalize-space(text())="Rango de Comparación"]/ancestor::div[.//*[contains(text(),":00:")]][1])'
+    viewport: { width: 1600, height: 900 }
+
+  # PHOTOGRAPHED, NOT PRESSED. The step this illustrates says clicking the field
+  # unlinks the comparison range from the main one. Showing where the control is
+  # needs no such click, and the boundary at the top of this file is that a
+  # capture may look, never act.
+  - slot: dashboard.filtros.comparacion.paso.editar
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+    screenIs: '::-p-text(Rango de Comparación)'
+    dataReady: '::-p-text(Rango de Comparación)'
+    clip: '::-p-xpath(//*[normalize-space(text())="Rango de Comparación"]/ancestor::div[.//*[contains(text(),":00:")]][1]//*[contains(text(),":00:")][1])'
+    viewport: { width: 1600, height: 900 }
+
+  # The link icon beside the heading — the first button after it in document
+  # order. Photographed, not pressed: pressing it would relink the range.
+  - slot: dashboard.filtros.comparacion.paso.vincular
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+    screenIs: '::-p-text(Rango de Comparación)'
+    dataReady: '::-p-text(Rango de Comparación)'
+    clip: '::-p-xpath(//*[normalize-space(text())="Rango de Comparación"]/ancestor::div[.//*[contains(text(),":00:")]][1]//button[1])'
+    viewport: { width: 1600, height: 900 }

@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 248,
-    "delivered": 234,
-    "pending": 14
+    "delivered": 243,
+    "pending": 5
   },
   "pending": [
     {
@@ -66,66 +66,6 @@
       }
     },
     {
-      "slot": "dashboard.filtros.comparacion.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.filtros.comparacion.fig",
-          "blockType": "figure",
-          "shows": "Control de Rango de Comparación en el panel de Filtros."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.filtros.comparacion.fig.png",
-        "override": "<tenant>/dashboard.filtros.comparacion.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.filtros.comparacion.paso.editar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.filtros.comparacion.paso.editar",
-          "blockType": "procedure",
-          "shows": "Edite las fechas de comparación"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.filtros.comparacion.paso.editar.png",
-        "override": "<tenant>/dashboard.filtros.comparacion.paso.editar.png"
-      }
-    },
-    {
-      "slot": "dashboard.filtros.comparacion.paso.vincular",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.filtros.comparacion.paso.vincular",
-          "blockType": "procedure",
-          "shows": "Vuelva a vincular el rango de comparación"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.filtros.comparacion.paso.vincular.png",
-        "override": "<tenant>/dashboard.filtros.comparacion.paso.vincular.png"
-      }
-    },
-    {
       "slot": "dashboard.filtros.ubicacion.fig-zona",
       "neededBy": [
         "mv"
@@ -146,106 +86,6 @@
       }
     },
     {
-      "slot": "dashboard.variables.emergencia.mv.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.emergencia.mv.fig",
-          "blockType": "figure",
-          "shows": "Filtro por código policial."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.emergencia.mv.fig.png",
-        "override": "<tenant>/dashboard.variables.emergencia.mv.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.estado-caso.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.estado-caso.fig",
-          "blockType": "figure",
-          "shows": "Filtro por estado del caso."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.estado-caso.fig.png",
-        "override": "<tenant>/dashboard.variables.estado-caso.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.tipo-caso.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.tipo-caso.fig",
-          "blockType": "figure",
-          "shows": "Filtro por tipo de caso."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.tipo-caso.fig.png",
-        "override": "<tenant>/dashboard.variables.tipo-caso.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.clase-siniestro.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.clase-siniestro.fig",
-          "blockType": "figure",
-          "shows": "Filtro por clase de siniestro vial."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.clase-siniestro.fig.png",
-        "override": "<tenant>/dashboard.variables.clase-siniestro.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.recursos-asignados.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.recursos-asignados.fig",
-          "blockType": "figure",
-          "shows": "Filtro por recursos asignados al caso."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.recursos-asignados.fig.png",
-        "override": "<tenant>/dashboard.variables.recursos-asignados.fig.png"
-      }
-    },
-    {
       "slot": "dashboard.variables.motivo-cierre.fig",
       "neededBy": [
         "mv"
@@ -263,26 +103,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.variables.motivo-cierre.fig.png",
         "override": "<tenant>/dashboard.variables.motivo-cierre.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.estacion.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.estacion.fig",
-          "blockType": "figure",
-          "shows": "Filtro por estación."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.estacion.fig.png",
-        "override": "<tenant>/dashboard.variables.estacion.fig.png"
       }
     },
     {
@@ -2257,6 +2077,70 @@
       ]
     },
     {
+      "slot": "dashboard.filtros.comparacion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.comparacion.fig",
+          "blockType": "figure",
+          "shows": "Control de Rango de Comparación en el panel de Filtros."
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.comparacion.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.filtros.comparacion.paso.editar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.comparacion.paso.editar",
+          "blockType": "procedure",
+          "shows": "Edite las fechas de comparación"
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.comparacion.paso.editar.png"
+      ]
+    },
+    {
+      "slot": "dashboard.filtros.comparacion.paso.vincular",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.comparacion.paso.vincular",
+          "blockType": "procedure",
+          "shows": "Vuelva a vincular el rango de comparación"
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.comparacion.paso.vincular.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.emergencia.mv.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.emergencia.mv.fig",
+          "blockType": "figure",
+          "shows": "Filtro por código policial."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.emergencia.mv.fig.png"
+      ]
+    },
+    {
       "slot": "dashboard.variables.movilidad.fig",
       "neededBy": [
         "mv"
@@ -2270,6 +2154,86 @@
       ],
       "files": [
         "_common/dashboard.variables.movilidad.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.estado-caso.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.estado-caso.fig",
+          "blockType": "figure",
+          "shows": "Filtro por estado del caso."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.estado-caso.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.tipo-caso.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.tipo-caso.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de caso."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.tipo-caso.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.clase-siniestro.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.clase-siniestro.fig",
+          "blockType": "figure",
+          "shows": "Filtro por clase de siniestro vial."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.clase-siniestro.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.recursos-asignados.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.recursos-asignados.fig",
+          "blockType": "figure",
+          "shows": "Filtro por recursos asignados al caso."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.recursos-asignados.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.estacion.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.estacion.fig",
+          "blockType": "figure",
+          "shows": "Filtro por estación."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.estacion.fig.png"
       ]
     },
     {
