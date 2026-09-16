@@ -111,6 +111,49 @@ state.
   decides.** It was the last fact under undeclared coverage in `documents
   broadlineavida`; with the declaration the report reaches zero.
 
+- **`10-fuerzas-en-campo.yaml` is conditioned to `[mv, demo]`, and that is the
+  one place in this manual where section-level tagging is right.** It is not an
+  exception to the "tag the smallest unit that varies" rule — it is that rule
+  applied honestly. Nothing INSIDE the module varies: its single entry point is
+  gated whole. `CaseFiltering.tsx:1432` renders the "Fuerzas en Campo" menu
+  button only under `config.canSeeForcesInField`, and that button is the only
+  navigation to `/home-agents` in the product; the four other call sites
+  (`NavigationToogle.tsx:43,55`, `AgentsDetailsTabs.tsx:52`,
+  `AgentReportCharts.tsx:506`) are inside the screen itself or inside the Agent
+  Dashboard this manual already declined to document. Verified per deployment by
+  reading the configs, not the map: `true` at `mv.config.ts:89`,
+  `demo.config.ts:88`, `dev.config.ts:88`; `false` at `med.config.ts:819`,
+  `lv.config.ts:88`, `ant.config.ts:86`, `amva.config.ts:53`. `dev` is enabled in
+  the product and is not a value of this manual's axis, so it is absent from the
+  tag rather than dropped from it.
+
+  The port had recorded this as an observation and deliberately left it, and it
+  was the costliest thing standing in the manual: `med` is a BUILD TARGET, so its
+  document shipped an entire module for a screen its operators have no button to
+  reach. `med` now builds at 45 pages and 138 image slots instead of 57 and 178 —
+  twelve pages and forty slots that were describing somebody else's product.
+
+- **`10` declares coverage and is deliberately NOT stamped**, for the same reason
+  `09` is not. Seventeen paths and two flags, one per subject the section
+  describes. The flags matter more than usual here: `canSeeForcesInField` is the
+  fact the whole file is conditioned on, and a capability joins by flag rather
+  than by the file that reads it, so without declaring it a flip in a tenant
+  config could never reach this module. `verified` waits for a human to look at
+  the drift.
+
+- **A delivered image can prove the PROSE wrong, not only the other way round.**
+  `10` filed three figures under "Call AI" captioned as a Call AI summary *of a
+  task*. There is no such thing — `TasksIncidentsItem.tsx:402-414` sends a task
+  to `ShiftDetailTaskIncident`, which imports no Call AI at all. Opening the
+  three PNGs settled it before anything was deleted: `fig-resumen-tarea` is
+  literally the task dialog (Estado / Horario Programado / Hora de Inicio / Hora
+  de Fin / Categoría / Acción), field for field as the component renders it. The
+  images were never wrong; they were filed wrong. They moved to a subsection that
+  describes what they depict, **keeping their ids** — a node id IS its image
+  slot, so renaming would have orphaned three delivered files to tidy a string no
+  reader sees. The same reasoning kept `fuerzas.estado.con-caso` when its label
+  became "Asignado".
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and
@@ -159,16 +202,16 @@ state.
    ships the element-type images the section describes in prose. **What settles
    it:** deciding whether that section gets an `icon-table`; the assets are
    ready either way.
-3. **A delivery has been proposed and not authorised, and it is no longer the
-   simple case it was.** Nothing has ever been handed over —
-   `deliveries/broadlineavida/` is empty and no row carries a proof — so both
-   existing rows are still stampable. But the entry that used to say every slot
-   was filled is out of date: re-grounding 09 declared twelve captures that do
-   not exist yet (`image-requests.json`, 250 slots, 238 delivered), so a
-   delivery today would ship twelve placeholders. A version marks a delivery
-   and only the owner moves it. **What settles it:** the captures arriving, and
-   then the owner saying so in the conversation, naming the target and the
-   number.
+3. **A delivery has been proposed and not authorised.** Nothing has ever been
+   handed over — `deliveries/broadlineavida/` is empty and no row carries a
+   proof — so both existing rows are still stampable. Whether a delivery today
+   would ship placeholders is not written here, because `image-requests.json`
+   answers it and cannot be stale. What IS worth carrying: every time a module
+   is audited against the product it declares captures that do not exist yet, so
+   "no placeholders left" is a state this manual keeps leaving rather than a
+   milestone it reaches. A version marks a delivery and only the owner moves it.
+   **What settles it:** the outstanding captures arriving, and then the owner
+   saying so in the conversation, naming the target and the number.
 4. **What `07-interfaz-general` actually claims to document.** Its `documents:`
    now declares `components/LayersMap.tsx` and
    `components/GoogleMap/store/mapDataStore.ts` — both about the map. Drift in
@@ -177,10 +220,10 @@ state.
    imported only by `pages/EventHistory/EventHistoryPage.tsx`. **What settles
    it:** naming the components that render the Home top bar and the incident
    list, and adding them to the section's `documents:` paths alongside the map.
-5. **The other seven legacy ports still declare no coverage.** 09 now does —
-   see Decided — but 04, 05, 06, 08, 10, 11 and 13 report `unknown coverage`,
+5. **The remaining legacy ports still declare no coverage.** 09 and 10 now do —
+   see Decided — but 04, 05, 06, 08, 11 and 13 report `unknown coverage`,
    so drift can never reach them. **What settles it:** the same decision 09
-   just received, taken per module: declare what the section describes once
+   and 10 received, taken per module: declare what the section describes once
    somebody has read the product for it, and leave `verified` for whoever
    actually audits it.
 6. **`07`'s `mapa.controles` is AUDITED: three of its six rows are wrong, and
@@ -237,3 +280,30 @@ state.
    table narrowed what it claims, which makes the declaration easier to write
    than it was. **What settles it:** the same per-module decision 09 and 07
    have now had.
+
+9. **The "Inicio" control of Fuerzas en Campo does not work for every reader,
+   and the manual says it does.** `CaseFilteringAgents.tsx:150-175` (and
+   `CaseFilteringShifts.tsx:177-202`, the same function) navigates home only
+   when `isAdmin` — `validatePermissions(["admin"])`, reading the stored role at
+   `utils/auth/functions.ts:934-937`. Any other role gets an `InfoModal` reading
+   `dashboardPage.noPermission` (es.json:36) — "No tiene permiso para acceder a
+   esta sección." — and stays where it is. It looks like the reports-window
+   permission check reused verbatim on a button that has nothing to do with
+   reports, but "looks like a bug" is not a finding this manual may act on.
+
+   Left unwritten ON PURPOSE. Role is not an axis of this manual — `axes` in
+   `manual.config.yaml` declares `tenant` and nothing else — so a sentence like
+   "si usted es administrador" would introduce a second conditioning axis in
+   prose, exactly where the pipeline cannot filter it. **What settles it:**
+   either the product fixing the gate, or a decision that this manual addresses
+   roles at all, which is a decision about every module and not about this one.
+
+10. **`knowledge/module-map.json` is behind the product checkout.** It places
+    `canSeeForcesInField` at `med.config.ts:816`; the file has it at `:819`.
+    Small and harmless in itself — the VALUES still match, which is why the tag
+    above could be grounded — but it dates the map, and a line number is what a
+    future reader will check a citation against. Not refreshed here on purpose:
+    `extract` rewrites the map for every module at once, so running it during a
+    single-module update discards the drift of every module nobody has reviewed
+    yet. **What settles it:** a deliberate whole-manual `extract`, run on its
+    own, when somebody is ready to re-read every module's drift afterwards.

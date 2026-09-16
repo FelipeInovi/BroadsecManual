@@ -1,14 +1,100 @@
-# Ported from docs/manual-usuario.md § 10 (lines 850-1005) as it stands.
-# Faithful port; see 04-introduccion.yaml for what the format changes and why.
+# Originally ported from docs/manual-usuario.md § 10 (lines 850-1005) as it
+# stood. See 04-introduccion.yaml for what the format changes and why.
 #
-# Observation for the later update pass, recorded and NOT acted on here: the
-# module map says `canSeeForcesInField` is on for demo, dev and mv only, while
-# the legacy documents this module for every deployment (`Tenants: Todos`).
-# Left exactly as the legacy has it.
+# The observation the port recorded and deliberately did not act on — that the
+# legacy documents this module for every deployment while `canSeeForcesInField`
+# is on for three — is RESOLVED below, in this file's `when`. That is what the
+# update pass was for.
 
 id: fuerzas-en-campo
 title: Fuerzas en Campo
 subtitle: Gestión de agentes y operaciones
+
+# The ONE place in this manual where section-level conditioning is correct, and
+# it is not an exception to `tenant-conditioning` rule 1 — it is that rule's own
+# criterion applied honestly. Rule 1 forbids tagging a section because one row
+# inside it differs. Here nothing inside differs: the module's single entry
+# point is gated whole. `CaseFiltering.tsx:1432` renders the "Fuerzas en Campo"
+# menu button only under `config.canSeeForcesInField`, and that button is the
+# only navigation to `/home-agents` in the product — the other four call sites
+# (`NavigationToogle.tsx:43,55`, `AgentsDetailsTabs.tsx:52`,
+# `AgentReportCharts.tsx:506`) are all INSIDE the screen or inside the Agent
+# Dashboard this manual already declined to document.
+#
+# Verified per deployment by reading the configs directly, not the map, which
+# is three lines stale on `med`:
+#   true  — mv.config.ts:89, demo.config.ts:88, dev.config.ts:88
+#   false — med.config.ts:819, lv.config.ts:88, ant.config.ts:86, amva.config.ts:53
+#
+# `dev` is enabled in the product and is not a value of this manual's axis
+# (`manual.config.yaml`), so it is absent here rather than dropped.
+#
+# What this fixes: `med` is a BUILD TARGET, so until now its document shipped an
+# entire module for a screen its operators have no button to reach — invariant 4
+# broken in the loudest possible way, and the reason the port flagged it.
+when:
+  tenant: [mv, demo]
+
+# Named by reading the product, one path per subject this section describes.
+# Declaring coverage is NOT claiming the module was stamped: `verified` records
+# that a human looked, and nobody has looked at this drift yet.
+sourceBase: src/render/
+documents:
+  paths:
+    # The entry point and its gate — the fact this whole file is conditioned on.
+    - components/CaseFiltering.tsx
+    # "Barra Superior" and the Agentes/Operaciones switch it carries.
+    - components/CaseFilteringAgents.tsx
+    - components/CaseFilteringShifts.tsx
+    - components/NavigationToogle.tsx
+    # "Módulo de Agentes" — the list and its rows.
+    - pages/Dashboard/DashboardPageAgents.tsx
+    - pages/Dashboard/MobilityCasesAgents.tsx
+    - components/MobilityCasesItemAgent.tsx
+    # "Perfil de Agente" — the tab bar and every tab under it.
+    - pages/Dashboard/AgentDetailsPage.tsx
+    - pages/Dashboard/AgentsDetailsTabs.tsx
+    - components/AgensDetailsTabs/
+    # "Módulo de Operaciones" — the shift list, its rows and the shift detail.
+    - pages/Dashboard/DashboardPageShifts.tsx
+    - pages/Dashboard/MobilityCasesShifts.tsx
+    - components/MobilityCasesItemShift.tsx
+    - pages/Dashboard/ShiftDetailsPage.tsx
+    - pages/Dashboard/ShiftsDetailsTabs.tsx
+    - pages/Dashboard/TasksIncidentsItem.tsx
+    # "Call AI" — the summary dialog the incidents of a shift open.
+    - pages/Dashboard/CallAI.tsx
+  # A capability fact joins by FLAG, not by the file that reads it
+  # (`coverage.ts`, `matchesFlagEntry`), so declaring CaseFiltering.tsx does not
+  # catch either of these flipping in a tenant config — and the first one
+  # decides whether this module exists for a deployment at all.
+  flags:
+    - canSeeForcesInField
+    # Gates the "Añadir" control on both bars (CaseFilteringAgents.tsx:415,
+    # CaseFilteringShifts.tsx:458). True for every deployment this module is
+    # written for, which is why nothing below carries a second tag for it — but
+    # it is a different flag, so it is declared rather than assumed.
+    - canAddIncidentsOrTasks
+
+# Parts of the product this section deliberately does not describe.
+pending:
+  - id: perfil-agente-paneles-vacios
+    covers:
+      - fuerzas.perfil.agente
+    missing: >-
+      Los paneles Observaciones y Personas Asociadas de la pestaña Agente, y el
+      contenido de Hoja de Vida.
+    because: >-
+      components/AgensDetailsTabs/Agent/AgentAditionalInfo.tsx:92-107 monta
+      Observaciones y Personas Asociadas como `CustomDropdown` SIN hijos: los
+      encabezados se despliegan y no hay nada detrás, para cualquier deployment
+      y cualquier agente. Hoja de Vida (:45-91) sólo tiene texto para
+      `config.name === "DEMO"` con `agentSelected.id === 200` o `229`, escrito a
+      mano en el componente; para mv el panel abre vacío. Ninguno de los tres
+      consulta dato alguno.
+    settles: >-
+      Que el producto conecte esos tres paneles a una consulta real, o que
+      alguien decida retirarlos de la pantalla.
 
 children:
   - id: fuerzas.intro
@@ -50,31 +136,55 @@ children:
           labelHeader: Elemento
           descriptionHeader: Descripción
           rows:
+            # agentsPage.typesToSearch (es.json:483) — "Ingrese Placa o Nombre".
+            # The control is an input with that placeholder; it carries no
+            # visible caption, so the description is what makes it findable.
             - id: fuerzas.barra.buscar
               label: Buscar
-              description: Permite buscar un agente por su nombre o placa.
+              description: >-
+                Campo de búsqueda rotulado **Ingrese Placa o Nombre**. Filtra el
+                listado por el nombre del agente o por su placa.
             - id: fuerzas.barra.filtro
               label: Filtro
               description: >-
                 Genera funciones de filtro según el módulo en el que se esté
                 navegando (Agentes u Operaciones).
+            # agentsPage.agentsTitle (es.json:471) — "Agentes". The row used to
+            # read "Módulo de Agentes", which is the manual's own name for the
+            # submodule and not a string the operator can find on the control.
             - id: fuerzas.barra.agentes
-              label: Módulo de Agentes
+              label: Agentes
               description: Visualiza los agentes según su estado de disponibilidad.
+            # shiftsPage.operationsTitle (es.json:574) — "Operaciones". Same
+            # correction as the row above.
             - id: fuerzas.barra.operaciones
-              label: Módulo de Operaciones
+              label: Operaciones
               description: >-
                 Muestra el historial de actividades de los agentes y sus turnos.
+            # menuPage.add (es.json:12) — "Añadir".
             - id: fuerzas.barra.anadir
               label: Añadir
               description: >-
                 Permite crear un nuevo incidente o una nueva tarea desde el
                 aplicativo web.
+            # menuPage.map (es.json:3) — "Mapa".
             - id: fuerzas.barra.mapa
               label: Mapa
               description: Activa o desactiva la visualización del mapa.
+            # NavigationButtons (components/Back/NavigationButtons.tsx),
+            # rendered at CaseFilteringAgents.tsx:488 and
+            # CaseFilteringShifts.tsx:532. menuPage.back (es.json:17) —
+            # "Atrás"; menuPage.forward (es.json:18) — "Adelante". Undocumented
+            # until now, and it is the control that undoes a wrong turn.
+            - id: fuerzas.barra.navegacion
+              label: Atrás
+              description: >-
+                Regresa a la pantalla anterior dentro del módulo. Aparece
+                únicamente cuando hay una pantalla a la que volver.
+            # menuPage.dashboard (es.json:9) — "Inicio". The row read "Home",
+            # which is not on the control: the tooltip says Inicio.
             - id: fuerzas.barra.home
-              label: Home
+              label: Inicio
               description: Vuelve al Home principal de Broadsec.
 
   - id: fuerzas.agentes
@@ -97,21 +207,60 @@ children:
       - id: fuerzas.agentes.estados
         title: Visualización de estados de Agentes
         children:
+          # The product has FOUR agent states, not three. All four are named by
+          # one i18n block (`agentsPage.statusType`, es.json:501-504), built
+          # into one filter list (`utils/utils.ts:514-531`, ids "1" to "4") and
+          # coloured by one switch (`utils/auth/functions.ts:194-207`). The
+          # legacy listed three and invented labels for two of them; the rows
+          # below are the product's own strings, in the order the filter offers
+          # them.
+          #
+          # `fuerzas.estado.con-caso` keeps its id although its label is now
+          # "Asignado". A row's id IS its image slot, and that icon is already
+          # delivered — renaming would orphan the file to gain nothing a reader
+          # can see.
           - id: fuerzas.agentes.estados.tabla
             type: icon-table
             props:
               labelHeader: Estado
               descriptionHeader: Descripción
               rows:
-                - id: fuerzas.estado.no-disponible
-                  label: No disponible
-                  description: El agente no puede recibir casos en este momento.
+                # agentsPage.statusType.available (es.json:501) — "Disponible".
+                # functions.ts:196-197 — punto verde.
                 - id: fuerzas.estado.disponible
                   label: Disponible
-                  description: El agente está listo para recibir asignaciones.
+                  description: >-
+                    El agente está listo para recibir asignaciones. Se señala
+                    con un punto verde.
+                # agentsPage.statusType.unavailable (es.json:503) — "No
+                # Disponible". functions.ts:198-199 — punto rojo.
+                - id: fuerzas.estado.no-disponible
+                  label: No Disponible
+                  description: >-
+                    El agente no puede recibir casos en este momento. Se señala
+                    con un punto rojo.
+                # agentsPage.statusType.assigned (es.json:502) — "Asignado".
+                # functions.ts:200-201 — punto ámbar, con parpadeo
+                # (`animate-ping`, CustomTagAgent.tsx).
                 - id: fuerzas.estado.con-caso
-                  label: Con caso asignado
-                  description: El agente tiene un caso activo en gestión.
+                  label: Asignado
+                  description: >-
+                    El agente tiene un caso activo en gestión. Se señala con un
+                    punto ámbar intermitente.
+                # agentsPage.statusType.emergency (es.json:504) — "Emergencia".
+                # functions.ts:202-203 devuelve el MISMO rojo que No Disponible,
+                # así que el color no los separa: lo que los separa es el filtro
+                # y el botón de liberación descrito más abajo. Escrito así a
+                # propósito, para que el operador no crea que hay un color
+                # propio que buscar.
+                - id: fuerzas.estado.emergencia
+                  label: Emergencia
+                  description: >-
+                    El agente se encuentra en situación de emergencia. Se señala
+                    con un punto rojo, igual que **No Disponible**; para
+                    distinguirlos, utilice el filtro de estado. Mientras dure
+                    este estado el agente no admite despachos, y su perfil
+                    ofrece la liberación descrita más adelante.
 
       - id: fuerzas.agentes.filtro
         title: Filtro
@@ -123,6 +272,22 @@ children:
                 El filtro de este módulo permite ver a todos los agentes
                 —disponibles, no disponibles o en otros estados, como
                 emergencia— y también según si están en turno o no.
+          # `CaseFilteringAgents.tsx:95-101` applies these defaults on load:
+          # `stateValues: {"1": true, "4": true}` — Disponible y Emergencia — y
+          # `on_shift: true`. An operator who does not know this reads the list
+          # as "these are all the agents", and it is not. Added because the
+          # omission makes the screen misleading, not because the paragraph
+          # above was badly written.
+          - id: fuerzas.agentes.filtro.defecto
+            type: prose
+            props:
+              text: >-
+                Son dos controles independientes: **Agente**, con una casilla por
+                estado, y **Turno**, que admite **Ambos**, **En Turno** o **Sin
+                Turno**. Tenga en cuenta que el módulo se abre ya filtrado:
+                muestra únicamente a los agentes **En Turno** cuyo estado es
+                **Disponible** o **Emergencia**. Para ver el resto, ajuste el
+                filtro o utilice **Restaurar Filtros**.
           - id: fuerzas.agentes.filtro.fig
             type: figure
             props:
@@ -132,13 +297,18 @@ children:
       - id: fuerzas.perfil
         title: Perfil de Agente
         children:
+          # The old sentence promised "historial de turnos" as part of what the
+          # profile shows on arrival. It is not: the header shows identity, and
+          # the shift history lives behind the Turnos tab
+          # (AgentsDetailsTabs.tsx:87-101). Corrected rather than reworded.
           - id: fuerzas.perfil.texto
             type: prose
             props:
               text: >-
-                Al hacer clic sobre un agente en la lista se navega a su perfil,
-                con información relevante como nombre, estado, placa e historial
-                de turnos.
+                Al hacer clic sobre un agente en la lista se navega a su perfil.
+                El encabezado muestra su nombre, su estado y su placa; debajo,
+                una barra de pestañas reúne el resto de la información y las
+                acciones disponibles sobre ese agente.
           - id: fuerzas.perfil.fig-acceso
             type: figure
             props:
@@ -163,13 +333,68 @@ children:
             props:
               caption: "Ubicación del agente en el mapa."
               widthPercent: 45
+          # The tab the profile OPENS on, and the manual never mentioned it —
+          # it jumped straight to Turnos. `AgentsDetailsTabs.tsx:78-92` renders
+          # it as page 0, the default. Labels: agentsPage.agentDetails
+          # (es.json:479) — "Agente"; inventory.title (es.json:1398) —
+          # "Intendencia"; agentsPage.agentInfo.generalInformation
+          # (es.json:529) — "Información General".
+          #
+          # What this paragraph does NOT name is deliberate: the three panels
+          # under Información General render empty in this deployment. See this
+          # section's `pending` declaration.
+          - id: fuerzas.perfil.agente
+            type: prose
+            props:
+              text: >-
+                El perfil se abre en la pestaña **Agente**, que reúne la
+                identificación del agente —su fuerza, su placa y su estado— y su
+                panel de **Intendencia**, donde se listan los elementos de
+                dotación asignados: vehículo, arma, radio y chaleco, cada uno
+                con su serial, su historial de mantenimiento y sus licencias.
+          - id: fuerzas.perfil.agente.fig
+            type: figure
+            props:
+              caption: "Pestaña Agente del perfil."
+              widthPercent: 45
+
+          # `AgentInformation.tsx:116-137` renders this control only when
+          # `agentSelected.state.toLowerCase() === "emergency"`, and the dialog
+          # is agentsPage.releaseModal (es.json:494-499) — "¿Confirmar
+          # Liberación del Agente?" / "Cancelar" / "Liberar". Undocumented until
+          # now, and it is the only way out of the fourth agent state.
+          - id: fuerzas.perfil.liberar
+            type: procedure
+            props:
+              lead: >-
+                Cuando un agente se encuentra en estado **Emergencia**, su
+                perfil ofrece la liberación. Para devolverlo a la operación:
+              steps:
+                - id: fuerzas.perfil.liberar.abrir
+                  title: Abra el perfil del agente en emergencia
+                  text: >-
+                    Diríjase al listado de **Agentes** y seleccione el agente
+                    cuyo estado figura como **Emergencia**. En la pestaña
+                    **Agente** aparece un botón rojo junto a su identificación,
+                    que sólo se muestra en este estado.
+                - id: fuerzas.perfil.liberar.confirmar
+                  title: Confirme la liberación
+                  text: >-
+                    La plataforma solicita confirmación con el mensaje
+                    **¿Confirmar Liberación del Agente?**. Pulse **Liberar** para
+                    completar la acción o **Cancelar** para desistir. Al
+                    confirmar, el agente deja el estado de emergencia y vuelve a
+                    admitir despachos.
+
           - id: fuerzas.perfil.turnos
             type: prose
             props:
               text: >-
                 Al entrar en la pestaña **Turnos**, ubicada en la barra superior
                 del perfil, se muestra una visualización organizada de los turnos
-                que el agente ha ejercido a lo largo del tiempo.
+                que el agente ha ejercido a lo largo del tiempo. Cada fila de esa
+                lista es navegable: al seleccionarla se abre el detalle completo
+                de ese turno, descrito en el módulo de Operaciones.
           - id: fuerzas.perfil.fig-turnos
             type: figure
             props:
@@ -228,13 +453,25 @@ children:
           text: "El estado de cada turno se identifica con un ícono."
 
       # Two columns: the legacy table is a legend of two icons and one line each.
+      #
+      # There are two icons and THREE states. `MobilityCasesItemShift.tsx:73-84`
+      # computes "Future", "Ongoing" or "Finished" from start/end against now,
+      # and :107-111 branches on `status === "Finished"` alone — so the teal
+      # icon is shown for a shift that has not started yet as well as for one in
+      # progress. The row said "el agente está con un turno activo", which is
+      # false for every scheduled shift. The row that DOES separate the two is
+      # the highlight: :102 gives only "Ongoing" the lighter background and a
+      # left edge (`bg-[#26344E] border-l-4`).
       - id: fuerzas.operaciones.estados
         type: icon-table
         props:
           labelHeader: Descripción
           rows:
             - id: fuerzas.turno.activo
-              label: Indica que el agente está con un turno activo.
+              label: >-
+                Indica que el turno aún no ha finalizado: puede estar en curso o
+                estar programado para más adelante. Los turnos en curso se
+                distinguen además por el fondo resaltado de su fila.
             - id: fuerzas.turno.finalizado
               label: Indica que el turno ya se ha finalizado.
 
@@ -247,6 +484,26 @@ children:
               text: >-
                 El filtro permite establecer un rango de tiempo específico para el
                 cual se mostrarán todos los turnos registrados de los agentes.
+          # `CaseFilteringShifts.tsx:394-426` renders a SECOND control in the
+          # same menu, built from `radioShiftStatusShifts` (utils/utils.ts:551-567)
+          # and sent to the API as `active` alongside `dates`. The manual
+          # described the date range as if it were the whole filter.
+          #
+          # Its three labels are shiftsPage.statusShift (es.json:617-619) —
+          # "Ambos" / "Activo" / "Inactivo" — and they are NOT the ones the
+          # Agentes filter uses for the same idea (agentsPage.statusShift,
+          # es.json:510-512: "Ambos" / "En Turno" / "Sin Turno"). Written as the
+          # product writes each, because the operator reads each on its own
+          # screen.
+          - id: fuerzas.operaciones.filtro.estado
+            type: prose
+            props:
+              text: >-
+                Junto al rango de tiempo, el mismo menú ofrece el control
+                **Turno**, que restringe el listado según el turno haya
+                finalizado o no: **Ambos**, **Activo** o **Inactivo**. Ambos
+                controles se aplican a la vez al pulsar **Aplicar Filtros**, y
+                **Restaurar Filtros** los devuelve a su estado inicial.
           - id: fuerzas.operaciones.filtro.fig
             type: figure
             props:
@@ -284,20 +541,47 @@ children:
             props:
               caption: "Recorrido del turno en el mapa."
               widthPercent: 54
+          # Audited against `TasksIncidentsItem.tsx` and corrected. The old
+          # sentence gave every item the same two options; the product gives
+          # each item an eye that opens DIFFERENT dialogs by type, and a locate
+          # control that is not always there.
+          #
+          #   - the eye (`:276-301`) is always rendered. `:401-467`: for a task
+          #     it opens `ShiftDetailTaskIncident`; only for an incident does it
+          #     open `CallAIDetail`.
+          #   - the locate control (`:242-266`) renders only when `canLocate`
+          #     (`:40-48`) — `hasPolygon || (hasAddress && hasAddressCoordinates)`.
           - id: fuerzas.operaciones.resumen.opciones
             type: prose
             props:
               text: >-
-                Cada tarea o incidente del historial tiene la opción de
-                **polígono** y la opción de **Call AI**.
+                Cada tarea o incidente del historial ofrece el **ícono de ojo**,
+                que abre su detalle, y —cuando la plataforma conoce su
+                ubicación— el ícono de **Localizar**, que la señala en el mapa.
+                El detalle que abre el ojo depende de qué se trate: una tarea
+                muestra su ficha de programación, y un incidente muestra el
+                resumen de **Call AI**.
 
+          # The subsection was titled "Polígono", which is not a control on this
+          # screen: the button is `shiftsPage.locate` (es.json:609) —
+          # "Localizar". `TasksIncidentsItem.tsx:62-77` draws the polygon when
+          # the item has one and otherwise only pans to its address, so the old
+          # single sentence promised a polygon the reader will not always get.
+          # The two delivered figures are unchanged — both show items that DO
+          # have a polygon, which is what they were captioned for.
           - id: fuerzas.poligono
-            title: Polígono
+            title: Localizar
             children:
               - id: fuerzas.poligono.texto
                 type: prose
                 props:
-                  text: "Muestra en el mapa el polígono del incidente o de la tarea."
+                  text: >-
+                    El ícono de **Localizar** sitúa el elemento en el mapa. Si
+                    la tarea o el incidente tiene un polígono asociado, se
+                    dibuja el polígono completo; si sólo se registró una
+                    dirección, el mapa se desplaza hasta ese punto. El ícono no
+                    aparece en los elementos de los que no se conoce ninguna de
+                    las dos cosas.
               - id: fuerzas.poligono.fig-incidente
                 type: figure
                 props:
@@ -309,6 +593,54 @@ children:
                   caption: "Polígono de la tarea en el mapa."
                   widthPercent: 54
 
+          # Three of the six figures below used to sit under "Call AI" and
+          # claimed to show a Call AI summary OF A TASK. There is no such
+          # thing: `TasksIncidentsItem.tsx:402-414` sends a task to
+          # `ShiftDetailTaskIncident`, and that component imports no Call AI at
+          # all.
+          #
+          # The IMAGES were never wrong — they were filed wrong. Opened before
+          # touching anything: `fig-resumen-tarea` is literally the task dialog
+          # (Estado / Horario Programado / Hora de Inicio / Hora de Fin /
+          # Categoría / Acción), `fig-hist-tareas` is a task row showing its
+          # locate pin and its eye, and `fig-mapa-tarea` is a task marker with
+          # its polygon drawn. So the three move to a subsection that describes
+          # what they actually depict, and their captions are corrected.
+          #
+          # Their ids do NOT change although they still read `callai`. A node id
+          # IS its image slot; renaming would orphan three delivered files to
+          # tidy a string no reader sees.
+          - id: fuerzas.tarea-detalle
+            title: Detalle de la tarea
+            children:
+              - id: fuerzas.tarea-detalle.texto
+                type: prose
+                props:
+                  text: >-
+                    El **ícono de ojo** de una tarea abre su ficha, con el estado
+                    en que se encuentra, el horario programado, las horas de
+                    inicio y de fin, y la categoría y la acción que le fueron
+                    asignadas. Se llega a la misma ficha desde el marcador de la
+                    tarea en el mapa.
+              - id: fuerzas.callai.fig-hist-tareas
+                type: figure
+                props:
+                  caption: "Acceso a la ficha desde el historial de tareas."
+                  widthPercent: 45
+              - id: fuerzas.callai.fig-mapa-tarea
+                type: figure
+                props:
+                  caption: >-
+                    Acceso a la ficha de la tarea desde su ubicación en el mapa.
+                  widthPercent: 32
+              - id: fuerzas.callai.fig-resumen-tarea
+                type: figure
+                props:
+                  caption: "Ficha de la tarea."
+                  widthPercent: 45
+
+          # Call AI is for INCIDENTS. `TasksIncidentsItem.tsx:415-467` is the
+          # only branch that renders `CallAIDetail`, and it is the non-task one.
           - id: fuerzas.callai
             title: Call AI
             children:
@@ -316,10 +648,10 @@ children:
                 type: prose
                 props:
                   text: >-
-                    Cuando se accede al Call AI, se muestra un diálogo con el
-                    resumen que Call AI realizó del incidente o la tarea en
-                    cuestión. En ambos casos se puede acceder mediante el **ícono
-                    de ojo** o mediante la **ubicación en el mapa**.
+                    Cuando se accede al Call AI de un incidente, se muestra un
+                    diálogo con el resumen que Call AI realizó de ese incidente.
+                    Se puede acceder mediante el **ícono de ojo** del historial o
+                    mediante la **ubicación en el mapa**.
               - id: fuerzas.callai.fig-hist-incidentes
                 type: figure
                 props:
@@ -336,22 +668,44 @@ children:
                 props:
                   caption: "Resumen de Call AI del incidente."
                   widthPercent: 50
-              - id: fuerzas.callai.fig-hist-tareas
+
+          # The second tab of the shift detail, and the manual never mentioned
+          # it. `ShiftsDetailsTabs.tsx:78-92` is "Tareas" (shiftsPage.tasks,
+          # es.json:588) — the history described above. `:96-114` is "Asignar"
+          # (shiftsPage.assignAgents, es.json:608), rendered only while
+          # `statusShift !== "Finished"`. `:116-138` is the "Tarea" button,
+          # hardcoded at :136 with no i18n key, shown only while Asignar is
+          # selected and disabled when the agent is already `assigned`.
+          # `:196-215` replaces the tab's body with shiftsPage.operationInProgress
+          # (es.json:613) — "Operación en Proceso" — for an agent in
+          # `assigned`/`unavailable`/`emergency`.
+          - id: fuerzas.turno-asignar
+            title: Asignar desde el turno
+            children:
+              - id: fuerzas.turno-asignar.texto
+                type: prose
+                props:
+                  text: >-
+                    Sobre un turno que aún no ha finalizado, el detalle ofrece
+                    una segunda pestaña, **Asignar**, desde la cual se despacha
+                    un caso al agente de ese turno sin salir de la pantalla.
+                    Mientras esa pestaña está seleccionada se habilita además el
+                    botón **Tarea**, que crea una tarea dirigida únicamente a ese
+                    agente.
+              - id: fuerzas.turno-asignar.fig
                 type: figure
                 props:
-                  caption: "Acceso a Call AI desde el historial de tareas."
-                  widthPercent: 45
-              - id: fuerzas.callai.fig-mapa-tarea
-                type: figure
+                  caption: "Pestaña Asignar del detalle del turno."
+                  widthPercent: 70
+              - id: fuerzas.turno-asignar.ocupado
+                type: prose
                 props:
-                  caption: >-
-                    Acceso a Call AI de la tarea desde la ubicación en el mapa.
-                  widthPercent: 32
-              - id: fuerzas.callai.fig-resumen-tarea
-                type: figure
-                props:
-                  caption: "Resumen de Call AI de la tarea."
-                  widthPercent: 45
+                  text: >-
+                    Si el agente ya tiene un caso asignado, no está disponible o
+                    se encuentra en emergencia, la pestaña muestra el aviso
+                    **Operación en Proceso** en lugar del buscador de casos, y el
+                    botón **Tarea** queda inhabilitado. En un turno finalizado la
+                    pestaña no se ofrece.
 
   - id: fuerzas.anadir
     title: Módulo de Añadir
@@ -393,11 +747,34 @@ children:
       - id: fuerzas.anadir.tarea
         title: Nueva Tarea
         children:
+          # The subsection was a bare figure — no "what it does" and no "what to
+          # expect", which module-completeness asks of every submodule. Written
+          # from `pages/CreateTask/CreateTaskPage.tsx`: the form takes category,
+          # sub-action, schedule, instructions and agents, and on success
+          # :144 raises tasksPage.taskCreatedSuccess (es.json:633) — "¡Tarea
+          # creada exitosamente!". There is deliberately no sentence about a
+          # redirect: unlike an incident, creating a task navigates nowhere.
+          - id: fuerzas.anadir.tarea.texto
+            type: prose
+            props:
+              text: >-
+                El formulario de tarea solicita su categoría y acción, el horario
+                en que debe ejecutarse, las instrucciones para el agente y los
+                agentes a los que se dirige.
           - id: fuerzas.anadir.tarea.fig
             type: figure
             props:
               caption: "Formulario para crear una nueva tarea."
               widthPercent: 31
+          - id: fuerzas.anadir.tarea.resultado
+            type: prose
+            props:
+              text: >-
+                Al guardarla, la plataforma confirma con el mensaje **¡Tarea
+                creada exitosamente!** y permanece en el formulario, donde la
+                tarea recién creada queda listada junto a las demás de la
+                sesión. A diferencia de un incidente, la creación de una tarea
+                no redirige a ninguna otra pantalla.
 
   - id: fuerzas.home
     title: Módulo de Retornar a Home
