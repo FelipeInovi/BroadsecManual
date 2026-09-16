@@ -19,6 +19,12 @@ sourceBase: src/render/
 documents:
   paths:
     - components/LayersMap.tsx
+    # Added when this table became the manual's single layer catalogue. It is
+    # what decides pin grouping (`agrupatedPins: config.name !== "MV"`, :70)
+    # and `viewRouteLayer` (:34), both of which the rows below now describe.
+    # Until it was declared, the gating fact this file carries joined to NO
+    # module and reported as undeclared coverage in `documents broadlineavida`.
+    - components/GoogleMap/store/mapDataStore.ts
 
 children:
   - id: interfaz-general.intro
@@ -111,11 +117,18 @@ children:
               label: Tráfico
               description: >-
                 Muestra el estado del tráfico en tiempo real sobre la vía.
+            # The clustering this row used to claim is NOT universal:
+            # `agrupatedPins: config.name !== "MV"` (mapDataStore.ts:70) reaches
+            # `ClusterProvider groupingEnabled` (GlobalGoogleMap.tsx:375, 470),
+            # so mv is the one deployment that does NOT group pins by proximity
+            # — and mv is a build target, so the sentence was false in a
+            # document that ships. It is dropped rather than split in two: the
+            # grouping is behaviour of the map, not of this layer, and a second
+            # row would mint a second icon slot to say it.
             - id: mapa.capa.incidentes
               label: Incidentes
               description: >-
-                Muestra los incidentes activos, agrupados por cercanía y
-                tipificados por su categoría.
+                Muestra los incidentes activos, tipificados por su categoría.
             # LayersMap.tsx:76 — the entry only exists when
             # `config.name === "MV" || config.name === "DEMO"`.
             - id: mapa.capa.avl
@@ -145,6 +158,28 @@ children:
                 tenant: [mv]
             # LayersMap.tsx:138 — the entry only exists when
             # `config.name === "MV"`.
+            # LayersMap.tsx:112 — the entry only exists when
+            # `config.name === "MV"`. The heading is NOT "Semáforos": that is
+            # the entry's internal `name`, while the operator reads
+            # `t("layers.traffic_lights")`, which is "ARS"
+            # (locales/translations/es.json:1335).
+            - id: mapa.capa.ars
+              label: ARS
+              description: >-
+                Muestra la ubicación de los dispositivos de regulación
+                semafórica sobre la vía.
+              when:
+                tenant: [mv]
+            # LayersMap.tsx:122-125 — gated by `viewRouteLayer`, which is
+            # navigation state in mapDataStore.ts:34 (default false, :92) and
+            # not an axis value. Every deployment has this layer; it appears
+            # when the view being shown carries a route, not by deployment, so
+            # it is untagged.
+            - id: mapa.capa.recorrido
+              label: Recorrido
+              description: >-
+                Muestra el trayecto recorrido en la vista consultada. Solo está
+                disponible cuando la consulta incluye un recorrido.
             - id: mapa.capa.paneles
               label: Paneles
               description: >-

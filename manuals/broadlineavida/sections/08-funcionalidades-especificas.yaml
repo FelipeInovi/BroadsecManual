@@ -34,48 +34,16 @@ children:
           caption: "Selector de capas del mapa."
           widthPercent: 63
 
-      - id: funcionalidades.mapa.capas
-        type: icon-table
-        props:
-          labelHeader: Capa
-          descriptionHeader: Función
-          rows:
-            - id: func.capa.trafico
-              label: Tráfico
-              description: >-
-                Información vial en tiempo real. Valida la dirección por Calle,
-                Carrera, Diagonal, etc.
-            # LayersMap.tsx:76 — the entry only exists when
-            # `config.name === "MV" || config.name === "DEMO"`.
-            - id: func.capa.avl
-              label: AVL
-              description: >-
-                Muestra la ubicación de las fuerzas integradas para el monitoreo
-                y la coordinación de recursos.
-              when:
-                tenant: [mv, demo]
-            - id: func.capa.mobile
-              label: Mobile
-              description: >-
-                Visualiza la ubicación de los agentes que operan desde la
-                aplicación Broadsec Mobile.
-            # LayersMap.tsx:138 — the entry only exists when
-            # `config.name === "MV"`.
-            - id: func.capa.paneles
-              label: Paneles
-              description: Muestra todos los paneles disponibles en el mapa.
-              when:
-                tenant: [mv]
-            - id: func.capa.satelital
-              label: Satelital
-              description: >-
-                Permite tomar puntos de referencia con una vista aérea de alta
-                resolución.
-            - id: func.capa.360
-              label: 360°
-              description: >-
-                Identifica el punto exacto del incidente con una visión
-                tridimensional del entorno.
+      # REMOVED — the layer catalogue (`funcionalidades.mapa.capas`, six rows
+      # with their icons). It lived here AND in `07-interfaz-general.yaml`, two
+      # tables maintained by hand for one selector, and they had drifted apart:
+      # this one listed four of the eight entries `components/LayersMap.tsx`
+      # builds and added two that are not entries of it at all. The manual now
+      # keeps ONE catalogue, in 07, where the rows carry the condition that
+      # gates each of them. Two tables cannot disagree if there is one.
+      #
+      # The two rows that were not layers are not lost: they described real
+      # controls and are written below as what they are.
 
       - id: funcionalidades.mapa.funcionalidad
         type: prose
@@ -99,19 +67,58 @@ children:
           caption: "Visualización de capas del mapa."
           widthPercent: 90
 
+      # `components/TypeMap.tsx` — its own button, fixed at the lower right of
+      # the map, NOT an entry of the layer selector. It reads no deployment
+      # config, so every deployment has it. The i18n catalogue does carry a
+      # `layers.satellite` key ("Satélite", es.json:1330), but nothing reads it
+      # — a dead key, and not evidence of a satellite layer.
+      - id: funcionalidades.mapa.satelital
+        type: prose
+        props:
+          text: >-
+            **Vista satelital.** El botón ubicado en el extremo inferior derecho
+            del mapa alterna entre la vista de calles y la vista satelital. La
+            vista satelital permite tomar puntos de referencia con una imagen
+            aérea de alta resolución, y el mismo botón devuelve la vista de
+            calles.
+
+      # The button's own icon, so the sentence above can be acted on without
+      # hunting for it. Its image is the capture that used to fill the removed
+      # `func.capa.satelital` row.
+      - id: funcionalidades.mapa.satelital.boton
+        type: figure
+        props:
+          caption: "Botón que alterna la vista satelital."
+          widthPercent: 14
+
       - id: funcionalidades.mapa.fig-satelital
         type: figure
         props:
-          caption: "Capa Satelital y capa de Tráfico."
+          caption: "Vista satelital sobre la capa de Tráfico."
           widthPercent: 90
 
+      # Google Street View, available because the main map does not disable it:
+      # `GlobalGoogleMap.tsx` passes no `streetViewControl`, so it keeps the
+      # Google default. That this is deliberate shows in the maps that DO turn
+      # it off — ModalSOS.tsx:66 and Forms/Agents/AgentMap.tsx:123, both with
+      # `streetViewControl={false}`.
       - id: funcionalidades.mapa.vista360
         type: prose
         props:
           text: >-
-            Mediante la vista 360° es posible identificar el punto exacto donde
-            ocurre el incidente, asegurando que la fuerza en campo llegue con la
-            mayor precisión al lugar correcto.
+            **Vista 360°.** Arrastrando el muñeco de Street View sobre la vía es
+            posible identificar el punto exacto donde ocurre el incidente,
+            asegurando que la fuerza en campo llegue con la mayor precisión al
+            lugar correcto.
+
+      # The Street View figure itself, so "el muñeco" names something the
+      # reader can see. Its image is the capture that used to fill the removed
+      # `func.capa.360` row — which is, literally, Google's pegman.
+      - id: funcionalidades.mapa.vista360.pegman
+        type: figure
+        props:
+          caption: "Muñeco de Street View que abre la vista 360°."
+          widthPercent: 14
 
   - id: funcionalidades.incidentes
     title: Incidentes

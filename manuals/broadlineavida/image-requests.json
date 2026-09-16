@@ -18,11 +18,53 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 250,
-    "delivered": 238,
-    "pending": 12
+    "total": 248,
+    "delivered": 234,
+    "pending": 14
   },
   "pending": [
+    {
+      "slot": "mapa.capa.ars",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.ars",
+          "blockType": "icon-table",
+          "shows": "ARS"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa.capa.ars.png",
+        "override": "<tenant>/mapa.capa.ars.png"
+      }
+    },
+    {
+      "slot": "mapa.capa.recorrido",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "mapa.capa.recorrido",
+          "blockType": "icon-table",
+          "shows": "Recorrido"
+        }
+      ],
+      "pendingFor": [
+        "mv",
+        "med"
+      ],
+      "deliverTo": {
+        "shared": "_common/mapa.capa.recorrido.png",
+        "override": "<tenant>/mapa.capa.recorrido.png"
+      }
+    },
     {
       "slot": "dashboard.filtros.comparacion.fig",
       "neededBy": [
@@ -790,106 +832,6 @@
       ]
     },
     {
-      "slot": "func.capa.trafico",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.trafico",
-          "blockType": "icon-table",
-          "shows": "Tráfico"
-        }
-      ],
-      "files": [
-        "_common/func.capa.trafico.png"
-      ]
-    },
-    {
-      "slot": "func.capa.avl",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.avl",
-          "blockType": "icon-table",
-          "shows": "AVL"
-        }
-      ],
-      "files": [
-        "_common/func.capa.avl.png"
-      ]
-    },
-    {
-      "slot": "func.capa.mobile",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.mobile",
-          "blockType": "icon-table",
-          "shows": "Mobile"
-        }
-      ],
-      "files": [
-        "_common/func.capa.mobile.png"
-      ]
-    },
-    {
-      "slot": "func.capa.paneles",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.paneles",
-          "blockType": "icon-table",
-          "shows": "Paneles"
-        }
-      ],
-      "files": [
-        "_common/func.capa.paneles.png"
-      ]
-    },
-    {
-      "slot": "func.capa.satelital",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.satelital",
-          "blockType": "icon-table",
-          "shows": "Satelital"
-        }
-      ],
-      "files": [
-        "_common/func.capa.satelital.png"
-      ]
-    },
-    {
-      "slot": "func.capa.360",
-      "neededBy": [
-        "mv",
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "func.capa.360",
-          "blockType": "icon-table",
-          "shows": "360°"
-        }
-      ],
-      "files": [
-        "_common/func.capa.360.png"
-      ]
-    },
-    {
       "slot": "funcionalidades.mapa.fig-activo",
       "neededBy": [
         "mv",
@@ -924,6 +866,23 @@
       ]
     },
     {
+      "slot": "funcionalidades.mapa.satelital.boton",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.satelital.boton",
+          "blockType": "figure",
+          "shows": "Botón que alterna la vista satelital."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.satelital.boton.png"
+      ]
+    },
+    {
       "slot": "funcionalidades.mapa.fig-satelital",
       "neededBy": [
         "mv",
@@ -933,11 +892,28 @@
         {
           "nodeId": "funcionalidades.mapa.fig-satelital",
           "blockType": "figure",
-          "shows": "Capa Satelital y capa de Tráfico."
+          "shows": "Vista satelital sobre la capa de Tráfico."
         }
       ],
       "files": [
         "_common/funcionalidades.mapa.fig-satelital.png"
+      ]
+    },
+    {
+      "slot": "funcionalidades.mapa.vista360.pegman",
+      "neededBy": [
+        "mv",
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "funcionalidades.mapa.vista360.pegman",
+          "blockType": "figure",
+          "shows": "Muñeco de Street View que abre la vista 360°."
+        }
+      ],
+      "files": [
+        "_common/funcionalidades.mapa.vista360.pegman.png"
       ]
     },
     {
@@ -4249,9 +4225,5 @@
         "_common/dashboard.variables.fuerzas.fig.png"
       ]
     }
-  ],
-  "undeclared": [
-    "dashboard.variables.emergencia.fig",
-    "dashboard.variables.finalizacion.fig"
   ]
 }

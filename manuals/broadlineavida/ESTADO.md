@@ -70,6 +70,44 @@ state.
   claims them, and the manual-wide undeclared list drops from four facts to
   one.
 
+- **There is ONE layer catalogue, and it lives in `07`.** The selector was
+  described by a table in 07 AND a table in 08, both maintained by hand, and
+  they had drifted: 08 listed four of the eight entries `LayersMap.tsx` builds
+  and added two that are not entries of it at all. 08's table is removed; 07's
+  is completed and is now the only one. Two tables cannot disagree if there is
+  one. 07 gained the two entries neither had: **ARS** `[mv]`
+  (`LayersMap.tsx:112`) and **Recorrido**, untagged because `viewRouteLayer`
+  (`mapDataStore.ts:34`, default `false` at `:92`) is navigation state and not
+  an axis value — every deployment has the layer and it appears when the view
+  carries a route.
+- **The traffic-light layer is headed "ARS", not "Semáforos".** `Semáforos` is
+  the entry's internal `name` in `LayersMap.tsx:115`; the operator reads
+  `t("layers.traffic_lights")`, which is `"ARS"`
+  (`locales/translations/es.json:1335`). Written from the i18n catalogue, the
+  way the emergency-type headings were.
+- **"Satelital" and "360°" are real controls but were never layers.** Satellite
+  is `components/TypeMap.tsx`, its own button at the lower right that toggles
+  `hybrid`/`roadmap`, reading no deployment config, rendered by eight pages.
+  The 360° view is Google Street View, available because `GlobalGoogleMap.tsx`
+  passes no `streetViewControl` and so keeps Google's default — deliberate, as
+  the maps that DO disable it show (`ModalSOS.tsx:66`,
+  `Forms/Agents/AgentMap.tsx:123`). Both are written in 08 as what they are,
+  each with the icon that used to sit in the removed table: the satellite
+  button, and the pegman. The delivered capture for `func.capa.360` is,
+  literally, Google's yellow pegman — the image proved the reading.
+  `layers.satellite` ("Satélite", `es.json:1330`) exists in the i18n catalogue
+  and nothing reads it: a dead key, not evidence of a satellite layer.
+- **The Incidentes row no longer claims pins are grouped by proximity.**
+  `agrupatedPins: config.name !== "MV"` (`mapDataStore.ts:70`) reaches
+  `ClusterProvider groupingEnabled` (`GlobalGoogleMap.tsx:375, 470`), so mv is
+  the one deployment that does NOT group them — and mv is a build target, so
+  the sentence shipped false. Dropped rather than split in two: the grouping is
+  behaviour of the map, not of that layer, and a second row would mint a second
+  icon slot to say it. **Nothing documents the grouping now**; see Unresolved.
+- **`07` declares `mapDataStore.ts` because it describes what that file
+  decides.** It was the last fact under undeclared coverage in `documents
+  broadlineavida`; with the declaration the report reaches zero.
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and
@@ -129,10 +167,10 @@ state.
    then the owner saying so in the conversation, naming the target and the
    number.
 4. **What `07-interfaz-general` actually claims to document.** Its `documents:`
-   declares `components/LayersMap.tsx` and nothing else, so drift in the Barra
-   Superior and in the Incidentes list can never join to it — the module will
-   keep reporting `clean` through changes to two thirds of its own subject
-   matter. Note that `components/Header.tsx` is NOT the Barra Superior: it is
+   now declares `components/LayersMap.tsx` and
+   `components/GoogleMap/store/mapDataStore.ts` — both about the map. Drift in
+   the Barra Superior and in the Incidentes list still cannot join to it, so
+   the module will keep reporting on one of its three subjects. Note that `components/Header.tsx` is NOT the Barra Superior: it is
    imported only by `pages/EventHistory/EventHistoryPage.tsx`. **What settles
    it:** naming the components that render the Home top bar and the incident
    list, and adding them to the section's `documents:` paths alongside the map.
@@ -142,19 +180,16 @@ state.
    just received, taken per module: declare what the section describes once
    somebody has read the product for it, and leave `verified` for whoever
    actually audits it.
-6. **`08` and `07` hold two different tables for one layer selector, and they
-   disagree on which layers exist.** Tagging AVL and Paneles fixed what `med`
-   was being shown wrongly, but it did not reconcile the two tables. `08` lists
-   a **Satelital** row and a **360°** row; neither is an entry of
-   `components/LayersMap.tsx`, which is the component that builds the selector.
-   Satellite views do exist in the product, but in other components
-   (`components/Forms/Agents/AgentMap.tsx`, `components/ModalSOS.tsx`,
-   `pages/PRT/utils.ts`), so these two rows describe either a different control
-   or a layer the selector no longer offers. `08` also omits four entries the
-   selector does build — Incidentes, Cámaras (`[mv]`), Semáforos (`[mv]`) and
-   Recorrido. `08`'s `mobile` row is likewise untagged where `07` conditions it
-   to `[lv, ant, mv, med, demo]`; harmless for the two built targets, wrong for
-   the other four. **What settles it:** deciding whether `08` keeps a layer
-   table at all, or defers to `07`'s and describes only the behaviour — then
-   re-grounding whatever survives against `LayersMap.tsx`. This is
-   investigation, not a tagging pass.
+6. **Nothing documents that mv does not group incident pins.** The claim was
+   removed from 07's Incidentes row because it was false for mv (see Decided),
+   and it was not rewritten anywhere: pin clustering is behaviour of the map,
+   and no subsection describes the map's behaviour as opposed to its layers.
+   The difference is visible to an operator — the same incidents draw as one
+   badge per cluster in med and as individual pins in mv. **What settles it:**
+   deciding where map behaviour belongs (a subsection of 07's Mapa, or 08's
+   Mapa), then writing it once with `agrupatedPins` cited and tagged.
+7. **08 still declares no `documents:`.** It describes the Mapa, the Incidentes
+   actions and the Filtros, and reports `unknown coverage`. Removing its layer
+   table narrowed what it claims, which makes the declaration easier to write
+   than it was. **What settles it:** the same per-module decision 09 and 07
+   have now had.
