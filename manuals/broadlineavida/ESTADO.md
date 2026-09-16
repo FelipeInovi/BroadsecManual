@@ -99,13 +99,16 @@ state.
    ships the element-type images the section describes in prose. **What settles
    it:** deciding whether that section gets an `icon-table`; the assets are
    ready either way.
-3. **A delivery has been proposed and not authorised.** Every image slot is now
-   filled and nothing has ever been handed over — `deliveries/broadlineavida/`
-   is empty and no row carries a proof — so both existing rows are still
-   stampable, which makes this the simplest kind of delivery: no summary to
-   write and no agent to run. But a version marks a delivery and only the owner
-   moves it. **What settles it:** the owner saying so, in the conversation,
-   naming the target and the number.
+3. **A delivery has been proposed and not authorised, and it is no longer the
+   simple case it was.** Nothing has ever been handed over —
+   `deliveries/broadlineavida/` is empty and no row carries a proof — so both
+   existing rows are still stampable. But the entry that used to say every slot
+   was filled is out of date: re-grounding 09 declared twelve captures that do
+   not exist yet (`image-requests.json`, 250 slots, 238 delivered), so a
+   delivery today would ship twelve placeholders. A version marks a delivery
+   and only the owner moves it. **What settles it:** the captures arriving, and
+   then the owner saying so in the conversation, naming the target and the
+   number.
 4. **What `07-interfaz-general` actually claims to document.** Its `documents:`
    declares `components/LayersMap.tsx` and nothing else, so drift in the Barra
    Superior and in the Incidentes list can never join to it — the module will
