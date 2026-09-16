@@ -36,8 +36,29 @@ state.
   take this as licence to shoot mv's figures elsewhere; it is one instruction
   about two files.
 
-  What makes it sound rather than merely permitted, and the test to apply to any
-  repeat: **neither image contains a single pixel that varies by deployment.**
+  **A third figure joins them by the same instruction, and it is the harder
+  case.** `fuerzas.turno-asignar.fig` shows the Asignar pane of a shift detail,
+  which lists the cases available to dispatch — so unlike the two above it DOES
+  carry deployment-specific content. That reservation was raised and the owner
+  overruled it: demo's cases represent mv's well enough for a figure whose
+  subject is where the control is, not which cases exist. His call, and recorded
+  as his rather than as a rule.
+
+  Not taken yet. Three preconditions, all of them the product's:
+  a shift that is not `Finished` (`ShiftsDetailsTabs.tsx:96`), an agent not in
+  `assigned`/`unavailable`/`emergency` — otherwise the pane is replaced by
+  "Operación en Proceso" (`:196-215`) — and at least one case in `case_open`
+  (`AssignAgentMobilityCase.tsx:47-50`). On 2026-09-16 the first two held on
+  demo (agent Daniel Ospina, shift 8020) and the third did not: zero open cases.
+  **What settles it:** an open incident existing in demo when the shot is taken.
+
+  Dispatching was authorised for this and is deliberately NOT used. The figure
+  is the pane, and opening the tab is all it takes; a write that a read already
+  answers is a write not worth making.
+
+  What makes the first two sound rather than merely permitted, and the test to
+  apply to any repeat: **neither image contains a single pixel that varies by
+  deployment.**
   `AgentInformation.tsx` carries no tenant branch on that control or its dialog,
   every string comes from the shared i18n catalogue, and the delivered images
   show an icon and a dialog that names no agent — no name, no plate, no force.
