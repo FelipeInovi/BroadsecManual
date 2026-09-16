@@ -19,50 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 253,
-    "delivered": 250,
-    "pending": 3
+    "delivered": 252,
+    "pending": 1
   },
   "pending": [
-    {
-      "slot": "fuerzas.perfil.liberar.abrir",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.liberar.abrir",
-          "blockType": "procedure",
-          "shows": "Abra el perfil del agente en emergencia"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.liberar.abrir.png",
-        "override": "<tenant>/fuerzas.perfil.liberar.abrir.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.liberar.confirmar",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.liberar.confirmar",
-          "blockType": "procedure",
-          "shows": "Confirme la liberación"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.liberar.confirmar.png",
-        "override": "<tenant>/fuerzas.perfil.liberar.confirmar.png"
-      }
-    },
     {
       "slot": "fuerzas.turno-asignar.fig",
       "neededBy": [
@@ -2924,6 +2884,38 @@
       ],
       "files": [
         "_common/fuerzas.perfil.agente.fig.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.liberar.abrir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.liberar.abrir",
+          "blockType": "procedure",
+          "shows": "Abra el perfil del agente en emergencia"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.liberar.abrir.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.liberar.confirmar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.liberar.confirmar",
+          "blockType": "procedure",
+          "shows": "Confirme la liberación"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.liberar.confirmar.png"
       ]
     },
     {

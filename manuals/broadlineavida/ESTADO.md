@@ -20,6 +20,33 @@ state.
   delivery histories are independent by design: the change log gives `mv` a row
   at 1.1.0 that `med` never receives.
 
+- **Two figures were shot on DEMO and are delivered for `mv`, on the owner's
+  explicit instruction, as a one-off.** `fuerzas.perfil.liberar.abrir` and
+  `fuerzas.perfil.liberar.confirmar` show the emergency-release control and its
+  confirmation dialog. They could not come from mv: the control renders only
+  while an agent's state is `emergency` (`AgentInformation.tsx:116`), and
+  producing that on mv means putting a real officer on a real street into it.
+  The owner arranged the state on demo instead and asked for these two by hand,
+  outside the recipe pipeline.
+
+  **Written here because nothing else records it.** The two recipes in
+  `capture-recipes.yaml` did NOT produce these files — `capture` binds the
+  deployment to the build target, so they still cannot run, and a future reader
+  who assumes otherwise would "fix" a recipe that is already correct. Do not
+  take this as licence to shoot mv's figures elsewhere; it is one instruction
+  about two files.
+
+  What makes it sound rather than merely permitted, and the test to apply to any
+  repeat: **neither image contains a single pixel that varies by deployment.**
+  `AgentInformation.tsx` carries no tenant branch on that control or its dialog,
+  every string comes from the shared i18n catalogue, and the delivered images
+  show an icon and a dialog that names no agent — no name, no plate, no force.
+  A demo capture that DID show deployment-specific content would be a different
+  question and a worse answer. Note in passing that the profile behind them was
+  agent 229, one of the two ids `AgentAditionalInfo.tsx:65` gives a hand-written
+  résumé on DEMO; the clips exclude it, which is why they were opened and
+  checked rather than trusted.
+
 - **A figure may carry real operational data, including an agent's name and
   plate.** Asked and answered by the owner on 2026-09-16, about
   `fuerzas.perfil.agente.fig`, which shows an agent's full name, callsign, force

@@ -835,6 +835,14 @@ recipes:
   # emergency: the one other red state, No Disponible, is filtered out.
   # ---------------------------------------------------------------------
 
+  # NEITHER OF THESE TWO HAS EVER RUN, and the delivered files did not come
+  # from them. `capture` binds the deployment to the manual's build target
+  # (main.ts:867-876) and demo is not one, so `--tenant demo` is refused. The
+  # owner asked for the two figures by hand, once, off demo; they were taken
+  # outside this file and the reasoning is in ESTADO.md. Left here because they
+  # are correct and become runnable the day the pipeline can say which
+  # deployment a figure is shot FROM — do not "fix" them to explain the files.
+  #
   # The red control itself. `dataReady` is the MUI CloseIcon it contains,
   # which AgentInformation.tsx:116 renders ONLY while the agent's state is
   # emergency — so if the state was not arranged, this fails and delivers
