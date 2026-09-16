@@ -19,50 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 253,
-    "delivered": 248,
-    "pending": 5
+    "delivered": 250,
+    "pending": 3
   },
   "pending": [
-    {
-      "slot": "fuerzas.barra.navegacion",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.barra.navegacion",
-          "blockType": "icon-table",
-          "shows": "Atrás"
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.barra.navegacion.png",
-        "override": "<tenant>/fuerzas.barra.navegacion.png"
-      }
-    },
-    {
-      "slot": "fuerzas.perfil.agente.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "fuerzas.perfil.agente.fig",
-          "blockType": "figure",
-          "shows": "Pestaña Agente del perfil."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/fuerzas.perfil.agente.fig.png",
-        "override": "<tenant>/fuerzas.perfil.agente.fig.png"
-      }
-    },
     {
       "slot": "fuerzas.perfil.liberar.abrir",
       "neededBy": [
@@ -2802,6 +2762,22 @@
       ]
     },
     {
+      "slot": "fuerzas.barra.navegacion",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.barra.navegacion",
+          "blockType": "icon-table",
+          "shows": "Atrás"
+        }
+      ],
+      "files": [
+        "_common/fuerzas.barra.navegacion.png"
+      ]
+    },
+    {
       "slot": "fuerzas.barra.home",
       "neededBy": [
         "mv"
@@ -2932,6 +2908,22 @@
       ],
       "files": [
         "_common/fuerzas.perfil.fig-ubicacion.png"
+      ]
+    },
+    {
+      "slot": "fuerzas.perfil.agente.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "fuerzas.perfil.agente.fig",
+          "blockType": "figure",
+          "shows": "Pestaña Agente del perfil."
+        }
+      ],
+      "files": [
+        "_common/fuerzas.perfil.agente.fig.png"
       ]
     },
     {

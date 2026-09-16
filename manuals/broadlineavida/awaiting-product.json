@@ -15,7 +15,7 @@
   ],
   "targetsConfigured": 2,
   "counts": {
-    "gaps": 1,
+    "gaps": 2,
     "sections": 1
   },
   "awaiting": [
@@ -32,6 +32,20 @@
       "missing": "Los paneles Observaciones y Personas Asociadas de la pestaña Agente, y el contenido de Hoja de Vida.",
       "because": "components/AgensDetailsTabs/Agent/AgentAditionalInfo.tsx:92-107 monta Observaciones y Personas Asociadas como `CustomDropdown` SIN hijos: los encabezados se despliegan y no hay nada detrás, para cualquier deployment y cualquier agente. Hoja de Vida (:45-91) sólo tiene texto para `config.name === \"DEMO\"` con `agentSelected.id === 200` o `229`, escrito a mano en el componente; para mv el panel abre vacío. Ninguno de los tres consulta dato alguno.",
       "settles": "Que el producto conecte esos tres paneles a una consulta real, o que alguien decida retirarlos de la pantalla."
+    },
+    {
+      "id": "buscar-casilla-casos-externos-inerte",
+      "affects": [
+        "mv"
+      ],
+      "section": "fuerzas-en-campo",
+      "declaredIn": "sections/10-fuerzas-en-campo.yaml",
+      "covers": [
+        "fuerzas.barra.tabla"
+      ],
+      "missing": "La casilla **Casos Externos** que aparece dentro del panel de búsqueda de la barra superior.",
+      "because": "`components/Filters/SearchInput.tsx:101-113` la renderiza cuando `config.name === \"MV\"`, pero es un input controlado por la prop `isCheckboxChecked`, que en `:23` tiene valor por defecto `false`, y su handler (`:50-53`) sólo escribe `if (setIsCheckboxChecked)`. Las dos props son OPCIONALES y esta pantalla no pasa ninguna: `CaseFilteringAgents.tsx:246-250` y `CaseFilteringShifts.tsx:252-256` llaman a `SearchInput` con `value`, `onChange` y `placeholder` y nada más. La casilla queda clavada en `checked={false}` y el marcador de posición nunca cambia a `mobilityCasesPage.typesToSearchIC`. El único lugar que sí la cablea es la barra del Home (`CaseFiltering.tsx:768`, vía `MobilityCases.tsx:91-92`). Verificado además en producción: la casilla está en la barra de `/#/home-agents` y de `/#/home-shifts`.",
+      "settles": "Que el producto cablee las dos props en estas dos barras, o que retire la casilla de ellas."
     }
   ]
 }

@@ -688,3 +688,57 @@ recipes:
     dataReady: '::-p-text(Rango de Comparación)'
     clip: '::-p-xpath(//*[normalize-space(text())="Rango de Comparación"]/ancestor::div[.//*[contains(text(),":00:")]][1]//button[1])'
     viewport: { width: 1600, height: 900 }
+
+  # ---------------------------------------------------------------------
+  # Fuerzas en Campo (sections/10-fuerzas-en-campo.yaml). Read-only: these
+  # open a profile by clicking a row in a list. Nothing here dispatches,
+  # assigns, releases or submits, and no control on an agent is pressed.
+  #
+  # Both recipes reach the profile the way an operator does, by clicking the
+  # first row of the agents list, rather than by navigating to `/#/agent/<id>`.
+  # An id typed into a recipe names one agent of a live directory and rots the
+  # first time that person leaves.
+  # ---------------------------------------------------------------------
+
+  # The BACK control of the top bar, which is why this recipe opens a profile
+  # first: `NavigationButtons` renders `canGoBack() && <BackButton />`
+  # (components/Back/NavigationButtons.tsx), and a freshly loaded screen has no
+  # history, so the button does not exist to photograph. Clicking a row fills
+  # the navigation store and the control appears.
+  #
+  # `data-tip` is the handle for every button of this bar: `MenuBtn`
+  # (components/Header/BtnsHeader.tsx:32) writes the tooltip there. It comes
+  # from the source, not from a stylesheet, so it does not move with a redesign
+  # the way an emotion class hash does.
+  - slot: fuerzas.barra.navegacion
+    route: /#/home-agents
+    steps:
+      - click: ".simplebar-content button"
+    screenIs: "::-p-text(Intendencia)"
+    dataReady: '[data-tip="Atrás"]'
+    clip: '[data-tip="Atrás"]'
+    viewport: { width: 1600, height: 900 }
+
+  # The Agente tab — the one the profile opens on.
+  #
+  # `clipUp` rather than a clip of its own: `[role="tab"]` is a stable handle
+  # and `div.w-full` is the wrapper AgentDetailsPage.tsx:110-121 puts around the
+  # identity card and the tab bar together, which is exactly what the caption
+  # promises. Clipping by the panel's own class was the alternative and it is
+  # not one — MUI emits `css-8atqhb`, an emotion hash that changes when anyone
+  # edits a style.
+  #
+  # `screenIs` is "Intendencia" (inventory.title, es.json:1398), the endowment
+  # panel's heading, which renders only on this tab — so it proves the shot is
+  # the Agente tab and not one of its siblings. `dataReady` asks for the tabs,
+  # which AgentsDetailsTabs only reaches once the agent record has loaded; until
+  # then the page returns its "agente no encontrado" fallback instead.
+  - slot: fuerzas.perfil.agente.fig
+    route: /#/home-agents
+    steps:
+      - click: ".simplebar-content button"
+    screenIs: "::-p-text(Intendencia)"
+    dataReady: '[role="tab"]'
+    clip: '[role="tab"]'
+    clipUp: "div.w-full"
+    viewport: { width: 1600, height: 900 }

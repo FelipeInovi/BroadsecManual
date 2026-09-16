@@ -96,6 +96,32 @@ pending:
       Que el producto conecte esos tres paneles a una consulta real, o que
       alguien decida retirarlos de la pantalla.
 
+  - id: buscar-casilla-casos-externos-inerte
+    # The node, not the row: `covers` is checked against node ids, and
+    # `fuerzas.barra.buscar` is a row of this table rather than a node of its
+    # own. The table is where the withheld content would have gone.
+    covers:
+      - fuerzas.barra.tabla
+    missing: >-
+      La casilla **Casos Externos** que aparece dentro del panel de búsqueda de
+      la barra superior.
+    because: >-
+      `components/Filters/SearchInput.tsx:101-113` la renderiza cuando
+      `config.name === "MV"`, pero es un input controlado por la prop
+      `isCheckboxChecked`, que en `:23` tiene valor por defecto `false`, y su
+      handler (`:50-53`) sólo escribe `if (setIsCheckboxChecked)`. Las dos props
+      son OPCIONALES y esta pantalla no pasa ninguna:
+      `CaseFilteringAgents.tsx:246-250` y `CaseFilteringShifts.tsx:252-256`
+      llaman a `SearchInput` con `value`, `onChange` y `placeholder` y nada más.
+      La casilla queda clavada en `checked={false}` y el marcador de posición
+      nunca cambia a `mobilityCasesPage.typesToSearchIC`. El único lugar que sí
+      la cablea es la barra del Home (`CaseFiltering.tsx:768`, vía
+      `MobilityCases.tsx:91-92`). Verificado además en producción: la casilla
+      está en la barra de `/#/home-agents` y de `/#/home-shifts`.
+    settles: >-
+      Que el producto cablee las dos props en estas dos barras, o que retire la
+      casilla de ellas.
+
 children:
   - id: fuerzas.intro
     type: prose
@@ -171,11 +197,19 @@ children:
             - id: fuerzas.barra.mapa
               label: Mapa
               description: Activa o desactiva la visualización del mapa.
-            # NavigationButtons (components/Back/NavigationButtons.tsx),
+            # `NavigationButtons` (components/Back/NavigationButtons.tsx),
             # rendered at CaseFilteringAgents.tsx:488 and
-            # CaseFilteringShifts.tsx:532. menuPage.back (es.json:17) —
-            # "Atrás"; menuPage.forward (es.json:18) — "Adelante". Undocumented
-            # until now, and it is the control that undoes a wrong turn.
+            # CaseFilteringShifts.tsx:532. menuPage.back (es.json:17) — "Atrás".
+            #
+            # ONE button, not two, although the component is plural and the
+            # catalogue carries menuPage.forward (es.json:18) — "Adelante".
+            # `NavigationButtons` returns `canGoBack() && <BackButton />` and
+            # nothing else; no component in the product renders a forward
+            # control. Confirmed on the live bar, which shows `data-tip="Atrás"`
+            # and no "Adelante". The row is singular for that reason.
+            #
+            # It appears only once there is somewhere to go back to, which is
+            # why it is absent on a freshly loaded screen.
             - id: fuerzas.barra.navegacion
               label: Atrás
               description: >-
@@ -371,7 +405,12 @@ children:
             type: figure
             props:
               caption: "Pestaña Agente del perfil."
-              widthPercent: 45
+              # 90, not the 45 this was written with before the capture existed.
+              # The delivered image is a 1588x502 banner — the identity card,
+              # the tab bar and the Intendencia panel across one row — and at
+              # 45% of the column its labels are unreadable. Sized from the file
+              # rather than from a guess.
+              widthPercent: 90
 
           # `AgentInformation.tsx:116-137` renders this control only when
           # `agentSelected.state.toLowerCase() === "emergency"`, and the dialog
