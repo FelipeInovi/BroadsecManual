@@ -98,11 +98,39 @@ target:
         passwordSelector: 'input[name="password"]'
         submitSelector: "#submit-button"
         doneWhen: ".h-screen"
+    # The deployment to shoot anything that would need a real operational
+    # action on mv. It is a training environment, so an agent can be put into
+    # emergency and a case can be dispatched without anyone on a street feeling
+    # it — which is the only way some of Fuerzas en Campo's controls can be
+    # photographed at all.
+    #
+    # Its `verify` USED to be BoT's Alarmas button, which proved only that
+    # something answered. That is not enough here, and the reason is this
+    # deployment specifically: `basePath` is "lv", and demo and lv are served
+    # from the same one. So the URL cannot say which config loaded, and lv is a
+    # deployment where `canSeeForcesInField` is false — capturing this module
+    # from it would deliver screens nobody in it can reach.
+    #
+    # `logoImages` (constants/logoImages.ts) gives DEMO `bridge_logo.webp` and
+    # LV `linea_vida_logo.webp`, two different files, and ReportsCharts.tsx:666
+    # renders the active one on /#/dashboard. Matching it turns "I pointed it at
+    # the right place" into a check, the way med's verify already does.
+    #
+    # It has its own account, so it carries its own `auth`. Variable NAMES only,
+    # as everywhere in this file.
     demo:
       baseUrl: https://web.inovisec.com/lv
       verify:
-        route: /#/broadsec-of-things
-        selector: 'button::-p-text(Alarmas)'
+        route: /#/dashboard
+        selector: 'img[alt="Project logo"][src*="bridge_logo"]'
+      auth:
+        route: /#/login
+        userEnv: BROADSEC_CAPTURE_USER_DEMO
+        passwordEnv: BROADSEC_CAPTURE_PASSWORD_DEMO
+        userSelector: 'input[name="email"]'
+        passwordSelector: 'input[name="password"]'
+        submitSelector: "#submit-button"
+        doneWhen: ".h-screen"
   auth:
     route: /#/login
     userEnv: BROADSEC_CAPTURE_USER
@@ -785,4 +813,60 @@ recipes:
     dataReady: 'div.space-y-0\.5 > div'
     clip: '[role="tab"]'
     clipUp: "div.w-full"
+    viewport: { width: 1600, height: 900 }
+
+  # ---------------------------------------------------------------------
+  # The emergency-release procedure. SHOOT THESE AGAINST demo, never mv:
+  # they need an agent who is actually in `emergency`, and the only way to
+  # produce that state on mv would be to put a real officer on a real street
+  # into it. On demo the state is arranged deliberately, for this purpose.
+  #
+  # Neither recipe releases anybody. `handleOpen`
+  # (AgentInformation.tsx:59-63) is `showModal()` and nothing else; the
+  # mutation hangs off `handleReleaseAgent`, which is the "Liberar" button
+  # INSIDE the dialog and is never clicked here. Opening a dialog to
+  # photograph it is looking, not acting.
+  #
+  # Neither hardcodes a person. The agent is found by the RED DOT
+  # (`getStatusColorAgent`, utils/auth/functions.ts:198-203), and the list's
+  # own default filter — `stateValues {"1": true, "4": true}`, on-shift only,
+  # CaseFilteringAgents.tsx:95-101 — shows Disponible and Emergencia and
+  # nothing else. So in that list a red dot can only be an agent in
+  # emergency: the one other red state, No Disponible, is filtered out.
+  # ---------------------------------------------------------------------
+
+  # The red control itself. `dataReady` is the MUI CloseIcon it contains,
+  # which AgentInformation.tsx:116 renders ONLY while the agent's state is
+  # emergency — so if the state was not arranged, this fails and delivers
+  # nothing rather than photographing an ordinary profile.
+  #
+  # The tab bar's own "✕" is not this and cannot be confused with it: it is a
+  # plain text glyph (AgentsDetailsTabs.tsx:174-180), not an icon component.
+  - slot: fuerzas.perfil.liberar.abrir
+    route: /#/home-agents
+    steps:
+      - click: '::-p-xpath(//*[contains(@class,"bg-[#F44336]")]/ancestor::button[1])'
+    screenIs: "::-p-text(Intendencia)"
+    dataReady: 'svg[data-testid="CloseIcon"]'
+    clip: 'svg[data-testid="CloseIcon"]'
+    clipUp: "button"
+    viewport: { width: 1600, height: 900 }
+
+  # The confirmation. `screenIs` is `#agentReleaseModal[open]`, and that
+  # attribute is the whole point: the <dialog> is in the DOM from first paint,
+  # so a gate on the element would pass before anything was clicked. `open` is
+  # set by `showModal()`, so it is false until the step above lands.
+  #
+  # `dataReady` takes a substring that skips the accented letter of
+  # "Liberación", per this file's own rule about ::-p-text and accents. The
+  # window for this shot is somebody deliberately holding an agent in
+  # emergency; it is not the place to find out whether an accent matched.
+  - slot: fuerzas.perfil.liberar.confirmar
+    route: /#/home-agents
+    steps:
+      - click: '::-p-xpath(//*[contains(@class,"bg-[#F44336]")]/ancestor::button[1])'
+      - click: '::-p-xpath(//button[.//*[@data-testid="CloseIcon"]])'
+    screenIs: '#agentReleaseModal[open]'
+    dataReady: '::-p-text(n del Agente)'
+    clip: '#agentReleaseModal .modal-box'
     viewport: { width: 1600, height: 900 }
