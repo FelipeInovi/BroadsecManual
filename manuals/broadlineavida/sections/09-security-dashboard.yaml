@@ -233,12 +233,20 @@ children:
           # (mv.config.ts:13-14), so it is conditioned to med — and the
           # submodule would be left without the overview figure that
           # `module-completeness` requires of every submodule. This is that
-          # figure for mv: the same panel as it renders there, with Zona,
-          # Comuna y Barrio and no Departamento or Ciudad.
+          # figure for mv.
+          #
+          # It shows the Zona filter open rather than the three rows together,
+          # and the caption says so. The drawer has no section containers — a
+          # DOM walk found the innermost element holding Zona, Comuna and
+          # Barrio to be the one that holds every other filter too, so "those
+          # three rows" is not a thing any capture can frame. Zona is also the
+          # only one of the three with contents: Comuna and Barrio read 0/0
+          # until a zone is picked, so the three collapsed would have shown an
+          # operator three headings and no mechanism. See `capture-recipes.yaml`.
           - id: dashboard.filtros.ubicacion.fig-zona
             type: figure
             props:
-              caption: "Filtro de ubicación por Zona, Comuna y Barrio."
+              caption: "Filtro de Zona desplegado, con las zonas disponibles."
               widthPercent: 91
             when:
               tenant: [mv]

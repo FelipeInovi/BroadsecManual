@@ -561,52 +561,56 @@ recipes:
   # needs med's own deployment declared and reachable — not a different
   # selector.
 
-  # NO RECIPE — dashboard.variables.motivo-cierre.fig could not be shot, and
-  # the reason is NOT the one it looks like. Six attempts, every one failing on
-  # the same gate, and the run that replaced the clip with `.MuiDrawer-paper`
-  # said "matched nothing": THE DRAWER IS CLOSED by the time the shot is taken,
-  # so the accordion was never expanded and no `aria-expanded` was ever going
-  # to appear. Clicking this title closes the drawer instead of opening the
-  # panel.
+  # THE ONLY FILTER WHOSE TITLE IS NOT UNIQUE ON THIS SCREEN. The dashboard
+  # behind the drawer draws a CHART also headed "Motivo de Cierre", as an
+  # `h3.font-bold.text-lg.text-center` at x=580 — and `::-p-text()` returns the
+  # first match in document order, which is that chart, not the filter at x=31.
+  # A click on its centre lands on `MuiBackdrop-root`, and clicking the backdrop
+  # CLOSES the drawer. Six runs failed identically on the expanded gate for that
+  # one reason, while the fetched options list, the network, a render race and
+  # the viewport were each eliminated in turn and none of them was it.
   #
-  # Ruled out, each by a run of its own: it is not the fetched options list
-  # (`useClosedReasonsList`, ReportsFilters.tsx:193) — `isLoading` only swaps
-  # the accordion's CONTENT, never its title (CheboxFilterReports.tsx:77-92),
-  # and the drawer shows it populated at 0/13. It is not a slow network — the
-  # failure is identical every time. It is not a render race — opening a static
-  # filter first to spend a render changes nothing. It is not the viewport or
-  # the element sitting low in a scrolling drawer — 1600x1400 fails exactly
-  # like 1600x900, and Estación, which sits BELOW it, captures fine at 900.
-  #
-  # Every sibling above uses this identical shape and works, so the next step
-  # is a headful run to watch where that click actually lands, not another
-  # selector guess. Like bot.cctv.fn.estado, this slot stays pending.
+  # So the selector is scoped to the drawer. Every sibling above gets away with
+  # a bare title because no chart shares its heading; this one cannot, and
+  # nothing warns you — the run reports a selector that timed out, not a title
+  # that matched twice.
+  - slot: dashboard.variables.motivo-cierre.fig
+    route: /#/dashboard
+    steps:
+      - click: 'img[alt="Filter"]'
+      - click: '::-p-xpath(//*[contains(@class,"MuiDrawer-paper")]//*[normalize-space(text())="Motivo de Cierre"])'
+    screenIs: '::-p-text(Motivo de Cierre)'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Motivo de Cierre"]])'
+    clip: '::-p-xpath(//*[contains(@class,"MuiDrawer-paper")]//*[normalize-space(text())="Motivo de Cierre"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
+    viewport: { width: 1600, height: 900 }
 
-  # The Ubicación block, collapsed: its three rows are what the caption
-  # promises, and Comuna and Barrio legitimately read 0/0 until a Zona is
-  # chosen. Choosing one would be filtering — allowed — but it would also
-  # photograph a state no operator starts from.
+  # THE DRAWER HAS NO SECTION CONTAINERS. A DOM walk settled it rather than a
+  # guess: the innermost element holding Zona, Comuna AND Barrio is
+  # `div.flex.flex-col.gap-1` at 470x951, and it holds Rango de Tiempo,
+  # Variables de Gestión and Tiempos de Gestión too. "Ubicación" is a MuiBox
+  # whose nextElementSibling IS the Zona accordion — every filter and every
+  # heading is a flat sibling. `clipUp` climbs to a container the product does
+  # not name; here there is none to climb to, and the run that tried delivered
+  # the whole drawer plus the map behind it.
+  #
+  # So this shoots what one element can show, and the slot is already named for
+  # it. Zona expanded is also the only one of the three with anything in it:
+  # Comuna and Barrio read 0/0 until a Zona is picked, so a shot of three
+  # collapsed rows would teach an operator three headings and no mechanism.
+  # The caption in 09 says what this shows.
+  #
+  # Selector scoped to the drawer, for the reason motivo-cierre had to be: a
+  # bare title can collide with a chart heading behind the drawer, and the
+  # failure reads like a timeout rather than a double match.
   - slot: dashboard.filtros.ubicacion.fig-zona
     route: /#/dashboard
     steps:
       - click: 'img[alt="Filter"]'
+      - click: '::-p-xpath(//*[contains(@class,"MuiDrawer-paper")]//*[normalize-space(text())="Zona"])'
     screenIs: '::-p-text(Ubicación)'
-    dataReady: '::-p-text(Barrio)'
-    clip: '::-p-xpath(//*[normalize-space(text())="Ubicación"]/ancestor::*[.//*[normalize-space(text())="Barrio"]][1])'
+    dataReady: '::-p-xpath(//*[@aria-expanded="true"][.//*[normalize-space(text())="Zona"]])'
+    clip: '::-p-xpath(//*[contains(@class,"MuiDrawer-paper")]//*[normalize-space(text())="Zona"]/ancestor::*[contains(@class,"MuiAccordion-root")][1])'
     viewport: { width: 1600, height: 900 }
-
-  # NO RECIPE — dashboard.filtros.ubicacion.fig-zona has no element to clip.
-  # Its caption promises Zona, Comuna AND Barrio, and the product renders the
-  # "Ubicación" heading as a SIBLING of the three filters, not their parent
-  # (ReportsFilters.tsx:727-739). The nearest ancestor holding both the heading
-  # and "Barrio" is the drawer itself, which is what a run delivered: the whole
-  # panel, plus the map behind it, for a caption about three rows.
-  #
-  # `clipUp` exists for the opposite problem — climbing TO a container the
-  # product does not name. Here the climb overshoots, and no selector expresses
-  # "these four siblings". Clipping the Zona accordion alone would answer two
-  # thirds of its own caption. Needs a hand capture, or a caption that promises
-  # what a single element shows.
 
   # The comparison-range control whole: heading, link icon and the date field.
   # Anchored on the heading and climbed to the block that also holds a time,

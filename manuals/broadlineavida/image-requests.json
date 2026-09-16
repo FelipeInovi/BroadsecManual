@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 248,
-    "delivered": 243,
-    "pending": 5
+    "delivered": 245,
+    "pending": 3
   },
   "pending": [
     {
@@ -63,46 +63,6 @@
       "deliverTo": {
         "shared": "_common/mapa.capa.recorrido.png",
         "override": "<tenant>/mapa.capa.recorrido.png"
-      }
-    },
-    {
-      "slot": "dashboard.filtros.ubicacion.fig-zona",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.filtros.ubicacion.fig-zona",
-          "blockType": "figure",
-          "shows": "Filtro de ubicación por Zona, Comuna y Barrio."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.filtros.ubicacion.fig-zona.png",
-        "override": "<tenant>/dashboard.filtros.ubicacion.fig-zona.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.motivo-cierre.fig",
-      "neededBy": [
-        "mv"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.motivo-cierre.fig",
-          "blockType": "figure",
-          "shows": "Filtro por motivo de cierre."
-        }
-      ],
-      "pendingFor": [
-        "mv"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.motivo-cierre.fig.png",
-        "override": "<tenant>/dashboard.variables.motivo-cierre.fig.png"
       }
     },
     {
@@ -2125,6 +2085,22 @@
       ]
     },
     {
+      "slot": "dashboard.filtros.ubicacion.fig-zona",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.filtros.ubicacion.fig-zona",
+          "blockType": "figure",
+          "shows": "Filtro de Zona desplegado, con las zonas disponibles."
+        }
+      ],
+      "files": [
+        "_common/dashboard.filtros.ubicacion.fig-zona.png"
+      ]
+    },
+    {
       "slot": "dashboard.variables.emergencia.mv.fig",
       "neededBy": [
         "mv"
@@ -2218,6 +2194,22 @@
       ],
       "files": [
         "_common/dashboard.variables.recursos-asignados.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.motivo-cierre.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.motivo-cierre.fig",
+          "blockType": "figure",
+          "shows": "Filtro por motivo de cierre."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.motivo-cierre.fig.png"
       ]
     },
     {
