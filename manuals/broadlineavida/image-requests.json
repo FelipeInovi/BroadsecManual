@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 248,
-    "delivered": 245,
-    "pending": 3
+    "delivered": 246,
+    "pending": 2
   },
   "pending": [
     {
@@ -63,26 +63,6 @@
       "deliverTo": {
         "shared": "_common/mapa.capa.recorrido.png",
         "override": "<tenant>/mapa.capa.recorrido.png"
-      }
-    },
-    {
-      "slot": "dashboard.variables.emergencia.med.fig",
-      "neededBy": [
-        "med"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.variables.emergencia.med.fig",
-          "blockType": "figure",
-          "shows": "Filtro por tipo de reporte."
-        }
-      ],
-      "pendingFor": [
-        "med"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.variables.emergencia.med.fig.png",
-        "override": "<tenant>/dashboard.variables.emergencia.med.fig.png"
       }
     }
   ],
@@ -4163,6 +4143,22 @@
       ],
       "files": [
         "_common/dashboard.filtros.ubicacion.fig-depto.png"
+      ]
+    },
+    {
+      "slot": "dashboard.variables.emergencia.med.fig",
+      "neededBy": [
+        "med"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.variables.emergencia.med.fig",
+          "blockType": "figure",
+          "shows": "Filtro por tipo de reporte."
+        }
+      ],
+      "files": [
+        "_common/dashboard.variables.emergencia.med.fig.png"
       ]
     },
     {

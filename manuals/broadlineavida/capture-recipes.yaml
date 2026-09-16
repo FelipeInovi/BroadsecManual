@@ -92,8 +92,8 @@ target:
         selector: 'img[alt="Project logo"][src*="medellin_logo"]'
       auth:
         route: /#/login
-        userEnv: BROADSEC_CAPTURE_MED_USER
-        passwordEnv: BROADSEC_CAPTURE_MED_PASSWORD
+        userEnv: BROADSEC_CAPTURE_USER_MED
+        passwordEnv: BROADSEC_CAPTURE_PASSWORD_MED
         userSelector: 'input[name="email"]'
         passwordSelector: 'input[name="password"]'
         submitSelector: "#submit-button"
