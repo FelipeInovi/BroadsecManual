@@ -406,11 +406,3 @@ state.
     single-module update discards the drift of every module nobody has reviewed
     yet. **What settles it:** a deliberate whole-manual `extract`, run on its
     own, when somebody is ready to re-read every module's drift afterwards.
-
-## PRUEBA TEMPORAL — borrar después de la verificación
-
-Entrada creada sólo para comprobar si `deliver` relee el rango de commits
-cuando una fila ya existe. Describe una capacidad ficticia.
-
-- **Exportar el tablero a CSV** — el operador de `mv` puede descargar el
-  Security Dashboard como CSV desde el menú del panel. Capacidad nueva.
