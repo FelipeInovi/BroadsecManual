@@ -1,6 +1,6 @@
 ---
 name: release-notes
-description: Writes the release notes a client receives beside an updated manual — a short document of its own, in Word, that reports what changed in the PRODUCT rather than in the manual. Classifies each commit of the range by its `Producto:` trailer and never by inference, because a manual's diff mixes three different things and only one of them is news to the operator. Use when promoting a manual to a LATER official delivery and at least one commit in the range declares a product change. Not needed for a first delivery, for a row that already exists, or when no commit declares one — then no document is emitted at all.
+description: Writes the release notes a client receives beside an updated manual — a short document of its own, in Word, that reports what changed in the PRODUCT rather than in the manual — a capability the operator gained, one that behaves differently, or one that was RETIRED. Classifies each commit of the range by its `Producto:` trailer (`nuevo`, `cambio`, `retirado`, `sin-cambio`) and never by inference, because a manual's diff mixes a correction, a capability finally written down, and a real product change, and only the last is news to the operator. Use when promoting a manual to a LATER official delivery and at least one commit in the range declares a product change. Not needed for a first delivery, for a row that already exists, or when no commit declares one — then no document is emitted at all.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
@@ -34,6 +34,7 @@ A manual's diff mixes three things that must not reach a client mixed:
 | What actually happened | Goes in |
 |---|---|
 | The product changed | **Yes** — this is the whole document |
+| The product lost a capability the operator had | **Yes** — same as above, the other direction |
 | The manual was wrong and was corrected | No. The product was always like that |
 | The manual caught up with something old | No. The operator has used it for months |
 
@@ -42,8 +43,9 @@ second and third are invisible in a diff. Only the commit author knows. They
 declare it with a trailer:
 
 ```
-Producto: nuevo        una capability the operator did not have
+Producto: nuevo        a capability the operator did not have
 Producto: cambio       one they had, now behaving differently
+Producto: retirado     one they had, and no longer has — it may come back
 Producto: sin-cambio   nothing changed for them
 ```
 
@@ -73,7 +75,7 @@ If you were invoked anyway, say so and stop.
 
 Beyond that, stop and report rather than filling the document:
 
-- No commit in the range declares `nuevo` or `cambio`.
+- No commit in the range declares `nuevo`, `cambio` or `retirado`.
 - The range is empty, or the anchor commit is not in the history.
 - Every declared change turns out, in its diff, to be about the manual.
 - This is a FIRST delivery. There is nothing to diff against, and describing
@@ -132,8 +134,8 @@ Blocks available to you — no others, and do not improvise a layout:
 
 | Block | For |
 |---|---|
-| `prose` | every paragraph |
-| `callout` `important` | a consequence the operator must not miss |
+| `prose` | every paragraph — including the removal statement itself: "this no longer exists" is the main content of its section, not an aside to it |
+| `callout` `important` | an operational consequence attached to a removal (or any other change), never the removal statement itself — see `callout`'s own description: "use sparingly" |
 | `term-list` | the validity row: one entry, `term` the module, `definition` the date it takes effect |
 
 **The validity row reuses `term-list` rather than a block of its own**, and that
@@ -170,11 +172,16 @@ them out.
 > Actualización visual del menú de navegación, nuevo módulo Bridge of Things en
 > etapa de pruebas y cierre de casos directamente desde la lista.
 
+A version that only retires something still needs a `lede` naming that:
+
+> Se retiró el acceso directo a reportes desde el panel principal.
+
 ## How the prose reads
 
 - **Spanish**, neutral and formal.
 - **About the product, in the past**: "Se implementó…", "Se incorporó…", "Ahora
-  es posible…".
+  es posible…" for an addition or a change; "Se retiró…", "Ya no está
+  disponible…" for a removal.
 - Name controls as the product labels them, and screens as the manual titles
   them.
 - Say where a thing is reached and what it does. An operator reads this to know
@@ -193,6 +200,9 @@ The register to match:
 > Ahora es posible cerrar casos directamente desde la lista. Para ello, ubique
 > el cursor sobre el identificador del incidente; al hacerlo aparecerá un ícono
 > de carpeta.
+
+> Se retiró el acceso directo a reportes desde el panel principal. El módulo de
+> reportes sigue disponible desde el menú de navegación.
 
 ## Conditioning is not optional here
 

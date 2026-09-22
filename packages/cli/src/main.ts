@@ -1308,8 +1308,25 @@ async function buildDocx(
  * Transcribed from the reference rather than composed, because it names what the
  * DOCUMENT is, not which product it is about — the product is already in the
  * band above it and on the line below.
+ *
+ * KIND-NEUTRAL, deliberately: a version can add, change or retire a capability
+ * (`Producto: nuevo` / `cambio` / `retirado`), and the footer prints on every
+ * page of every one of those, unconditionally. Narrowing it back to "nuevas
+ * características" would assert novelty on a version that only removed
+ * something — do not re-narrow it.
  */
-const RELEASE_FOOTER_TITLE = "Actualización – nuevas características";
+const RELEASE_FOOTER_TITLE = "Actualización de producto";
+
+/**
+ * The cover title, on both the PDF and the Word file — a single constant so the
+ * two cannot drift apart, since the Word file also carries it into its document
+ * metadata (`title` and `description`, in `render-docx/src/release.ts`).
+ *
+ * KIND-NEUTRAL for the same reason as `RELEASE_FOOTER_TITLE`: it names the
+ * DOCUMENT, not what this particular version contains, because that can be an
+ * addition, a change or a removal (`Producto: nuevo` / `cambio` / `retirado`).
+ */
+const RELEASE_COVER_TITLE = "Actualización de Producto";
 
 /**
  * The office that issues these notes.
@@ -1473,7 +1490,7 @@ async function buildReleaseNotes(
         // The version being delivered, and the same argument the manual beside
         // these notes is built from — so the two cannot name different ones.
         version,
-        title: "Nuevas Características Habilitadas",
+        title: RELEASE_COVER_TITLE,
         // The NOTES' standfirst, not the manual's. See `releaseLede`.
         lede: notes.lede,
         date: releaseDate(),
@@ -1501,7 +1518,7 @@ async function buildReleaseNotes(
       bands: { ordinary: asset(bands.ordinary), opener: asset(bands.opener) },
       footerTitle: RELEASE_FOOTER_TITLE,
       project: config.manual.product,
-      title: "Nuevas Características Habilitadas",
+      title: RELEASE_COVER_TITLE,
       // A literal for the same reason as ISSUING_OFFICE: one template for every
       // product means one issuer, and a per-manual field would invite four
       // copies of the same name to drift.

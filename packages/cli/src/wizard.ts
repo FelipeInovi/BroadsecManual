@@ -1286,9 +1286,10 @@ export function assembleDeliveryPrompt(
           `   un documento aparte y responden otra pregunta: qué cambió en el`,
           `   PRODUCTO, no en el manual. Cargá la skill \`release-notes\`; ella dice`,
           `   cómo se decide, y la respuesta sale del trailer \`Producto:\` de cada`,
-          `   commit del rango, nunca de inferir. Si ninguno declara \`nuevo\` ni`,
-          `   \`cambio\`, NO hay notas: decilo y seguí. Una actualización sin novedad`,
-          `   funcional es un hecho real, no un documento a llenar.`,
+          `   commit del rango, nunca de inferir. Si ninguno declara \`nuevo\`,`,
+          `   \`cambio\` ni \`retirado\`, NO hay notas: decilo y seguí. Una`,
+          `   actualización sin novedad funcional es un hecho real, no un documento`,
+          `   a llenar.`,
         ]
       : [];
 
