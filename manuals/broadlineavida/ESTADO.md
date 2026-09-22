@@ -230,6 +230,29 @@ state.
   filter to separate them. Verified in the rendered output, not in a count: the
   fourth row's `src` resolves to `_common/fuerzas.estado.no-disponible.png`.
 
+- **The owner's product declaration for the range delivered as 1.2.0**
+  (`cb6f0eb..` the 1.2.0 row), stated on 2026-09-22. None of these commits
+  carries a `Producto:` trailer: they predate the convention, which landed in
+  `af1ee68`. Absent trailers read as `sin-cambio`, so without this entry the
+  range would owe the client no release notes. In the owner's words:
+
+  > - Fuerzas en Campo — el perfil del agente, la liberación de emergencia y la
+  >   pestaña Asignar del turno son capacidades que el operador de mv NO tenía
+  >   antes. Producto: nuevo.
+  > - canViewFilterTrafficDetails y los seis filtros del Security Dashboard que
+  >   habilita son una capacidad AGREGADA al producto, tal como reportó el diff
+  >   del extractor en b61438d. Producto: nuevo.
+
+  The second settles a contradiction between two commits: `b61438d` reports
+  "capability added" from the extractor's diff, while `39d51c3` says "nothing
+  here changed, it was never right". The extractor was right; the section had
+  been silent about a capability the product had just gained.
+
+  `release-notes/v1.2.0.yaml` is this declaration written out. It was first
+  committed as `v1.1.1.yaml` (`65491df`) — a test delivery reverted on another
+  branch that never existed here and has no change-log row. The content was
+  right; the number was not.
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and

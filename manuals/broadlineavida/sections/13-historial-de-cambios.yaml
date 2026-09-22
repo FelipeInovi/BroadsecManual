@@ -92,3 +92,14 @@ children:
           description: >-
             Incorpora el módulo Broadsec of Things, con la gestión de
             dispositivos en campo.
+
+        - id: historial.tabla.1-2-0
+          version: 1.2.0
+          date: 2026-09-22
+          # Names Fuerzas en Campo, which med does not receive.
+          when:
+            tenant: [mv, demo]
+          description: >-
+            Amplía **Security Dashboard** y **Fuerzas en Campo** con nuevos
+            procedimientos y sus figuras, y completa el catálogo de capas del
+            mapa en **Interfaz General**.
