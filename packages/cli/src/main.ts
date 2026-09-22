@@ -46,11 +46,28 @@ import {
 } from "./extract.ts";
 import { joinCoverage, type EntryMatch, type ModuleInput } from "./coverage.ts";
 import { soleAxis } from "./axis.ts";
-import { commitFile, headCommit, isDirty } from "./git.ts";
+import {
+  commitFile,
+  headCommit,
+  isAncestorOrSame,
+  isDirty,
+  lastCommitTouching,
+  productTrailers,
+} from "./git.ts";
 import { readBaselines, stampBaseline } from "./baselines.ts";
 import { hiddenSlotSet, hideSlot, readHidden, showSlot } from "./hidden.ts";
 import { archive, planDelivery, stampFile, unstampFile } from "./deliver.ts";
-import { changeLogSectionFile, proofFor, type ChangeLogRowLike } from "./delivery-state.ts";
+import {
+  changeLogSectionFile,
+  deliveredRows,
+  proofFor,
+  readChangeLogRows,
+  rowsForTarget,
+  staleReleaseNotesReport,
+  versionMismatches,
+  type ChangeLogRowLike,
+  type DeclaredCommit,
+} from "./delivery-state.ts";
 import { nextWorkNumber, releaseNotesFilename, workStamp } from "./naming.ts";
 import { awaitingProduct, type TargetPending } from "./awaiting.ts";
 import { checkLabels, labelLines, labelReport } from "./labels.ts";
@@ -1532,6 +1549,93 @@ async function buildReleaseNotes(
 }
 
 /**
+ * GUARD 2's message: which targets fall short of the version being delivered,
+ * and the two ways out. See `versionMismatches` (`delivery-state.ts`) for the
+ * predicate this reports on — the same one `build()` throws on today, asked
+ * here BEFORE anything is rendered.
+ */
+export function formatVersionMismatchMessage(
+  version: string,
+  shortOf: readonly { readonly value: string; readonly highestRow: string }[],
+): string {
+  const names = shortOf.map((m) => m.value).join(", ");
+  const detail = shortOf.map((m) => `${m.value} en ${m.highestRow}`).join(", ");
+  const verb = shortOf.length === 1 ? "no llega" : "no llegan";
+  return [
+    ``,
+    `${names} ${verb} a la versión ${version} pedida (${detail}).`,
+    `  Nada se construyó todavía. Dos salidas: entregue sólo lo que sí llega con`,
+    `  --tenant <id>, o escriba y commitee la fila ${version} para ${names} antes`,
+    `  de reintentar.`,
+  ].join("\n");
+}
+
+/**
+ * GUARD 1's message: which commits declare product news the release notes do
+ * not (yet) reflect. See `staleReleaseNotesReport` (`delivery-state.ts`) —
+ * this NEVER accompanies a refusal, only a report.
+ */
+export function formatStaleReleaseNotesMessage(
+  axisValue: string,
+  version: string,
+  offending: readonly DeclaredCommit[],
+): string {
+  const list = offending.map((c) => `    ${c.commit.slice(0, 7)} ${c.subject}`).join("\n");
+  return [
+    ``,
+    `${axisValue}: hay commits que declaran novedad de producto y las notas de`,
+    `  versión de v${version} no las reflejan (o no existen todavía). Esto NO`,
+    `  detiene la entrega — puede ser una decisión deliberada, o un commit que se`,
+    `  revirtió y igual quedó con el trailer — pero alguien tiene que mirarlo:`,
+    list,
+    `  Ver la skill \`release-notes\` para escribirlas.`,
+  ].join("\n");
+}
+
+/**
+ * GUARD 1's wiring: read git, decide, report. Never refuses — see
+ * `staleReleaseNotesReport` for why. One target at a time, because the anchor
+ * (the last delivery this target actually received) is per target, exactly
+ * like everything else about a delivery's history.
+ *
+ * `anchor: undefined` means this target has never been delivered before —
+ * skipped, on purpose: a first delivery has nothing to diff against, the same
+ * reason the `release-notes` skill itself does not run for one.
+ */
+export function reportStaleReleaseNotes(
+  manualDir: string,
+  repoRoot: string,
+  version: string,
+  perTarget: readonly { readonly value: string; readonly anchor: string | undefined }[],
+): void {
+  for (const { value, anchor } of perTarget) {
+    if (anchor === undefined) continue;
+    const trailers = productTrailers(repoRoot, anchor);
+    if (trailers === null) continue; // git could not answer — degrade to silence
+    const declaredCommits: DeclaredCommit[] = trailers
+      .filter((t) => t.value === "nuevo" || t.value === "cambio" || t.value === "retirado")
+      .map((t) => ({ commit: t.commit, subject: t.subject }));
+    if (declaredCommits.length === 0) continue;
+
+    const notesPath = releaseNotesFile(manualDir, version);
+    const notesFileExists = existsSync(notesPath);
+    let notesReflectNewest: boolean | null = null;
+    if (notesFileExists) {
+      const lastTouch = lastCommitTouching(repoRoot, notesPath);
+      notesReflectNewest =
+        lastTouch === null
+          ? null
+          : isAncestorOrSame(repoRoot, declaredCommits[0] /* newest first */!.commit, lastTouch);
+    }
+
+    const report = staleReleaseNotesReport({ declaredCommits, notesFileExists, notesReflectNewest });
+    if (report !== null) {
+      console.error(formatStaleReleaseNotesMessage(value, version, report.offending));
+    }
+  }
+}
+
+/**
  * Promote a manual to an official delivery: render it, archive it, stamp it.
  *
  * RENDERS THE OFFICIAL DOCUMENT ITSELF rather than looking for one. Ordinary
@@ -1591,6 +1695,13 @@ async function deliverManual(
   // One expected name per target, built from the same template the build used —
   // so a draft or a superseded build is never even a candidate.
   const expected = new Map<string, readonly string[]>();
+  // Read ONCE, unconditioned — narrowed per target below via `rowsForTarget`.
+  // Feeds both new guards: guard 2 needs each target's actual highest row
+  // (`highestRow`, computed regardless of `asked`); guard 1 needs each
+  // target's own delivery anchor (`deliveredRows(...).at(-1)`).
+  const changeLogRows = readChangeLogRows(manualDir);
+  const targetVersions: { value: string; highestRow: string }[] = [];
+  const perTargetAnchors: { value: string; anchor: string | undefined }[] = [];
   let version: string | undefined = asked;
   for (const target of targets) {
     const value = requireAxisValue(target, axis);
@@ -1604,8 +1715,17 @@ async function deliverManual(
         if (use.hidden) hiddenUsed.add(use.slot);
       }
     }
-    const targetVersion =
-      asked ?? deliveredVersion(assembled.children, config.manual.contentVersion);
+    // ACTUAL highest row for THIS target — regardless of what was asked. This
+    // is the exact predicate `build()` throws on (`official !== version`);
+    // GUARD 2 below asks it of every target before anything renders.
+    const highestRow = deliveredVersion(assembled.children, config.manual.contentVersion);
+    targetVersions.push({ value, highestRow });
+    perTargetAnchors.push({
+      value,
+      anchor: deliveredRows(rowsForTarget(changeLogRows, target), value).at(-1)?.commit,
+    });
+
+    const targetVersion = asked ?? highestRow;
     version ??= targetVersion;
 
     if (deliveryProofFor(assembled.children, targetVersion, value) !== undefined) {
@@ -1636,12 +1756,30 @@ async function deliverManual(
     return 1;
   }
 
+  // GUARD 2 — refuse BEFORE rendering anything when a target's highest row
+  // does not reach `version`. Reproduced today with `--version` given and no
+  // `--tenant`: `mv` rendered in full, and only then did `med` — whose
+  // highest row is lower — throw out of `build()`. Checking every target
+  // here, before the first one is even built, makes that throw unreachable
+  // from this path; it stays in `build()` as the last line of defence.
+  const shortOfVersion = versionMismatches(targetVersions, version);
+  if (shortOfVersion.length > 0) {
+    console.error(formatVersionMismatchMessage(version, shortOfVersion));
+    return 1;
+  }
+
   if (hiddenUsed.size > 0) {
     console.log(
       `  ${hiddenUsed.size} imagen(es) se entregan ocultas (pendiente, sin mostrarse en ` +
         `este documento) — ver \`hidden ${config.manual.id}\`.`,
     );
   }
+
+  // GUARD 1 — reports, never refuses. See `reportStaleReleaseNotes` and
+  // `staleReleaseNotesReport` for the full reasoning: an author may
+  // legitimately decide a declared change needs no notes, and a commit later
+  // reverted still carries its trailer, so this can only inform, not block.
+  reportStaleReleaseNotes(manualDir, repoRoot, version, perTargetAnchors);
 
   // THE OFFICIAL DOCUMENT IS RENDERED HERE, and this is the only place that
   // renders one. Ordinary builds are named by their working number, so a

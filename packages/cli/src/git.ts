@@ -81,3 +81,74 @@ export function isExactly(repoRoot: string, commit: string): boolean | null {
   const n = Math.min(commit.length, head.length);
   return head.slice(0, n) === commit.slice(0, n) && !dirty;
 }
+
+/** One commit's declared `Producto:` trailer, over a `since..HEAD` range. */
+export interface ProductTrailer {
+  readonly commit: string;
+  readonly subject: string;
+  /** The trailer's raw value, or `""` when the commit carries none — read as `sin-cambio`. */
+  readonly value: string;
+}
+
+/**
+ * Every commit strictly after `since`, up to `HEAD`, with its `Producto:`
+ * trailer — newest first, `git log`'s own order.
+ *
+ * `null` when git cannot answer: `since` unknown to this repository, git
+ * missing, not a repository. See the module doc — a guard reading this must
+ * degrade to silence, never invent an answer.
+ */
+export function productTrailers(
+  repoRoot: string,
+  since: string,
+): readonly ProductTrailer[] | null {
+  const out = git(repoRoot, [
+    "log",
+    "--format=%H%x09%s%x09%(trailers:key=Producto,valueonly)",
+    `${since}..HEAD`,
+  ]);
+  if (out === null) return null;
+  if (out === "") return [];
+  return out.split("\n").map((line) => {
+    const [commit = "", subject = "", value = ""] = line.split("\t");
+    return { commit, subject, value: value.trim() };
+  });
+}
+
+/**
+ * The most recent commit that touched `path`, or `null` if git cannot say or
+ * no commit ever has.
+ */
+export function lastCommitTouching(repoRoot: string, path: string): string | null {
+  const out = git(repoRoot, ["log", "-1", "--format=%H", "--", path]);
+  return out === null || out === "" ? null : out;
+}
+
+/**
+ * Whether `ancestor` is `descendant` itself, or reachable from it by
+ * following parent links — i.e. whether `descendant`'s history already
+ * contains `ancestor`.
+ *
+ * `null` when git cannot answer (an unknown commit, git missing, not a
+ * repository) — deliberately NOT the same as `false`. `git merge-base
+ * --is-ancestor` itself distinguishes "not an ancestor" (exit 1, a real
+ * negative answer) from every other failure (exit >1, unreadable); collapsing
+ * the two into one `false` would let an unrelated git failure quietly read as
+ * "the notes are stale" instead of "cannot tell".
+ */
+export function isAncestorOrSame(
+  repoRoot: string,
+  ancestor: string,
+  descendant: string,
+): boolean | null {
+  if (ancestor === descendant) return true;
+  try {
+    execFileSync("git", ["-C", repoRoot, "merge-base", "--is-ancestor", ancestor, descendant], {
+      stdio: "ignore",
+    });
+    return true;
+  } catch (error) {
+    const status = (error as { status?: number | null }).status;
+    return status === 1 ? false : null;
+  }
+}

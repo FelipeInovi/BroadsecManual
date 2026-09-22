@@ -267,6 +267,55 @@ export function classifyDelivery(
     : { kind: "summarise-since", version, since: previous.commit };
 }
 
+/** One commit whose `Producto:` trailer declares product news. */
+export interface DeclaredCommit {
+  readonly commit: string;
+  readonly subject: string;
+}
+
+/**
+ * GUARD 1's pure decision: is there product news the release notes do not
+ * (yet) reflect?
+ *
+ * REPORTS, NEVER REFUSES. `deliverManual` prints this and keeps going — see
+ * its call site for the full reasoning. In short: an author may legitimately
+ * decide a declared change needs no notes, and a commit that was later
+ * reverted still carries its trailer, so treating this as a refusal would
+ * trap the delivery with no way out. What was missing before this guard was
+ * not a permission, it was the information.
+ *
+ * `notesReflectNewest === null` means the caller could not tell (git was
+ * unreadable, or the anchor is unknown to this repository) — read as "stay
+ * silent", the same rule `git.ts` follows: a guard that cannot answer must
+ * not manufacture one.
+ */
+export function staleReleaseNotesReport(input: {
+  readonly declaredCommits: readonly DeclaredCommit[];
+  readonly notesFileExists: boolean;
+  readonly notesReflectNewest: boolean | null;
+}): { readonly offending: readonly DeclaredCommit[] } | null {
+  if (input.declaredCommits.length === 0) return null;
+  if (!input.notesFileExists) return { offending: input.declaredCommits };
+  if (input.notesReflectNewest === null || input.notesReflectNewest) return null;
+  return { offending: input.declaredCommits };
+}
+
+/**
+ * GUARD 2's pure decision: which targets' highest change-log row does NOT
+ * reach the version being delivered.
+ *
+ * This is exactly the predicate `build()` throws on today (`official !==
+ * version`), lifted out so `deliverManual` can ask it of EVERY target before
+ * rendering any of them — see `main.ts`'s `deliverManual` for why running it
+ * late left `mv` fully rendered before `med` blew up the whole delivery.
+ */
+export function versionMismatches<T extends { readonly highestRow: string }>(
+  targets: readonly T[],
+  version: string,
+): readonly T[] {
+  return targets.filter((t) => t.highestRow !== version);
+}
+
 /**
  * The section file holding a manual's change log.
  *

@@ -7,6 +7,8 @@ import {
   newestVersion,
   proofFor,
   rowsForTarget,
+  staleReleaseNotesReport,
+  versionMismatches,
 } from "./delivery-state.ts";
 
 /** The target every row here is delivered to, unless a test says otherwise. */
@@ -288,5 +290,99 @@ describe("deliveredFor", () => {
 
   it("ignores rows written but never handed over", () => {
     expect(deliveredFor([{ version: "1.0.0" }], "mv")).toEqual([]);
+  });
+});
+
+/**
+ * GUARD 2 — the pure decision `deliverManual` checks BEFORE rendering
+ * anything: does every target's highest change-log row already reach the
+ * version being delivered? See `main.ts`'s `deliverManual` for the wiring —
+ * this is the predicate `build()` throws on today, run early instead of after
+ * `mv` has already rendered.
+ */
+describe("versionMismatches", () => {
+  it("is empty when every target's highest row already matches", () => {
+    const targets = [
+      { value: "mv", highestRow: "1.2.0" },
+      { value: "med", highestRow: "1.2.0" },
+    ];
+    expect(versionMismatches(targets, "1.2.0")).toEqual([]);
+  });
+
+  /** THE FAILURE REPRODUCED TODAY: `mv` reaches 1.2.0, `med` is still at 1.0.0. */
+  it("names the target whose highest row falls short", () => {
+    const targets = [
+      { value: "mv", highestRow: "1.2.0" },
+      { value: "med", highestRow: "1.0.0" },
+    ];
+    expect(versionMismatches(targets, "1.2.0")).toEqual([{ value: "med", highestRow: "1.0.0" }]);
+  });
+
+  it("is empty with a single target that matches", () => {
+    expect(versionMismatches([{ value: "mv", highestRow: "1.0.0" }], "1.0.0")).toEqual([]);
+  });
+});
+
+/**
+ * GUARD 1 — the pure decision behind the stale-release-notes report. Never a
+ * refusal: an author may legitimately decide a declared change needs no
+ * notes, and a reverted commit still carries its trailer. See `git.ts`'s
+ * `productTrailers` / `isAncestorOrSame` for how the CLI answers
+ * `notesReflectNewest`; this function only judges what to do once that
+ * answer is in hand.
+ */
+describe("staleReleaseNotesReport", () => {
+  const nuevo = { commit: "aaaaaaa", subject: "feat: nuevo módulo" };
+  const cambio = { commit: "bbbbbbb", subject: "feat: cambia el flujo" };
+
+  it("reports nothing when no commit in range declares product news", () => {
+    expect(
+      staleReleaseNotesReport({
+        declaredCommits: [],
+        notesFileExists: false,
+        notesReflectNewest: null,
+      }),
+    ).toBeNull();
+  });
+
+  it("reports the declaring commits when the notes file does not exist at all", () => {
+    expect(
+      staleReleaseNotesReport({
+        declaredCommits: [nuevo],
+        notesFileExists: false,
+        notesReflectNewest: null,
+      }),
+    ).toEqual({ offending: [nuevo] });
+  });
+
+  it("reports nothing when the notes were touched at or after the newest declaring commit", () => {
+    expect(
+      staleReleaseNotesReport({
+        declaredCommits: [cambio, nuevo],
+        notesFileExists: true,
+        notesReflectNewest: true,
+      }),
+    ).toBeNull();
+  });
+
+  it("reports every declaring commit when the notes predate the newest one", () => {
+    expect(
+      staleReleaseNotesReport({
+        declaredCommits: [cambio, nuevo],
+        notesFileExists: true,
+        notesReflectNewest: false,
+      }),
+    ).toEqual({ offending: [cambio, nuevo] });
+  });
+
+  /** Git could not answer (unreadable, missing commit) — degrade to silence, never guess. */
+  it("stays silent when the CLI could not tell whether the notes reflect the newest commit", () => {
+    expect(
+      staleReleaseNotesReport({
+        declaredCommits: [nuevo],
+        notesFileExists: true,
+        notesReflectNewest: null,
+      }),
+    ).toBeNull();
   });
 });

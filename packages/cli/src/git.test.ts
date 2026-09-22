@@ -4,7 +4,15 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { commitFile, headCommit, isDirty, isExactly } from "./git.ts";
+import {
+  commitFile,
+  headCommit,
+  isAncestorOrSame,
+  isDirty,
+  isExactly,
+  lastCommitTouching,
+  productTrailers,
+} from "./git.ts";
 
 /**
  * These run against THIS repository, which is the only honest way to test a
@@ -125,5 +133,132 @@ describe("commitFile", () => {
   it("returns false when there is nothing to commit", () => {
     const root = scratch();
     expect(commitFile(root, join(root, "seed.txt"), "chore: nada cambió")).toBe(false);
+  });
+});
+
+/**
+ * Git plumbing for GUARD 1 (stale/missing release notes) — against a
+ * THROWAWAY repository, same reasoning as `commitFile`'s tests: this one
+ * writes commits, so it must never run against the repository it is testing.
+ */
+describe("productTrailers", () => {
+  const scratch = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "git-trailers-"));
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", "seed"]);
+    return root;
+  };
+
+  const commit = (root: string, message: string): string => {
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", message]);
+    return execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  };
+
+  it("reads the trailer's value, newest commit first", () => {
+    const root = scratch();
+    const since = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim();
+    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    const last = commit(root, "chore: sin novedad");
+    const trailers = productTrailers(root, since);
+    expect(trailers).toEqual([
+      { commit: last, subject: "chore: sin novedad", value: "" },
+      { commit: expect.any(String), subject: "feat: nuevo modulo", value: "nuevo" },
+    ]);
+  });
+
+  it("is empty over a range with no commits, without treating that as failure", () => {
+    const root = scratch();
+    const head = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim();
+    expect(productTrailers(root, head)).toEqual([]);
+  });
+
+  it("returns null rather than throwing when the anchor is unknown here", () => {
+    const root = scratch();
+    expect(() => productTrailers(root, "0".repeat(40))).not.toThrow();
+    expect(productTrailers(root, "0".repeat(40))).toBeNull();
+  });
+
+  it("returns null outside a repository", () => {
+    expect(productTrailers("/definitely/not/a/repository/anywhere", "HEAD~1")).toBeNull();
+  });
+});
+
+describe("lastCommitTouching", () => {
+  const scratch = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "git-touch-"));
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    return root;
+  };
+
+  it("names the commit that last touched the path", () => {
+    const root = scratch();
+    writeFileSync(join(root, "notas.yaml"), "id: notas\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "notas: primera version"]);
+    const first = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim();
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", "algo no relacionado"]);
+    expect(lastCommitTouching(root, join(root, "notas.yaml"))).toBe(first);
+  });
+
+  it("is null for a path no commit ever touched", () => {
+    const root = scratch();
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", "seed"]);
+    expect(lastCommitTouching(root, join(root, "nunca-existio.yaml"))).toBeNull();
+  });
+
+  it("returns null outside a repository", () => {
+    expect(lastCommitTouching("/definitely/not/a/repository/anywhere", "x.yaml")).toBeNull();
+  });
+});
+
+describe("isAncestorOrSame", () => {
+  const scratch = (): { root: string; c0: string; c1: string; c2: string } => {
+    const root = mkdtempSync(join(tmpdir(), "git-ancestor-"));
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", "c0"]);
+    const c0 = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", "c1"]);
+    const c1 = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", "c2"]);
+    const c2 = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    return { root, c0, c1, c2 };
+  };
+
+  it("is true when the two commits are the same", () => {
+    const { root, c1 } = scratch();
+    expect(isAncestorOrSame(root, c1, c1)).toBe(true);
+  });
+
+  it("is true when the first commit precedes the second", () => {
+    const { root, c1, c2 } = scratch();
+    expect(isAncestorOrSame(root, c1, c2)).toBe(true);
+  });
+
+  it("is false when the first commit comes AFTER the second — a real negative, not `null`", () => {
+    const { root, c1, c2 } = scratch();
+    expect(isAncestorOrSame(root, c2, c1)).toBe(false);
+  });
+
+  it("returns null, not false, for a commit unknown to this repository", () => {
+    const { root, c1 } = scratch();
+    expect(isAncestorOrSame(root, "f".repeat(40), c1)).toBeNull();
+  });
+
+  it("returns null outside a repository", () => {
+    expect(
+      isAncestorOrSame("/definitely/not/a/repository/anywhere", "a".repeat(40), "b".repeat(40)),
+    ).toBeNull();
   });
 });

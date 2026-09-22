@@ -14,10 +14,13 @@ import {
   axisValueName,
   draftFilename,
   formatCliError,
+  formatStaleReleaseNotesMessage,
+  formatVersionMismatchMessage,
   imageRequests,
   manualConfigSchema,
   narrowHidden,
   outputFilename,
+  reportStaleReleaseNotes,
   resolveTargetImages,
   workFilename,
   parseAxisFilters,
@@ -713,6 +716,278 @@ describe("releaseLede", () => {
     expect(() => releaseLede(null, file)).toThrow(/lede/);
     expect(() => releaseLede("notas", file)).toThrow(/lede/);
   });
+});
+
+/**
+ * GUARD 2 — `deliverManual` refuses BEFORE rendering anything when a target's
+ * highest change-log row does not reach the version being delivered. See
+ * `versionMismatches` (`delivery-state.ts`) for the predicate; this is only
+ * the message `deliverManual` prints alongside the refusal.
+ */
+describe("formatVersionMismatchMessage", () => {
+  it("names the short target, its actual version, and both ways out", () => {
+    const message = formatVersionMismatchMessage("1.2.0", [{ value: "med", highestRow: "1.0.0" }]);
+    expect(message).toContain("med");
+    expect(message).toContain("1.0.0");
+    expect(message).toContain("1.2.0");
+    expect(message).toContain("--tenant");
+  });
+
+  it("names every falling-short target when there is more than one", () => {
+    const message = formatVersionMismatchMessage("1.2.0", [
+      { value: "med", highestRow: "1.0.0" },
+      { value: "agencia-propia", highestRow: "1.1.0" },
+    ]);
+    expect(message).toContain("med");
+    expect(message).toContain("agencia-propia");
+  });
+});
+
+/**
+ * GUARD 1 — `deliverManual` REPORTS (never refuses) when commits since the
+ * last delivery declare product news the release notes do not reflect. See
+ * `staleReleaseNotesReport` (`delivery-state.ts`) for the decision; this
+ * covers the message text and `reportStaleReleaseNotes`, the wiring that
+ * reads git and the filesystem and calls that decision.
+ */
+describe("formatStaleReleaseNotesMessage", () => {
+  it("names the target, the version, the offending commits, and the skill", () => {
+    const message = formatStaleReleaseNotesMessage("mv", "1.2.0", [
+      { commit: "aaaaaaaaaa", subject: "feat: nuevo modulo" },
+    ]);
+    expect(message).toContain("mv");
+    expect(message).toContain("1.2.0");
+    expect(message).toContain("aaaaaaa"); // short hash
+    expect(message).toContain("feat: nuevo modulo");
+    expect(message).toContain("release-notes");
+  });
+});
+
+describe("reportStaleReleaseNotes", () => {
+  const roots: string[] = [];
+
+  const gitInit = (dir: string): void => {
+    execFileSync("git", ["-C", dir, "init", "-q"]);
+    execFileSync("git", ["-C", dir, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", dir, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", dir, "commit", "-q", "--allow-empty", "-m", "seed"]);
+  };
+
+  const scratch = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "stale-notes-"));
+    roots.push(root);
+    gitInit(root);
+    return root;
+  };
+
+  const headSha = (root: string): string =>
+    execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+
+  const commit = (root: string, message: string): string => {
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", message]);
+    return headSha(root);
+  };
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it("reports nothing for a target with no anchor — a first delivery has nothing to diff against", () => {
+    const root = scratch();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      reportStaleReleaseNotes(root, root, "1.0.0", [{ value: "mv", anchor: undefined }]);
+      expect(errorSpy).not.toHaveBeenCalled();
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("reports nothing when no commit since the anchor declares product news", () => {
+    const root = scratch();
+    const anchor = headSha(root);
+    commit(root, "chore: nada de producto");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      expect(errorSpy).not.toHaveBeenCalled();
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("reports when product news exists and the notes file for this version does not", () => {
+    const root = scratch();
+    const anchor = headSha(root);
+    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+      const message = String(errorSpy.mock.calls[0]?.[0]);
+      expect(message).toContain("mv");
+      expect(message).toContain("1.1.0");
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("stays quiet when the notes were written AFTER the declaring commit", () => {
+    const root = scratch();
+    const anchor = headSha(root);
+    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    mkdirSync(join(root, "release-notes"), { recursive: true });
+    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    commit(root, "docs: notas de la 1.1.0");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      expect(errorSpy).not.toHaveBeenCalled();
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("reports when the notes file exists but predates the declaring commit", () => {
+    const root = scratch();
+    mkdirSync(join(root, "release-notes"), { recursive: true });
+    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    commit(root, "docs: notas viejas");
+    const anchor = headSha(root);
+    commit(root, "feat: cambia el flujo\n\nProducto: cambio");
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+});
+
+/**
+ * `deliver <manual> --version <N.N.N>` end to end, against a real (throwaway)
+ * git repository — the exact scenario reproduced today: `--version` given, no
+ * `--tenant`, and one target's highest change-log row falls short of it.
+ *
+ * Stops at GUARD 2, before `build()` is ever called — no PDF is rendered and
+ * no headless Chrome is launched, which is why this can run in the ordinary
+ * suite rather than needing the infrastructure a real render would.
+ */
+describe("deliver — cross-target version guard", () => {
+  const roots: string[] = [];
+
+  const CONFIG = [
+    "manual:",
+    "  id: un-manual",
+    "  title: Un Manual",
+    "  product: Producto",
+    "  contentVersion: 0.1.0",
+    "axes:",
+    "  tenant:",
+    "    values:",
+    "      - id: mv",
+    "        name: MV",
+    "      - id: med",
+    "        name: MED",
+    "targets:",
+    "  - tenant: mv",
+    "  - tenant: med",
+    "output:",
+    "  dir: output",
+    "  filename: x.pdf",
+    "",
+  ].join("\n");
+
+  const INTRO = ["id: s", "title: S", "children:", "  - id: s.p1", "    type: prose", "    props:", "      text: Texto.", ""].join(
+    "\n",
+  );
+
+  // `mv` reaches 1.2.0; `med` — with no `when` on that row — never sees it,
+  // so its table's highest stays 1.0.0. Reproduces exactly what crashed
+  // `build()` today.
+  const CHANGE_LOG = [
+    "id: cambios",
+    "title: Historial de cambios",
+    "children:",
+    "  - id: cambios.tabla",
+    "    type: change-log",
+    "    props:",
+    "      versionHeader: Versión",
+    "      dateHeader: Fecha",
+    "      descriptionHeader: Descripción",
+    "      rows:",
+    "        - id: cambios.tabla.1",
+    "          version: 1.0.0",
+    "          date: 2026-01-01",
+    "          description: Primera entrega.",
+    "        - id: cambios.tabla.2",
+    "          version: 1.2.0",
+    "          date: 2026-06-01",
+    "          description: Segunda entrega.",
+    "          when:",
+    "            tenant: [mv]",
+    "",
+  ].join("\n");
+
+  const repoRoot = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "deliver-guard-"));
+    roots.push(root);
+    mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    writeFileSync(join(root, "manuals", "un-manual", "manual.config.yaml"), CONFIG);
+    writeFileSync(join(root, "manuals", "un-manual", "sections", "01-intro.yaml"), INTRO);
+    writeFileSync(join(root, "manuals", "un-manual", "sections", "99-cambios.yaml"), CHANGE_LOG);
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return root;
+  };
+
+  const runIn = async (root: string, argv: readonly string[]): Promise<number> => {
+    const cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return await run(argv);
+    } finally {
+      process.chdir(cwd);
+    }
+  };
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it("refuses before rendering anything when med's highest row falls short of the requested 1.2.0", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(repoRoot(), ["deliver", "un-manual", "--version", "1.2.0"]);
+      expect(code).toBe(1);
+
+      const messages = errorSpy.mock.calls.map((c) => String(c[0]));
+      expect(messages.some((m) => m.includes("med") && m.includes("1.0.0") && m.includes("1.2.0"))).toBe(
+        true,
+      );
+      expect(messages.some((m) => m.includes("--tenant"))).toBe(true);
+
+      // NOTHING RENDERED: the guard fired before `build()`'s own log line.
+      const logs = logSpy.mock.calls.map((c) => String(c[0]));
+      expect(logs.some((l) => l.includes("construyendo el documento oficial"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+      logSpy.mockRestore();
+    }
+  });
+
+  // A `--tenant mv`-scoped call is deliberately NOT exercised here: mv's own
+  // table already reaches 1.2.0, so the guard steps aside and the run
+  // proceeds into `build()` — real headless Chrome rendering, which no test
+  // in this suite invokes (see `packages/cli/AGENTS.md`: pipeline behaviour
+  // beyond CLI wiring is tested in `core`, not through a rendered PDF here).
 });
 
 /**
