@@ -1061,6 +1061,109 @@ describe("hidden", () => {
     }
   });
 
+  // The confirmed bug: a user typed the delivered FILE name instead of the
+  // slot. The refusal must name the real slot, not just say "invalid".
+  it("refuses to hide the delivered file name instead of the slot, naming the real slot", async () => {
+    const root = repoRoot();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig.png"]);
+      expect(code).toBe(1);
+      expect(
+        existsSync(join(root, "manuals", "un-manual", "hidden-images.json")),
+      ).toBe(false);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("s.fig.png") && m.includes("s.fig"))).toBe(true);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses to hide a slot name with a path separator", async () => {
+    const root = repoRoot();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s/fig"]);
+      expect(code).toBe(1);
+      expect(
+        existsSync(join(root, "manuals", "un-manual", "hidden-images.json")),
+      ).toBe(false);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("no es un nombre de slot válido"))).toBe(true);
+      expect(messages.some((m) => m.includes("barras"))).toBe(true);
+      // The refusal states the slot rule. It must NOT hand someone hiding an
+      // image the validator's advice about authoring `image:` in a section.
+      expect(messages.some((m) => m.includes("image: true"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses to hide an uppercase slot name", async () => {
+    const root = repoRoot();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "S.fig"]);
+      expect(code).toBe(1);
+      expect(
+        existsSync(join(root, "manuals", "un-manual", "hidden-images.json")),
+      ).toBe(false);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("no es un nombre de slot válido"))).toBe(true);
+      expect(messages.some((m) => m.includes("minúsculas"))).toBe(true);
+      expect(messages.some((m) => m.includes("image: true"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses to hide a well-formed slot name the content never declares", async () => {
+    const root = repoRoot();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "no.existe"]);
+      expect(code).toBe(1);
+      expect(
+        existsSync(join(root, "manuals", "un-manual", "hidden-images.json")),
+      ).toBe(false);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("no.existe"))).toBe(true);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses --show for a slot the content never declares", async () => {
+    const root = repoRoot();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--show", "no.existe"]);
+      expect(code).toBe(1);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("no.existe"))).toBe(true);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("still hides a real, fully-pending slot exactly as before", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig"]);
+      expect(code).toBe(0);
+      expect(
+        existsSync(join(root, "manuals", "un-manual", "hidden-images.json")),
+      ).toBe(true);
+      const file = JSON.parse(
+        readFileSync(join(root, "manuals", "un-manual", "hidden-images.json"), "utf8"),
+      );
+      expect(file.hidden["s.fig"]).toBeDefined();
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
   it("records an optional --note alongside the hide", async () => {
     const root = repoRoot();
     const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});

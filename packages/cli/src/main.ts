@@ -4,7 +4,7 @@ import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
-import { catalog } from "@broadsec-manual/blocks";
+import { catalog, EXTENSION as IMAGE_EXTENSION, slotNameProblem } from "@broadsec-manual/blocks";
 import type {
   BlockNode,
   BuildTarget,
@@ -1085,6 +1085,73 @@ function reportHidden(manualDir: string): void {
 }
 
 /**
+ * Every slot the manual's content declares, across every target.
+ *
+ * Read across every configured target, ignoring any axis filter, for the same
+ * reason `deliveredFor` does: hiding and showing are manual-wide acts. A slot
+ * conditioned into only one tenant's branch would be missing from a single
+ * target's walk — the union across every target is the only complete answer
+ * to "does this manual's content declare that slot at all".
+ */
+function declaredSlots(manualDir: string): ReadonlySet<string> {
+  const { doc, targets } = loadManual(manualDir, new Map());
+  const slots = new Set<string>();
+  for (const target of targets) {
+    const manual = assemble(doc, target, catalog);
+    for (const use of collectSlots(manual, catalog)) slots.add(use.slot);
+  }
+  return slots;
+}
+
+/**
+ * Everything wrong with a slot name typed at the CLI, checked BEFORE either
+ * `hideCommand` or `showCommand` touches `hidden-images.json` — a malformed or
+ * undeclared slot must write nothing and report why, not silently succeed at
+ * hiding or showing nothing real.
+ *
+ * Two layers, checked in this order because a malformed name was never going
+ * to be in the declared set anyway, and layer 1's message is the more
+ * specific of the two:
+ *
+ * 1. Malformed — reuses `slotNameProblem` (the SAME validator content
+ *    authoring is held to) rather than a second one. A malformed name that
+ *    is one file extension away from a real slot is exactly the confirmed
+ *    bug: someone typed the delivered FILE name
+ *    (`fuerzas.turno-asignar.fig.png`) instead of the SLOT
+ *    (`fuerzas.turno-asignar.fig`) — so when stripping a trailing image
+ *    extension lands on something the content actually declares, the
+ *    refusal names it concretely instead of just saying "invalid".
+ * 2. Well-formed but undeclared — nothing in `collectSlots` across any
+ *    target ever names it, so hiding or showing it could not affect any
+ *    real build.
+ *
+ * The validator DECIDES; the wording below is this command's own. Echoing
+ * `slotNameProblem`'s message here would hand someone hiding an image a
+ * paragraph about how to write `image:` in a section file — advice for a
+ * different job, in the middle of the one sentence they need.
+ */
+function invalidSlotReason(slot: string, declared: ReadonlySet<string>): string | undefined {
+  if (slotNameProblem(slot)) {
+    const stripped = slot.replace(IMAGE_EXTENSION, "");
+    const suggestion = stripped !== slot && declared.has(stripped) ? stripped : undefined;
+    return suggestion
+      ? `"${slot}" es el nombre del ARCHIVO entregado, no el del slot. ` +
+          `¿Quisiste decir "${suggestion}"?`
+      : `"${slot}" no es un nombre de slot válido. Un slot va en minúsculas, ` +
+          `separado por puntos y sin extensión ni barras — por ejemplo ` +
+          `"barra.busqueda". \`broadsec-manual images <manual>\` lista los ` +
+          `slots reales del manual.`;
+  }
+  if (!declared.has(slot)) {
+    return (
+      `"${slot}" no es un slot que el contenido declare. Revisá el nombre — ` +
+      `\`broadsec-manual images <manual>\` lista los slots reales del manual.`
+    );
+  }
+  return undefined;
+}
+
+/**
  * Every deployment for which `slot` ALREADY resolves to a delivered image —
  * never a hidden slot's own tenant, but exactly the ones the hide guard below
  * refuses to touch.
@@ -1107,13 +1174,19 @@ function deliveredFor(manualDir: string, slot: string): readonly string[] {
 }
 
 /**
- * Hide one slot, refusing when ANY deployment already has it delivered.
+ * Hide one slot, refusing a malformed or undeclared name (`invalidSlotReason`)
+ * and refusing when ANY deployment already has it delivered.
  *
  * A slot can be pending for one tenant and delivered for another — hiding it
  * globally would strip an image a tenant already has from its own document.
  * Only a slot that is fully pending, everywhere, may be hidden.
  */
 function hideCommand(manualDir: string, slot: string, note: string | undefined): number {
+  const invalid = invalidSlotReason(slot, declaredSlots(manualDir));
+  if (invalid) {
+    console.error(`\n${invalid}`);
+    return 1;
+  }
   const delivered = deliveredFor(manualDir, slot);
   if (delivered.length > 0) {
     console.error(
@@ -1135,8 +1208,19 @@ function hideCommand(manualDir: string, slot: string, note: string | undefined):
   return 0;
 }
 
-/** Un-hide one slot. Always succeeds — nothing about showing it can be unsafe. */
+/**
+ * Un-hide one slot, refusing a malformed or undeclared name
+ * (`invalidSlotReason`) first — a typo here must not silently do nothing
+ * while reporting success. Once the name is valid, showing always succeeds:
+ * un-hiding a slot that was never hidden is a harmless no-op (see
+ * `showSlot`).
+ */
 function showCommand(manualDir: string, slot: string): number {
+  const invalid = invalidSlotReason(slot, declaredSlots(manualDir));
+  if (invalid) {
+    console.error(`\n${invalid}`);
+    return 1;
+  }
   showSlot(manualDir, slot);
   console.log(`  "${slot}" visible de nuevo`);
   return 0;

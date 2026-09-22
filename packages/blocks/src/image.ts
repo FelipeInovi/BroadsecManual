@@ -42,8 +42,16 @@ export type ImageRef = true | string;
  */
 export type ImageDeclaration = ImageRef | false;
 
-/** Recognised image extensions — the tell that someone wrote a filename. */
-const EXTENSION = /\.(?:png|jpe?g|svg|gif|webp|bmp|tiff?|pdf)$/i;
+/**
+ * Recognised image extensions — the tell that someone wrote a filename.
+ *
+ * Exported so a caller checking a slot name against something OTHER than
+ * `slotNameProblem`'s own refusal — e.g. the CLI's `hidden` command
+ * suggesting the real slot when someone typed the delivered FILE name
+ * instead — can strip the same extensions this validator recognises,
+ * rather than maintaining a second list that drifts from this one.
+ */
+export const EXTENSION = /\.(?:png|jpe?g|svg|gif|webp|bmp|tiff?|pdf)$/i;
 
 /** A path separator, in either flavour. */
 const SEPARATOR = /[/\\]/;
