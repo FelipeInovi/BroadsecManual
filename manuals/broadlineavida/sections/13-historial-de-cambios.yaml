@@ -96,6 +96,13 @@ children:
         - id: historial.tabla.1-2-0
           version: 1.2.0
           date: 2026-09-22
+          delivered:
+            mv:
+              commit: 7c000818bbbcd5c03c0489c92f9658d474afbb43
+              files:
+                manual-operador-mv-v1.2.0.pdf: 5d22f2d44cb62caccfd55aa523db12a149fee7e7557b2069c91dc2c7132fc3ec
+                manual-operador-mv-v1.2.0.docx: 997b14493e164edafdfb16fd416a385f0dcf03735e91cb58ca6c6271181d1949
+                manual-operador-mv-v1.2.0-notas-de-version.docx: 74440835e6fe2b56ad29936ec137c967f4ee31980d5d72b977b7bd1ee148f27b
           # Names Fuerzas en Campo, which med does not receive.
           when:
             tenant: [mv, demo]
