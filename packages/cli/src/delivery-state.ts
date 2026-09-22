@@ -317,6 +317,40 @@ export function versionMismatches<T extends { readonly highestRow: string }>(
 }
 
 /**
+ * One file an undelivery would delete, and what a filesystem probe already
+ * found about it.
+ *
+ * The probe (does opening this file for read-write throw?) lives beside the
+ * filesystem it reads — `main.ts`'s `isLocked` — so this type only carries the
+ * ANSWER, never a path this module would need `node:fs` to check itself.
+ */
+export interface UndeliverFileProbe {
+  readonly path: string;
+  readonly locked: boolean;
+}
+
+/**
+ * GUARD 3's pure decision: which of the files an undelivery would delete are
+ * actually blocked from being deleted.
+ *
+ * An ABSENT file is not a block — `undeliverManual`'s existing "ya no estaba"
+ * already treats that as fine, and this guard must not turn it into a
+ * refusal. Only a file the probe found LOCKED counts here.
+ *
+ * REPRODUCED ON THIS REPOSITORY: `undeliver` ran while the archived release
+ * notes `.docx` sat open in Microsoft Word. `unstampFile` had already
+ * rewritten the change-log row — in the working tree, uncommitted — by the
+ * time `unlinkSync` reached that file and threw. This is what now runs FIRST,
+ * against every file the run would touch, before `unstampFile` writes
+ * anything.
+ */
+export function filesBlockingUndeliver(
+  probes: readonly UndeliverFileProbe[],
+): readonly string[] {
+  return probes.filter((p) => p.locked).map((p) => p.path);
+}
+
+/**
  * The section file holding a manual's change log.
  *
  * Found by reading the files, never by naming one. The change log must sort

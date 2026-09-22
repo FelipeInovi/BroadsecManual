@@ -1,6 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { execFileSync, spawn, type ChildProcess } from "node:child_process";
+import {
+  closeSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  openSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { catalog } from "@broadsec-manual/blocks";
@@ -988,6 +997,252 @@ describe("deliver — cross-target version guard", () => {
   // proceeds into `build()` — real headless Chrome rendering, which no test
   // in this suite invokes (see `packages/cli/AGENTS.md`: pipeline behaviour
   // beyond CLI wiring is tested in `core`, not through a rendered PDF here).
+});
+
+/**
+ * GUARD 3 — `undeliverManual` refuses BEFORE touching anything (not the row,
+ * not a single file) when an archived file it would delete cannot actually be
+ * deleted. THE EXACT FAILURE REPRODUCED TODAY: `undeliver` was run against
+ * `broadlineavida mv` while the archived release notes `.docx` sat open in
+ * Microsoft Word. `unstampFile` had already rewritten the change-log row — in
+ * the working tree, uncommitted — by the time `unlinkSync` reached that file
+ * and threw. The run died there: the PDF and manual `.docx` already gone, the
+ * release notes `.docx` still archived, and the proof stripped but not
+ * committed.
+ *
+ * WINDOWS ONLY, on purpose. The bug is a Windows fact: `unlinkSync` refuses a
+ * file another process holds open with a deny-write share; POSIX has no such
+ * concept, an open file can always be unlinked there. Faking that on another
+ * platform would test a description of the bug, not the bug. The lock here is
+ * real — a separate process opens the file through .NET's `FileShare.None` —
+ * verified empirically (see this change's report) to make both
+ * `openSync(path, "r+")` and `unlinkSync` throw `EBUSY` on this platform,
+ * exactly as Word editing a document does.
+ */
+describe.skipIf(process.platform !== "win32")("undeliver — locked archived file", () => {
+  const roots: string[] = [];
+  const holders: ChildProcess[] = [];
+
+  const CONFIG = [
+    "manual:",
+    "  id: un-manual",
+    "  title: Un Manual",
+    "  product: Producto",
+    "  contentVersion: 0.1.0",
+    "axes:",
+    "  tenant:",
+    "    values:",
+    "      - id: mv",
+    "        name: MV",
+    "targets:",
+    "  - tenant: mv",
+    "output:",
+    "  dir: output",
+    "  filename: x.pdf",
+    "",
+  ].join("\n");
+
+  const INTRO = [
+    "id: s",
+    "title: S",
+    "children:",
+    "  - id: s.p1",
+    "    type: prose",
+    "    props:",
+    "      text: Texto.",
+    "",
+  ].join("\n");
+
+  const COMMIT_SHA = "c".repeat(40);
+  const PDF_SHA = "a".repeat(64);
+  const DOCX_SHA = "b".repeat(64);
+  const PDF_NAME = "un-manual-mv-v1.0.0.pdf";
+  const DOCX_NAME = "un-manual-mv-v1.0.0-notas.docx";
+
+  // Indentation mirrors `stampProof`'s own scheme (`deliver.ts`): the row's
+  // `version:` line sets the base, `delivered:` sits at that same indent, and
+  // each nested level adds two spaces — target, then `commit:`/`files:`, then
+  // the filenames themselves.
+  const IND = (levels: number): string => "  ".repeat(levels);
+  const CHANGE_LOG = [
+    "id: cambios",
+    "title: Historial de cambios",
+    "children:",
+    "  - id: cambios.tabla",
+    "    type: change-log",
+    "    props:",
+    "      versionHeader: Versión",
+    "      dateHeader: Fecha",
+    "      descriptionHeader: Descripción",
+    "      rows:",
+    "        - id: cambios.tabla.1",
+    "          version: 1.0.0",
+    "          date: 2026-01-01",
+    "          description: Primera entrega.",
+    `${IND(5)}delivered:`,
+    `${IND(6)}mv:`,
+    `${IND(7)}commit: ${COMMIT_SHA}`,
+    `${IND(7)}files:`,
+    `${IND(8)}${PDF_NAME}: ${PDF_SHA}`,
+    `${IND(8)}${DOCX_NAME}: ${DOCX_SHA}`,
+    "",
+  ].join("\n");
+
+  const repoRoot = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "undeliver-lock-"));
+    roots.push(root);
+    mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    mkdirSync(join(root, "deliveries", "un-manual"), { recursive: true });
+    writeFileSync(join(root, "manuals", "un-manual", "manual.config.yaml"), CONFIG);
+    writeFileSync(join(root, "manuals", "un-manual", "sections", "01-intro.yaml"), INTRO);
+    writeFileSync(join(root, "manuals", "un-manual", "sections", "99-cambios.yaml"), CHANGE_LOG);
+    writeFileSync(join(root, "deliveries", "un-manual", PDF_NAME), "pdf bytes");
+    writeFileSync(join(root, "deliveries", "un-manual", DOCX_NAME), "docx bytes");
+    // Matches this repository's own `.gitignore`: `deliveries/` is never
+    // tracked. Doing otherwise here would be a fixture bug, not a faithful
+    // reproduction — a TRACKED file held open with `FileShare.None` makes
+    // `git status --porcelain` itself report it as modified (empirically
+    // confirmed for this change), which would make the pre-existing
+    // dirty-tree check fire first and mask the guard this test exists to
+    // exercise. Untracked, exactly like production, the lock is invisible to
+    // git and only this guard sees it.
+    writeFileSync(join(root, ".gitignore"), "deliveries/\n");
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return root;
+  };
+
+  const runIn = async (root: string, argv: readonly string[]): Promise<number> => {
+    const cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return await run(argv);
+    } finally {
+      process.chdir(cwd);
+    }
+  };
+
+  /**
+   * Locks `path` exclusively from a SEPARATE OS process — `FileShare.None`
+   * denies read, write AND delete to everyone else, which is what makes
+   * `unlinkSync` throw `EBUSY` rather than the plain-Node handle this repo's
+   * probe script first tried (and which, verified empirically, changes
+   * nothing: Node's own default share mode leaves delete wide open).
+   */
+  const lockExclusively = (path: string): ChildProcess => {
+    const escaped = path.replace(/'/g, "''");
+    const script =
+      `$fs = [System.IO.File]::Open('${escaped}', [System.IO.FileMode]::Open, ` +
+      `[System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None); ` +
+      `Write-Host locked; Start-Sleep -Seconds 30; $fs.Close()`;
+    const child = spawn("powershell", ["-NoProfile", "-Command", script], { stdio: "ignore" });
+    holders.push(child);
+    return child;
+  };
+
+  /**
+   * Polls with a real probe rather than sleeping a guessed duration. The
+   * generous default accounts for `powershell.exe` startup under a loaded
+   * test run (many worker processes competing for CPU) rather than the
+   * ~300ms it takes in isolation.
+   */
+  const waitUntilLocked = async (path: string, timeoutMs = 15000): Promise<void> => {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      try {
+        closeSync(openSync(path, "r+"));
+      } catch {
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    throw new Error(`gave up waiting for ${path} to become locked`);
+  };
+
+  afterEach(() => {
+    for (const child of holders.splice(0)) child.kill();
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it(
+    "refuses before touching the row or any file when the archived docx is open elsewhere",
+    async () => {
+      const root = repoRoot();
+      const sectionFile = join(root, "manuals", "un-manual", "sections", "99-cambios.yaml");
+      const docxPath = join(root, "deliveries", "un-manual", DOCX_NAME);
+      const pdfPath = join(root, "deliveries", "un-manual", PDF_NAME);
+      const yamlBefore = readFileSync(sectionFile, "utf8");
+
+      lockExclusively(docxPath);
+      await waitUntilLocked(docxPath);
+
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+      try {
+        const code = await runIn(root, [
+          "undeliver",
+          "un-manual",
+          "--version",
+          "1.0.0",
+          "--not-handed-over",
+        ]);
+        expect(code).toBe(1);
+
+        const messages = errorSpy.mock.calls.map((c) => String(c[0]));
+        expect(messages.some((m) => m.includes(DOCX_NAME))).toBe(true);
+
+        // Nothing deleted — including the file that was NOT locked. The
+        // refusal is a pre-flight over every file the run would touch, not a
+        // per-file decision made mid-loop.
+        expect(existsSync(docxPath)).toBe(true);
+        expect(existsSync(pdfPath)).toBe(true);
+
+        // THE POINT OF THE WHOLE FIX: the row is untouched, byte for byte. Not
+        // merely "still declares delivered" — literally the same bytes, so a
+        // half-applied `unstampFile` write cannot hide behind an equivalent
+        // re-serialisation.
+        expect(readFileSync(sectionFile, "utf8")).toBe(yamlBefore);
+
+        // Never got as far as printing anything about deleting or committing.
+        const logs = logSpy.mock.calls.map((c) => String(c[0]));
+        expect(logs.some((l) => l.includes("borrado ->"))).toBe(false);
+        expect(logs.some((l) => l.includes("commiteado"))).toBe(false);
+      } finally {
+        errorSpy.mockRestore();
+        logSpy.mockRestore();
+      }
+    },
+    20000,
+  );
+
+  it("still undoes the delivery normally when nothing is locked", async () => {
+    const root = repoRoot();
+    const sectionFile = join(root, "manuals", "un-manual", "sections", "99-cambios.yaml");
+    const docxPath = join(root, "deliveries", "un-manual", DOCX_NAME);
+    const pdfPath = join(root, "deliveries", "un-manual", PDF_NAME);
+
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, [
+        "undeliver",
+        "un-manual",
+        "--version",
+        "1.0.0",
+        "--not-handed-over",
+      ]);
+      expect(code).toBe(0);
+      expect(existsSync(docxPath)).toBe(false);
+      expect(existsSync(pdfPath)).toBe(false);
+      expect(readFileSync(sectionFile, "utf8")).not.toContain("delivered:");
+    } finally {
+      errorSpy.mockRestore();
+      logSpy.mockRestore();
+    }
+  });
 });
 
 /**

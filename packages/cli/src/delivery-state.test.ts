@@ -4,6 +4,7 @@ import {
   classifyDelivery,
   deliveredFor,
   deliveredRows,
+  filesBlockingUndeliver,
   newestVersion,
   proofFor,
   rowsForTarget,
@@ -320,6 +321,53 @@ describe("versionMismatches", () => {
 
   it("is empty with a single target that matches", () => {
     expect(versionMismatches([{ value: "mv", highestRow: "1.0.0" }], "1.0.0")).toEqual([]);
+  });
+});
+
+/**
+ * GUARD 3 — the pure decision behind `undeliverManual`'s pre-flight check:
+ * given what a filesystem probe already found for each file an undelivery
+ * would delete, which of them actually block the run?
+ *
+ * REPRODUCED ON THIS REPOSITORY: `undeliver` was run while the archived
+ * release notes `.docx` sat open in Microsoft Word. `unstampFile` had already
+ * rewritten the change-log row — in the working tree, uncommitted — by the
+ * time `unlinkSync` reached that file and threw `EBUSY`. The run died there,
+ * leaving the proof stripped but not committed. This function is what now
+ * runs FIRST, against every file the run would touch, so that never happens.
+ *
+ * The probe itself (does opening a file for read-write throw?) lives beside
+ * the filesystem it reads, in `main.ts`'s `isLocked` — this only judges what
+ * the probe already found, which is why it takes booleans rather than paths
+ * to open.
+ */
+describe("filesBlockingUndeliver", () => {
+  it("is empty when nothing the probe looked at was locked", () => {
+    expect(
+      filesBlockingUndeliver([
+        { path: "deliveries/m/x-mv-v1.0.0.pdf", locked: false },
+        { path: "deliveries/m/x-mv-v1.0.0.docx", locked: false },
+      ]),
+    ).toEqual([]);
+  });
+
+  /** An absent file is not a block — the probe already reports it as unlocked. */
+  it("names only the locked files, never the ones the probe found merely absent", () => {
+    expect(
+      filesBlockingUndeliver([
+        { path: "deliveries/m/x-mv-v1.0.0.pdf", locked: false },
+        { path: "deliveries/m/notas-v1.0.0.docx", locked: true },
+      ]),
+    ).toEqual(["deliveries/m/notas-v1.0.0.docx"]);
+  });
+
+  it("names every locked file when more than one target's files are blocked", () => {
+    expect(
+      filesBlockingUndeliver([
+        { path: "a.pdf", locked: true },
+        { path: "a.docx", locked: true },
+      ]),
+    ).toEqual(["a.pdf", "a.docx"]);
   });
 });
 

@@ -1,5 +1,14 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, readdirSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  mkdirSync,
+  unlinkSync,
+  writeFileSync,
+  openSync,
+  closeSync,
+} from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
@@ -56,10 +65,11 @@ import {
 } from "./git.ts";
 import { readBaselines, stampBaseline } from "./baselines.ts";
 import { hiddenSlotSet, hideSlot, readHidden, showSlot } from "./hidden.ts";
-import { archive, planDelivery, stampFile, unstampFile } from "./deliver.ts";
+import { archive, planDelivery, stampFile, unstampFile, unstampProof } from "./deliver.ts";
 import {
   changeLogSectionFile,
   deliveredRows,
+  filesBlockingUndeliver,
   proofFor,
   readChangeLogRows,
   rowsForTarget,
@@ -1895,6 +1905,38 @@ async function deliverManual(
 }
 
 /**
+ * Can this file actually be removed right now?
+ *
+ * Probes by trying to OPEN it for read-write — the same access `unlinkSync`
+ * itself needs on Windows to delete it. A file another program holds open with
+ * a deny-write share throws from this exactly as it would throw from the
+ * delete itself; Microsoft Word editing a `.docx` is the ordinary case, and
+ * this is what asks that question BEFORE anything else has been touched.
+ *
+ * VERIFIED EMPIRICALLY on Windows, for this change: a plain Node handle
+ * (`fs.openSync` with no special sharing) does NOT reproduce the lock — a
+ * second process can still open and even `unlinkSync` the file right out from
+ * under it, because Node's default share mode leaves delete wide open. A
+ * separate process holding the file with .NET's `FileShare.None` — the real
+ * analogue of a program editing a document — does: it makes both
+ * `openSync(path, "r+")` and `unlinkSync` throw `EBUSY`, on this file, on this
+ * platform. Probing with an open is safe precisely because it fails the same
+ * way the delete would.
+ *
+ * An absent file is not locked — the caller decides what an absent file means
+ * ("ya no estaba" below); this only answers about a file that exists.
+ */
+function isLocked(path: string): boolean {
+  if (!existsSync(path)) return false;
+  try {
+    closeSync(openSync(path, "r+"));
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+/**
  * Undo a delivery that never left the building.
  *
  * THIS EXISTS FOR A MISTAKE OF OURS, never for a document somebody received.
@@ -1983,6 +2025,45 @@ async function undeliverManual(
     }
   }
 
+  // GUARD 3 — pre-flight, split from BOTH the check above and the deletion
+  // below ON PURPOSE: confirm every archived file this run would delete can
+  // actually be deleted, BEFORE `unstampFile` rewrites a single byte of the
+  // row. REPRODUCED ON THIS REPOSITORY: `undeliver` was run while the archived
+  // release notes `.docx` sat open in Microsoft Word. `unstampFile` had
+  // already taken the proof off the row — in the working tree, uncommitted —
+  // by the time `unlinkSync` reached that file and threw. The run died there:
+  // proof stripped but not committed, two files gone, one still archived.
+  //
+  // Reads the SAME row the deletion loop below reads, through `unstampProof` —
+  // its pure half — so the preview and the real removal always agree on which
+  // files are in play. Previewing rather than calling `unstampFile` itself is
+  // the whole point: nothing here writes anything back.
+  const yamlBeforeDelete = readFileSync(sectionFile, "utf8");
+  const toDelete: string[] = [];
+  for (const target of targets) {
+    const value = requireAxisValue(target, axis);
+    const preview = unstampProof(yamlBeforeDelete, version, value);
+    // Not reachable in practice: the loop above already confirmed a proof
+    // exists for every target, reading this same row.
+    if (preview === null) continue;
+    for (const file of preview.files) {
+      toDelete.push(join(repoRoot, "deliveries", config.manual.id, file));
+    }
+  }
+  const blocked = filesBlockingUndeliver(toDelete.map((path) => ({ path, locked: isLocked(path) })));
+  if (blocked.length > 0) {
+    console.error(
+      [
+        ``,
+        `${blocked.length} archivo(s) archivado(s) están abiertos en otro programa y no se`,
+        `  pueden borrar. Nada se tocó — ni la fila, ni un solo archivo:`,
+        ...blocked.map((path) => `    - deliveries/${config.manual.id}/${basename(path)}`),
+        `  Cierre el programa que los tiene abiertos (por ejemplo Word) y reintente.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+
   // Split from the check above ON PURPOSE: nothing is deleted until every
   // target asked for has been confirmed as deliverable-back. A run that undid
   // `mv` and then refused on `med` would leave half a delivery, and half a
@@ -1997,7 +2078,29 @@ async function undeliverManual(
     for (const file of named) {
       const path = join(repoRoot, "deliveries", config.manual.id, file);
       if (existsSync(path)) {
-        unlinkSync(path);
+        // Last line of defence, not the check: GUARD 3 above already probed
+        // this exact file. A file that gets locked in the gap between that
+        // probe and this line — opened by someone the instant after we
+        // looked — still deserves an actionable message rather than a raw
+        // EBUSY stack trace, even though by THIS point `unstampFile` has
+        // already rewritten the row, uncommitted.
+        try {
+          unlinkSync(path);
+        } catch (error) {
+          console.error(
+            [
+              ``,
+              `${file} se volvió imposible de borrar justo ahora — probablemente se abrió`,
+              `  en otro programa en este instante. La fila de ${config.manual.id} YA QUEDÓ`,
+              `  SIN LA PRUEBA de ${value} en el árbol de trabajo, todavía SIN COMMITEAR.`,
+              `  Cierre lo que tenga abierto ese archivo y reintente: el comando vuelve a`,
+              `  leer la fila tal como está. Si prefiere partir de cero, revierta el`,
+              `  archivo a mano con \`git checkout -- ${basename(sectionFile)}\`.`,
+              `  Detalle: ${error instanceof Error ? error.message : String(error)}`,
+            ].join("\n"),
+          );
+          return 1;
+        }
         console.log(`  borrado -> deliveries/${config.manual.id}/${file}`);
       } else {
         console.log(`  ya no estaba -> deliveries/${config.manual.id}/${file}`);
