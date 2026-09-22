@@ -1,3 +1,8 @@
 {
-  "hidden": {}
+  "hidden": {
+    "fuerzas.turno-asignar.fig": {
+      "hiddenAt": "2026-09-22",
+      "note": "mientras se arregla la funcionalidad"
+    }
+  }
 }
