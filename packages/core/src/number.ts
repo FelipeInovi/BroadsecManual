@@ -1,4 +1,4 @@
-import { declaredRef } from "@broadsec-manual/blocks";
+import { declaredSlot } from "@broadsec-manual/blocks";
 import type { BlockCatalog, ImageSlotPolicy, ManualNode, NodeId } from "@broadsec-manual/blocks";
 
 /** Every ordinal one build target needs. */
@@ -23,15 +23,41 @@ export interface AssignedNumbers {
  */
 const FIGURE_COUNTER = "figure";
 
-/** Ids that carry a figure-convention image, in the order they appear. */
+/**
+ * Whether a node or item counts as a figure bearer, given a possibly-throwing
+ * slot derivation.
+ *
+ * Swallows a `slotFor` failure (an id that cannot become a filename) and
+ * counts the node as visible either way: that failure is a content problem
+ * `collectSlots` is responsible for reporting with the node id attached (see
+ * `ContentError` there). Numbering has no such context to attach, and
+ * silently mis-numbering because of it would be worse than reporting nothing
+ * — the build still fails, just from the error message that names the node.
+ */
+function bearsVisibleFigure(
+  source: Readonly<Record<string, unknown>>,
+  id: NodeId,
+  images: ImageSlotPolicy,
+  hidden: ReadonlySet<string>,
+): boolean {
+  try {
+    const resolved = declaredSlot(source, id, images, hidden);
+    return resolved !== undefined && !resolved.hidden;
+  } catch {
+    return true;
+  }
+}
+
+/** Ids that carry a VISIBLE figure-convention image, in the order they appear. */
 function figureBearers(
   node: { readonly id: NodeId; readonly props: Readonly<Record<string, unknown>> },
   images: ImageSlotPolicy,
+  hidden: ReadonlySet<string>,
 ): NodeId[] {
   if (images.convention !== "figure") return [];
 
   if (images.itemsProp === undefined) {
-    return declaredRef(node.props, images) === undefined ? [] : [node.id];
+    return bearsVisibleFigure(node.props, node.id, images, hidden) ? [node.id] : [];
   }
 
   const items = node.props[images.itemsProp];
@@ -41,11 +67,11 @@ function figureBearers(
     if (typeof item !== "object" || item === null) continue;
     const record = item as Record<string, unknown>;
     const id = record["id"];
-    // `declaredRef` is shared with slot collection on purpose: if numbering and
-    // rendering disagreed about which items carry an image, a figure number
-    // would be assigned to something that draws no figure, and every figure
-    // after it would be off by one.
-    if (typeof id === "string" && declaredRef(record, images) !== undefined) ids.push(id);
+    // `declaredSlot` is shared with slot collection on purpose: if numbering
+    // and rendering disagreed about which items carry a VISIBLE image, a
+    // figure number would be assigned to something that draws no figure, and
+    // every figure after it would be off by one.
+    if (typeof id === "string" && bearsVisibleFigure(record, id, images, hidden)) ids.push(id);
   }
   return ids;
 }
@@ -69,10 +95,17 @@ function figureBearers(
  *     - `block` — resets at every instance. Bare ordinal.
  * - A block that declares `numbering.itemsProp` numbers the items in that prop
  *   instead of itself, so a filtered table or procedure renumbers from one.
+ *
+ * `hidden` names slots a delivery-time act is currently hiding (see
+ * `packages/cli/src/hidden.ts`) — never assigned a figure number, so the
+ * count renumbers with no gap, exactly as it already does when conditioning
+ * removes a node. Defaults to empty, so every existing caller keeps
+ * compiling and numbering exactly as before.
  */
 export function assignNumbers(
   nodes: readonly ManualNode[],
   catalog: BlockCatalog,
+  hidden: ReadonlySet<string> = new Set(),
 ): AssignedNumbers {
   const numbers = new Map<NodeId, string>();
   const figures = new Map<NodeId, string>();
@@ -153,7 +186,7 @@ export function assignNumbers(
       // block that could produce one.
       if (def.images) {
         let n = sectionCounters.get(FIGURE_COUNTER) ?? 0;
-        for (const id of figureBearers(node, def.images)) {
+        for (const id of figureBearers(node, def.images, hidden)) {
           n += 1;
           figures.set(id, [...topLevelPrefix, n].join("."));
         }

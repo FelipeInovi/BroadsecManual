@@ -11,6 +11,14 @@ const fig = (id: string): BlockNode => ({
   props: { caption: "c", widthPercent: 100 },
 });
 
+/** A figure whose `image:` override names a slot different from its own id. */
+const figWithSlot = (id: string, slot: string): BlockNode => ({
+  kind: "block",
+  id,
+  type: "figure",
+  props: { image: slot, caption: "c", widthPercent: 100 },
+});
+
 const table = (id: string, rowIds: readonly string[]): BlockNode => ({
   kind: "block",
   id,
@@ -19,6 +27,16 @@ const table = (id: string, rowIds: readonly string[]): BlockNode => ({
     labelHeader: "Elemento",
     descriptionHeader: "Descripción",
     rows: rowIds.map((r) => ({ id: r, label: r, description: r })),
+  },
+});
+
+/** `field-list` items carry the `figure` convention, unlike an icon-table row. */
+const fields = (id: string, itemIds: readonly string[]): BlockNode => ({
+  kind: "block",
+  id,
+  type: "field-list",
+  props: {
+    items: itemIds.map((i) => ({ id: i, label: i, text: "texto" })),
   },
 });
 
@@ -161,6 +179,70 @@ describe("assignNumbers", () => {
     expect(figures.get("a.f1")).toBe("1.1");
     // Nested one level deeper, but still counted against top-level section "a".
     expect(figures.get("a.x.f1")).toBe("1.2");
+  });
+
+  // A hidden slot is still declared, still owed by support, but a build must
+  // never render it or count it — the whole point of hiding is that the page
+  // looks as if it had never been declared for THIS build.
+  it("never assigns a figure number to a hidden slot", () => {
+    const { figures } = assignNumbers(
+      [section("a", [fig("a.f1"), fig("a.f2")])],
+      catalog,
+      new Set(["a.f1"]),
+    );
+    expect(figures.has("a.f1")).toBe(false);
+    expect(figures.get("a.f2")).toBe("1.1");
+  });
+
+  it("renumbers the remaining figures so hiding one leaves no gap", () => {
+    const { figures } = assignNumbers(
+      [section("a", [fig("a.f1"), fig("a.f2"), fig("a.f3")])],
+      catalog,
+      new Set(["a.f2"]),
+    );
+    expect(figures.get("a.f1")).toBe("1.1");
+    expect(figures.has("a.f2")).toBe(false);
+    // Was 1.3 before hiding; now takes the slot 1.2 left open.
+    expect(figures.get("a.f3")).toBe("1.2");
+  });
+
+  it("hides one item's figure inside a field-list without shifting its siblings out of order", () => {
+    const { figures } = assignNumbers(
+      [section("a", [fields("a.fl", ["r1", "r2"])])],
+      catalog,
+      new Set(["r1"]),
+    );
+    expect(figures.has("r1")).toBe(false);
+    expect(figures.get("r2")).toBe("1.1");
+  });
+
+  it("with no hidden set at all, numbers every figure exactly as before", () => {
+    const { figures } = assignNumbers([section("a", [fig("a.f1")])], catalog);
+    expect(figures.get("a.f1")).toBe("1.1");
+  });
+
+  // Every other figure fixture in this file has a node id identical to its
+  // slot, which would hide a lookup accidentally keyed by node id rather than
+  // by slot — see `packages/blocks/src/image.ts`'s `declaredSlot`. These two
+  // are the only cases here that would catch that regression.
+  it("hides a figure by its overridden slot name, not by its node id", () => {
+    const { figures } = assignNumbers(
+      [section("a", [figWithSlot("a.f1", "compartido.mapa"), fig("a.f2")])],
+      catalog,
+      new Set(["compartido.mapa"]),
+    );
+    expect(figures.has("a.f1")).toBe(false);
+    expect(figures.get("a.f2")).toBe("1.1");
+  });
+
+  it("does NOT hide a figure when the hidden set names its node id instead of its overridden slot", () => {
+    const { figures } = assignNumbers(
+      [section("a", [figWithSlot("a.f1", "compartido.mapa"), fig("a.f2")])],
+      catalog,
+      new Set(["a.f1"]),
+    );
+    expect(figures.get("a.f1")).toBe("1.1");
+    expect(figures.get("a.f2")).toBe("1.2");
   });
 
   it("`document` scope keeps one counter for the whole manual, never reset", () => {

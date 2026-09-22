@@ -138,6 +138,62 @@ describe("pending image names", () => {
   });
 });
 
+/**
+ * `hidden <manual> --hide <slot>` (`packages/cli/src/hidden.ts`) works by
+ * removing the hidden node's id from the `slots` map the CLI hands the
+ * renderer — a hidden slot renders exactly as if the id had never declared
+ * an image at all. These tests confirm the renderer already does the right
+ * thing for the four shapes the design calls out, rather than rewriting it.
+ */
+describe("a slot absent from `slots` — what a hidden node renders as", () => {
+  it("a standalone figure disappears entirely, caption included", () => {
+    const html = body(render(figure, [], PENDING));
+    expect(html).not.toContain("<figure");
+    expect(html).not.toContain("Barra de búsqueda");
+    expect(html).not.toContain("_pending.svg");
+  });
+
+  it("a procedure step still renders its text, with no image", () => {
+    const proc = [
+      block("proc", "procedure", {
+        steps: [{ id: "proc.abrir", title: "Abrir el panel", text: "Presione el botón." }],
+      }),
+    ];
+    const html = body(render(proc, [], PENDING));
+    expect(html).toContain("Abrir el panel");
+    expect(html).toContain("Presione el botón.");
+    expect(html).not.toContain("<figure");
+    expect(html).not.toContain("_pending.svg");
+  });
+
+  it("a field-list item still renders its label and text, with no image", () => {
+    const fields = [
+      block("fl", "field-list", {
+        items: [{ id: "fl.uno", label: "Campo", text: "Explicación del campo." }],
+      }),
+    ];
+    const html = body(render(fields, [], PENDING));
+    expect(html).toContain("Campo");
+    expect(html).toContain("Explicación del campo.");
+    expect(html).not.toContain("<figure");
+    expect(html).not.toContain("_pending.svg");
+  });
+
+  it("an icon-table row still renders, with an empty icon cell", () => {
+    const table = [
+      block("s.tabla", "icon-table", {
+        labelHeader: "Control",
+        descriptionHeader: "Función",
+        rows: [{ id: "r1", label: "Buscar", description: "Busca casos." }],
+      }),
+    ];
+    const html = body(render(table, [], PENDING));
+    expect(html).toContain("Busca casos.");
+    expect(html).toContain('<td class="tbl__icon"></td>');
+    expect(html).not.toContain("_pending.svg");
+  });
+});
+
 // A page number exists nowhere but the paginated DOM, and the DOM can only say
 // WHICH image it is if the markup carries the slot. Without this the page
 // numbers would have to be matched to slots by caption text — which breaks the

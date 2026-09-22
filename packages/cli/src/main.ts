@@ -48,6 +48,7 @@ import { joinCoverage, type EntryMatch, type ModuleInput } from "./coverage.ts";
 import { soleAxis } from "./axis.ts";
 import { commitFile, headCommit, isDirty } from "./git.ts";
 import { readBaselines, stampBaseline } from "./baselines.ts";
+import { hiddenSlotSet, hideSlot, readHidden, showSlot } from "./hidden.ts";
 import { archive, planDelivery, stampFile, unstampFile } from "./deliver.ts";
 import { changeLogSectionFile, proofFor, type ChangeLogRowLike } from "./delivery-state.ts";
 import { nextWorkNumber, releaseNotesFilename, workStamp } from "./naming.ts";
@@ -841,21 +842,64 @@ function readCoverMark(manualDir: string): string | undefined {
  * asked for an image of a control it does not have. `undeclared` can only be
  * read after every slot has been resolved, which is why the index is returned
  * alongside rather than queried here.
+ *
+ * `hidden` names slots currently hidden for delivery (see `hidden.ts`).
+ * `entries` — the manifest — keeps EVERY slot, hidden or not: hiding is
+ * cosmetic for this build, and support still owes the image. `slots` — what
+ * a renderer is handed — carries only the VISIBLE ones, so a hidden node
+ * renders exactly as if it had never declared an image at all.
  */
-function resolveTargetImages(
+export function resolveTargetImages(
   manual: ReturnType<typeof assemble>,
   figuresDir: string,
   tenant: string,
+  hidden: ReadonlySet<string> = new Set(),
 ): {
   entries: ManifestSlot[];
   slots: Map<string, string>;
   images: ImageIndex;
   uses: readonly ImageSlotUse[];
 } {
-  const uses = collectSlots(manual, catalog);
+  const uses = collectSlots(manual, catalog, hidden);
   const images = buildImageIndex(figuresDir, tenant);
   const entries = manifestSlots(uses, (slot) => images.resolve(slot));
-  return { entries, slots: new Map(uses.map((u) => [u.nodeId, u.slot])), images, uses };
+  const visible = uses.filter((u) => !u.hidden);
+  return { entries, slots: new Map(visible.map((u) => [u.nodeId, u.slot])), images, uses };
+}
+
+/**
+ * Narrow a manual-wide hidden set to what is STILL PENDING for one target.
+ *
+ * `hideCommand` refuses to hide a slot ANY tenant already has — but that
+ * guard runs once, at hide time. Hiding and capturing happen on nobody's
+ * shared schedule: a slot pending everywhere when it was hidden can be
+ * delivered for one tenant weeks later, and nothing re-checks the guard.
+ * Without this narrowing, `deliver --tenant mv` would ship `mv`'s document
+ * missing an image `mv` genuinely has, because the global hidden set still
+ * names the slot.
+ *
+ * MUST be computed before `assemble()` / `collectSlots()` / `assignNumbers()`
+ * ever see the set, and the SAME narrowed set must go to all of them for one
+ * target. Narrowing late, or narrowing only what gets rendered, would let
+ * numbering and rendering disagree about which node carries an image — see
+ * the warning in `packages/core/src/number.ts` about exactly that failure.
+ *
+ * Consequence, and it is the desirable one: hiding becomes self-healing. The
+ * moment a tenant's image is delivered, that tenant's next build shows it
+ * again on its own, with no `--show` required.
+ */
+export function narrowHidden(
+  hidden: ReadonlySet<string>,
+  figuresDir: string,
+  tenant: string,
+): ReadonlySet<string> {
+  if (hidden.size === 0) return hidden;
+  const images = buildImageIndex(figuresDir, tenant);
+  const effective = new Set<string>();
+  for (const slot of hidden) {
+    if (images.resolve(slot).state === "pending") effective.add(slot);
+  }
+  return effective;
 }
 
 /**
@@ -1023,6 +1067,79 @@ function exportAwaiting(
       : `  ${counts.gaps} gap(s) awaiting the product, across ${counts.sections} section(s)`,
   );
   console.log(`  -> ${outPath}`);
+}
+
+/** Print every currently hidden slot — the report `hidden <manual>` gives with no flags. */
+function reportHidden(manualDir: string): void {
+  const file = readHidden(manualDir);
+  const entries = Object.entries(file?.hidden ?? {});
+  if (entries.length === 0) {
+    console.log("  no image slot is hidden");
+    return;
+  }
+  console.log(`  ${entries.length} image slot(s) hidden:`);
+  for (const [slot, entry] of entries) {
+    const note = entry.note ? ` — ${entry.note}` : "";
+    console.log(`    ${slot} (since ${entry.hiddenAt})${note}`);
+  }
+}
+
+/**
+ * Every deployment for which `slot` ALREADY resolves to a delivered image —
+ * never a hidden slot's own tenant, but exactly the ones the hide guard below
+ * refuses to touch.
+ *
+ * Read across every configured target, ignoring any axis filter the caller
+ * passed: hiding is a manual-wide act, so the guard has to see the whole
+ * manual regardless of what a `--tenant` flag would narrow a build to.
+ */
+function deliveredFor(manualDir: string, slot: string): readonly string[] {
+  const { config, doc, targets, figuresDir } = loadManual(manualDir, new Map());
+  const axis = primaryAxis(config);
+  const delivered: string[] = [];
+  for (const target of targets) {
+    const tenant = requireAxisValue(target, axis);
+    const manual = assemble(doc, target, catalog);
+    const images = buildImageIndex(figuresDir, tenant);
+    if (images.resolve(slot).state !== "pending") delivered.push(tenant);
+  }
+  return delivered;
+}
+
+/**
+ * Hide one slot, refusing when ANY deployment already has it delivered.
+ *
+ * A slot can be pending for one tenant and delivered for another — hiding it
+ * globally would strip an image a tenant already has from its own document.
+ * Only a slot that is fully pending, everywhere, may be hidden.
+ */
+function hideCommand(manualDir: string, slot: string, note: string | undefined): number {
+  const delivered = deliveredFor(manualDir, slot);
+  if (delivered.length > 0) {
+    console.error(
+      [
+        ``,
+        `"${slot}" ya está entregada para ${delivered.join(", ")} — no se puede ocultar.`,
+        `  Un slot puede estar pendiente para un tenant y entregado para otro; ocultarlo`,
+        `  de forma global le quitaría la imagen a un tenant que ya la tiene. Solo un`,
+        `  slot totalmente pendiente, en todos los deployments, puede ocultarse.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+  hideSlot(manualDir, slot, {
+    hiddenAt: new Date().toISOString().slice(0, 10),
+    ...(note ? { note } : {}),
+  });
+  console.log(`  "${slot}" oculto — sigue pendiente en el manifiesto, no se muestra en el build`);
+  return 0;
+}
+
+/** Un-hide one slot. Always succeeds — nothing about showing it can be unsafe. */
+function showCommand(manualDir: string, slot: string): number {
+  showSlot(manualDir, slot);
+  console.log(`  "${slot}" visible de nuevo`);
+  return 0;
 }
 
 /**
@@ -1337,7 +1454,7 @@ async function deliverManual(
   filters: ReadonlyMap<string, string>,
   args: readonly string[],
 ): Promise<number> {
-  const { config, doc, targets } = loadManual(manualDir, filters);
+  const { config, doc, targets, figuresDir } = loadManual(manualDir, filters);
   const axis = primaryAxis(config);
   const outDir = join(manualDir, config.output.dir);
   const repoRoot = resolve(process.cwd());
@@ -1365,13 +1482,27 @@ async function deliverManual(
   const at = args.indexOf("--version");
   const asked = at === -1 ? undefined : args[at + 1];
 
+  // Shipping with hidden images is the entire point of hiding — this reports
+  // it, it never refuses. See `hidden.ts`.
+  const hidden = hiddenSlotSet(manualDir);
+  const hiddenUsed = new Set<string>();
+
   // One expected name per target, built from the same template the build used —
   // so a draft or a superseded build is never even a candidate.
   const expected = new Map<string, readonly string[]>();
   let version: string | undefined = asked;
   for (const target of targets) {
     const value = requireAxisValue(target, axis);
-    const assembled = assemble(doc, target, catalog);
+    // Narrowed per target — see `narrowHidden` — so `hiddenUsed` below only
+    // ever names a slot that is STILL hidden for THIS target, never one that
+    // was hidden manual-wide and has since been delivered for it.
+    const targetHidden = narrowHidden(hidden, figuresDir, value);
+    const assembled = assemble(doc, target, catalog, targetHidden);
+    if (targetHidden.size > 0) {
+      for (const use of collectSlots(assembled, catalog, targetHidden)) {
+        if (use.hidden) hiddenUsed.add(use.slot);
+      }
+    }
     const targetVersion =
       asked ?? deliveredVersion(assembled.children, config.manual.contentVersion);
     version ??= targetVersion;
@@ -1402,6 +1533,13 @@ async function deliverManual(
   if (version === undefined) {
     console.error("\nno hay targets que entregar con los filtros dados.");
     return 1;
+  }
+
+  if (hiddenUsed.size > 0) {
+    console.log(
+      `  ${hiddenUsed.size} imagen(es) se entregan ocultas (pendiente, sin mostrarse en ` +
+        `este documento) — ver \`hidden ${config.manual.id}\`.`,
+    );
   }
 
   // THE OFFICIAL DOCUMENT IS RENDERED HERE, and this is the only place that
@@ -1685,6 +1823,12 @@ async function build(
   const workNumber =
     official === null ? nextWorkNumber(readdirSync(outDir)) : null;
 
+  // Read once per run, same as the work number — this is the manual-wide
+  // declaration. Each target below narrows it to what is STILL PENDING for
+  // that target (`narrowHidden`), because a slot delivered for one tenant
+  // must render for that tenant even while it stays hidden for another.
+  const hidden = hiddenSlotSet(manualDir);
+
   const polyfill = pagedRuntime();
   // Undeclared images can only be judged once EVERY target has been resolved —
   // an image one deployment uses is legitimately unused by another.
@@ -1692,9 +1836,24 @@ async function build(
   const askedFor = new Set<string>();
 
   for (const target of targets) {
-    const manual = assemble(doc, target, catalog);
     const axis = primaryAxis(config);
     const tenant = requireAxisValue(target, axis);
+    // Narrowed to what is STILL PENDING for THIS target, before assembly —
+    // see `narrowHidden`. The SAME narrowed set goes to `assemble()` (which
+    // threads it to `assignNumbers`) and to `resolveTargetImages()` (which
+    // threads it to `collectSlots()`), so numbering and rendering can never
+    // disagree about which node draws a figure.
+    const targetHidden = narrowHidden(hidden, figuresDir, tenant);
+    if (targetHidden.size < hidden.size) {
+      const revealed = [...hidden].filter((s) => !targetHidden.has(s));
+      console.log(
+        `  ${tenant} ${revealed.length} previously hidden slot(s) show anyway for ` +
+          `${tenant} — already delivered: ${revealed.join(", ")}. Run \`hidden ` +
+          `${config.manual.id} --show <slot>\` to tidy hidden-images.json.`,
+      );
+    }
+
+    const manual = assemble(doc, target, catalog, targetHidden);
     // Derived from the ASSEMBLED manual, so each target reports the version it
     // actually received. See `deliveredVersion`.
     const version = deliveredVersion(manual.children, config.manual.contentVersion);
@@ -1718,7 +1877,12 @@ async function build(
         : outputFilename(config, target, official);
     const name = draft ? draftFilename(base) : base;
 
-    const { entries, slots, images, uses } = resolveTargetImages(manual, figuresDir, tenant);
+    const { entries, slots, images, uses } = resolveTargetImages(
+      manual,
+      figuresDir,
+      tenant,
+      targetHidden,
+    );
 
     const brand = config.manual.brand ?? config.manual.product.toUpperCase();
     const declared = config.manual.theme;
@@ -1848,6 +2012,14 @@ async function build(
         `build covered ${targets.length} of ${config.targets.length})`,
     );
   }
+  // Reported, never blocking a plain build either — hiding is cosmetic for
+  // THIS build, and the manifest keeps asking for these slots regardless.
+  if (hidden.size > 0) {
+    console.log(
+      `\n${hidden.size} image slot(s) are hidden for this build — see ` +
+        `\`hidden ${config.manual.id}\`.`,
+    );
+  }
   // Reported, never written. The queue is a committed contract produced by
   // `awaiting`; surfacing the count here is what stops a declared gap being
   // invisible until somebody remembers to run that command.
@@ -1903,7 +2075,8 @@ export async function run(argv: readonly string[]): Promise<number> {
       command !== "capture" &&
       command !== "release-notes" &&
       command !== "documents" &&
-      command !== "verified") ||
+      command !== "verified" &&
+      command !== "hidden") ||
     !manualId
   ) {
     console.error(
@@ -1917,7 +2090,8 @@ export async function run(argv: readonly string[]): Promise<number> {
         `       broadsec-manual documents <manual>\n` +
         `       broadsec-manual verified <manual> --module <sections/NN-....yaml>\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
-        `       broadsec-manual extract <manual>\n\n` +
+        `       broadsec-manual extract <manual>\n` +
+        `       broadsec-manual hidden <manual> [--hide <slot> [--note <text>]] [--show <slot>]\n\n` +
         `  capture  shoot pending figures off the running product, per\n` +
         `           manuals/<manual>/capture-recipes.yaml. Needs the login in the\n` +
         `           environment variables that file NAMES — never in the file.\n` +
@@ -1954,7 +2128,13 @@ export async function run(argv: readonly string[]): Promise<number> {
         `  verified record which product commit a module was verified against, in\n` +
         `           manuals/<manual>/baselines.json. Stamps exactly ONE module per\n` +
         `           run — no --all — and refuses on a dirty or unreadable product\n` +
-        `           checkout, writing nothing.\n\n` +
+        `           checkout, writing nothing.\n` +
+        `  hidden   temporarily hide a pending image slot from THIS build, so a\n` +
+        `           version can ship without a placeholder showing. The slot stays\n` +
+        `           declared and still pending in the manifest — hiding is cosmetic\n` +
+        `           for delivery, never a content edit. Refuses to hide a slot that\n` +
+        `           already resolves to a delivered image for any deployment. With\n` +
+        `           neither flag, prints what is currently hidden.\n\n` +
         `       broadsec-manual new\n` +
         `  new      interactive: collect which product, what to call its manual and\n` +
         `           how much to attempt, then print the prompt that starts the work.\n` +
@@ -2251,6 +2431,39 @@ ${drift.length} change(s) since the previous map:`);
       });
       console.log(`  ${module} verified at ${commit}`);
       return 0;
+    }
+
+    if (command === "hidden") {
+      const hideAt = rest.indexOf("--hide");
+      const showAt = rest.indexOf("--show");
+      const noteAt = rest.indexOf("--note");
+      const noteRaw = noteAt === -1 ? undefined : rest[noteAt + 1];
+      const note = noteRaw && !noteRaw.startsWith("--") ? noteRaw : undefined;
+
+      if (hideAt === -1 && showAt === -1) {
+        console.log(`hidden image slots for ${manualId}`);
+        reportHidden(manualDir);
+        return 0;
+      }
+
+      let code = 0;
+      if (hideAt !== -1) {
+        const slot = rest[hideAt + 1];
+        if (!slot || slot.startsWith("--")) {
+          console.error("\n--hide requires a slot name, e.g. `--hide mapa.fig-capas`.");
+          return 1;
+        }
+        code = hideCommand(manualDir, slot, note) || code;
+      }
+      if (showAt !== -1) {
+        const slot = rest[showAt + 1];
+        if (!slot || slot.startsWith("--")) {
+          console.error("\n--show requires a slot name, e.g. `--show mapa.fig-capas`.");
+          return 1;
+        }
+        code = showCommand(manualDir, slot) || code;
+      }
+      return code;
     }
 
     if (command === "deliver") {

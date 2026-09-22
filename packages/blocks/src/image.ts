@@ -154,6 +154,46 @@ export function slotFor(ref: ImageRef, nodeId: string): string {
   return nodeId;
 }
 
+/** A slot resolved to its name, with whether it is currently hidden. */
+export interface DeclaredSlot {
+  readonly slot: string;
+  /**
+   * Hidden slots are still declared and still pending delivery — hiding is a
+   * delivery-time act, never a content edit — but a build must not render
+   * them and must not assign them a figure number. See `SlotState`, which
+   * this is deliberately orthogonal to: hiding never becomes a fourth
+   * resolution state.
+   */
+  readonly hidden: boolean;
+}
+
+/**
+ * The slot a node or item declares, resolved to its name and whether it is
+ * currently hidden.
+ *
+ * The ONE place that combines `declaredRef` and `slotFor` with a hidden-set
+ * lookup. `collectSlots` and `figureBearers` both have to agree on which node
+ * carries an image and on whether it is visible — two call sites answering
+ * either question separately is exactly how they end up disagreeing, and the
+ * symptom is a figure number assigned to a slot the renderer draws nothing
+ * for (see `packages/core/src/number.ts`).
+ *
+ * `hidden` defaults to empty, so every existing call site keeps compiling and
+ * behaving exactly as before. `core` stays pure: the hidden set is data
+ * passed in, never read from disk here.
+ */
+export function declaredSlot(
+  source: Readonly<Record<string, unknown>>,
+  nodeId: string,
+  policy: { readonly prop: string; readonly policy: "always" | "optional" },
+  hidden: ReadonlySet<string> = new Set(),
+): DeclaredSlot | undefined {
+  const ref = declaredRef(source, policy);
+  if (ref === undefined) return undefined;
+  const slot = slotFor(ref, nodeId);
+  return { slot, hidden: hidden.has(slot) };
+}
+
 /** A slot's path under an image root: dots become folders. */
 export function slotToPath(slot: string): string {
   return slot.split(".").join("/");

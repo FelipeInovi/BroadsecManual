@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { pendingTable, type PendingRow } from "./pending-table.ts";
 
-const use = (slot: string, shows: string, nodeId = slot) => ({
+const use = (slot: string, shows: string, nodeId = slot, hidden = false) => ({
   slot,
   nodeId,
   blockType: "figure",
   shows,
   convention: "figure" as const,
+  hidden,
 });
 
 const rows = (
@@ -182,6 +183,36 @@ describe("the rendered markdown", () => {
     const row = md.split("\n").find((l) => l.includes("`a`"));
     expect(row?.split("|").filter((c) => c.trim()).length).toBe(3);
     expect(md).toContain("Alta \\| Baja");
+  });
+});
+
+// A hidden slot never renders, so the paginator can never find a page for
+// it — that gap must not look like the same "—" a genuine paginator miss
+// prints, or it is indistinguishable from one and reappears every rebuild.
+describe("a hidden slot's row", () => {
+  it("carries `hidden: true` through to the row", () => {
+    const r = rows([use("a", "Vista", "a", true)], new Set(["a"]), []);
+    expect(r[0]?.hidden).toBe(true);
+  });
+
+  it("prints an explicit marker instead of the bare em dash a missed page gets", () => {
+    const md = pendingTable([use("a", "Vista", "a", true)], new Set(["a"]), []).markdown;
+    const row = md.split("\n").find((l) => l.includes("`a`"));
+    expect(row).toContain("oculta");
+    expect(row).not.toContain("| — |");
+  });
+
+  it("still keeps the row and its instruction column — the image is still owed", () => {
+    const md = pendingTable([use("a", "Vista", "a", true)], new Set(["a"]), []).markdown;
+    const row = md.split("\n").find((l) => l.includes("`a`"));
+    expect(row).toBeDefined();
+    expect(row?.trimEnd().endsWith("|  |")).toBe(true);
+  });
+
+  it("a visible slot the paginator genuinely missed still gets the bare em dash", () => {
+    const md = pendingTable([use("a", "Vista", "a", false)], new Set(["a"]), []).markdown;
+    const row = md.split("\n").find((l) => l.includes("`a`"));
+    expect(row).toContain("| — |");
   });
 });
 

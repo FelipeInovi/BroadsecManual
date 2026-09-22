@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { declaredRef, imageRefSchema, slotFor, slotToPath } from "./image.ts";
+import { declaredRef, declaredSlot, imageRefSchema, slotFor, slotToPath } from "./image.ts";
 
 /** The message zod produced for `value`, or `undefined` if it was accepted. */
 const reject = (value: unknown): string | undefined => {
@@ -120,6 +120,48 @@ describe("slotFor", () => {
   it("refuses to derive a slot from a node id that is not a valid slot name", () => {
     expect(() => slotFor(true, "Barra Superior")).toThrow(/Barra Superior/);
     expect(() => slotFor(true, "Barra Superior")).toThrow(/slot/i);
+  });
+});
+
+describe("declaredSlot", () => {
+  const always = { prop: "image", policy: "always" } as const;
+  const optional = { prop: "image", policy: "optional" } as const;
+
+  it("resolves a slot and reports it visible when nothing hides it", () => {
+    expect(declaredSlot({}, "barra.busqueda", always)).toEqual({
+      slot: "barra.busqueda",
+      hidden: false,
+    });
+  });
+
+  it("reports hidden when the slot is in the hidden set", () => {
+    expect(declaredSlot({}, "barra.busqueda", always, new Set(["barra.busqueda"]))).toEqual({
+      slot: "barra.busqueda",
+      hidden: true,
+    });
+  });
+
+  it("returns undefined for a place that declares no image, hidden set or not", () => {
+    expect(
+      declaredSlot({}, "barra.busqueda", optional, new Set(["barra.busqueda"])),
+    ).toBeUndefined();
+  });
+
+  // The hidden set is keyed by SLOT, never by node id — a shared image hidden
+  // once must disappear from every place that shares it.
+  it("resolves an explicit slot name, not the node id, against the hidden set", () => {
+    expect(
+      declaredSlot(
+        { image: "compartido.buscar" },
+        "barra.busqueda",
+        always,
+        new Set(["compartido.buscar"]),
+      ),
+    ).toEqual({ slot: "compartido.buscar", hidden: true });
+  });
+
+  it("propagates slotFor's refusal for an underivable node id", () => {
+    expect(() => declaredSlot({}, "Barra Superior", always)).toThrow(/slot/i);
   });
 });
 

@@ -837,6 +837,14 @@ export async function runWizard(repoRoot: string): Promise<number> {
                 `llegó se niega — eso se supera con una versión nueva, no se borra.`,
               value: "undeliver" as const,
             },
+            {
+              label: "Ocultar o mostrar imágenes pendientes",
+              detail:
+                `Para entregar sin que se vea el placeholder de una imagen que todavía no ` +
+                `llegó. El slot sigue declarado y pendiente en el manifiesto — es cosmético ` +
+                `para esta entrega, nunca una edición de contenido.`,
+              value: "hidden" as const,
+            },
           ]);
 
     if (action === "update") {
@@ -853,6 +861,10 @@ export async function runWizard(repoRoot: string): Promise<number> {
 
     if (action === "undeliver") {
       return await undeliveryFlow(rl, repoRoot);
+    }
+
+    if (action === "hidden") {
+      return await hiddenImagesFlow(rl, repoRoot);
     }
 
     if (action === "continue") {
@@ -1681,6 +1693,96 @@ async function buildFlow(
     const child = spawn(
       process.execPath,
       [join(repoRoot, "packages", "cli", "src", "main.ts"), "build", ...picked, ...kind.flags],
+      { cwd: repoRoot, stdio: "inherit" },
+    );
+    child.on("close", (c) => done(c ?? 1));
+  });
+}
+
+/**
+ * Hide or show a pending image slot for delivery, or just see what is hidden.
+ *
+ * Fully MECHANICAL — like `buildFlow` and `deliveryFlow`, it `spawn()`s the
+ * CLI's own `hidden` command rather than `handOff()`ing to an agent, because
+ * there is no judgement here for an agent to exercise: the guard that refuses
+ * an unsafe hide already lives in `hidden.ts`, and this flow only collects the
+ * three things a terminal invocation would otherwise need typed by hand.
+ *
+ * GATED TO ESTABLISHED CONTENT (requirement: never during content creation).
+ * Nothing on disk can tell "a session is mid-draft right now" from "this
+ * manual is finished" — that is a fact about a live session, not a file. The
+ * closest the repository derives is two signals ANDed together:
+ *
+ *   - `readBuildableManuals` — the same list "Construir un manual" already
+ *     trusts as buildable at all (valid config, one axis). A manual that
+ *     cannot build is not a candidate for anything delivery-shaped.
+ *   - `sections > 0` (`readManualStates`) — there is at least one authored
+ *     module, not a bare scaffold from `new` that has not been written yet.
+ *
+ * Neither proves "finished" on its own — a manual mid-authoring still has
+ * `sections > 0` — but together they are the narrowest EXISTING signal this
+ * repository has for "content, not proposal", and the design explicitly asks
+ * for the narrowest existing signal rather than a new "finished" flag.
+ */
+async function hiddenImagesFlow(
+  rl: ReturnType<typeof createInterface>,
+  repoRoot: string,
+): Promise<number> {
+  const sections = new Map(readManualStates(repoRoot).map((s) => [s.id, s.sections]));
+  const eligible = readBuildableManuals(repoRoot).filter((m) => (sections.get(m.id) ?? 0) > 0);
+
+  if (eligible.length === 0) {
+    ui(dim("   Ningún manual tiene contenido todavía — nada que ocultar."));
+    ui("");
+    return 1;
+  }
+
+  const manualId = await select(
+    rl,
+    "Paso 1 — ¿qué manual?",
+    eligible.map((m) => ({ label: `${m.id}  ${dim(m.title)}`, value: m.id })),
+  );
+
+  const action = await select(rl, "Paso 2 — ¿qué hacemos?", [
+    {
+      label: "Ver qué está oculto",
+      detail: "No cambia nada — sólo el reporte.",
+      value: "report" as const,
+    },
+    {
+      label: "Ocultar un slot pendiente",
+      detail:
+        "Se niega si ese slot ya está entregado para algún deployment — sólo un slot " +
+        "totalmente pendiente puede ocultarse.",
+      value: "hide" as const,
+    },
+    {
+      label: "Mostrar de nuevo un slot oculto",
+      detail: "Reversible en cualquier momento.",
+      value: "show" as const,
+    },
+  ]);
+
+  const args: string[] = [manualId];
+  if (action === "hide") {
+    const slot = await ask(rl, "nombre del slot a ocultar (p. ej. mapa.fig-capas)", (v) =>
+      v.trim() === "" ? { problem: "hace falta el nombre del slot." } : { value: v.trim() },
+    );
+    args.push("--hide", slot);
+    const note = (await rl.question("   nota opcional, para recordar por qué (enter para omitir): ")).trim();
+    ui("");
+    if (note !== "") args.push("--note", note);
+  } else if (action === "show") {
+    const slot = await ask(rl, "nombre del slot a mostrar de nuevo", (v) =>
+      v.trim() === "" ? { problem: "hace falta el nombre del slot." } : { value: v.trim() },
+    );
+    args.push("--show", slot);
+  }
+
+  return await new Promise<number>((done) => {
+    const child = spawn(
+      process.execPath,
+      [join(repoRoot, "packages", "cli", "src", "main.ts"), "hidden", ...args],
       { cwd: repoRoot, stdio: "inherit" },
     );
     child.on("close", (c) => done(c ?? 1));

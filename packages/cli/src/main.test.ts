@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { ManualNode } from "@broadsec-manual/blocks";
+import { catalog } from "@broadsec-manual/blocks";
+import type { ManualDocument, ManualNode } from "@broadsec-manual/blocks";
+import { assemble } from "@broadsec-manual/core";
 import { readBaselines, stampBaseline } from "./baselines.ts";
 import {
   assertChangeLog,
@@ -14,7 +16,9 @@ import {
   formatCliError,
   imageRequests,
   manualConfigSchema,
+  narrowHidden,
   outputFilename,
+  resolveTargetImages,
   workFilename,
   parseAxisFilters,
   parseOutPath,
@@ -902,6 +906,184 @@ describe("verified", () => {
 });
 
 /**
+ * `hidden <manual> [--hide <slot>] [--show <slot>]` — temporarily hide a
+ * pending image slot from a build. Reuses `verified`'s temp-repo/`runIn`
+ * idiom: no product checkout is needed here, only a manual with one image
+ * slot to hide.
+ */
+describe("hidden", () => {
+  const roots: string[] = [];
+
+  /** A repository root with one manual, one section declaring one figure slot. */
+  const repoRoot = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "hidden-cmd-"));
+    roots.push(root);
+    mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    writeFileSync(
+      join(root, "manuals", "un-manual", "manual.config.yaml"),
+      [
+        "manual:",
+        "  id: un-manual",
+        "  title: Un Manual",
+        "  product: Producto",
+        "  contentVersion: 0.1.0",
+        "axes:",
+        "  tenant:",
+        "    values:",
+        "      - id: mv",
+        "        name: MV",
+        "targets:",
+        "  - tenant: mv",
+        "output:",
+        "  dir: output",
+        "  filename: x.pdf",
+        "",
+      ].join("\n"),
+    );
+    writeFileSync(
+      join(root, "manuals", "un-manual", "sections", "01-modulo.yaml"),
+      [
+        "id: s",
+        "title: S",
+        "children:",
+        "  - id: s.fig",
+        "    type: figure",
+        "    props:",
+        "      caption: Vista",
+        "      widthPercent: 100",
+        "",
+      ].join("\n"),
+    );
+    return root;
+  };
+
+  const runIn = async (root: string, argv: readonly string[]): Promise<number> => {
+    const cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return await run(argv);
+    } finally {
+      process.chdir(cwd);
+    }
+  };
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it("with no flags, reports nothing hidden on a fresh manual", async () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(repoRoot(), ["hidden", "un-manual"]);
+      expect(code).toBe(0);
+      const messages = logSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("no image slot is hidden"))).toBe(true);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("hides a pending slot and then reports it", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      expect(await runIn(root, ["hidden", "un-manual", "--hide", "s.fig"])).toBe(0);
+      expect(
+        existsSync(join(root, "manuals", "un-manual", "hidden-images.json")),
+      ).toBe(true);
+
+      logSpy.mockClear();
+      expect(await runIn(root, ["hidden", "un-manual"])).toBe(0);
+      const messages = logSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("s.fig"))).toBe(true);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("un-hides a slot, leaving nothing hidden again", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, ["hidden", "un-manual", "--hide", "s.fig"]);
+      expect(await runIn(root, ["hidden", "un-manual", "--show", "s.fig"])).toBe(0);
+
+      logSpy.mockClear();
+      await runIn(root, ["hidden", "un-manual"]);
+      const messages = logSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("no image slot is hidden"))).toBe(true);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  // The guard: a slot can be pending for one tenant and delivered for
+  // another, and hiding it globally would strip the image from a tenant that
+  // already has it. Here the single configured tenant already has it.
+  it("refuses to hide a slot that already resolves to a delivered image", async () => {
+    const root = repoRoot();
+    mkdirSync(join(root, "manuals", "un-manual", "assets", "figures", "_common", "s"), {
+      recursive: true,
+    });
+    writeFileSync(
+      join(root, "manuals", "un-manual", "assets", "figures", "_common", "s", "fig.png"),
+      "not a real png, but the resolver only checks the extension and presence",
+    );
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig"]);
+      expect(code).toBe(1);
+      expect(
+        existsSync(join(root, "manuals", "un-manual", "hidden-images.json")),
+      ).toBe(false);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("ya está entregada"))).toBe(true);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses --hide with no slot name", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await runIn(repoRoot(), ["hidden", "un-manual", "--hide"])).toBe(1);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("refuses --show with no slot name", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await runIn(repoRoot(), ["hidden", "un-manual", "--show"])).toBe(1);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("records an optional --note alongside the hide", async () => {
+    const root = repoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      await runIn(root, [
+        "hidden",
+        "un-manual",
+        "--hide",
+        "s.fig",
+        "--note",
+        "llega en la 1.1.0",
+      ]);
+      const file = JSON.parse(
+        readFileSync(join(root, "manuals", "un-manual", "hidden-images.json"), "utf8"),
+      );
+      expect(file.hidden["s.fig"].note).toBe("llega en la 1.1.0");
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+});
+
+/**
  * `documents <manual>` — reports each module's coverage of today's drift
  * (MUF-101..104, MUF-306), including ADR-007's per-entry match counts and
  * unjoinable-path annotation. `documents`'s real-product correctness against
@@ -1252,5 +1434,120 @@ describe("usage text", () => {
     } finally {
       errorSpy.mockRestore();
     }
+  });
+});
+
+/**
+ * `resolveTargetImages` is the one line (`main.ts`'s `visible` filter) that
+ * keeps a hidden slot away from the renderer — nothing exercised it before.
+ * Inverting or deleting that filter must turn this red.
+ */
+describe("resolveTargetImages", () => {
+  const twoFigures = (): ManualDocument => ({
+    manualId: "m",
+    version: "0.1.0",
+    children: [
+      {
+        kind: "section",
+        id: "s",
+        title: [{ kind: "text", value: "S" }],
+        children: [
+          { kind: "block", id: "s.f1", type: "figure", props: { caption: "Uno", widthPercent: 100 } },
+          { kind: "block", id: "s.f2", type: "figure", props: { caption: "Dos", widthPercent: 100 } },
+        ],
+      },
+    ],
+  });
+
+  it("keeps a hidden slot in `entries` (the manifest) but drops it from `slots` (what the renderer draws)", () => {
+    const hidden = new Set(["s.f1"]);
+    const manual = assemble(twoFigures(), { tenant: "mv" }, catalog, hidden);
+    // A non-existent figures dir resolves every slot to "pending" — no files
+    // need to exist on disk for this to constrain the hiding behaviour.
+    const { entries, slots } = resolveTargetImages(manual, "/nowhere/figures", "mv", hidden);
+
+    expect(entries.map((e) => e.slot).sort()).toEqual(["s.f1", "s.f2"]);
+    expect([...slots.keys()]).toEqual(["s.f2"]);
+    expect([...slots.values()]).toEqual(["s.f2"]);
+  });
+
+  it("with nothing hidden, every declared slot is both in `entries` and in `slots`", () => {
+    const manual = assemble(twoFigures(), { tenant: "mv" }, catalog);
+    const { entries, slots } = resolveTargetImages(manual, "/nowhere/figures", "mv");
+    expect(entries.map((e) => e.slot).sort()).toEqual(["s.f1", "s.f2"]);
+    expect([...slots.keys()].sort()).toEqual(["s.f1", "s.f2"]);
+  });
+});
+
+/**
+ * FINDING 1 (judgment-day, hidden-image-slots): the cross-tenant guard used
+ * to be check-time only. `hideCommand` refuses to hide a slot any tenant
+ * already has, but nothing re-checked that once a hidden slot was LATER
+ * delivered for one tenant and not another — `build`/`deliver` applied the
+ * same global hidden set to every target regardless.
+ */
+describe("narrowHidden (finding 1: per-target hidden narrowing)", () => {
+  const twoFigures = (): ManualDocument => ({
+    manualId: "m",
+    version: "0.1.0",
+    children: [
+      {
+        kind: "section",
+        id: "s",
+        title: [{ kind: "text", value: "S" }],
+        children: [
+          { kind: "block", id: "s.f1", type: "figure", props: { caption: "Uno", widthPercent: 100 } },
+          { kind: "block", id: "s.f2", type: "figure", props: { caption: "Dos", widthPercent: 100 } },
+        ],
+      },
+    ],
+  });
+
+  it(
+    "a slot hidden then delivered for one tenant renders for that tenant and stays hidden " +
+      "for the tenant that still lacks it, with figure numbering consistent per tenant",
+    () => {
+      const root = mkdtempSync(join(tmpdir(), "narrow-hidden-"));
+      try {
+        const figuresDir = join(root, "figures");
+        mkdirSync(join(figuresDir, "mv"), { recursive: true });
+        writeFileSync(join(figuresDir, "mv", "s.f1.png"), "not a real png, resolver only checks presence");
+
+        const hidden = new Set(["s.f1"]);
+        const doc = twoFigures();
+
+        // mv already has its own delivered image for s.f1 — the narrowed set
+        // must drop it, so it renders and is numbered.
+        const mvHidden = narrowHidden(hidden, figuresDir, "mv");
+        expect(mvHidden.has("s.f1")).toBe(false);
+        const mvManual = assemble(doc, { tenant: "mv" }, catalog, mvHidden);
+        const mvResolved = resolveTargetImages(mvManual, figuresDir, "mv", mvHidden);
+        expect([...mvResolved.slots.values()]).toContain("s.f1");
+        expect(mvManual.figures.get("s.f1")).toBe("1.1");
+        expect(mvManual.figures.get("s.f2")).toBe("1.2");
+
+        // med has nothing delivered — it stays hidden, gets no figure number,
+        // and s.f2 takes the number s.f1 would otherwise have taken.
+        const medHidden = narrowHidden(hidden, figuresDir, "med");
+        expect(medHidden.has("s.f1")).toBe(true);
+        const medManual = assemble(doc, { tenant: "med" }, catalog, medHidden);
+        const medResolved = resolveTargetImages(medManual, figuresDir, "med", medHidden);
+        expect([...medResolved.slots.values()]).not.toContain("s.f1");
+        expect(medManual.figures.has("s.f1")).toBe(false);
+        expect(medManual.figures.get("s.f2")).toBe("1.1");
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    },
+  );
+
+  it("returns the same set instance when nothing is hidden — no image index needs building", () => {
+    const empty = new Set<string>();
+    expect(narrowHidden(empty, "/nowhere", "mv")).toBe(empty);
+  });
+
+  it("narrows to nothing when every hidden slot is still pending for the target", () => {
+    const hidden = new Set(["s.f1", "s.f2"]);
+    expect(narrowHidden(hidden, "/nowhere/figures", "mv")).toEqual(new Set(["s.f1", "s.f2"]));
   });
 });

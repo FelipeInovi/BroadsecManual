@@ -14,6 +14,14 @@ export interface PendingRow {
   readonly shows: string;
   /** Every page it appears on, ascending. Empty when the paginator saw none. */
   readonly pages: readonly number[];
+  /**
+   * Hidden for THIS build (see `hidden.ts`). A hidden slot's image is still
+   * owed, so its row stays — but the renderer draws no `data-slot` for a
+   * hidden node, so `pages` is ALWAYS empty for it. That empty array means
+   * something different than it does for a slot the paginator simply missed,
+   * and the markdown must not print the same "—" for both.
+   */
+  readonly hidden: boolean;
 }
 
 /**
@@ -104,6 +112,7 @@ export function pendingTable(
       slot: use.slot,
       shows: use.shows,
       pages: [...(pagesBySlot.get(use.slot) ?? [])].sort((a, b) => a - b),
+      hidden: use.hidden,
     });
   }
 
@@ -131,7 +140,10 @@ export function pendingTable(
     "| --- | --- | --- |",
     ...rows.map((r) => {
       const shows = r.shows ? ` — ${cell(r.shows)}` : "";
-      const pages = r.pages.length === 0 ? "—" : r.pages.join(", ");
+      // A hidden slot never renders, so it never lands on a page — that "—"
+      // would be indistinguishable from a genuine paginator miss and would
+      // reappear on every regeneration. Say why instead.
+      const pages = r.hidden ? "oculta" : r.pages.length === 0 ? "—" : r.pages.join(", ");
       const instruction = answered.get(r.slot);
       return `| \`${r.slot}\`${shows} | ${pages} | ${instruction ? cell(instruction) : ""} |`;
     }),

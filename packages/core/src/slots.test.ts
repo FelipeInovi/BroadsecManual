@@ -39,6 +39,7 @@ describe("collectSlots", () => {
         blockType: "figure",
         shows: "Capas del mapa",
         convention: "figure",
+        hidden: false,
       },
     ]);
   });
@@ -174,5 +175,107 @@ describe("collectSlots", () => {
     expect(() =>
       collectSlots(manual([block("Figura Uno", "figure", { caption: "Mala" })]), catalog),
     ).toThrow(/Figura Uno/);
+  });
+});
+
+// Hiding is a delivery-time act, never a content edit (see `hidden.ts`): the
+// manifest must keep asking for a hidden slot exactly as it did before, so
+// support still owes the image even though the current build does not show it.
+describe("collectSlots with a hidden set", () => {
+  it("still returns a hidden slot, marked `hidden`", () => {
+    const slots = collectSlots(
+      manual([block("mapa.fig-capas", "figure", { caption: "Capas del mapa", widthPercent: 100 })]),
+      catalog,
+      new Set(["mapa.fig-capas"]),
+    );
+    expect(slots).toEqual([
+      {
+        slot: "mapa.fig-capas",
+        nodeId: "mapa.fig-capas",
+        blockType: "figure",
+        shows: "Capas del mapa",
+        convention: "figure",
+        hidden: true,
+      },
+    ]);
+  });
+
+  it("leaves every other slot visible", () => {
+    const slots = collectSlots(
+      manual([
+        block("uno.fig", "figure", { caption: "Una" }),
+        block("dos.fig", "figure", { caption: "Otra" }),
+      ]),
+      catalog,
+      new Set(["uno.fig"]),
+    );
+    expect(slots.map((s) => [s.slot, s.hidden])).toEqual([
+      ["uno.fig", true],
+      ["dos.fig", false],
+    ]);
+  });
+
+  it("hides an item's slot inside a table row without touching its siblings", () => {
+    const slots = collectSlots(
+      manual([
+        block("barra.tabla", "icon-table", {
+          labelHeader: "Control",
+          descriptionHeader: "Función",
+          rows: [
+            { id: "barra.busqueda", label: "Búsqueda", description: "Busca casos" },
+            { id: "barra.filtros", label: "Filtros", description: "Filtra casos" },
+          ],
+        }),
+      ]),
+      catalog,
+      new Set(["barra.busqueda"]),
+    );
+    expect(slots.map((s) => [s.slot, s.hidden])).toEqual([
+      ["barra.busqueda", true],
+      ["barra.filtros", false],
+    ]);
+  });
+
+  it("with no hidden set at all, every slot reports `hidden: false`", () => {
+    const slots = collectSlots(
+      manual([block("uno.fig", "figure", { caption: "Una" })]),
+      catalog,
+    );
+    expect(slots[0]?.hidden).toBe(false);
+  });
+
+  // Every fixture above happens to use a node whose id and slot are the same
+  // string. That coincidence would hide a lookup accidentally keyed by node
+  // id instead of by slot — these two cases are the only ones that tell the
+  // difference.
+  it("hides a slot addressed by an explicit `image:` override that differs from the node's own id", () => {
+    const slots = collectSlots(
+      manual([
+        block("otra.fig", "figure", { image: "compartido.mapa", caption: "Vista compartida" }),
+      ]),
+      catalog,
+      new Set(["compartido.mapa"]),
+    );
+    expect(slots).toEqual([
+      {
+        slot: "compartido.mapa",
+        nodeId: "otra.fig",
+        blockType: "figure",
+        shows: "Vista compartida",
+        convention: "figure",
+        hidden: true,
+      },
+    ]);
+  });
+
+  it("does NOT hide it when the hidden set names the node id instead of the overridden slot", () => {
+    const slots = collectSlots(
+      manual([
+        block("otra.fig", "figure", { image: "compartido.mapa", caption: "Vista compartida" }),
+      ]),
+      catalog,
+      new Set(["otra.fig"]),
+    );
+    expect(slots[0]?.hidden).toBe(false);
   });
 });

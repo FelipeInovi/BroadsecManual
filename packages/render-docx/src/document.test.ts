@@ -219,6 +219,40 @@ describe("ordinals", () => {
   });
 });
 
+/**
+ * `hidden <manual> --hide <slot>` (`packages/cli/src/hidden.ts`) works by
+ * removing the hidden node's id from the `slots` map the CLI hands the
+ * renderer — a hidden slot renders exactly as if the id had never declared
+ * an image at all. These tests confirm `assetFor`'s existing `undefined`
+ * handling already does the right thing for the four shapes the design calls
+ * out, rather than rewriting it.
+ */
+describe("a slot absent from `slots` — what a hidden node renders as", () => {
+  it("a standalone figure disappears entirely, caption included", async () => {
+    const xml = await documentXml(options({ slots: new Map() }));
+    expect(xml).not.toContain("Pantalla principal");
+    expect(xml).not.toContain("Figura ");
+  });
+
+  it("a procedure step still renders its title and text, with no image", async () => {
+    const xml = await documentXml(options({ slots: new Map() }));
+    expect(xml).toContain("Abrir el módulo");
+    expect(xml).toContain("Desde el menú lateral.");
+  });
+
+  it("a field-list item still renders its label and text, with no image", async () => {
+    const xml = await documentXml(options({ slots: new Map() }));
+    expect(xml).toContain("Campo");
+    expect(xml).toContain("Qué es.");
+  });
+
+  it("an icon-table row still renders, with an empty icon cell", async () => {
+    const xml = await documentXml(options({ slots: new Map() }));
+    expect(xml).toContain("Zoom");
+    expect(xml).toContain("Acerca el mapa.");
+  });
+});
+
 describe("the frozen typography", () => {
   it("names only faces that ship with Office", async () => {
     const xml = await documentXml();

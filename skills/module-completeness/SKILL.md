@@ -208,10 +208,60 @@ later, so a module is normally written before a single capture exists. That is
 not a reason to leave the page empty: a gap reads as finished content and the
 reader has no way to detect the lie.
 
+That is the rule for CONTENT. There is one narrow exception, decided
+separately from it, at delivery time — see "Hiding a slot from one delivery"
+below before assuming every pending slot must show its placeholder.
+
 | State | Renders as |
 |---|---|
 | Delivered | The image |
 | Pending | `_pending.svg` — one temporary image, identical in every slot |
+| Hidden (this build only) | Nothing — the node renders as if it had never declared an image |
+
+### Hiding a slot from one delivery
+
+A third state, and it is not a fourth resolution alongside "delivered" and
+"pending" in `SlotState` — it never reaches `packages/blocks/src/image.ts`.
+Hiding lives one layer up, as a set of slot names a build is told to treat as
+absent: the node still renders its text, its title, its label — everything
+**except** the image and, for a standalone `figure`, its caption too, since a
+figure block draws nothing else.
+
+**When it is legitimate.** A client delivery cannot wait for a screenshot that
+has not arrived, and showing the placeholder in a document marked Confidential
+is worse than showing nothing: it advertises that this repository's internal
+pipeline exists. Hiding lets that one delivery ship clean. It is not for
+skipping a module that is still being written — see "Two builds" above and the
+`awaiting`/`pending` machinery for that different problem.
+
+**Who may set it.** A person, from the wizard's "Ocultar o mostrar imágenes
+pendientes" flow, and only against ESTABLISHED content — never while a module
+is still in its content-creation flow. It is never something content itself
+declares: no prop, no YAML key, nothing under `sections/` changes. Hiding is a
+fact about a BUILD, recorded in `manuals/<manual>/hidden-images.json`
+(`packages/cli/src/hidden.ts`), never a fact about the manual.
+
+**It changes nothing about what is owed.** A hidden slot still reports as
+`pending` in the image manifest (`images <manual>`) and in every count `build`
+prints — hiding is cosmetic for the reader of one document, not a withdrawal
+of the request. The capture team is never told a slot is "done" because
+somebody hid it. Un-hiding is a normal, reversible act: drop the image in and
+ship the next version.
+
+**Numbering follows.** A hidden figure gets no figure number for that build,
+and the remaining figures renumber with no gap — the same thing that already
+happens when conditioning removes a node for a tenant.
+
+Use `broadsec-manual hidden <manual>` with no flags to see what is currently
+hidden. Two mechanisms together hold the guarantee that a slot pending for one
+tenant and delivered for another must never disappear from the tenant that
+already has it: `--hide <slot>` refuses AT HIDE TIME when the slot already
+resolves to a delivered image for ANY deployment, and every `build`/`deliver`
+re-narrows the hidden set to what is STILL PENDING for the target it is
+building, before assembly — so a slot that gets delivered for a tenant AFTER
+being hidden stops being hidden for that tenant too. The second is what makes
+hiding self-healing: the moment a tenant's image arrives, that tenant's next
+build shows it again on its own, with no `--show` required.
 
 The placeholder is deliberately the same everywhere. It is a *shape held open*,
 not a description of what is missing: every slot sits directly under the thing
