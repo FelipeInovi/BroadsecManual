@@ -245,16 +245,21 @@ state.
   > - canViewFilterTrafficDetails y los seis filtros del Security Dashboard que
   >   habilita son una capacidad AGREGADA al producto, tal como reportó el diff
   >   del extractor en b61438d. Producto: nuevo.
+  >   (Registered on 2026-09-23 as its own commit, `feat(broadlineavida): the
+  >   Security Dashboard gains the filters canViewFilterTrafficDetails enables`,
+  >   which carries the trailer. That commit, not this quote, is what the pipeline
+  >   reads.)
 
   The second settles a contradiction between two commits: `b61438d` reports
   "capability added" from the extractor's diff, while `39d51c3` says "nothing
   here changed, it was never right". The extractor was right; the section had
   been silent about a capability the product had just gained.
 
-  `release-notes/v1.2.0.yaml` is this declaration written out. It was first
-  committed as `v1.1.1.yaml` (`65491df`) — a test delivery reverted on another
-  branch that never existed here and has no change-log row. The content was
-  right; the number was not.
+  The first `release-notes/v1.2.0.yaml` was this declaration written out by
+  hand (first committed as `v1.1.1.yaml`, `65491df`). It was removed with the
+  1.2.0 row in `2ce59fa` so the delivery flow would regenerate both from
+  trailers alone — which is why each declaration above now also lives in a
+  commit of its own.
 
 ## Ruled out
 
