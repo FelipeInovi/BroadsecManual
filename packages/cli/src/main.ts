@@ -2065,9 +2065,9 @@ async function undeliverManual(
   }
 
   // GUARD 3 — pre-flight, split from BOTH the check above and the deletion
-  // below ON PURPOSE: confirm every archived file this run would delete can
-  // actually be deleted, BEFORE `unstampFile` rewrites a single byte of the
-  // row. REPRODUCED ON THIS REPOSITORY: `undeliver` was run while the archived
+  // below ON PURPOSE: confirm every file this run would delete can actually
+  // be deleted, BEFORE `unstampFile` rewrites a single byte of the row.
+  // REPRODUCED ON THIS REPOSITORY: `undeliver` was run while the archived
   // release notes `.docx` sat open in Microsoft Word. `unstampFile` had
   // already taken the proof off the row — in the working tree, uncommitted —
   // by the time `unlinkSync` reached that file and threw. The run died there:
@@ -2077,8 +2077,16 @@ async function undeliverManual(
   // its pure half — so the preview and the real removal always agree on which
   // files are in play. Previewing rather than calling `unstampFile` itself is
   // the whole point: nothing here writes anything back.
+  //
+  // COVERS `--regenerate`'s OWN FILE TOO, not just the archived ones: the
+  // release notes yaml is exactly as deletable-or-not as an archived `.docx`,
+  // and a locked one used to throw the same raw stack trace, just later —
+  // after the row itself had already been removed. `labelFor` carries a
+  // display path per candidate since the notes file does not live under
+  // `deliveries/<manual>/` the way archived files do.
   const yamlBeforeDelete = readFileSync(sectionFile, "utf8");
   const toDelete: string[] = [];
+  const labelFor = new Map<string, string>();
   for (const target of targets) {
     const value = requireAxisValue(target, axis);
     const preview = unstampProof(yamlBeforeDelete, version, value);
@@ -2086,17 +2094,23 @@ async function undeliverManual(
     // exists for every target, reading this same row.
     if (preview === null) continue;
     for (const file of preview.files) {
-      toDelete.push(join(repoRoot, "deliveries", config.manual.id, file));
+      const path = join(repoRoot, "deliveries", config.manual.id, file);
+      toDelete.push(path);
+      labelFor.set(path, `deliveries/${config.manual.id}/${file}`);
     }
+  }
+  if (notesPath !== null && existsSync(notesPath)) {
+    toDelete.push(notesPath);
+    labelFor.set(notesPath, `manuals/${config.manual.id}/release-notes/${basename(notesPath)}`);
   }
   const blocked = filesBlockingUndeliver(toDelete.map((path) => ({ path, locked: isLocked(path) })));
   if (blocked.length > 0) {
     console.error(
       [
         ``,
-        `${blocked.length} archivo(s) archivado(s) están abiertos en otro programa y no se`,
-        `  pueden borrar. Nada se tocó — ni la fila, ni un solo archivo:`,
-        ...blocked.map((path) => `    - deliveries/${config.manual.id}/${basename(path)}`),
+        `${blocked.length} archivo(s) están abiertos en otro programa y no se pueden borrar.`,
+        `  Nada se tocó — ni la fila, ni un solo archivo:`,
+        ...blocked.map((path) => `    - ${labelFor.get(path) ?? path}`),
         `  Cierre el programa que los tiene abiertos (por ejemplo Word) y reintente.`,
       ].join("\n"),
     );
@@ -2173,7 +2187,31 @@ async function undeliverManual(
     }
     console.log(`  borrada la fila ${version} de ${basename(sectionFile)}, para regenerar`);
     if (notesPath !== null && existsSync(notesPath)) {
-      unlinkSync(notesPath);
+      // Last line of defence, not the check: GUARD 3 above already probed
+      // this exact file. A file that gets locked in the gap between that
+      // probe and this line — opened by someone the instant after we looked
+      // — still deserves an actionable message rather than a raw EBUSY stack
+      // trace, even though by THIS point the row has already been rewritten
+      // AND had its whole row removed, uncommitted. Same reasoning as the
+      // archived-file loop above, for the one file that is not archived.
+      try {
+        unlinkSync(notesPath);
+      } catch (error) {
+        console.error(
+          [
+            ``,
+            `${basename(notesPath)} se volvió imposible de borrar justo ahora —`,
+            `  probablemente se abrió en otro programa en este instante. La fila de`,
+            `  ${config.manual.id} YA QUEDÓ SIN LA PRUEBA de ${label} y SIN LA FILA`,
+            `  ${version} en el árbol de trabajo, todavía SIN COMMITEAR.`,
+            `  Cierre lo que tenga abierto ese archivo y reintente: el comando vuelve a`,
+            `  leer la fila tal como está. Si prefiere partir de cero, revierta el`,
+            `  archivo a mano con \`git checkout -- ${basename(sectionFile)}\`.`,
+            `  Detalle: ${error instanceof Error ? error.message : String(error)}`,
+          ].join("\n"),
+        );
+        return 1;
+      }
       extraCommitted.push(notesPath);
       console.log(`  borradas las notas de versión -> ${basename(notesPath)}`);
     }

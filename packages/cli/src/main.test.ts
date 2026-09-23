@@ -1305,21 +1305,26 @@ describe.skipIf(process.platform !== "win32")("undeliver — locked archived fil
     const root = mkdtempSync(join(tmpdir(), "undeliver-lock-"));
     roots.push(root);
     mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    mkdirSync(join(root, "manuals", "un-manual", "release-notes"), { recursive: true });
     mkdirSync(join(root, "deliveries", "un-manual"), { recursive: true });
     writeFileSync(join(root, "manuals", "un-manual", "manual.config.yaml"), CONFIG);
     writeFileSync(join(root, "manuals", "un-manual", "sections", "01-intro.yaml"), INTRO);
     writeFileSync(join(root, "manuals", "un-manual", "sections", "99-cambios.yaml"), CHANGE_LOG);
+    writeFileSync(
+      join(root, "manuals", "un-manual", "release-notes", "v1.0.0.yaml"),
+      ["id: notas", "title: Actualización", "lede: Algo.", "children: []", ""].join("\n"),
+    );
     writeFileSync(join(root, "deliveries", "un-manual", PDF_NAME), "pdf bytes");
     writeFileSync(join(root, "deliveries", "un-manual", DOCX_NAME), "docx bytes");
-    // Matches this repository's own `.gitignore`: `deliveries/` is never
-    // tracked. Doing otherwise here would be a fixture bug, not a faithful
-    // reproduction — a TRACKED file held open with `FileShare.None` makes
-    // `git status --porcelain` itself report it as modified (empirically
-    // confirmed for this change), which would make the pre-existing
-    // dirty-tree check fire first and mask the guard this test exists to
-    // exercise. Untracked, exactly like production, the lock is invisible to
-    // git and only this guard sees it.
-    writeFileSync(join(root, ".gitignore"), "deliveries/\n");
+    // `deliveries/` matches this repository's own `.gitignore` — never
+    // tracked in production either. `release-notes/` does NOT, in the real
+    // repository; it is added here ONLY so this fixture's own lock tests can
+    // isolate GUARD 3 from the unrelated dirty-tree check: a TRACKED file
+    // held open with `FileShare.None` makes `git status --porcelain` itself
+    // report it as modified (empirically confirmed for this change), which
+    // would make the pre-existing dirty-tree check fire first — for the
+    // WRONG reason — and mask the guard this fixture exists to exercise.
+    writeFileSync(join(root, ".gitignore"), "deliveries/\nrelease-notes/\n");
     execFileSync("git", ["-C", root, "init", "-q"]);
     execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
     execFileSync("git", ["-C", root, "config", "user.name", "T"]);
@@ -1456,6 +1461,63 @@ describe.skipIf(process.platform !== "win32")("undeliver — locked archived fil
       logSpy.mockRestore();
     }
   });
+
+  /**
+   * GUARD 3 EXTENDED TO `--regenerate`'s OWN FILE. Follow-up fix: the release
+   * notes yaml `--regenerate` deletes was not in GUARD 3's pre-flight probe —
+   * only the archived files were — so a locked notes file threw a raw
+   * `EBUSY` stack trace AFTER the stamp was removed, the archived files
+   * deleted, and the row itself removed, all of it uncommitted. Same
+   * reproduction shape as the archived-docx case above, on the file
+   * `--regenerate` adds to what a run deletes.
+   */
+  it(
+    "refuses before touching anything when --regenerate's own release notes are open elsewhere",
+    async () => {
+      const root = repoRoot();
+      const sectionFile = join(root, "manuals", "un-manual", "sections", "99-cambios.yaml");
+      const notesPath = join(root, "manuals", "un-manual", "release-notes", "v1.0.0.yaml");
+      const docxPath = join(root, "deliveries", "un-manual", DOCX_NAME);
+      const pdfPath = join(root, "deliveries", "un-manual", PDF_NAME);
+      const yamlBefore = readFileSync(sectionFile, "utf8");
+
+      lockExclusively(notesPath);
+      await waitUntilLocked(notesPath);
+
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+      try {
+        const code = await runIn(root, [
+          "undeliver",
+          "un-manual",
+          "--version",
+          "1.0.0",
+          "--not-handed-over",
+          "--regenerate",
+        ]);
+        expect(code).toBe(1);
+
+        const messages = errorSpy.mock.calls.map((c) => String(c[0]));
+        expect(messages.some((m) => m.includes("v1.0.0.yaml"))).toBe(true);
+
+        // Nothing touched — not the row, not the archived files, not the
+        // notes file itself. Same pre-flight guarantee as the archived-docx
+        // case: a bad `--regenerate` never leaves a half-undone delivery.
+        expect(existsSync(docxPath)).toBe(true);
+        expect(existsSync(pdfPath)).toBe(true);
+        expect(existsSync(notesPath)).toBe(true);
+        expect(readFileSync(sectionFile, "utf8")).toBe(yamlBefore);
+
+        const logs = logSpy.mock.calls.map((c) => String(c[0]));
+        expect(logs.some((l) => l.includes("borrado ->"))).toBe(false);
+        expect(logs.some((l) => l.includes("commiteado"))).toBe(false);
+      } finally {
+        errorSpy.mockRestore();
+        logSpy.mockRestore();
+      }
+    },
+    20000,
+  );
 });
 
 /**
