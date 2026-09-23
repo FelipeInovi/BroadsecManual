@@ -49,10 +49,11 @@ Producto: retirado     one they had, and no longer has — it may come back
 Producto: sin-cambio   nothing changed for them
 ```
 
-Read them, do not guess:
+Read them, do not guess — and narrow the range to THIS manual, or another
+manual's `Producto:` commit leaks into these notes:
 
 ```bash
-git log --format='%H%x09%s%x09%(trailers:key=Producto,valueonly)' <commit>..HEAD
+git log --format='%H%x09%s%x09%(trailers:key=Producto,valueonly)' <commit>..HEAD -- manuals/<manual>
 ```
 
 `<commit>` is `delivered.<target>.commit` from the previous row — the commit the

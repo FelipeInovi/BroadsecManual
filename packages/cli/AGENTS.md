@@ -91,6 +91,14 @@ there.
 - `--tenant` is shorthand for the general axis form. Keep the general form
   available so a second axis does not require a new CLI surface.
 
+## The `commit-msg` hook
+
+`commit-check.ts` (pure decision) and `commit-check-cli.ts` (its thin `git
+diff --cached`/file-reading wrapper) back `.githooks/commit-msg`, the
+versioned hook `core.hooksPath` activates. It enforces the `commit-messages`
+skill's rule on every commit in this repository, not only ones made through
+this CLI — read that skill for what it checks and why, not here.
+
 ## Testing
 
 Command wiring and argument parsing are tested. Pipeline behaviour is tested in

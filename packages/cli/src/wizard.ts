@@ -35,7 +35,7 @@ import {
   type ChangeLogRowLike,
   type DeclaredCommit,
 } from "./delivery-state.ts";
-import { isAncestorOrSame, lastCommitTouching, productTrailers } from "./git.ts";
+import { isAncestorOrSame, lastCommitTouching, manualGitPath, productTrailers } from "./git.ts";
 import { newestWorkNumberFor, nextWorkNumber, workStamp } from "./naming.ts";
 import { soleAxis } from "./axis.ts";
 import { readBaselines, type Baseline } from "./baselines.ts";
@@ -1271,7 +1271,8 @@ export function assembleDeliveryPrompt(
           `\`${target.axis}=${target.value}\`.`,
           ``,
           `Lo entregado por última vez salió del commit \`${since}\`. Lo que cambió`,
-          `desde entonces está en \`git log ${since}..HEAD\`.`,
+          `desde entonces está en \`git log ${since}..HEAD -- manuals/${manualId}\` — sólo`,
+          `los commits de ESTE manual, nunca los de otro.`,
         ]
       : [
           `Entregá la versión ${version} de \`${manualId}\` para`,
@@ -1347,7 +1348,11 @@ export function staleReleaseNotesFor(
   anchor: string | undefined,
 ): { readonly offending: readonly DeclaredCommit[] } | null {
   if (anchor === undefined) return null;
-  const trailers = productTrailers(repoRoot, anchor);
+  // Repo-relative, forward slashes always — without it, this range runs over
+  // the whole repository and another manual's `Producto:` commit leaks into
+  // this one's.
+  const manualPath = manualGitPath(repoRoot, manualDir);
+  const trailers = productTrailers(repoRoot, anchor, manualPath);
   if (trailers === null) return null; // git could not answer — degrade to silence
   const declaredCommits: DeclaredCommit[] = trailers
     .filter((t) => t.value === "nuevo" || t.value === "cambio" || t.value === "retirado")
@@ -1395,8 +1400,9 @@ export function assembleStaleNotesPrompt(
     list,
     ``,
     `Lo entregado por última vez a este documento salió del commit \`${since}\`. El`,
-    `rango a considerar es \`git log ${since}..HEAD\` — completo, no sólo lo que`,
-    `pasó después de la última vez que se tocaron la fila o las notas.`,
+    `rango a considerar es \`git log ${since}..HEAD -- manuals/${manualId}\` —`,
+    `completo, no sólo lo que pasó después de la última vez que se tocaron la`,
+    `fila o las notas, y sólo commits de ESTE manual.`,
     ``,
     `Daniel ya autorizó esta entrega en el asistente, con esta versión y este`,
     `documento. No vuelvas a preguntar si hacerla.`,

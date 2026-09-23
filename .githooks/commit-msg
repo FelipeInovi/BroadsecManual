@@ -1,0 +1,31 @@
+#!/bin/sh
+# Versioned commit-msg hook.
+#
+# Wraps packages/cli/src/commit-check-cli.ts, which reads this commit's
+# message and staged paths and asks packages/cli/src/commit-check.ts's pure
+# `checkCommit` whether it may land — see the `commit-messages` skill for the
+# rule this enforces and why.
+#
+# ACTIVATED by `git config core.hooksPath .githooks`, which the root
+# package.json's `prepare` script runs on `pnpm install`. `core.hooksPath` is
+# a LOCAL, per-repository setting: it resolves this relative path against the
+# top level of whichever repository is committing, which is only ever this
+# one, since nothing else configures it to point here.
+#
+# A POSIX sh script rather than a `.cmd`/`.ps1`: Git for Windows runs hooks
+# through its own bundled `sh.exe` regardless of platform, driven by this
+# file's shebang — the same interpreter Git Bash itself is.
+set -e
+
+if ! command -v node >/dev/null 2>&1; then
+	echo "" >&2
+	echo "commit-check: no se encontró 'node' en el PATH de este cliente git." >&2
+	echo "  El hook necesita node para validar el mensaje. Si Git Bash no ve tu" >&2
+	echo "  instalación de Node, agregala a PATH (o abrí una terminal donde 'node'" >&2
+	echo "  ya funcione) y reintentá el commit." >&2
+	echo "" >&2
+	exit 1
+fi
+
+repo_root=$(git rev-parse --show-toplevel)
+exec node "$repo_root/packages/cli/src/commit-check-cli.ts" "$1"

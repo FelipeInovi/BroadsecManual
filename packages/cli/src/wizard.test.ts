@@ -1333,8 +1333,11 @@ describe("readModuleStates", () => {
  * enough to still offer the agent path instead of a plain stamp.
  *
  * Against a THROWAWAY repository, never this one — same reasoning as
- * `git.test.ts`'s own git-writing tests: `manualDir` and `repoRoot` are the
- * same directory here, exactly like `reportStaleReleaseNotes`'s tests.
+ * `git.test.ts`'s own git-writing tests. `manualDir` is a REAL
+ * `manuals/<id>/` subdirectory of `repoRoot`, not `repoRoot` itself: this
+ * function narrows its `git log` range to that path (layer 3 — see
+ * `productTrailers`), and a commit has to actually touch a file under it to
+ * register, the same as it would in this repository.
  */
 describe("staleReleaseNotesFor", () => {
   const roots: string[] = [];
@@ -1343,21 +1346,29 @@ describe("staleReleaseNotesFor", () => {
     execFileSync("git", ["-C", dir, "init", "-q"]);
     execFileSync("git", ["-C", dir, "config", "user.email", "t@example.com"]);
     execFileSync("git", ["-C", dir, "config", "user.name", "T"]);
-    execFileSync("git", ["-C", dir, "commit", "-q", "--allow-empty", "-m", "seed"]);
   };
 
-  const scratch = (): string => {
+  /** `{ root, manualDir }` — a fresh repo with `manuals/m/` inside it, seeded. */
+  const scratch = (): { root: string; manualDir: string } => {
     const root = mkdtempSync(join(tmpdir(), "wizard-stale-notes-"));
     roots.push(root);
     gitInit(root);
-    return root;
+    const manualDir = join(root, "manuals", "m");
+    mkdirSync(manualDir, { recursive: true });
+    writeFileSync(join(manualDir, "seed.yaml"), "id: seed\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return { root, manualDir };
   };
 
   const headSha = (root: string): string =>
     execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 
-  const commit = (root: string, message: string): string => {
-    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", message]);
+  /** Commits by touching a marker file INSIDE `manualDir`, so path-filtered ranges pick it up. */
+  const commit = (root: string, manualDir: string, message: string): string => {
+    writeFileSync(join(manualDir, "marker.txt"), `${message}\n`);
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", message]);
     return headSha(root);
   };
 
@@ -1366,53 +1377,68 @@ describe("staleReleaseNotesFor", () => {
   });
 
   it("is null when this target has never been delivered before", () => {
-    const root = scratch();
-    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
-    expect(staleReleaseNotesFor(root, root, "1.0.0", undefined)).toBeNull();
+    const { root, manualDir } = scratch();
+    commit(root, manualDir, "feat(m): nuevo modulo\n\nProducto: nuevo");
+    expect(staleReleaseNotesFor(manualDir, root, "1.0.0", undefined)).toBeNull();
   });
 
   it("is null when no commit since the anchor declares product news", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const anchor = headSha(root);
-    commit(root, "chore: nada de producto");
-    expect(staleReleaseNotesFor(root, root, "1.1.0", anchor)).toBeNull();
+    commit(root, manualDir, "chore(m): nada de producto");
+    expect(staleReleaseNotesFor(manualDir, root, "1.1.0", anchor)).toBeNull();
   });
 
   it("names the offending commits when product news exists and the notes file is missing", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const anchor = headSha(root);
-    const news = commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
-    const stale = staleReleaseNotesFor(root, root, "1.1.0", anchor);
-    expect(stale?.offending).toEqual([{ commit: news, subject: "feat: nuevo modulo" }]);
+    const news = commit(root, manualDir, "feat(m): nuevo modulo\n\nProducto: nuevo");
+    const stale = staleReleaseNotesFor(manualDir, root, "1.1.0", anchor);
+    expect(stale?.offending).toEqual([{ commit: news, subject: "feat(m): nuevo modulo" }]);
   });
 
   it("is null when the notes were written AFTER the declaring commit", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const anchor = headSha(root);
-    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
-    mkdirSync(join(root, "release-notes"), { recursive: true });
-    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    commit(root, manualDir, "feat(m): nuevo modulo\n\nProducto: nuevo");
+    mkdirSync(join(manualDir, "release-notes"), { recursive: true });
+    writeFileSync(join(manualDir, "release-notes", "v1.1.0.yaml"), "id: notas\n");
     execFileSync("git", ["-C", root, "add", "-A"]);
-    commit(root, "docs: notas de la 1.1.0");
-    expect(staleReleaseNotesFor(root, root, "1.1.0", anchor)).toBeNull();
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "docs(m): notas de la 1.1.0"]);
+    expect(staleReleaseNotesFor(manualDir, root, "1.1.0", anchor)).toBeNull();
   });
 
   it("names the offending commits when the notes file exists but predates them", () => {
-    const root = scratch();
-    mkdirSync(join(root, "release-notes"), { recursive: true });
-    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    const { root, manualDir } = scratch();
+    mkdirSync(join(manualDir, "release-notes"), { recursive: true });
+    writeFileSync(join(manualDir, "release-notes", "v1.1.0.yaml"), "id: notas\n");
     execFileSync("git", ["-C", root, "add", "-A"]);
-    const anchor = commit(root, "docs: notas de la 1.1.0");
-    const news = commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
-    const stale = staleReleaseNotesFor(root, root, "1.1.0", anchor);
-    expect(stale?.offending).toEqual([{ commit: news, subject: "feat: nuevo modulo" }]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "docs(m): notas de la 1.1.0"]);
+    const anchor = headSha(root);
+    const news = commit(root, manualDir, "feat(m): nuevo modulo\n\nProducto: nuevo");
+    const stale = staleReleaseNotesFor(manualDir, root, "1.1.0", anchor);
+    expect(stale?.offending).toEqual([{ commit: news, subject: "feat(m): nuevo modulo" }]);
   });
 
   it("ignores a commit with no Producto: trailer, read as sin-cambio", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const anchor = headSha(root);
-    commit(root, "fix: correccion del manual, no del producto");
-    expect(staleReleaseNotesFor(root, root, "1.1.0", anchor)).toBeNull();
+    commit(root, manualDir, "fix(m): correccion del manual, no del producto");
+    expect(staleReleaseNotesFor(manualDir, root, "1.1.0", anchor)).toBeNull();
+  });
+
+  it("excludes a commit that only touches a DIFFERENT manual, even with Producto: nuevo", () => {
+    const { root, manualDir } = scratch();
+    const otherDir = join(root, "manuals", "otro");
+    mkdirSync(otherDir, { recursive: true });
+    const anchor = headSha(root);
+    writeFileSync(join(otherDir, "marker.txt"), "ajeno\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync(
+      "git",
+      ["-C", root, "commit", "-q", "-m", "feat(otro): algo ajeno\n\nProducto: nuevo"],
+    );
+    expect(staleReleaseNotesFor(manualDir, root, "1.1.0", anchor)).toBeNull();
   });
 });
 

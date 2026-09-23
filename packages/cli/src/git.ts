@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { relative, sep } from "node:path";
 
 /**
  * The little git this pipeline needs, and nothing more.
@@ -105,6 +106,26 @@ export function isExactly(repoRoot: string, commit: string): boolean | null {
   return head.slice(0, n) === commit.slice(0, n) && !dirty;
 }
 
+/**
+ * `manualDir`, as a path relative to the repository root — the form
+ * `productTrailers`'s `path` argument wants, and `git log -- <path>` wants.
+ *
+ * Forward slashes always, even on Windows: git pathspecs are POSIX-shaped
+ * regardless of platform, and `relative()` returns backslashes there.
+ *
+ * THE FIX for the leak layer 3 exists to close: a range read without a path
+ * runs over the WHOLE repository, so a commit that only ever touched
+ * `manuals/bridge-manual/` and happens to declare `Producto: nuevo` would
+ * otherwise surface inside `broadlineavida`'s own release-notes range.
+ *
+ * Lives here, not in `main.ts` or `wizard.ts`, because both call it before
+ * calling `productTrailers` — one shared function beats two call sites
+ * computing the same `relative().split(sep).join("/")` and drifting.
+ */
+export function manualGitPath(repoRoot: string, manualDir: string): string {
+  return relative(repoRoot, manualDir).split(sep).join("/");
+}
+
 /** One commit's declared `Producto:` trailer, over a `since..HEAD` range. */
 export interface ProductTrailer {
   readonly commit: string;
@@ -117,6 +138,16 @@ export interface ProductTrailer {
  * Every commit strictly after `since`, up to `HEAD`, with its `Producto:`
  * trailer — newest first, `git log`'s own order.
  *
+ * `path`, WHEN GIVEN, narrows the range with `git log … -- <path>`: only
+ * commits that touched that path (repo-relative, e.g. `manuals/broadlineavida`)
+ * are considered. This is what keeps one manual's release-notes range from
+ * picking up another manual's `Producto:` commits — `git log <since>..HEAD`
+ * over the whole repository, with no path, is exactly the bug this parameter
+ * exists to fix. Omitted entirely, the range is repository-wide, which is
+ * only ever correct for a caller that has no single manual to narrow to (see
+ * this module's own tests, which use generic scratch repositories with
+ * nothing under `manuals/`).
+ *
  * `null` when git cannot answer: `since` unknown to this repository, git
  * missing, not a repository. See the module doc — a guard reading this must
  * degrade to silence, never invent an answer.
@@ -124,11 +155,13 @@ export interface ProductTrailer {
 export function productTrailers(
   repoRoot: string,
   since: string,
+  path?: string,
 ): readonly ProductTrailer[] | null {
   const out = git(repoRoot, [
     "log",
     "--format=%H%x09%s%x09%(trailers:key=Producto,valueonly)",
     `${since}..HEAD`,
+    ...(path === undefined ? [] : ["--", path]),
   ]);
   if (out === null) return null;
   if (out === "") return [];

@@ -62,6 +62,7 @@ import {
   isAncestorOrSame,
   isDirty,
   lastCommitTouching,
+  manualGitPath,
   productTrailers,
 } from "./git.ts";
 import { readBaselines, stampBaseline } from "./baselines.ts";
@@ -1627,9 +1628,10 @@ export function reportStaleReleaseNotes(
   version: string,
   perTarget: readonly { readonly value: string; readonly anchor: string | undefined }[],
 ): void {
+  const manualPath = manualGitPath(repoRoot, manualDir);
   for (const { value, anchor } of perTarget) {
     if (anchor === undefined) continue;
-    const trailers = productTrailers(repoRoot, anchor);
+    const trailers = productTrailers(repoRoot, anchor, manualPath);
     if (trailers === null) continue; // git could not answer — degrade to silence
     const declaredCommits: DeclaredCommit[] = trailers
       .filter((t) => t.value === "nuevo" || t.value === "cambio" || t.value === "retirado")
@@ -1890,11 +1892,17 @@ async function deliverManual(
   // Nothing in the message is a judgement — manual, target, version, all
   // derived. And of every step in a delivery this is the LEAST irreversible: a
   // commit can be amended or reset, an archived file cannot be un-archived.
+  //
+  // Scope names the manual (the `commit-msg` hook requires it, same as any
+  // other commit touching `manuals/<id>/`) and the trailer is always
+  // `sin-cambio`: a stamp records that a delivery happened, it never changes
+  // what the product does.
   const targetLabel = [...expected.keys()].join(", ");
   const committed = commitFile(
     repoRoot,
     sectionFile as string,
-    `chore(deliver): ${config.manual.id} ${targetLabel} v${version} — sello de entrega`,
+    `chore(${config.manual.id},deliver): ${targetLabel} v${version} — sello de entrega\n\n` +
+      `Producto: sin-cambio`,
   );
   if (!committed) {
     console.error(
@@ -2217,11 +2225,15 @@ async function undeliverManual(
     }
   }
 
+  // Same reasoning as the `deliver` stamp above: scope names the manual, and
+  // the trailer is `sin-cambio` — undoing a delivery that never reached
+  // anyone did not change what the product does either.
   const committed = commitFiles(
     repoRoot,
     [sectionFile, ...extraCommitted],
-    `revert(deliver): ${config.manual.id} ${label} v${version} — entrega deshecha, no salió` +
-      (regenerate ? ", fila borrada para regenerar" : ""),
+    `revert(${config.manual.id},deliver): ${label} v${version} — entrega deshecha, no salió` +
+      (regenerate ? ", fila borrada para regenerar" : "") +
+      `\n\nProducto: sin-cambio`,
   );
   if (!committed) {
     console.error(

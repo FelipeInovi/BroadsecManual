@@ -95,9 +95,11 @@ The wizard tells you which. Do not choose.
 
 ### `summarise-since` — there is a previous delivery
 
-Read `git log <commit>..HEAD`, where the commit is the one the prompt names. It
-is the commit the last delivered file was built from, so that range is exactly
-what the client has not seen.
+Read `git log <commit>..HEAD -- manuals/<manual>`, where the commit is the one
+the prompt names and `<manual>` is this manual's own directory. It is the
+commit the last delivered file was built from, so that range is exactly what
+the client has not seen — and the path keeps another manual's commits, in this
+same repository, out of a summary they have nothing to do with.
 
 Read the **diffs**, not only the subjects. A commit subject describes the work;
 the diff shows whether a reader is affected. A commit titled as a fix to the

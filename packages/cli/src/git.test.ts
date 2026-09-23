@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +12,7 @@ import {
   isDirty,
   isExactly,
   lastCommitTouching,
+  manualGitPath,
   productTrailers,
 } from "./git.ts";
 
@@ -204,6 +205,29 @@ describe("commitFiles", () => {
  * THROWAWAY repository, same reasoning as `commitFile`'s tests: this one
  * writes commits, so it must never run against the repository it is testing.
  */
+/**
+ * `manualDir`, as a path relative to the repository root — the form
+ * `productTrailers`'s own `path` argument wants. Shared by `main.ts` and
+ * `wizard.ts` (layer 3's callers), which previously each computed this
+ * inline — one here, one moved here from `main.ts`.
+ */
+describe("manualGitPath", () => {
+  it("is the manual's directory, relative to the repo root, with forward slashes", () => {
+    expect(
+      manualGitPath(join("C:", "repo"), join("C:", "repo", "manuals", "broadlineavida")),
+    ).toBe("manuals/broadlineavida");
+  });
+
+  it("handles a nested repo root the same way", () => {
+    expect(
+      manualGitPath(
+        join("C:", "a b", "repo"),
+        join("C:", "a b", "repo", "manuals", "bridge-manual"),
+      ),
+    ).toBe("manuals/bridge-manual");
+  });
+});
+
 describe("productTrailers", () => {
   const scratch = (): string => {
     const root = mkdtempSync(join(tmpdir(), "git-trailers-"));
@@ -249,6 +273,82 @@ describe("productTrailers", () => {
 
   it("returns null outside a repository", () => {
     expect(productTrailers("/definitely/not/a/repository/anywhere", "HEAD~1")).toBeNull();
+  });
+});
+
+/**
+ * `path`, narrowing the range to one manual — GUARD 1's fix for the leak
+ * described in the layer-3 problem statement: a commit that touches another
+ * manual's directory and declares `Producto: nuevo` must not appear in THIS
+ * manual's range. Against a THROWAWAY repository, same reasoning as every
+ * other `describe` in this file that writes commits.
+ */
+describe("productTrailers, narrowed by path", () => {
+  const scratch = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "git-trailers-path-"));
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    mkdirSync(join(root, "manuals", "alfa"), { recursive: true });
+    mkdirSync(join(root, "manuals", "beta"), { recursive: true });
+    writeFileSync(join(root, "manuals", "alfa", "seed.yaml"), "seed\n");
+    writeFileSync(join(root, "manuals", "beta", "seed.yaml"), "seed\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return root;
+  };
+
+  const commitTouching = (root: string, relFile: string, message: string): string => {
+    writeFileSync(join(root, relFile), `${message}\n`);
+    execFileSync("git", ["-C", root, "add", "--", relFile]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", message]);
+    return execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  };
+
+  it("excludes another manual's commit, even one that declares Producto", () => {
+    const root = scratch();
+    const since = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim();
+    commitTouching(
+      root,
+      join("manuals", "beta", "seed.yaml"),
+      "feat(beta): algo ajeno\n\nProducto: nuevo",
+    );
+    const own = commitTouching(
+      root,
+      join("manuals", "alfa", "seed.yaml"),
+      "feat(alfa): lo propio\n\nProducto: cambio",
+    );
+    const trailers = productTrailers(root, since, "manuals/alfa");
+    expect(trailers).toEqual([{ commit: own, subject: "feat(alfa): lo propio", value: "cambio" }]);
+  });
+
+  it("is empty, not null, when the path exists but nothing in range touched it", () => {
+    const root = scratch();
+    const since = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim();
+    commitTouching(
+      root,
+      join("manuals", "beta", "seed.yaml"),
+      "feat(beta): algo ajeno\n\nProducto: nuevo",
+    );
+    expect(productTrailers(root, since, "manuals/alfa")).toEqual([]);
+  });
+
+  it("is repository-wide when no path is given, same as before this parameter existed", () => {
+    const root = scratch();
+    const since = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim();
+    commitTouching(
+      root,
+      join("manuals", "beta", "seed.yaml"),
+      "feat(beta): algo ajeno\n\nProducto: nuevo",
+    );
+    const trailers = productTrailers(root, since);
+    expect(trailers).toHaveLength(1);
   });
 });
 

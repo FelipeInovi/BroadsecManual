@@ -779,21 +779,34 @@ describe("reportStaleReleaseNotes", () => {
     execFileSync("git", ["-C", dir, "init", "-q"]);
     execFileSync("git", ["-C", dir, "config", "user.email", "t@example.com"]);
     execFileSync("git", ["-C", dir, "config", "user.name", "T"]);
-    execFileSync("git", ["-C", dir, "commit", "-q", "--allow-empty", "-m", "seed"]);
   };
 
-  const scratch = (): string => {
+  /**
+   * `{ root, manualDir }` — `manualDir` is a REAL `manuals/<id>/`
+   * subdirectory, not `root` itself: `reportStaleReleaseNotes` narrows its
+   * `git log` range to it (layer 3 — see `productTrailers`), so a commit has
+   * to touch a file under it to register.
+   */
+  const scratch = (): { root: string; manualDir: string } => {
     const root = mkdtempSync(join(tmpdir(), "stale-notes-"));
     roots.push(root);
     gitInit(root);
-    return root;
+    const manualDir = join(root, "manuals", "m");
+    mkdirSync(manualDir, { recursive: true });
+    writeFileSync(join(manualDir, "seed.yaml"), "id: seed\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return { root, manualDir };
   };
 
   const headSha = (root: string): string =>
     execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 
-  const commit = (root: string, message: string): string => {
-    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", message]);
+  /** Commits by touching a marker file INSIDE `manualDir`. */
+  const commit = (root: string, manualDir: string, message: string): string => {
+    writeFileSync(join(manualDir, "marker.txt"), `${message}\n`);
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", message]);
     return headSha(root);
   };
 
@@ -802,10 +815,10 @@ describe("reportStaleReleaseNotes", () => {
   });
 
   it("reports nothing for a target with no anchor — a first delivery has nothing to diff against", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
-      reportStaleReleaseNotes(root, root, "1.0.0", [{ value: "mv", anchor: undefined }]);
+      reportStaleReleaseNotes(manualDir, root, "1.0.0", [{ value: "mv", anchor: undefined }]);
       expect(errorSpy).not.toHaveBeenCalled();
     } finally {
       errorSpy.mockRestore();
@@ -813,12 +826,12 @@ describe("reportStaleReleaseNotes", () => {
   });
 
   it("reports nothing when no commit since the anchor declares product news", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const anchor = headSha(root);
-    commit(root, "chore: nada de producto");
+    commit(root, manualDir, "chore(m): nada de producto");
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
-      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      reportStaleReleaseNotes(manualDir, root, "1.1.0", [{ value: "mv", anchor }]);
       expect(errorSpy).not.toHaveBeenCalled();
     } finally {
       errorSpy.mockRestore();
@@ -826,12 +839,12 @@ describe("reportStaleReleaseNotes", () => {
   });
 
   it("reports when product news exists and the notes file for this version does not", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const anchor = headSha(root);
-    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    commit(root, manualDir, "feat(m): nuevo modulo\n\nProducto: nuevo");
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
-      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      reportStaleReleaseNotes(manualDir, root, "1.1.0", [{ value: "mv", anchor }]);
       expect(errorSpy).toHaveBeenCalledTimes(1);
       const message = String(errorSpy.mock.calls[0]?.[0]);
       expect(message).toContain("mv");
@@ -842,16 +855,16 @@ describe("reportStaleReleaseNotes", () => {
   });
 
   it("stays quiet when the notes were written AFTER the declaring commit", () => {
-    const root = scratch();
+    const { root, manualDir } = scratch();
     const anchor = headSha(root);
-    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
-    mkdirSync(join(root, "release-notes"), { recursive: true });
-    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    commit(root, manualDir, "feat(m): nuevo modulo\n\nProducto: nuevo");
+    mkdirSync(join(manualDir, "release-notes"), { recursive: true });
+    writeFileSync(join(manualDir, "release-notes", "v1.1.0.yaml"), "id: notas\n");
     execFileSync("git", ["-C", root, "add", "-A"]);
-    commit(root, "docs: notas de la 1.1.0");
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "docs(m): notas de la 1.1.0"]);
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
-      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      reportStaleReleaseNotes(manualDir, root, "1.1.0", [{ value: "mv", anchor }]);
       expect(errorSpy).not.toHaveBeenCalled();
     } finally {
       errorSpy.mockRestore();
@@ -859,17 +872,37 @@ describe("reportStaleReleaseNotes", () => {
   });
 
   it("reports when the notes file exists but predates the declaring commit", () => {
-    const root = scratch();
-    mkdirSync(join(root, "release-notes"), { recursive: true });
-    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    const { root, manualDir } = scratch();
+    mkdirSync(join(manualDir, "release-notes"), { recursive: true });
+    writeFileSync(join(manualDir, "release-notes", "v1.1.0.yaml"), "id: notas\n");
     execFileSync("git", ["-C", root, "add", "-A"]);
-    commit(root, "docs: notas viejas");
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "docs(m): notas viejas"]);
     const anchor = headSha(root);
-    commit(root, "feat: cambia el flujo\n\nProducto: cambio");
+    commit(root, manualDir, "feat(m): cambia el flujo\n\nProducto: cambio");
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
-      reportStaleReleaseNotes(root, root, "1.1.0", [{ value: "mv", anchor }]);
+      reportStaleReleaseNotes(manualDir, root, "1.1.0", [{ value: "mv", anchor }]);
       expect(errorSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("excludes a commit that only touches a DIFFERENT manual, even with Producto: nuevo", () => {
+    const { root, manualDir } = scratch();
+    const otherDir = join(root, "manuals", "otro");
+    mkdirSync(otherDir, { recursive: true });
+    const anchor = headSha(root);
+    writeFileSync(join(otherDir, "marker.txt"), "ajeno\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync(
+      "git",
+      ["-C", root, "commit", "-q", "-m", "feat(otro): algo ajeno\n\nProducto: nuevo"],
+    );
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      reportStaleReleaseNotes(manualDir, root, "1.1.0", [{ value: "mv", anchor }]);
+      expect(errorSpy).not.toHaveBeenCalled();
     } finally {
       errorSpy.mockRestore();
     }

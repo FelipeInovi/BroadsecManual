@@ -104,33 +104,10 @@ skills/             Agent Skills (agentskills.io spec) — portable, vendor-neut
   documentation are in **English**. Manual *content* is in **Spanish**
   (neutral/formal register — see `manuals/AGENTS.md`).
 - **Source repos are read-only.** Never write to a path under `sources/`.
-- **Commits**: conventional commits. No AI attribution or co-author trailers.
-- **Every commit that touches a manual declares what it means for the OPERATOR**,
-  in a `Producto:` trailer — `nuevo`, `cambio`, `retirado` or `sin-cambio`:
-
-  ```
-  feat(broadlineavida): the emergency release on the agent's profile
-
-  Producto: nuevo
-  ```
-
-  (`nuevo` here because this commit added a capability — `cambio`, `retirado` or
-  `sin-cambio` read the same way for the other three values. `release-notes`
-  has the full gloss.)
-
-  A manual's diff mixes several things that look identical in it: we fixed the
-  manual, we finally wrote down something the product always had, the product
-  gained a capability the operator did not have, or the product LOST one the
-  operator used to have. Only the gain and the loss are news to a client, and
-  **no diff can tell them apart from a correction** — only the person making the
-  change knows, at the moment they make it. That is why this is the author's
-  statement and why nothing may infer it later.
-
-  A release delivers those notes off these trailers alone: **an absent trailer
-  counts as `sin-cambio`**, so a forgotten one silently costs the client a
-  novelty. `release-notes` owns the classification and the wording; this line
-  exists because that skill is read at delivery time, and by then the commit is
-  already written.
+- **Commits**: conventional, following the `commit-messages` skill — scope,
+  the `Producto:` trailer, attribution, all of it lives there, enforced by the
+  `commit-msg` hook. This is the author's statement, made once, at commit
+  time; nothing downstream may infer it later.
 
 ## Commands
 
