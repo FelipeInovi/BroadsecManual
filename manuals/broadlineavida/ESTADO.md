@@ -239,6 +239,9 @@ state.
   > - Fuerzas en Campo — el perfil del agente, la liberación de emergencia y la
   >   pestaña Asignar del turno son capacidades que el operador de mv NO tenía
   >   antes. Producto: nuevo.
+  >   (Registered on 2026-09-23 as its own commit, `feat(broadlineavida): Fuerzas
+  >   en Campo gains the agent profile, emergency release and Asignar tab`, which
+  >   carries the trailer. That commit, not this quote, is what the pipeline reads.)
   > - canViewFilterTrafficDetails y los seis filtros del Security Dashboard que
   >   habilita son una capacidad AGREGADA al producto, tal como reportó el diff
   >   del extractor en b61438d. Producto: nuevo.
