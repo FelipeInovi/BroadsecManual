@@ -311,3 +311,58 @@ export function unstampFile(
   writeFileSync(sectionFile, undone.yaml, "utf8");
   return undone.files;
 }
+
+/**
+ * The full bounds of ONE row — from its `- id:` marker to the line before the
+ * next row (or the end of the array) — found off the same `version:` line
+ * `locateRow` anchors on, so the two never disagree about which row "this
+ * one" is.
+ */
+function locateRowBounds(
+  lines: readonly string[],
+  version: string,
+): { readonly start: number; readonly end: number } | null {
+  const found = locateRow(lines, version);
+  if (found === null) return null;
+  const dashIndent = found.indent - 2;
+  let start = found.at;
+  while (start > 0) {
+    const line = lines[start] ?? "";
+    if (indentOf(line) === dashIndent && /^\s*-\s/.test(line)) break;
+    start -= 1;
+  }
+  return { start, end: blockEnd(lines, start, dashIndent) };
+}
+
+/**
+ * Remove a row ENTIRELY — `id`, `version`, `date`, `description`, everything
+ * — rather than just its `delivered:` proof.
+ *
+ * ONLY MEANT FOR A ROW `unstampProof` HAS ALREADY EMPTIED, and only when no
+ * OTHER target still holds proof on it: removing a row another delivery is
+ * still proven against would erase the one record that delivery is
+ * verifiable by. Checking that is the caller's job — see
+ * `otherTargetsHoldingRow` in `delivery-state.ts` — this function does the
+ * removal, never the judgement.
+ *
+ * TEXT SURGERY, for the same reason `stampProof`/`unstampProof` are: a YAML
+ * round-trip would reformat every section it touches and lose the comments
+ * that carry this repository's reasoning.
+ *
+ * Returns null when no row declares that version — the caller's signal that
+ * there is nothing here to remove.
+ */
+export function removeRow(yaml: string, version: string): string | null {
+  const lines = yaml.split("\n");
+  const bounds = locateRowBounds(lines, version);
+  if (bounds === null) return null;
+  return [...lines.slice(0, bounds.start), ...lines.slice(bounds.end)].join("\n");
+}
+
+/** Remove the row on disk. False when there was nothing to remove. */
+export function removeRowFile(sectionFile: string, version: string): boolean {
+  const removed = removeRow(readFileSync(sectionFile, "utf8"), version);
+  if (removed === null) return false;
+  writeFileSync(sectionFile, removed, "utf8");
+  return true;
+}

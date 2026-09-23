@@ -1,6 +1,6 @@
 ---
 name: delivery-summary
-description: Writes a new row of a manual's Historial de cambios and then runs the delivery it belongs to — the sentence a client reads to learn what a version changed, committed BEFORE the official document renders, because the cover prints the highest row. Two modes, chosen for you by the wizard that invokes it: a FIRST delivery describes what the manual covers, since there is nothing to diff against; a LATER one reads `git log <previous-delivery-commit>..HEAD` and reports only what changed for the READER. Use when promoting a manual to an official delivery, when a change-log row is missing its description, or when asked to summarise what a version changed for a client. Not needed when the row already exists: `deliver` stamps it with no agent involved.
+description: Writes a new row of a manual's Historial de cambios and then runs the delivery it belongs to — the sentence a client reads to learn what a version changed, committed BEFORE the official document renders, because the cover prints the highest row. Two modes, chosen for you by the wizard that invokes it: a FIRST delivery describes what the manual covers, since there is nothing to diff against; a LATER one reads `git log <previous-delivery-commit>..HEAD` and reports only what changed for the READER. Use when promoting a manual to an official delivery, when a change-log row is missing its description, when asked to summarise what a version changed for a client, or when the wizard finds an existing row stale against undelivered `Producto:` commits and asks you to REWRITE it for the full range. Not needed when the row already exists and is still current: `deliver` stamps it with no agent involved.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
@@ -43,8 +43,12 @@ and that document. Do not ask again. If any step refuses, STOP and report what i
 said — a half-finished delivery is worse than none, because archived files are
 never overwritten.
 
-Nothing above applies when the row already exists: then `deliver` stamps it and
-no agent is involved at all.
+Nothing above applies when the row already exists AND STILL DESCRIBES the
+current range: then `deliver` stamps it and no agent is involved at all. When
+the wizard finds it stale instead — commits since the last delivery declare
+`Producto:` news the row does not reflect — it hands this same skill a
+REWRITE: same row, same fields, but redone for the FULL range, never appended
+to.
 
 ## The only question that matters
 

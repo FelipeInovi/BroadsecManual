@@ -6,6 +6,7 @@ import {
   deliveredRows,
   filesBlockingUndeliver,
   newestVersion,
+  otherTargetsHoldingRow,
   proofFor,
   rowsForTarget,
   staleReleaseNotesReport,
@@ -291,6 +292,46 @@ describe("deliveredFor", () => {
 
   it("ignores rows written but never handed over", () => {
     expect(deliveredFor([{ version: "1.0.0" }], "mv")).toEqual([]);
+  });
+});
+
+describe("otherTargetsHoldingRow", () => {
+  const SHA = "a".repeat(64);
+  const stamped = (delivered: Record<string, unknown>) => ({ version: "1.0.0", delivered });
+
+  it("is empty when no other target holds this row", () => {
+    const row = stamped({ mv: { commit: "9348ddb", files: { "m.pdf": SHA } } });
+    expect(otherTargetsHoldingRow(row, ["mv"])).toEqual([]);
+  });
+
+  /** The whole point: a target this run is not undoing keeps its proof. */
+  it("names a target that still holds proof, besides the ones excluded", () => {
+    const row = stamped({
+      mv: { commit: "9348ddb", files: { "mv.pdf": SHA } },
+      med: { commit: "274e66f", files: { "med.pdf": SHA } },
+    });
+    expect(otherTargetsHoldingRow(row, ["mv"])).toEqual(["med"]);
+  });
+
+  it("excludes every axis value named, not just one", () => {
+    const row = stamped({
+      mv: { commit: "9348ddb", files: { "mv.pdf": SHA } },
+      med: { commit: "274e66f", files: { "med.pdf": SHA } },
+    });
+    expect(otherTargetsHoldingRow(row, ["mv", "med"])).toEqual([]);
+  });
+
+  /** "Handed over, nothing handed" is not a hold — same rule as `proofFor`. */
+  it("does not count an empty entry as still holding it", () => {
+    const row = stamped({
+      mv: { commit: "9348ddb", files: { "mv.pdf": SHA } },
+      med: { commit: "274e66f", files: {} },
+    });
+    expect(otherTargetsHoldingRow(row, ["mv"])).toEqual([]);
+  });
+
+  it("is empty for a row with no proof at all", () => {
+    expect(otherTargetsHoldingRow({ version: "1.0.0" }, ["mv"])).toEqual([]);
   });
 });
 

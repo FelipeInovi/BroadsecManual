@@ -1000,6 +1000,219 @@ describe("deliver — cross-target version guard", () => {
 });
 
 /**
+ * GUARD 4 — `undeliver --regenerate` also erases the change-log row and its
+ * release notes, but ONLY when no other target still holds a delivery stamp
+ * on that exact row. Refuses BEFORE touching anything otherwise — same
+ * "verify first, act after" discipline as GUARD 2 and GUARD 3, so a bad
+ * `--regenerate` request never leaves the row half gone.
+ */
+describe("undeliver --regenerate", () => {
+  const roots: string[] = [];
+
+  const CONFIG = [
+    "manual:",
+    "  id: un-manual",
+    "  title: Un Manual",
+    "  product: Producto",
+    "  contentVersion: 0.1.0",
+    "axes:",
+    "  tenant:",
+    "    values:",
+    "      - id: mv",
+    "        name: MV",
+    "      - id: med",
+    "        name: MED",
+    "targets:",
+    "  - tenant: mv",
+    "  - tenant: med",
+    "output:",
+    "  dir: output",
+    "  filename: x.pdf",
+    "",
+  ].join("\n");
+
+  const INTRO = [
+    "id: s",
+    "title: S",
+    "children:",
+    "  - id: s.p1",
+    "    type: prose",
+    "    props:",
+    "      text: Texto.",
+    "",
+  ].join("\n");
+
+  const COMMIT_SHA = "c".repeat(40);
+  const SHA = "a".repeat(64);
+  const IND = (levels: number): string => "  ".repeat(levels);
+
+  /** One row, version 1.0.0, delivered to every axis value named. */
+  const changeLog = (deliveredTo: readonly string[]): string =>
+    [
+      "id: cambios",
+      "title: Historial de cambios",
+      "children:",
+      "  - id: cambios.tabla",
+      "    type: change-log",
+      "    props:",
+      "      versionHeader: Versión",
+      "      dateHeader: Fecha",
+      "      descriptionHeader: Descripción",
+      "      rows:",
+      "        - id: cambios.tabla.1",
+      "          version: 1.0.0",
+      "          date: 2026-01-01",
+      "          description: Primera entrega.",
+      `${IND(5)}delivered:`,
+      ...deliveredTo.flatMap((value) => [
+        `${IND(6)}${value}:`,
+        `${IND(7)}commit: ${COMMIT_SHA}`,
+        `${IND(7)}files:`,
+        `${IND(8)}un-manual-${value}-v1.0.0.pdf: ${SHA}`,
+      ]),
+      "",
+    ].join("\n");
+
+  const repoRoot = (deliveredTo: readonly string[]): string => {
+    const root = mkdtempSync(join(tmpdir(), "undeliver-regen-"));
+    roots.push(root);
+    mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    mkdirSync(join(root, "manuals", "un-manual", "release-notes"), { recursive: true });
+    writeFileSync(join(root, "manuals", "un-manual", "manual.config.yaml"), CONFIG);
+    writeFileSync(join(root, "manuals", "un-manual", "sections", "01-intro.yaml"), INTRO);
+    writeFileSync(
+      join(root, "manuals", "un-manual", "sections", "99-cambios.yaml"),
+      changeLog(deliveredTo),
+    );
+    writeFileSync(
+      join(root, "manuals", "un-manual", "release-notes", "v1.0.0.yaml"),
+      ["id: notas", "title: Actualización", "lede: Algo.", "children: []", ""].join("\n"),
+    );
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return root;
+  };
+
+  const runIn = async (root: string, argv: readonly string[]): Promise<number> => {
+    const cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return await run(argv);
+    } finally {
+      process.chdir(cwd);
+    }
+  };
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it("refuses before touching anything when another target still holds the row", async () => {
+    const root = repoRoot(["mv", "med"]);
+    const sectionFile = join(root, "manuals", "un-manual", "sections", "99-cambios.yaml");
+    const notesFile = join(root, "manuals", "un-manual", "release-notes", "v1.0.0.yaml");
+    const yamlBefore = readFileSync(sectionFile, "utf8");
+
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, [
+        "undeliver",
+        "un-manual",
+        "--tenant",
+        "mv",
+        "--version",
+        "1.0.0",
+        "--not-handed-over",
+        "--regenerate",
+      ]);
+      expect(code).toBe(1);
+
+      const messages = errorSpy.mock.calls.map((c) => String(c[0]));
+      expect(messages.some((m) => m.includes("med") && m.includes("--regenerate"))).toBe(true);
+
+      // Nothing touched: not the row, not the notes, no commit.
+      expect(readFileSync(sectionFile, "utf8")).toBe(yamlBefore);
+      expect(existsSync(notesFile)).toBe(true);
+      const logs = logSpy.mock.calls.map((c) => String(c[0]));
+      expect(logs.some((l) => l.includes("commiteado"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+      logSpy.mockRestore();
+    }
+  });
+
+  it("removes the row and its release notes when no other target holds it", async () => {
+    const root = repoRoot(["mv"]);
+    const sectionFile = join(root, "manuals", "un-manual", "sections", "99-cambios.yaml");
+    const notesFile = join(root, "manuals", "un-manual", "release-notes", "v1.0.0.yaml");
+
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, [
+        "undeliver",
+        "un-manual",
+        "--tenant",
+        "mv",
+        "--version",
+        "1.0.0",
+        "--not-handed-over",
+        "--regenerate",
+      ]);
+      expect(code).toBe(0);
+
+      const after = readFileSync(sectionFile, "utf8");
+      expect(after).not.toContain("version: 1.0.0");
+      expect(after).not.toContain("delivered:");
+      expect(existsSync(notesFile)).toBe(false);
+
+      // Both the row's edit and the notes' deletion landed in ONE commit.
+      const shown = execFileSync("git", ["-C", root, "show", "--name-status", "--format=", "HEAD"], {
+        encoding: "utf8",
+      });
+      expect(shown).toContain("99-cambios.yaml");
+      expect(shown).toContain("v1.0.0.yaml");
+    } finally {
+      errorSpy.mockRestore();
+      logSpy.mockRestore();
+    }
+  });
+
+  it("without --regenerate, the row and its notes survive as before", async () => {
+    const root = repoRoot(["mv"]);
+    const sectionFile = join(root, "manuals", "un-manual", "sections", "99-cambios.yaml");
+    const notesFile = join(root, "manuals", "un-manual", "release-notes", "v1.0.0.yaml");
+
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, [
+        "undeliver",
+        "un-manual",
+        "--tenant",
+        "mv",
+        "--version",
+        "1.0.0",
+        "--not-handed-over",
+      ]);
+      expect(code).toBe(0);
+
+      const after = readFileSync(sectionFile, "utf8");
+      expect(after).toContain("version: 1.0.0");
+      expect(after).not.toContain("delivered:");
+      expect(existsSync(notesFile)).toBe(true);
+    } finally {
+      errorSpy.mockRestore();
+      logSpy.mockRestore();
+    }
+  });
+});
+
+/**
  * GUARD 3 — `undeliverManual` refuses BEFORE touching anything (not the row,
  * not a single file) when an archived file it would delete cannot actually be
  * deleted. THE EXACT FAILURE REPRODUCED TODAY: `undeliver` was run against

@@ -57,6 +57,7 @@ import { joinCoverage, type EntryMatch, type ModuleInput } from "./coverage.ts";
 import { soleAxis } from "./axis.ts";
 import {
   commitFile,
+  commitFiles,
   headCommit,
   isAncestorOrSame,
   isDirty,
@@ -65,11 +66,19 @@ import {
 } from "./git.ts";
 import { readBaselines, stampBaseline } from "./baselines.ts";
 import { hiddenSlotSet, hideSlot, readHidden, showSlot } from "./hidden.ts";
-import { archive, planDelivery, stampFile, unstampFile, unstampProof } from "./deliver.ts";
+import {
+  archive,
+  planDelivery,
+  removeRowFile,
+  stampFile,
+  unstampFile,
+  unstampProof,
+} from "./deliver.ts";
 import {
   changeLogSectionFile,
   deliveredRows,
   filesBlockingUndeliver,
+  otherTargetsHoldingRow,
   proofFor,
   readChangeLogRows,
   rowsForTarget,
@@ -2025,6 +2034,36 @@ async function undeliverManual(
     }
   }
 
+  // GUARD 4 — `--regenerate` asks to also erase the row and its release
+  // notes, so the next delivery of this version takes the missing-row path
+  // and an agent writes it fresh rather than a stale description getting
+  // silently re-stamped. Refuse BEFORE touching anything when a target this
+  // run is NOT undoing still holds a delivery stamp on this exact row: that
+  // document is real, its proof points at this row and these notes, and
+  // erasing either would leave it unverifiable. See `otherTargetsHoldingRow`.
+  const regenerate = args.includes("--regenerate");
+  let notesPath: string | null = null;
+  if (regenerate) {
+    const row = readChangeLogRows(manualDir).find((r) => r.version === version);
+    const undoneValues = targets.map((target) => requireAxisValue(target, axis));
+    const heldElsewhere = row === undefined ? [] : otherTargetsHoldingRow(row, undoneValues);
+    if (heldElsewhere.length > 0) {
+      console.error(
+        [
+          ``,
+          `--regenerate pedía borrar la fila ${version} y sus notas de versión, pero`,
+          `  ${heldElsewhere.join(", ")} todavía tiene entregada esa misma fila. Nada se`,
+          `  tocó — ni la fila, ni un archivo.`,
+          `  Esa fila y esas notas son la prueba de lo que ${heldElsewhere.join(", ")} recibió;`,
+          `  borrarlas dejaría a ese documento sin nada que lo verifique. Deshaga`,
+          `  primero su entrega, o entregue este cambio como una versión nueva.`,
+        ].join("\n"),
+      );
+      return 1;
+    }
+    notesPath = releaseNotesFile(manualDir, version);
+  }
+
   // GUARD 3 — pre-flight, split from BOTH the check above and the deletion
   // below ON PURPOSE: confirm every archived file this run would delete can
   // actually be deleted, BEFORE `unstampFile` rewrites a single byte of the
@@ -2112,10 +2151,39 @@ async function undeliverManual(
   const label = undone.map((u) => u.value).join(", ");
   console.log(`  quitada la prueba de ${label} en la fila ${version}`);
 
-  const committed = commitFile(
+  // --- `--regenerate`: the row and its notes, now that nothing still needs
+  // them (GUARD 4 already confirmed it, before a byte changed) -------------
+  //
+  // Manual-wide, split from the per-target loop above on purpose: the row and
+  // its notes are not any one target's to keep or erase, and every target
+  // this run touches has already had its own proof taken off by now.
+  const extraCommitted: string[] = [];
+  if (regenerate) {
+    const removedRow = removeRowFile(sectionFile, version);
+    if (!removedRow) {
+      console.error(
+        [
+          ``,
+          `la fila ${version} desapareció de ${basename(sectionFile)} justo ahora — el resto`,
+          `  de la entrega ya se deshizo, pero la fila no se pudo borrar. Revísela a`,
+          `  mano antes de commitear.`,
+        ].join("\n"),
+      );
+      return 1;
+    }
+    console.log(`  borrada la fila ${version} de ${basename(sectionFile)}, para regenerar`);
+    if (notesPath !== null && existsSync(notesPath)) {
+      unlinkSync(notesPath);
+      extraCommitted.push(notesPath);
+      console.log(`  borradas las notas de versión -> ${basename(notesPath)}`);
+    }
+  }
+
+  const committed = commitFiles(
     repoRoot,
-    sectionFile,
-    `revert(deliver): ${config.manual.id} ${label} v${version} — entrega deshecha, no salió`,
+    [sectionFile, ...extraCommitted],
+    `revert(deliver): ${config.manual.id} ${label} v${version} — entrega deshecha, no salió` +
+      (regenerate ? ", fila borrada para regenerar" : ""),
   );
   if (!committed) {
     console.error(
@@ -2424,7 +2492,7 @@ export async function run(argv: readonly string[]): Promise<number> {
     console.error(
       `usage: broadsec-manual build <manual> ${axisFlags} [--draft] [--pending-table] [--docx]\n` +
         `       broadsec-manual deliver <manual> ${axisFlags} [--version <x.y.z>]\n` +
-        `       broadsec-manual undeliver <manual> ${axisFlags} --version <x.y.z> --not-handed-over\n` +
+        `       broadsec-manual undeliver <manual> ${axisFlags} --version <x.y.z> --not-handed-over [--regenerate]\n` +
         `       broadsec-manual images <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual awaiting <manual> ${axisFlags} [--out <path>]\n` +
         `       broadsec-manual release-notes <manual> ${axisFlags} --version <x.y.z>\n` +
@@ -2445,6 +2513,12 @@ export async function run(argv: readonly string[]): Promise<number> {
         `           already archived. Drafts are excluded by construction.\n` +
         `  --draft  internal build: prints the filename every pending image must\n` +
         `           be delivered under. Never distribute a draft to a client.\n` +
+        `  --regenerate\n` +
+        `           on undeliver: also erase the change-log row and its release\n` +
+        `           notes, so the next delivery of this version takes the\n` +
+        `           missing-row path and an agent rewrites it, instead of a stale\n` +
+        `           description getting silently re-stamped. Refuses instead when\n` +
+        `           another target still holds a delivery stamp on that row.\n` +
         `  --pending-table\n` +
         `           also write imagenes-pendientes-<tenant>.md: every pending image\n` +
         `           in reading order with the page it landed on, and a blank column\n` +

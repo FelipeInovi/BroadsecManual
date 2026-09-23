@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { archive, hashFile, planDelivery, stampProof, unstampProof } from "./deliver.ts";
+import { archive, hashFile, planDelivery, removeRow, stampProof, unstampProof } from "./deliver.ts";
 
 const tmp = (): string => mkdtempSync(join(tmpdir(), "deliver-"));
 const file = (dir: string, name: string, body: string): string => {
@@ -397,5 +397,99 @@ describe("unstampProof", () => {
     });
     expect(stamped).not.toBeNull();
     expect(unstampProof(stamped as string, "1.0.0", "mv")?.yaml).toBe(bare);
+  });
+});
+
+/**
+ * `undeliver --regenerate`'s other half: once `unstampProof` has taken every
+ * target's proof off a row, and nothing else still needs it, the row itself
+ * goes too — so the next delivery of that version takes the missing-row path
+ * and an agent writes it fresh instead of a stale description getting
+ * silently re-stamped.
+ */
+describe("removeRow", () => {
+  const SECTION = [
+    `# Un comentario que precede a la tabla, y debe sobrevivir.`,
+    `id: cambios`,
+    `title: Historial de cambios`,
+    `children:`,
+    `  - id: cambios.tabla`,
+    `    type: change-log`,
+    `    props:`,
+    `      rows:`,
+    `        # Comentario de la primera fila.`,
+    `        - id: cambios.tabla.1-0-0`,
+    `          version: 1.0.0`,
+    `          date: 2026-08-26`,
+    `          description: Primera entrega.`,
+    `        - id: cambios.tabla.1-1-0`,
+    `          version: 1.1.0`,
+    `          date: 2026-09-01`,
+    `          description: >-`,
+    `            Segunda entrega.`,
+    `        - id: cambios.tabla.1-2-0`,
+    `          version: 1.2.0`,
+    `          date: 2026-09-14`,
+    `          description: Tercera entrega.`,
+    ``,
+  ].join("\n");
+
+  it("removes id, version, date and description — not just the proof", () => {
+    const out = removeRow(SECTION, "1.1.0") as string;
+    expect(out).not.toContain("cambios.tabla.1-1-0");
+    expect(out).not.toContain("1.1.0");
+    expect(out).not.toContain("2026-09-01");
+    expect(out).not.toContain("Segunda entrega.");
+  });
+
+  it("leaves the rows before and after it exactly as they were", () => {
+    const out = removeRow(SECTION, "1.1.0") as string;
+    expect(out).toContain("version: 1.0.0");
+    expect(out).toContain("Primera entrega.");
+    expect(out).toContain("version: 1.2.0");
+    expect(out).toContain("Tercera entrega.");
+  });
+
+  it("removes the first row without touching the ones after it", () => {
+    const out = removeRow(SECTION, "1.0.0") as string;
+    expect(out).not.toContain("1.0.0");
+    expect(out).not.toContain("Primera entrega.");
+    expect(out).toContain("version: 1.1.0");
+    expect(out).toContain("version: 1.2.0");
+  });
+
+  it("removes the last row without touching the ones before it", () => {
+    const out = removeRow(SECTION, "1.2.0") as string;
+    expect(out).not.toContain("1.2.0");
+    expect(out).not.toContain("Tercera entrega.");
+    expect(out).toContain("version: 1.0.0");
+    expect(out).toContain("version: 1.1.0");
+  });
+
+  it("leaves everything else in the file untouched, comments included", () => {
+    const out = removeRow(SECTION, "1.1.0") as string;
+    expect(out).toContain("# Un comentario que precede a la tabla, y debe sobrevivir.");
+    expect(out).toContain("# Comentario de la primera fila.");
+    expect(out).toContain("type: change-log");
+  });
+
+  it("also takes the delivered block with it, when the row still had one", () => {
+    const withProof = stampProof(SECTION, "1.1.0", {
+      commit: "9348ddb",
+      files: [{ axisValue: "mv", path: "out/m-mv-v1.1.0.pdf", sha: "a".repeat(64) }],
+    }) as string;
+    expect(withProof).toContain("delivered:");
+    const out = removeRow(withProof, "1.1.0") as string;
+    expect(out).not.toContain("delivered:");
+    expect(out).not.toContain("9348ddb");
+  });
+
+  it("returns null when no row declares that version", () => {
+    expect(removeRow(SECTION, "9.9.9")).toBeNull();
+  });
+
+  it("does not confuse 1.0.0 with 1.0.01 or 11.0.0", () => {
+    const odd = SECTION.replace("version: 1.0.0", "version: 11.0.0");
+    expect(removeRow(odd, "1.0.0")).toBeNull();
   });
 });

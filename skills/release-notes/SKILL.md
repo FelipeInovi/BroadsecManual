@@ -1,6 +1,6 @@
 ---
 name: release-notes
-description: Writes the release notes a client receives beside an updated manual — a short document of its own, in Word, that reports what changed in the PRODUCT rather than in the manual — a capability the operator gained, one that behaves differently, or one that was RETIRED. Classifies each commit of the range by its `Producto:` trailer (`nuevo`, `cambio`, `retirado`, `sin-cambio`) and never by inference, because a manual's diff mixes a correction, a capability finally written down, and a real product change, and only the last is news to the operator. Use when promoting a manual to a LATER official delivery and at least one commit in the range declares a product change. Not needed for a first delivery, for a row that already exists, or when no commit declares one — then no document is emitted at all.
+description: Writes the release notes a client receives beside an updated manual — a short document of its own, in Word, that reports what changed in the PRODUCT rather than in the manual — a capability the operator gained, one that behaves differently, or one that was RETIRED. Classifies each commit of the range by its `Producto:` trailer (`nuevo`, `cambio`, `retirado`, `sin-cambio`) and never by inference, because a manual's diff mixes a correction, a capability finally written down, and a real product change, and only the last is news to the operator. Use when promoting a manual to a LATER official delivery and at least one commit in the range declares a product change, or when the wizard finds existing notes stale against undelivered `Producto:` commits and asks you to REWRITE them for the full range. Not needed for a first delivery, for a row that already exists and whose notes are still current, or when no commit declares one — then no document is emitted at all.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
@@ -67,11 +67,15 @@ Read the **diffs** of the commits that do declare a change: the trailer says
 
 ## When you write nothing
 
-**Nothing here applies when the change-log row already exists.** Then `deliver`
-stamps it and no agent is involved at all — not `delivery-summary`, and not you.
-A version whose row was written earlier is the SIMPLEST delivery in this
-repository, not a special case: every manual sits in exactly that state today.
-If you were invoked anyway, say so and stop.
+**Nothing here applies when the change-log row already exists and its notes
+are still current.** Then `deliver` stamps it and no agent is involved at all
+— not `delivery-summary`, and not you. A version whose row was written
+earlier is the SIMPLEST delivery in this repository, not a special case: most
+manuals sit in exactly that state most of the time. When the wizard finds the
+notes stale instead — commits since the last delivery declare `Producto:`
+news they do not reflect — it hands you a REWRITE: same file, full range,
+never just what is new. If you were invoked with neither signal, say so and
+stop.
 
 Beyond that, stop and report rather than filling the document:
 

@@ -1,7 +1,8 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   assembleContinuationPrompt,
   assemblePrompt,
@@ -18,10 +19,12 @@ import {
   type ManualState,
   type WizardAnswers,
   assembleDeliveryPrompt,
+  assembleStaleNotesPrompt,
   assembleUpdatePrompt,
   readDeliverableDocs,
   readBuildableManuals,
   readModuleStates,
+  staleReleaseNotesFor,
   BUILD_KINDS,
   type UpdateScope,
 } from "./wizard.ts";
@@ -1320,5 +1323,119 @@ describe("readModuleStates", () => {
     const root = repo();
     withSection(root, "m", "07-a.yaml", "id: a\ntype: prose\nbogusProp: true\n");
     expect(() => readModuleStates(root, "m")).not.toThrow();
+  });
+});
+
+/**
+ * The question `deliveryFlow` asks BEFORE Paso 3 when the row it is about to
+ * stamp already exists — the same signal `deliverManual`'s GUARD 1 reports
+ * mid-delivery (`reportStaleReleaseNotes`, `main.test.ts`), read here early
+ * enough to still offer the agent path instead of a plain stamp.
+ *
+ * Against a THROWAWAY repository, never this one — same reasoning as
+ * `git.test.ts`'s own git-writing tests: `manualDir` and `repoRoot` are the
+ * same directory here, exactly like `reportStaleReleaseNotes`'s tests.
+ */
+describe("staleReleaseNotesFor", () => {
+  const roots: string[] = [];
+
+  const gitInit = (dir: string): void => {
+    execFileSync("git", ["-C", dir, "init", "-q"]);
+    execFileSync("git", ["-C", dir, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", dir, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", dir, "commit", "-q", "--allow-empty", "-m", "seed"]);
+  };
+
+  const scratch = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "wizard-stale-notes-"));
+    roots.push(root);
+    gitInit(root);
+    return root;
+  };
+
+  const headSha = (root: string): string =>
+    execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+
+  const commit = (root: string, message: string): string => {
+    execFileSync("git", ["-C", root, "commit", "-q", "--allow-empty", "-m", message]);
+    return headSha(root);
+  };
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it("is null when this target has never been delivered before", () => {
+    const root = scratch();
+    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    expect(staleReleaseNotesFor(root, root, "1.0.0", undefined)).toBeNull();
+  });
+
+  it("is null when no commit since the anchor declares product news", () => {
+    const root = scratch();
+    const anchor = headSha(root);
+    commit(root, "chore: nada de producto");
+    expect(staleReleaseNotesFor(root, root, "1.1.0", anchor)).toBeNull();
+  });
+
+  it("names the offending commits when product news exists and the notes file is missing", () => {
+    const root = scratch();
+    const anchor = headSha(root);
+    const news = commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    const stale = staleReleaseNotesFor(root, root, "1.1.0", anchor);
+    expect(stale?.offending).toEqual([{ commit: news, subject: "feat: nuevo modulo" }]);
+  });
+
+  it("is null when the notes were written AFTER the declaring commit", () => {
+    const root = scratch();
+    const anchor = headSha(root);
+    commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    mkdirSync(join(root, "release-notes"), { recursive: true });
+    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    commit(root, "docs: notas de la 1.1.0");
+    expect(staleReleaseNotesFor(root, root, "1.1.0", anchor)).toBeNull();
+  });
+
+  it("names the offending commits when the notes file exists but predates them", () => {
+    const root = scratch();
+    mkdirSync(join(root, "release-notes"), { recursive: true });
+    writeFileSync(join(root, "release-notes", "v1.1.0.yaml"), "id: notas\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    const anchor = commit(root, "docs: notas de la 1.1.0");
+    const news = commit(root, "feat: nuevo modulo\n\nProducto: nuevo");
+    const stale = staleReleaseNotesFor(root, root, "1.1.0", anchor);
+    expect(stale?.offending).toEqual([{ commit: news, subject: "feat: nuevo modulo" }]);
+  });
+
+  it("ignores a commit with no Producto: trailer, read as sin-cambio", () => {
+    const root = scratch();
+    const anchor = headSha(root);
+    commit(root, "fix: correccion del manual, no del producto");
+    expect(staleReleaseNotesFor(root, root, "1.1.0", anchor)).toBeNull();
+  });
+});
+
+describe("assembleStaleNotesPrompt", () => {
+  const target = { axis: "tenant", value: "mv" };
+  const offending = [{ commit: "abc1234567", subject: "feat: nuevo modulo" }];
+
+  it("says the row and notes already exist and must be rewritten, not appended", () => {
+    const p = assembleStaleNotesPrompt("m", "1.1.0", "8a0ab58", target, offending);
+    expect(p).toContain("YA EXISTE");
+    expect(p).toContain("REESCRIBÍ");
+    expect(p).toContain("git log 8a0ab58..HEAD");
+  });
+
+  it("names the offending commits, like the CLI's own warning does", () => {
+    const p = assembleStaleNotesPrompt("m", "1.1.0", "8a0ab58", target, offending);
+    expect(p).toContain("abc1234");
+    expect(p).toContain("feat: nuevo modulo");
+  });
+
+  it("still says the authorisation was already given, and to stop on a refusal", () => {
+    const p = assembleStaleNotesPrompt("m", "1.1.0", "8a0ab58", target, offending);
+    expect(p).toContain("ya autorizó");
+    expect(p).toContain("PARÁ");
   });
 });

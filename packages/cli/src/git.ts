@@ -66,6 +66,29 @@ export function commitFile(repoRoot: string, path: string, message: string): boo
 }
 
 /**
+ * Commit SEVERAL files in one commit, and nothing else.
+ *
+ * THE MULTI-FILE TWIN OF `commitFile`, for the one case a single delivery
+ * commit needs more than one path: undoing a delivery for regeneration
+ * (`undeliver --regenerate`) touches the change-log row AND, when nothing
+ * else still needs it, the release notes file that row's version owned. Both
+ * belong in ONE commit — splitting them across two would let one land
+ * without the other if the second ever failed.
+ *
+ * NAMES EVERY PATH IN BOTH HALVES, same reasoning as `commitFile`: staged
+ * explicitly and passed to `commit`, so nothing that arrived in the tree
+ * between the two can ride along.
+ *
+ * `git add -- <paths>` stages a path's DELETION as readily as an edit, so a
+ * removed release-notes file commits the same way as the edited row.
+ */
+export function commitFiles(repoRoot: string, paths: readonly string[], message: string): boolean {
+  if (paths.length === 0) return false;
+  if (git(repoRoot, ["add", "--", ...paths]) === null) return false;
+  return git(repoRoot, ["commit", "-m", message, "--", ...paths]) !== null;
+}
+
+/**
  * Whether `commit` is what the tree currently holds, unmodified.
  *
  * Both halves are required. A build sitting on the delivered commit but with

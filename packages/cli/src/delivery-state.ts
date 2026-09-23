@@ -72,6 +72,27 @@ export function proofFor(
   return undefined;
 }
 
+/**
+ * Other axis values that still hold a delivery stamp on this exact row,
+ * besides the ones named.
+ *
+ * THE GUARD BEHIND "BORRAR PARA REGENERAR" (undeliver's `--regenerate`): a row
+ * and its release notes are shared by every target that row conditions in, so
+ * undoing ONE target's delivery must never erase content another,
+ * still-delivered target's proof still points at. `deliver` never overwrites
+ * an archived file; this is the same promise read from the other end — the
+ * row and the notes an existing delivery is PROVEN against are not this run's
+ * to erase.
+ */
+export function otherTargetsHoldingRow(
+  row: ChangeLogRowLike,
+  excluding: readonly string[],
+): readonly string[] {
+  return Object.keys(row.delivered ?? {}).filter(
+    (axisValue) => !excluding.includes(axisValue) && proofFor(row, axisValue) !== undefined,
+  );
+}
+
 /** The versions this target actually received, newest last. */
 export function deliveredFor(
   rows: readonly ChangeLogRowLike[],

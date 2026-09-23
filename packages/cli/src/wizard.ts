@@ -26,11 +26,16 @@ import {
   checkTypedVersion,
   classifyDelivery,
   deliveredFor,
+  deliveredRows,
   newestVersion,
+  otherTargetsHoldingRow,
   readChangeLogRows,
   rowsForTarget,
+  staleReleaseNotesReport,
   type ChangeLogRowLike,
+  type DeclaredCommit,
 } from "./delivery-state.ts";
+import { isAncestorOrSame, lastCommitTouching, productTrailers } from "./git.ts";
 import { newestWorkNumberFor, nextWorkNumber, workStamp } from "./naming.ts";
 import { soleAxis } from "./axis.ts";
 import { readBaselines, type Baseline } from "./baselines.ts";
@@ -1320,6 +1325,106 @@ export function assembleDeliveryPrompt(
 }
 
 /**
+ * GUARD 1's question, asked here instead of mid-delivery.
+ *
+ * `deliverManual` (`main.ts`) reports this same signal AFTER Paso 3 would
+ * already have run — by the time its own report prints, the delivery is
+ * already committing the stamp, too late to take the agent path instead.
+ * Asking it HERE, before Paso 3, is what makes "regenerar con el agente" an
+ * option rather than something only discoverable after the fact.
+ *
+ * Only meaningful for `state.kind === "stamp"`: a row about to be WRITTEN for
+ * the first time has nothing stale to detect — it does not exist yet.
+ *
+ * `anchor: undefined` means this target has never been delivered before —
+ * skipped, same as `reportStaleReleaseNotes`: a first delivery has nothing to
+ * diff against.
+ */
+export function staleReleaseNotesFor(
+  manualDir: string,
+  repoRoot: string,
+  version: string,
+  anchor: string | undefined,
+): { readonly offending: readonly DeclaredCommit[] } | null {
+  if (anchor === undefined) return null;
+  const trailers = productTrailers(repoRoot, anchor);
+  if (trailers === null) return null; // git could not answer — degrade to silence
+  const declaredCommits: DeclaredCommit[] = trailers
+    .filter((t) => t.value === "nuevo" || t.value === "cambio" || t.value === "retirado")
+    .map((t) => ({ commit: t.commit, subject: t.subject }));
+  if (declaredCommits.length === 0) return null;
+
+  const notesPath = join(manualDir, "release-notes", `v${version}.yaml`);
+  const notesFileExists = existsSync(notesPath);
+  let notesReflectNewest: boolean | null = null;
+  if (notesFileExists) {
+    const lastTouch = lastCommitTouching(repoRoot, notesPath);
+    notesReflectNewest =
+      lastTouch === null
+        ? null
+        : isAncestorOrSame(repoRoot, declaredCommits[0] /* newest first */!.commit, lastTouch);
+  }
+  return staleReleaseNotesReport({ declaredCommits, notesFileExists, notesReflectNewest });
+}
+
+/**
+ * What to ask an agent when the row and its notes ALREADY EXIST but do not
+ * reflect commits that declare product news since the last delivery to this
+ * target — `staleReleaseNotesFor`'s signal, turned into work.
+ *
+ * REWRITES, NEVER APPENDS. Unlike `assembleDeliveryPrompt`'s missing-row
+ * case, there is content here already, and it describes only PART of the
+ * range: the row and the notes have to be redone for the FULL range since the
+ * last delivery, not extended with what came after they were last touched.
+ */
+export function assembleStaleNotesPrompt(
+  manualId: string,
+  version: string,
+  since: string,
+  target: { readonly axis: string; readonly value: string },
+  offending: readonly DeclaredCommit[],
+): string {
+  const list = offending.map((c) => `    ${c.commit.slice(0, 7)} ${c.subject}`).join("\n");
+  return [
+    `Entregá la versión ${version} de \`${manualId}\` para`,
+    `\`${target.axis}=${target.value}\`.`,
+    ``,
+    `La fila ${version} del Historial de cambios YA EXISTE, y también sus notas`,
+    `de versión — pero quedaron desactualizadas. Estos commits declaran novedad`,
+    `de producto (\`Producto:\`) que ni la fila ni las notas reflejan todavía:`,
+    list,
+    ``,
+    `Lo entregado por última vez a este documento salió del commit \`${since}\`. El`,
+    `rango a considerar es \`git log ${since}..HEAD\` — completo, no sólo lo que`,
+    `pasó después de la última vez que se tocaron la fila o las notas.`,
+    ``,
+    `Daniel ya autorizó esta entrega en el asistente, con esta versión y este`,
+    `documento. No vuelvas a preguntar si hacerla.`,
+    ``,
+    `Tres pasos, en este orden:`,
+    ``,
+    `1. REESCRIBÍ la fila ${version}, con su fecha y su descripción — no agregues`,
+    `   una fila nueva, ésta ya existe y hay que corregirla para el rango`,
+    `   completo. Cargá la skill \`delivery-summary\` y seguila.`,
+    `1b. REESCRIBÍ también las notas de versión de v${version}`,
+    `   (\`release-notes/v${version}.yaml\`) para el rango completo, no sólo lo`,
+    `   nuevo. Cargá la skill \`release-notes\` y seguila: la decisión sale del`,
+    `   trailer \`Producto:\` de cada commit, nunca de inferir.`,
+    `2. Commiteá la fila y las notas. Tiene que estar en un commit ANTES del`,
+    `   build oficial, porque la prueba de entrega guarda el commit del que salió`,
+    `   el documento y la fila es parte del documento. El comando del paso 3 se`,
+    `   niega a arrancar con el árbol sucio, así que sin este commit no hay entrega.`,
+    `3. Corré la entrega. Construye el oficial, lo archiva, sella la prueba y`,
+    `   COMMITEA EL SELLO ella misma — no hay un cuarto paso:`,
+    `      node packages/cli/src/main.ts deliver ${manualId} \\`,
+    `        --version ${version} --axis ${target.axis}=${target.value}`,
+    ``,
+    `Si algo se niega, PARÁ y contá qué dijo. Una entrega a medias es peor que`,
+    `ninguna: los archivos archivados no se pisan.`,
+  ].join("\n");
+}
+
+/**
  * Promote a document to an official delivery.
  *
  * TWO QUESTIONS, and the second one is TYPED. Which document, and what version
@@ -1379,6 +1484,49 @@ async function deliveryFlow(
     },
   );
   const version = state.version;
+
+  // --- the row already exists: is it still the right thing to stamp? -------
+  //
+  // Asked BEFORE Paso 3, not after: `deliverManual`'s own GUARD 1 reports the
+  // same signal mid-delivery, by which point the stamp is already committing.
+  // Only reachable for `state.kind === "stamp"` — a row about to be written
+  // has nothing stale to detect yet.
+  if (state.kind === "stamp") {
+    const manualDir = join(repoRoot, "manuals", doc.manualId);
+    const anchor = deliveredRows(doc.rows, doc.axisValue).at(-1)?.commit;
+    const stale = staleReleaseNotesFor(manualDir, repoRoot, version, anchor);
+    if (stale !== null) {
+      ui(bold("Paso 2b — la fila y las notas ya existen, pero hay novedad sin reflejar"));
+      ui("");
+      ui(`   Estos commits declaran cambios de producto (${accent("Producto:")}) que`);
+      ui(`   ${accent(`v${version}`)} no refleja todavía:`);
+      for (const c of stale.offending) ui(`      ${dim(c.commit.slice(0, 7))} ${c.subject}`);
+      ui("");
+      ui(dim(`   Puede ser una decisión deliberada, o un commit que se revirtió y igual`));
+      ui(dim(`   quedó con el trailer — pero alguien tiene que mirarlo.`));
+      ui("");
+      const regen = await select(rl, "¿Qué hacemos?", [
+        { label: "Entregar igual (la fila y las notas quedan como están)", value: false },
+        { label: "Regenerar con el agente (reescribe la fila y las notas)", value: true },
+      ]);
+      if (regen) {
+        ui("");
+        return await handOff(
+          rl,
+          repoRoot,
+          `.broadsec-manual/entrega-${doc.manualId}-${doc.axisValue}-v${version}.md`,
+          assembleStaleNotesPrompt(
+            doc.manualId,
+            version,
+            anchor as string,
+            { axis: doc.axis, value: doc.axisValue },
+            stale.offending,
+          ),
+        );
+      }
+      ui("");
+    }
+  }
 
   // --- the last chance to stop ---------------------------------------------
   //
@@ -1549,8 +1697,8 @@ async function undeliveryFlow(
   ui(`   Queda un commit diciendo que se deshizo. ${dim("La historia no se reescribe: sin")}`);
   ui(`   ${dim(`ese commit, nadie podría distinguir "nunca se entregó" de "se deshizo".`)}`);
   ui("");
-  ui(dim(`   La fila y su descripción NO se tocan. ${picked.entry.version} vuelve a estar`));
-  ui(dim(`   disponible para entregar cuando quieras.`));
+  ui(dim(`   La fila y su descripción sobreviven, salvo que decidas borrarlas en el`));
+  ui(dim(`   paso siguiente. ${picked.entry.version} vuelve a estar disponible para entregar.`));
   ui("");
   const go = await select(rl, "¿Deshacemos?", [
     { label: "No, dejalo como está", value: false },
@@ -1563,6 +1711,42 @@ async function undeliveryFlow(
     ui(dim("   No se tocó nada."));
     ui("");
     return 0;
+  }
+
+  // --- the row and its notes: still valid, or due for a rewrite? -----------
+  //
+  // Undoing a delivery only ever takes the STAMP off — the row and its notes
+  // survive, on purpose, in case the same version goes out again unchanged.
+  // When it will not, leaving them means the NEXT delivery of this version
+  // re-stamps stale content with no agent ever looking at it again (GUARD 1
+  // only WARNS, mid-delivery, after the fact). Only offered when no OTHER
+  // target still holds this row's proof — see `otherTargetsHoldingRow`: that
+  // document's proof points at this exact row and these exact notes, and
+  // erasing either here would leave it unverifiable.
+  let regenerate = false;
+  const row = picked.doc.rows.find((r) => r.version === picked.entry.version);
+  const heldElsewhere =
+    row === undefined ? [] : otherTargetsHoldingRow(row, [picked.doc.axisValue]);
+  if (heldElsewhere.length === 0) {
+    ui(bold("Paso 4 — ¿la fila y las notas siguen valiendo?"));
+    ui("");
+    ui(dim(`   Deshacer sólo saca el sello. Si la próxima entrega de`));
+    ui(dim(`   ${picked.entry.version} va a describir algo distinto, hay que borrarlas`));
+    ui(dim(`   ahora — si no, esa próxima entrega las vuelve a sellar sin que corra`));
+    ui(dim(`   ningún agente.`));
+    ui("");
+    regenerate = await select(rl, "¿Qué hacemos con la fila y las notas?", [
+      { label: "Conservarlas (van a servir igual la próxima vez)", value: false },
+      {
+        label: "Borrarlas para regenerar (la próxima entrega escribe una fila y notas nuevas)",
+        value: true,
+      },
+    ]);
+  } else {
+    ui(dim(`   La fila ${picked.entry.version} también está entregada a ${heldElsewhere.join(", ")},`));
+    ui(dim(`   así que no se puede borrar acá: seguiría siendo la prueba de lo que`));
+    ui(dim(`   ese documento recibió. Se conserva.`));
+    ui("");
   }
 
   // Spawned rather than imported, like the delivery: `main.ts` imports this
@@ -1580,6 +1764,7 @@ async function undeliveryFlow(
         "--axis",
         `${picked.doc.axis}=${picked.doc.axisValue}`,
         "--not-handed-over",
+        ...(regenerate ? ["--regenerate"] : []),
       ],
       { cwd: repoRoot, stdio: "inherit" },
     );

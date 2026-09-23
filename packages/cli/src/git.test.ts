@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   commitFile,
+  commitFiles,
   headCommit,
   isAncestorOrSame,
   isDirty,
@@ -133,6 +134,68 @@ describe("commitFile", () => {
   it("returns false when there is nothing to commit", () => {
     const root = scratch();
     expect(commitFile(root, join(root, "seed.txt"), "chore: nada cambió")).toBe(false);
+  });
+});
+
+/**
+ * `undeliver --regenerate`'s one commit: the change-log row (edited) and the
+ * release notes it owned (deleted), together — never against this
+ * repository, same reasoning as `commitFile`'s own tests.
+ */
+describe("commitFiles", () => {
+  const scratch = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "git-"));
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    writeFileSync(join(root, "fila.txt"), "seed\n");
+    writeFileSync(join(root, "notas.txt"), "seed\n");
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return root;
+  };
+
+  it("commits an edit and a deletion together, in one commit", () => {
+    const root = scratch();
+    writeFileSync(join(root, "fila.txt"), "editada\n");
+    rmSync(join(root, "notas.txt"));
+    expect(
+      commitFiles(
+        root,
+        [join(root, "fila.txt"), join(root, "notas.txt")],
+        "revert(deliver): regenerar",
+      ),
+    ).toBe(true);
+    expect(isDirty(root)).toBe(false);
+    const shown = execFileSync("git", ["-C", root, "show", "--name-status", "--format=", "HEAD"], {
+      encoding: "utf8",
+    });
+    expect(shown).toContain("M\tfila.txt");
+    expect(shown).toContain("D\tnotas.txt");
+  });
+
+  it("takes ONLY the named files, leaving anything else dirty", () => {
+    const root = scratch();
+    writeFileSync(join(root, "fila.txt"), "editada\n");
+    writeFileSync(join(root, "otra.txt"), "trabajo ajeno\n");
+    expect(commitFiles(root, [join(root, "fila.txt")], "chore: stamp")).toBe(true);
+    expect(isDirty(root)).toBe(true);
+    const listed = execFileSync("git", ["-C", root, "status", "--porcelain"], { encoding: "utf8" });
+    expect(listed).toContain("otra.txt");
+  });
+
+  it("returns false for an empty list of paths, rather than committing nothing named", () => {
+    const root = scratch();
+    expect(commitFiles(root, [], "chore: nada")).toBe(false);
+  });
+
+  it("returns false outside a repository instead of throwing", () => {
+    expect(commitFiles(mkdtempSync(join(tmpdir(), "git-")), ["x.txt"], "chore: nada")).toBe(false);
+  });
+
+  it("returns false when there is nothing to commit", () => {
+    const root = scratch();
+    expect(commitFiles(root, [join(root, "fila.txt")], "chore: nada cambió")).toBe(false);
   });
 });
 
