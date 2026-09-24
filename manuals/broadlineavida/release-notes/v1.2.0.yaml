@@ -1,0 +1,80 @@
+id: notas
+title: Actualización
+# Every change below is conditioned to mv, and med is a target of this manual,
+# so the lede names none of them — see the release-notes skill, "The lede is
+# the same for every target".
+lede: >-
+  Nuevas capacidades de filtrado y de gestión operativa en la plataforma.
+children:
+  - kind: block
+    id: notas.vigencia
+    type: term-list
+    props:
+      entries:
+        - id: notas.vigencia.1
+          term: Módulo de Comando y Control
+          definition: Actualización efectiva desde el 24 de septiembre de 2026.
+
+  # Producto: nuevo — 534fccc. canViewFilterTrafficDetails is on for mv alone
+  # (knowledge/module-map.json). Estación is gated by canViewFilterStation and
+  # no commit in the range declares it, so it is not listed.
+  - kind: section
+    id: notas.dashboard
+    title: Security Dashboard
+    when:
+      tenant: [mv]
+    children:
+      - kind: block
+        id: notas.dashboard.p1
+        type: prose
+        props:
+          text: >-
+            Se incorporaron nuevos filtros en las **Variables de Gestión** del
+            panel de Filtros: **Estado del Caso**, **Tipo de Caso**, **Clase de
+            Siniestro Vial**, **Recursos Asignados al Caso** y **Motivo de
+            Cierre**.
+      - kind: block
+        id: notas.dashboard.p2
+        type: prose
+        props:
+          text: >-
+            Cada uno se presenta como una lista de casillas de verificación, con
+            la opción **Todos** para seleccionarlas en conjunto. Una vez
+            seleccionados, pulse **Aplicar** en la parte inferior del panel para
+            acotar la información del dashboard.
+
+  # Producto: nuevo — 4db553c. Same selector as sections/10-fuerzas-en-campo.yaml.
+  - kind: section
+    id: notas.fuerzas
+    title: Fuerzas en Campo
+    when:
+      tenant: [mv, demo]
+    children:
+      - kind: block
+        id: notas.fuerzas.perfil
+        type: prose
+        props:
+          text: >-
+            Se incorporó el perfil del agente. Al hacer clic sobre un agente en
+            el listado de **Agentes** se accede a su perfil, que se abre en la
+            pestaña **Agente** con su identificación y su panel de
+            **Intendencia**, donde se listan los elementos de dotación
+            asignados.
+      - kind: block
+        id: notas.fuerzas.liberar
+        type: prose
+        props:
+          text: >-
+            Ahora es posible liberar a un agente en estado **Emergencia**. En
+            su perfil aparece un botón junto a su identificación; al pulsarlo,
+            la plataforma solicita confirmación y, al pulsar **Liberar**, el
+            agente vuelve a admitir despachos.
+      - kind: block
+        id: notas.fuerzas.asignar
+        type: prose
+        props:
+          text: >-
+            Se incorporó la pestaña **Asignar** en el detalle de un turno que
+            aún no ha finalizado. Desde ella se despacha un caso al agente de
+            ese turno sin salir de la pantalla, y el botón **Tarea** crea una
+            tarea dirigida únicamente a ese agente.
