@@ -96,6 +96,13 @@ children:
         - id: historial.tabla.1-2-0
           version: 1.2.0
           date: 2026-09-24
+          delivered:
+            mv:
+              commit: c53a5a842f43af8ee65f6da12dbba86ba605eda1
+              files:
+                manual-operador-mv-v1.2.0.pdf: 414155103d8fe3aca69b44449cead79b72bce9acc1192fb5151728dfc639cae6
+                manual-operador-mv-v1.2.0.docx: 8199250c923ff3aa1e77ad4ccdbbb7df1efbe1fe2e3ccb8a4b5cc047a51bdadd
+                manual-operador-mv-v1.2.0-notas-de-version.docx: 53e77a6006ce5f20875da609b561bc1bf04a4b6d0ac82aa7800865121b85da5e
           # mv only: both modules this row announces are conditioned to mv
           # (Fuerzas en Campo to [mv, demo], the new dashboard filters to [mv]),
           # and med was not handed this version.
