@@ -181,6 +181,27 @@ A version that only retires something still needs a `lede` naming that:
 
 > Se retiró el acceso directo a reportes desde el panel principal.
 
+### The `lede` is the same for every target
+
+The `lede` is one plain string (`releaseLede` in `packages/cli/src/main.ts`). It
+takes no `when`, and every target prints it on its cover, whether or not the
+body shows that target the section it names. Name a change conditioned to mv,
+and med's cover announces something med's body never mentions and med's
+product does not have.
+
+So the `lede` may name only what **every target of the manual** sees:
+
+- A change whose section has no `when`, or whose `when` lists every target the
+  manual declares — name it.
+- A change conditioned to some targets — do not name it. Its section still
+  carries it, for the targets that have it.
+- If every change is conditioned, describe them at a level each target's cover
+  is still true for, without naming a module, screen or control some target
+  lacks. Never leave the `lede` out: the build refuses notes without one.
+
+Check it against the sections, not from memory: for each thing the `lede`
+names, open its section's `when` and compare it with the manual's targets.
+
 ## How the prose reads
 
 - **Spanish**, neutral and formal.
@@ -223,6 +244,8 @@ client reading about a control they cannot find has no chapter to check.
 - **Do not touch `delivered`.** Those hashes are the proof of what a client
   received.
 - Build to confirm the file renders and the numbering resolves.
+- Read the `lede` against every section's `when` — it names nothing a target
+  of the manual lacks. See "The `lede` is the same for every target".
 - If a change has no `Producto:` trailer but you are certain it is product news,
   **report it — do not promote it yourself.** The trailer is the author's
   statement, and overriding it silently is how an invented novelty gets in.
