@@ -1,6 +1,6 @@
 ---
 name: commit-messages
-description: How to write a commit in this repository — conventional `type(scope): subject`, the manual id inside the scope whenever a commit touches `manuals/<id>/`, the mandatory `Producto:` trailer that declares what a change means for the OPERATOR (`nuevo`, `cambio`, `retirado`, `sin-cambio`), why a commit touches at most one manual, how a `git revert` is not exempt, and why no commit carries AI attribution. Use when writing ANY commit message in this repository, especially one that touches `manuals/`; when the `commit-msg` hook (`.githooks/commit-msg`, `packages/cli/src/commit-check.ts`) rejects a commit and you need to fix the message; or when deciding whether a change is `nuevo`, `cambio`, `retirado` or `sin-cambio`.
+description: How to write a commit in this repository — conventional `type(scope): subject`, the manual id inside the scope whenever a commit touches `manuals/<id>/`, the mandatory `Producto:` trailer that declares what a change means for the OPERATOR (`nuevo`, `cambio`, `retirado`, `sin-cambio`), what the body of a product-news commit must name (the code identifier, what the operator gains, which targets get it, where the manual documents it) because release notes are written from it, why a commit touches at most one manual, how a `git revert` is not exempt, and why no commit carries AI attribution. Use when writing ANY commit message in this repository, especially one that touches `manuals/`; when the `commit-msg` hook (`.githooks/commit-msg`, `packages/cli/src/commit-check.ts`) rejects a commit and you need to fix the message; or when deciding whether a change is `nuevo`, `cambio`, `retirado` or `sin-cambio`.
 license: Proprietary — internal Broadsec / Inovisec use only.
 metadata:
   author: Inovisec AG
@@ -86,6 +86,48 @@ a forgotten trailer silently costs the client a novelty rather than failing
 loudly. That is exactly why the hook makes it mandatory at commit time instead
 of leaving "absent means nothing changed" as the only safety net: a commit
 that reaches history without one is a commit whose author never had to decide.
+
+### The body is what the release notes are written from
+
+On a `nuevo`, `cambio` or `retirado` commit, the trailer says *there is news
+here*; the body is what `release-notes` reads to learn *what* the news is. A
+vague body gets vague notes — the writer fills the gap, and what fills a gap is
+invented. The body names four things:
+
+1. **The code identifier** the change hangs on — a flag, a route, a screen
+   component, a section id. Not a description of it: an identifier can be
+   searched, and searching it leads the writer to the module map and to the
+   manual's own section instead of to a paraphrase.
+2. **What the operator gains or loses**, in the operator's terms: what they can
+   now do, or can no longer do, and where.
+3. **Which targets get it, and the file that decides it** — the tenant config
+   or `knowledge/module-map.json` entry. Never leave "every target" implied: a
+   capability one deployment has is the most likely thing to be announced to
+   one that does not.
+4. **Where the manual documents it** — the section that already describes it,
+   or this same commit. The notes translate verified content; they must not be
+   the first place the capability is written down.
+
+```
+feat(broadlineavida): the Security Dashboard gains the filters canViewFilterTrafficDetails enables
+
+The canViewFilterTrafficDetails permission adds five filters to the Variables
+de Gestión panel of the Security Dashboard. It is on for mv alone
+(knowledge/module-map.json). Documented in sections/09-security-dashboard.yaml.
+
+Producto: nuevo
+```
+
+Why this matters, from this repository's own history: broadlineavida's v1.2.0
+notes were written twice. The first time, from a verbal description ("the
+comparison range and the per-variable filters"), they announced a control that
+was not the novelty, listed filters that do not exist, and conditioned nothing.
+The second time, from a commit naming `canViewFilterTrafficDetails`, they listed
+the five real filters by their labels and carried the right `when` — because
+the identifier led to the facts.
+
+A `sin-cambio` commit needs none of this; its body is for the next developer,
+not for a client.
 
 ### `git revert` is not exempt
 
