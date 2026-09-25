@@ -683,14 +683,20 @@ children:
                 Al guardar, la plataforma lo redirige a **PMV › Gestión**, donde
                 el mensaje queda listado.
 
+      # PMVProgramming.tsx:922-925 — a conflict normally blocks saving; marking
+      # the message priority allows saving anyway (`conflicts.length === 0 ||
+      # priority`), and the warning banner turns from red to amber and states
+      # the consequence (es.json → pmv.programming.scheduleConflictsPriority).
       - id: bot.pmv.prioritario
         type: callout
         props:
           variant: important
           text: >-
-            Un mensaje marcado como **Mensaje Prioritario** se impone sobre la
-            programación existente del panel. Verifique la vigencia antes de
-            guardarlo.
+            Un mensaje marcado como **Mensaje Prioritario** puede guardarse
+            aunque exista un conflicto de programación con otro mensaje sobre
+            el mismo panel: la advertencia de conflicto cambia de color e
+            indica que el mensaje prioritario lo reemplaza. Verifique la
+            vigencia antes de guardarlo.
 
   # =========================================================== PMV Calendario ===
   # botSidebar.navItems.calendario — "Calendario" (was documented as "Gestión";
@@ -828,11 +834,16 @@ children:
             - id: bot.pmv-registros.col.texto
               label: Texto
               description: Contenido mostrado en la primera página del mensaje.
+            # PMVMessageList.tsx:275-292 — renderTargets: beyond dos paneles
+            # sueltos, la columna agrega un indicador "+N" con un listado
+            # completo al pasar el cursor.
             - id: bot.pmv-registros.col.panel
               label: Panel
               description: >-
                 Paneles de destino. Si el mensaje se programó por grupo,
-                muestra el nombre del grupo.
+                muestra el nombre del grupo; si se programó sobre varios
+                paneles sueltos, muestra el primero y un indicador **+N** que,
+                al pasar el cursor, despliega el listado completo.
             - id: bot.pmv-registros.col.dias
               label: Días
               description: Días de la semana en que el mensaje está programado.
@@ -947,12 +958,19 @@ children:
         props:
           items:
             # locales → pmv.variables
+            # PMVFamilyList.tsx — deleting asks the API on demand rather than
+            # trusting a stale count: a family is blocked while it still has
+            # subfamilies (familyHasSubfamilies, es.json:1915-1916) and a
+            # subfamily is blocked while it still has messages
+            # (subfamilyHasMessages).
             - id: bot.pmv-variables.s.familias
               label: Familias
               text: >-
                 Clasificación de los mensajes en familias y subfamilias. Cada
-                familia indica cuántos elementos contiene, y puede editarse o
-                eliminarse. Una subfamilia sin mensajes se señala como tal.
+                familia indica cuántos elementos contiene, y puede editarse.
+                No puede eliminarse mientras tenga subfamilias, ni una
+                subfamilia mientras tenga mensajes: la plataforma lo indica.
+                Una subfamilia sin mensajes se señala como tal.
             - id: bot.pmv-variables.s.grupos
               label: Grupos
               text: >-
