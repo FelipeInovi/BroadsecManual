@@ -86,6 +86,14 @@ documents:
     - pages/ResourcesManagment/
     - pages/Alarms/
     - locales/translations/es.json
+    - components/GoogleMap/GlobalGoogleMap.tsx
+    - components/GoogleMap/PanelCardsOverlay.tsx
+    - components/GoogleMap/PanelCard.tsx
+    - components/GoogleMap/panelCards.constants.ts
+    - components/GoogleMap/panelCards.geometry.ts
+    - components/GoogleMap/CustomMarker.tsx
+    - components/LayersMap.tsx
+    - pages/Resources/useResourcesTable.ts
 
 children:
   - id: bot.intro

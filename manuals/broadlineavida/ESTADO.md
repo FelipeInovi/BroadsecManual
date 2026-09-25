@@ -294,6 +294,64 @@ state.
   after the widening. DF-32 (alarm levels, unmerged) stays out of scope — see
   Unresolved #11.
 
+- **A same-day follow-up pass on `12-broadsec-of-things.yaml`, same baseline
+  (`98210678`), closed the blind spot the first pass's narrower scope left:
+  it had looked only under `pages/BroadsecOfThings`, `pages/PMV` and
+  `pages/CCTV`, and missed a feature living under `components/GoogleMap/`.**
+  Added the main gap: **PMV panels now render on the BoT map as detached
+  cards carrying their live message**, in `bot.mapa` — `GlobalGoogleMap.tsx`
+  gained a `panelPresentation` prop (`"infoWindow" | "cards"`,
+  `GlobalGoogleMap.tsx:104,162`), and `pages/PMV/PMVPage.tsx:145` is the
+  **only** call site that passes `"cards"` — every other mount, the Home map
+  included, keeps the pre-existing `"infoWindow"` default, so this is
+  documented in module 12 alone, with no open question left about another
+  map. Tagged `[mv]`, narrower than the module's own `[mv, demo]`: the
+  "Panel" entry in the layer selector — the only control that turns the
+  layer on — exists only when `config.name === "MV"`
+  (`LayersMap.tsx:136-138`), so a demo operator has no way to switch the
+  layer on and never sees a panel, a pin or a card. Documented: the card's
+  live message rotation (same per-page timing configured in Programación),
+  its road-direction header, free-space placement around pins and away from
+  other cards, hiding when panels cluster too tight to separate, giving way
+  to an open info window, expanding a card by clicking it or its pin,
+  activating/deactivating the panel from the expanded card
+  (`PanelCard.tsx:207-211` — literal button text, not an i18n key), and
+  dismissing it by clicking elsewhere on the map. `documents.paths` widened
+  by 8 entries to cover `components/GoogleMap/` and
+  `pages/Resources/useResourcesTable.ts`, none of which the module declared
+  before — the same gap the first pass's own postscript describes, one
+  folder further out. 4 new image slots declared, all pending.
+
+  Six smaller gaps closed in the same pass, none under the three folders the
+  first pass read either: a mobile-connectivity filter on Recursos' Agente
+  column (`agentMobileFilter`, `cf1c697a`); a guard blocking deletion of a
+  PMV family with subfamilies or a subfamily with messages, plus the
+  subfamily message list's direct edit link, in Predeterminados
+  (`PMVFamilyList.tsx`, `4df3703e`/`4c71a3a5`); the Calendario event detail
+  now previewing the message text page by page (`PMVCalendar.tsx`,
+  `3a7be0dc`); Programación allowing a priority message to save over a
+  scheduling conflict, with the warning turned amber instead of blocking
+  (`70879f9f`), and a confirmation prompt on leaving the form with unsaved
+  changes (`3a7be0dc`); Registros' Panel column showing a `+N` hover list
+  once a message targets more than one individual panel (`cad8c661`); and
+  Alarmas showing a success message plus who-and-when on a reconciled
+  alarm's Gestión column (`ad60a4e2`).
+
+  The rest of `git log --since=2026-08-05` on operator-visible BoT surfaces
+  read `sin-cambio` for this manual: bugfixes that only restore behaviour the
+  module already describes (PRT search null-guard `160b84c4`; alarm
+  "Recurso" cell rewording `d397c7c2`/`430cdf67`, superseded by later work
+  already reflected here; log-timestamp field rename and the empty-errors-
+  line fix `4df3703e`/`d7b7a861`), payload-only additions with no rendered
+  change (`ca9de178`, matching the precedent already recorded for the
+  dispatch-payload changes above), catalogue/data growth with no UI change
+  (PRT's `controlPointMap`/`vehicleTypePRT` entries, `aa8a023c`), and
+  screens or fields this manual does not reach at all (the Agent Dashboard's
+  entire `2026-09-11..09-15` build-out, already Ruled Out below; the
+  reports-form road-direction option `497a6a88`, a different field from the
+  panel's own `directionRoad`; `MobileInfoWindow.tsx`'s refactor `8308069b`,
+  a pin type the BoT map never renders — it passes no `mobileLocations`).
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and
@@ -457,3 +515,16 @@ state.
     subsection today. **What settles it:** the branch merging to `develop`,
     and a follow-up read of `routes/accessRules.ts` and the Alarmas screen
     against it.
+
+12. **The Home map keeps the pre-existing `infoWindow` presentation for
+    panels; only the BoT map moved to the new `cards` one.** Confirmed by
+    reading every `GlobalGoogleMap` call site — `pages/PMV/PMVPage.tsx:145`
+    is the one place `panelPresentation="cards"` is passed; every other
+    mount relies on the component's own `"infoWindow"` default
+    (`GlobalGoogleMap.tsx:162`). Not written as a gap in 07/08 — nothing
+    there is wrong, since the Home map's behaviour has not changed — but the
+    two screens now present the same panel data two different ways, and
+    nothing in the product says whether that is the intended end state or a
+    partial rollout the Home map will pick up later. **What settles it:** the
+    owner confirming whether the Home map is meant to move to cards too, or
+    whether `infoWindow` there is deliberate and permanent.
