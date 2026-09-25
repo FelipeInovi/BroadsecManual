@@ -1,0 +1,9 @@
+{
+  "source": "broadlineavida",
+  "modules": {
+    "sections/12-broadsec-of-things.yaml": {
+      "productCommit": "982106787ad42e345f8311b05fd1adb523854dcf",
+      "verifiedAt": "2026-09-25"
+    }
+  }
+}
