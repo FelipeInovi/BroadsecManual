@@ -96,6 +96,13 @@ children:
         - id: historial.tabla.1-2-0
           version: 1.2.0
           date: 2026-09-25
+          delivered:
+            mv:
+              commit: d5acfed75841c08467301c6a13364e959c50bbe0
+              files:
+                manual-operador-mv-v1.2.0.pdf: eee801cafdaf85521ac6ae73f266716e90f9e16b95859d8e59a75747765166a6
+                manual-operador-mv-v1.2.0.docx: b13fd3556748ef04dcab6a232eb8f7651c1ac6ceb818579063135da270063c27
+                manual-operador-mv-v1.2.0-notas-de-version.docx: 884f02d80623e10381b5fb034bbc1b8b33df55a264a0d3e7b043b0782186cca3
           # mv only: every module this row announces is conditioned to mv —
           # Fuerzas en Campo and Broadsec of Things to [mv, demo], the new
           # dashboard filters to [mv] — and med was not handed this version.
