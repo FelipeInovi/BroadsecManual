@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 267,
+    "total": 271,
     "delivered": 252,
-    "pending": 15
+    "pending": 19
   },
   "pending": [
     {
@@ -61,6 +61,86 @@
       "deliverTo": {
         "shared": "_common/bot.seccion.ars.png",
         "override": "<tenant>/bot.seccion.ars.png"
+      }
+    },
+    {
+      "slot": "bot.mapa.paneles.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.mapa.paneles.fig",
+          "blockType": "figure",
+          "shows": "Los paneles sobre el mapa, cada uno con su tarjeta de mensaje en vivo."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.mapa.paneles.fig.png",
+        "override": "<tenant>/bot.mapa.paneles.fig.png"
+      }
+    },
+    {
+      "slot": "bot.mapa.paneles.paso.abrir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.mapa.paneles.paso.abrir",
+          "blockType": "procedure",
+          "shows": "Seleccione la tarjeta o el marcador del panel"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.mapa.paneles.paso.abrir.png",
+        "override": "<tenant>/bot.mapa.paneles.paso.abrir.png"
+      }
+    },
+    {
+      "slot": "bot.mapa.paneles.paso.accionar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.mapa.paneles.paso.accionar",
+          "blockType": "procedure",
+          "shows": "Active o desactive el panel, si lo necesita"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.mapa.paneles.paso.accionar.png",
+        "override": "<tenant>/bot.mapa.paneles.paso.accionar.png"
+      }
+    },
+    {
+      "slot": "bot.mapa.paneles.paso.cerrar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.mapa.paneles.paso.cerrar",
+          "blockType": "procedure",
+          "shows": "Cierre la tarjeta"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.mapa.paneles.paso.cerrar.png",
+        "override": "<tenant>/bot.mapa.paneles.paso.cerrar.png"
       }
     },
     {
