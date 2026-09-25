@@ -66,7 +66,14 @@ import {
   productTrailers,
 } from "./git.ts";
 import { readBaselines, stampBaseline } from "./baselines.ts";
-import { hiddenSlotSet, hideSlot, readHidden, showSlot } from "./hidden.ts";
+import {
+  hiddenCommitMessage,
+  hiddenPath,
+  hiddenSlotSet,
+  hideSlot,
+  readHidden,
+  showSlot,
+} from "./hidden.ts";
 import {
   archive,
   planDelivery,
@@ -1211,14 +1218,64 @@ function deliveredFor(manualDir: string, slot: string): readonly string[] {
 }
 
 /**
+ * Commit the ONE file `hidden --commit` just changed, and report loudly if it
+ * fails — the caller has already written `hidden-images.json` by the time
+ * this runs and cannot roll that back, so a `false` here is something to
+ * surface, never to swallow silently (same contract `commitFile` documents
+ * for a delivery's own stamp).
+ *
+ * A pathspec commit, exactly like a delivery's: only this one file is staged
+ * and committed, so unrelated dirty or staged work elsewhere in the tree
+ * rides along with nothing.
+ */
+function commitHiddenChange(
+  repoRoot: string,
+  manualDir: string,
+  message: string,
+  slot: string,
+  verb: string,
+): number {
+  const committed = commitFile(repoRoot, hiddenPath(manualDir), message);
+  if (!committed) {
+    console.error(
+      [
+        ``,
+        `"${slot}" QUEDÓ ${verb}, pero el commit del cambio FALLÓ.`,
+        `  hidden-images.json ya tiene el cambio en el árbol de trabajo — commiteá`,
+        `  ${basename(hiddenPath(manualDir))} a mano antes de seguir, o \`deliver\`/\`undeliver\``,
+        `  van a rechazar el árbol sucio.`,
+      ].join("\n"),
+    );
+    return 1;
+  }
+  console.log(`  commiteado`);
+  return 0;
+}
+
+/**
  * Hide one slot, refusing a malformed or undeclared name (`invalidSlotReason`)
  * and refusing when ANY deployment already has it delivered.
  *
  * A slot can be pending for one tenant and delivered for another — hiding it
  * globally would strip an image a tenant already has from its own document.
  * Only a slot that is fully pending, everywhere, may be hidden.
+ *
+ * `commit`, when true (the wizard's "Ocultar o mostrar imágenes pendientes"
+ * flow always passes it — see `wizard.ts`), commits `hidden-images.json`
+ * alone right after a SUCCESSFUL hide: the two refusals above are checked
+ * FIRST and write nothing, so a refused hide never reaches the commit at all.
+ * `hideSlot` always writes when we get this far — even re-hiding an
+ * already-hidden slot updates `hiddenAt` — so a successful hide always has
+ * something to commit.
  */
-function hideCommand(manualDir: string, slot: string, note: string | undefined): number {
+function hideCommand(
+  repoRoot: string,
+  manualDir: string,
+  manualId: string,
+  slot: string,
+  note: string | undefined,
+  commit: boolean,
+): number {
   const invalid = invalidSlotReason(slot, declaredSlots(manualDir));
   if (invalid) {
     console.error(`\n${invalid}`);
@@ -1242,7 +1299,14 @@ function hideCommand(manualDir: string, slot: string, note: string | undefined):
     ...(note ? { note } : {}),
   });
   console.log(`  "${slot}" oculto — sigue pendiente en el manifiesto, no se muestra en el build`);
-  return 0;
+  if (!commit) return 0;
+  return commitHiddenChange(
+    repoRoot,
+    manualDir,
+    hiddenCommitMessage("hide", manualId, slot, note),
+    slot,
+    "OCULTO",
+  );
 }
 
 /**
@@ -1251,16 +1315,39 @@ function hideCommand(manualDir: string, slot: string, note: string | undefined):
  * while reporting success. Once the name is valid, showing always succeeds:
  * un-hiding a slot that was never hidden is a harmless no-op (see
  * `showSlot`).
+ *
+ * `commit`, when true, commits `hidden-images.json` — but ONLY when the slot
+ * was actually hidden before this call. `showSlot` itself is documented to
+ * leave the filesystem untouched on that no-op path (see its own doc: no
+ * write at all, not even of an unchanged file), and a commit with nothing
+ * changed to stage would either fail loudly for no reason or, worse, commit
+ * something unrelated that happened to be sitting in the index — so `wasHidden`
+ * is read BEFORE `showSlot` runs, while it can still tell the two cases apart.
  */
-function showCommand(manualDir: string, slot: string): number {
+function showCommand(
+  repoRoot: string,
+  manualDir: string,
+  manualId: string,
+  slot: string,
+  commit: boolean,
+): number {
   const invalid = invalidSlotReason(slot, declaredSlots(manualDir));
   if (invalid) {
     console.error(`\n${invalid}`);
     return 1;
   }
+  const before = readHidden(manualDir);
+  const wasHidden = before !== null && slot in before.hidden;
   showSlot(manualDir, slot);
   console.log(`  "${slot}" visible de nuevo`);
-  return 0;
+  if (!commit || !wasHidden) return 0;
+  return commitHiddenChange(
+    repoRoot,
+    manualDir,
+    hiddenCommitMessage("show", manualId, slot),
+    slot,
+    "VISIBLE DE NUEVO",
+  );
 }
 
 /**
@@ -2551,7 +2638,7 @@ export async function run(argv: readonly string[]): Promise<number> {
         `       broadsec-manual verified <manual> --module <sections/NN-....yaml>\n` +
         `       broadsec-manual capture <manual> --tenant <id> [--only <slot,...>]\n` +
         `       broadsec-manual extract <manual>\n` +
-        `       broadsec-manual hidden <manual> [--hide <slot> [--note <text>]] [--show <slot>]\n\n` +
+        `       broadsec-manual hidden <manual> [--hide <slot> [--note <text>]] [--show <slot>] [--commit]\n\n` +
         `  capture  shoot pending figures off the running product, per\n` +
         `           manuals/<manual>/capture-recipes.yaml. Needs the login in the\n` +
         `           environment variables that file NAMES — never in the file.\n` +
@@ -2600,7 +2687,10 @@ export async function run(argv: readonly string[]): Promise<number> {
         `           declared and still pending in the manifest — hiding is cosmetic\n` +
         `           for delivery, never a content edit. Refuses to hide a slot that\n` +
         `           already resolves to a delivered image for any deployment. With\n` +
-        `           neither flag, prints what is currently hidden.\n\n` +
+        `           neither flag, prints what is currently hidden.\n` +
+        `  --commit commit hidden-images.json alone after a successful hide or show\n` +
+        `           (the wizard's flow always passes it). A no-op — showing a slot\n` +
+        `           that was not hidden — commits nothing.\n\n` +
         `       broadsec-manual new\n` +
         `  new      interactive: collect which product, what to call its manual and\n` +
         `           how much to attempt, then print the prompt that starts the work.\n` +
@@ -2905,6 +2995,10 @@ ${drift.length} change(s) since the previous map:`);
       const noteAt = rest.indexOf("--note");
       const noteRaw = noteAt === -1 ? undefined : rest[noteAt + 1];
       const note = noteRaw && !noteRaw.startsWith("--") ? noteRaw : undefined;
+      // The wizard's flow always passes this; the plain CLI keeps today's
+      // behaviour (nothing committed) unless a caller opts in explicitly.
+      const commit = rest.includes("--commit");
+      const repoRoot = resolve(process.cwd());
 
       if (hideAt === -1 && showAt === -1) {
         console.log(`hidden image slots for ${manualId}`);
@@ -2919,7 +3013,7 @@ ${drift.length} change(s) since the previous map:`);
           console.error("\n--hide requires a slot name, e.g. `--hide mapa.fig-capas`.");
           return 1;
         }
-        code = hideCommand(manualDir, slot, note) || code;
+        code = hideCommand(repoRoot, manualDir, manualId, slot, note, commit) || code;
       }
       if (showAt !== -1) {
         const slot = rest[showAt + 1];
@@ -2927,7 +3021,7 @@ ${drift.length} change(s) since the previous map:`);
           console.error("\n--show requires a slot name, e.g. `--show mapa.fig-capas`.");
           return 1;
         }
-        code = showCommand(manualDir, slot) || code;
+        code = showCommand(repoRoot, manualDir, manualId, slot, commit) || code;
       }
       return code;
     }

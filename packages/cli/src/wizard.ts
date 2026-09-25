@@ -1916,6 +1916,35 @@ async function buildFlow(
  * repository has for "content, not proposal", and the design explicitly asks
  * for the narrowest existing signal rather than a new "finished" flag.
  */
+/**
+ * The `main.ts hidden` argv for one action — pulled out of `hiddenImagesFlow`
+ * so it is testable without spawning a process, the same way `launchPlan`
+ * separates a plan from `execFileSync`.
+ *
+ * `--commit` is appended for `hide` and `show`, ALWAYS — never for `report`,
+ * which changes nothing on disk and takes no slot. This is the one place
+ * that decides it: a hide or show done FROM THE WIZARD must land in commit
+ * history, while the plain CLI (`broadsec-manual hidden …`, typed directly)
+ * keeps today's behaviour and leaves the tree dirty unless the caller passes
+ * `--commit` themselves. See the `hidden` command's own doc in `main.ts`.
+ */
+export function hiddenFlowArgs(
+  manualId: string,
+  action: "report" | "hide" | "show",
+  slot: string | undefined,
+  note: string | undefined,
+): readonly string[] {
+  const args: string[] = [manualId];
+  if (action === "hide" && slot) {
+    args.push("--hide", slot);
+    if (note && note.trim() !== "") args.push("--note", note);
+    args.push("--commit");
+  } else if (action === "show" && slot) {
+    args.push("--show", slot, "--commit");
+  }
+  return args;
+}
+
 async function hiddenImagesFlow(
   rl: ReturnType<typeof createInterface>,
   repoRoot: string,
@@ -1955,21 +1984,23 @@ async function hiddenImagesFlow(
     },
   ]);
 
-  const args: string[] = [manualId];
+  let slot: string | undefined;
+  let note: string | undefined;
   if (action === "hide") {
-    const slot = await ask(rl, "nombre del slot a ocultar (p. ej. mapa.fig-capas)", (v) =>
+    slot = await ask(rl, "nombre del slot a ocultar (p. ej. mapa.fig-capas)", (v) =>
       v.trim() === "" ? { problem: "hace falta el nombre del slot." } : { value: v.trim() },
     );
-    args.push("--hide", slot);
-    const note = (await rl.question("   nota opcional, para recordar por qué (enter para omitir): ")).trim();
+    const rawNote = (
+      await rl.question("   nota opcional, para recordar por qué (enter para omitir): ")
+    ).trim();
     ui("");
-    if (note !== "") args.push("--note", note);
+    note = rawNote === "" ? undefined : rawNote;
   } else if (action === "show") {
-    const slot = await ask(rl, "nombre del slot a mostrar de nuevo", (v) =>
+    slot = await ask(rl, "nombre del slot a mostrar de nuevo", (v) =>
       v.trim() === "" ? { problem: "hace falta el nombre del slot." } : { value: v.trim() },
     );
-    args.push("--show", slot);
   }
+  const args = hiddenFlowArgs(manualId, action, slot, note);
 
   return await new Promise<number>((done) => {
     const child = spawn(

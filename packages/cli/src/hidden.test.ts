@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { chmodSync, existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { hiddenSlotSet, hideSlot, readHidden, showSlot } from "./hidden.ts";
+import { checkCommit } from "./commit-check.ts";
+import { hiddenCommitMessage, hiddenPath, hiddenSlotSet, hideSlot, readHidden, showSlot } from "./hidden.ts";
 
 const tmp = (): string => mkdtempSync(join(tmpdir(), "hidden-"));
 
@@ -104,6 +105,51 @@ describe("showSlot", () => {
     } finally {
       chmodSync(path, 0o666);
     }
+  });
+});
+
+describe("hiddenPath", () => {
+  it("names hidden-images.json inside the manual directory", () => {
+    expect(hiddenPath(join("manuals", "un-manual"))).toBe(
+      join("manuals", "un-manual", "hidden-images.json"),
+    );
+  });
+});
+
+describe("hiddenCommitMessage", () => {
+  const STAGED = ["manuals/un-manual/hidden-images.json"];
+
+  it("passes checkCommit for a hide with a note", () => {
+    const message = hiddenCommitMessage("hide", "un-manual", "s.fig", "llega en la 1.1.0");
+    expect(message).toContain("chore(un-manual): hide s.fig");
+    expect(message).toContain("llega en la 1.1.0");
+    expect(message).toContain("Producto: sin-cambio");
+    expect(checkCommit({ message, stagedPaths: STAGED })).toEqual({ ok: true, problems: [] });
+  });
+
+  it("passes checkCommit for a hide with no note, using a short generic line", () => {
+    const message = hiddenCommitMessage("hide", "un-manual", "s.fig");
+    expect(checkCommit({ message, stagedPaths: STAGED })).toEqual({ ok: true, problems: [] });
+  });
+
+  it("passes checkCommit for a show", () => {
+    const message = hiddenCommitMessage("show", "un-manual", "s.fig");
+    expect(message).toContain("chore(un-manual): show s.fig again");
+    expect(message).toContain("Producto: sin-cambio");
+    expect(checkCommit({ message, stagedPaths: STAGED })).toEqual({ ok: true, problems: [] });
+  });
+
+  it("carries the manual id into the header scope, matching the staged path's manual", () => {
+    const message = hiddenCommitMessage("hide", "otro-manual", "s.fig");
+    expect(
+      checkCommit({ message, stagedPaths: ["manuals/otro-manual/hidden-images.json"] }),
+    ).toEqual({ ok: true, problems: [] });
+  });
+
+  it("never carries AI attribution", () => {
+    const message = hiddenCommitMessage("hide", "un-manual", "s.fig", "una nota");
+    expect(message).not.toMatch(/Co-Authored-By/i);
+    expect(message.toLowerCase()).not.toContain("claude");
   });
 });
 

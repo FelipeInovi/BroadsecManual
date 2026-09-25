@@ -31,7 +31,12 @@ export interface HiddenFile {
   readonly hidden: Readonly<Record<string, HiddenEntry>>;
 }
 
-const hiddenPath = (manualDir: string): string => join(manualDir, "hidden-images.json");
+/**
+ * The path `hidden-images.json` lives at, for one manual. Exported so a
+ * caller that needs to `commitFile` this exact path (the `hidden --commit`
+ * flag in `main.ts`) names it from here rather than retyping the filename.
+ */
+export const hiddenPath = (manualDir: string): string => join(manualDir, "hidden-images.json");
 
 /** `null` when the file does not exist — no slot of this manual is hidden. */
 export function readHidden(manualDir: string): HiddenFile | null {
@@ -80,6 +85,38 @@ export function showSlot(manualDir: string, slot: string): HiddenFile {
   const hidden = { ...existing.hidden };
   delete hidden[slot];
   return writeSorted(manualDir, hidden);
+}
+
+/** Which of the two things `hidden --commit` just did. */
+export type HiddenCommitKind = "hide" | "show";
+
+/**
+ * The commit message for a hide or show performed FROM THE WIZARD (the
+ * `hidden --commit` flag in `main.ts`) — a small, pure, exported function so
+ * it can be run through `checkCommit` (`commit-check.ts`) in a test without
+ * spawning the CLI or a git process. See the `commit-messages` skill for the
+ * rules this has to satisfy: the manual id in the scope, the `Producto:`
+ * trailer, no AI attribution.
+ *
+ * ENGLISH, per this repository's convention that commit messages are code,
+ * not manual content — with one exception: `note`, when given, is quoted
+ * verbatim. It is whoever ran the wizard's own words, in whatever language
+ * they wrote it in, and translating it would put words in their mouth.
+ *
+ * `Producto: sin-cambio` always — hiding or showing a slot changes what a
+ * document LOOKS like, never what the operator can do with the product.
+ */
+export function hiddenCommitMessage(
+  kind: HiddenCommitKind,
+  manualId: string,
+  slot: string,
+  note?: string,
+): string {
+  if (kind === "show") {
+    return `chore(${manualId}): show ${slot} again\n\nProducto: sin-cambio`;
+  }
+  const body = note && note.trim() !== "" ? note.trim() : "No note was given for this hide.";
+  return `chore(${manualId}): hide ${slot}\n\n${body}\n\nProducto: sin-cambio`;
 }
 
 /**

@@ -2025,6 +2025,231 @@ describe("hidden", () => {
 });
 
 /**
+ * `hidden <manual> --hide/--show <slot> --commit` — the flag the wizard's
+ * "Ocultar o mostrar imágenes pendientes" flow always passes, so a hide or
+ * show it performs lands in commit history instead of leaving the tree dirty
+ * (which would otherwise block `deliver`/`undeliver`'s own dirty-tree guard).
+ *
+ * Reuses the "hidden" describe's fixture (one manual, one figure slot) —
+ * `repoRoot()` there does not `git init`, which is itself useful below for
+ * the "git cannot answer" cases; a git-backed variant is added here.
+ */
+describe("hidden --commit", () => {
+  const roots: string[] = [];
+
+  const plainRepoRoot = (): string => {
+    const root = mkdtempSync(join(tmpdir(), "hidden-commit-"));
+    roots.push(root);
+    mkdirSync(join(root, "manuals", "un-manual", "sections"), { recursive: true });
+    writeFileSync(
+      join(root, "manuals", "un-manual", "manual.config.yaml"),
+      [
+        "manual:",
+        "  id: un-manual",
+        "  title: Un Manual",
+        "  product: Producto",
+        "  contentVersion: 0.1.0",
+        "axes:",
+        "  tenant:",
+        "    values:",
+        "      - id: mv",
+        "        name: MV",
+        "targets:",
+        "  - tenant: mv",
+        "output:",
+        "  dir: output",
+        "  filename: x.pdf",
+        "",
+      ].join("\n"),
+    );
+    writeFileSync(
+      join(root, "manuals", "un-manual", "sections", "01-modulo.yaml"),
+      [
+        "id: s",
+        "title: S",
+        "children:",
+        "  - id: s.fig",
+        "    type: figure",
+        "    props:",
+        "      caption: Vista",
+        "      widthPercent: 100",
+        "",
+      ].join("\n"),
+    );
+    return root;
+  };
+
+  /** The same fixture, git-initialised with one seed commit. */
+  const gitRepoRoot = (): string => {
+    const root = plainRepoRoot();
+    execFileSync("git", ["-C", root, "init", "-q"]);
+    execFileSync("git", ["-C", root, "config", "user.email", "t@example.com"]);
+    execFileSync("git", ["-C", root, "config", "user.name", "T"]);
+    execFileSync("git", ["-C", root, "add", "-A"]);
+    execFileSync("git", ["-C", root, "commit", "-q", "-m", "seed"]);
+    return root;
+  };
+
+  const runIn = async (root: string, argv: readonly string[]): Promise<number> => {
+    const cwd = process.cwd();
+    process.chdir(root);
+    try {
+      return await run(argv);
+    } finally {
+      process.chdir(cwd);
+    }
+  };
+
+  const status = (root: string): string =>
+    execFileSync("git", ["-C", root, "status", "--porcelain"], { encoding: "utf8" });
+
+  afterEach(() => {
+    for (const r of roots.splice(0)) rmSync(r, { recursive: true, force: true });
+  });
+
+  it("commits ONLY hidden-images.json after a hide, with a hook-valid message", async () => {
+    const root = gitRepoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig", "--commit"]);
+      expect(code).toBe(0);
+      expect(status(root)).toBe("");
+
+      const shown = execFileSync(
+        "git",
+        ["-C", root, "show", "--name-status", "--format=%s%n%n%b", "HEAD"],
+        { encoding: "utf8" },
+      );
+      expect(shown).toContain("chore(un-manual): hide s.fig");
+      expect(shown).toContain("Producto: sin-cambio");
+      expect(shown).toMatch(/hidden-images\.json/);
+      expect(shown).not.toContain("01-modulo.yaml");
+      expect(shown).not.toMatch(/Co-Authored-By/i);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("commits after a show of a slot that was actually hidden", async () => {
+    const root = gitRepoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      // Hide first, without --commit, so the tree is dirty going into the show.
+      await runIn(root, ["hidden", "un-manual", "--hide", "s.fig"]);
+      execFileSync("git", ["-C", root, "add", "-A"]);
+      execFileSync("git", ["-C", root, "commit", "-q", "-m", "chore(un-manual): hide\n\nProducto: sin-cambio"]);
+
+      const code = await runIn(root, ["hidden", "un-manual", "--show", "s.fig", "--commit"]);
+      expect(code).toBe(0);
+      expect(status(root)).toBe("");
+
+      const shown = execFileSync(
+        "git",
+        ["-C", root, "show", "--name-status", "--format=%s%n%n%b", "HEAD"],
+        { encoding: "utf8" },
+      );
+      expect(shown).toContain("chore(un-manual): show s.fig again");
+      expect(shown).toContain("Producto: sin-cambio");
+      expect(shown).toMatch(/hidden-images\.json/);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("does NOT commit a --show of a slot that was never hidden — no-op, not an empty commit", async () => {
+    const root = gitRepoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const before = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+        encoding: "utf8",
+      }).trim();
+      const code = await runIn(root, ["hidden", "un-manual", "--show", "s.fig", "--commit"]);
+      expect(code).toBe(0);
+      const after = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+        encoding: "utf8",
+      }).trim();
+      expect(after).toBe(before);
+      expect(status(root)).toBe("");
+      expect(existsSync(join(root, "manuals", "un-manual", "hidden-images.json"))).toBe(false);
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("commits nothing when the hide is refused (slot already delivered)", async () => {
+    const root = gitRepoRoot();
+    mkdirSync(join(root, "manuals", "un-manual", "assets", "figures", "_common", "s"), {
+      recursive: true,
+    });
+    writeFileSync(
+      join(root, "manuals", "un-manual", "assets", "figures", "_common", "s", "fig.png"),
+      "not a real png, but the resolver only checks the extension and presence",
+    );
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const before = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+        encoding: "utf8",
+      }).trim();
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig", "--commit"]);
+      expect(code).toBe(1);
+      const after = execFileSync("git", ["-C", root, "rev-parse", "HEAD"], {
+        encoding: "utf8",
+      }).trim();
+      expect(after).toBe(before);
+      expect(existsSync(join(root, "manuals", "un-manual", "hidden-images.json"))).toBe(false);
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("leaves an unrelated dirty file elsewhere in the tree untouched by the commit", async () => {
+    const root = gitRepoRoot();
+    writeFileSync(join(root, "manuals", "un-manual", "otra-cosa.txt"), "trabajo ajeno\n");
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig", "--commit"]);
+      expect(code).toBe(0);
+      const listed = status(root);
+      expect(listed).toContain("otra-cosa.txt");
+      expect(listed).not.toContain("hidden-images.json");
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+
+  it("hides on disk but reports the commit failure loudly when git cannot commit", async () => {
+    // No `git init` here — `commitFile` returns false outside a repository,
+    // the same contract `git.test.ts` pins for a delivery's own stamp.
+    const root = plainRepoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig", "--commit"]);
+      expect(code).toBe(1);
+      // The hide itself still happened — only the commit failed.
+      expect(existsSync(join(root, "manuals", "un-manual", "hidden-images.json"))).toBe(true);
+      const messages = errorSpy.mock.calls.map((call) => String(call[0]));
+      expect(messages.some((m) => m.includes("FALLÓ"))).toBe(true);
+    } finally {
+      logSpy.mockRestore();
+      errorSpy.mockRestore();
+    }
+  });
+
+  it("without --commit, leaves the tree dirty exactly as before (default CLI behaviour)", async () => {
+    const root = gitRepoRoot();
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const code = await runIn(root, ["hidden", "un-manual", "--hide", "s.fig"]);
+      expect(code).toBe(0);
+      expect(status(root)).not.toBe("");
+    } finally {
+      logSpy.mockRestore();
+    }
+  });
+});
+
+/**
  * `documents <manual>` — reports each module's coverage of today's drift
  * (MUF-101..104, MUF-306), including ADR-007's per-entry match counts and
  * unjoinable-path annotation. `documents`'s real-product correctness against

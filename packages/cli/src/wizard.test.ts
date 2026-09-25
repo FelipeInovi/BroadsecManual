@@ -27,6 +27,7 @@ import {
   staleReleaseNotesFor,
   BUILD_KINDS,
   type UpdateScope,
+  hiddenFlowArgs,
 } from "./wizard.ts";
 
 const answers = (over: Partial<WizardAnswers> = {}): WizardAnswers => ({
@@ -1463,5 +1464,45 @@ describe("assembleStaleNotesPrompt", () => {
     const p = assembleStaleNotesPrompt("m", "1.1.0", "8a0ab58", target, offending);
     expect(p).toContain("ya autorizó");
     expect(p).toContain("PARÁ");
+  });
+});
+
+/**
+ * `hiddenFlowArgs` — the argv `hiddenImagesFlow` spawns `main.ts hidden`
+ * with. The owner asked that a hide or show done FROM THE WIZARD always
+ * commits; this is what proves the flow always asks for it.
+ */
+describe("hiddenFlowArgs", () => {
+  it("appends --commit to a hide, after the slot and note", () => {
+    expect(hiddenFlowArgs("un-manual", "hide", "s.fig", "llega en la 1.1.0")).toEqual([
+      "un-manual",
+      "--hide",
+      "s.fig",
+      "--note",
+      "llega en la 1.1.0",
+      "--commit",
+    ]);
+  });
+
+  it("appends --commit to a hide with no note", () => {
+    expect(hiddenFlowArgs("un-manual", "hide", "s.fig", undefined)).toEqual([
+      "un-manual",
+      "--hide",
+      "s.fig",
+      "--commit",
+    ]);
+  });
+
+  it("appends --commit to a show", () => {
+    expect(hiddenFlowArgs("un-manual", "show", "s.fig", undefined)).toEqual([
+      "un-manual",
+      "--show",
+      "s.fig",
+      "--commit",
+    ]);
+  });
+
+  it("never appends --commit for a plain report — there is no slot to act on", () => {
+    expect(hiddenFlowArgs("un-manual", "report", undefined, undefined)).toEqual(["un-manual"]);
   });
 });
