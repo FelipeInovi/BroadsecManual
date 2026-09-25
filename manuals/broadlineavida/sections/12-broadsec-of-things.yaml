@@ -397,6 +397,16 @@ children:
               text: >-
                 La plataforma solicita confirmación antes de aplicar el cambio,
                 indicando el recurso y la acción a realizar.
+            # ResourcesTable.tsx — pjType radio ("En Puertas" / "Emergente"),
+            # required only when marking (Confirmar stays deshabilitado sin
+            # elección); no aplica al desmarcar.
+            - id: bot.recursos.paso.pj-tipo
+              layout: beside
+              title: Elija el tipo, si está marcando
+              text: >-
+                Al marcar un recurso que todavía no es Policía Judicial, elija
+                el tipo: **En Puertas** o **Emergente**. Al desmarcar uno ya
+                marcado, este paso no aplica.
             - id: bot.recursos.paso.pj-confirmar
               layout: beside
               title: Confirme
@@ -584,9 +594,11 @@ children:
             programación existente del panel. Verifique la vigencia antes de
             guardarlo.
 
-  # ============================================================ PMV Gestión ===
+  # =========================================================== PMV Calendario ===
+  # botSidebar.navItems.calendario — "Calendario" (was documented as "Gestión";
+  # re-verified 2026-09-25 against the current sidebar label).
   - id: bot.pmv-gestion
-    title: PMV — Gestión
+    title: PMV — Calendario
     children:
       - id: bot.pmv-gestion.que-hace
         type: prose
@@ -599,8 +611,8 @@ children:
         type: prose
         props:
           text: >-
-            Despliegue **PMV** en el panel lateral y seleccione **Gestión**. La
-            plataforma también lo trae aquí al guardar un mensaje nuevo.
+            Despliegue **PMV** en el panel lateral y seleccione **Calendario**.
+            La plataforma también lo trae aquí al guardar un mensaje nuevo.
 
       # Overview figure: the module/submodule at a glance, before any detail.
       - id: bot.pmv-gestion.fig
@@ -678,9 +690,14 @@ children:
                 Un mensaje desactivado puede volver a ponerse en circulación con
                 **Activar**, siempre que su vigencia siga siendo válida.
 
-  # ========================================================== PMV Variables ===
+  # ========================================================== PMV Predeterminados ===
+  # botSidebar.navItems.variables — "Predeterminados" (was documented as
+  # "Variables"; re-verified 2026-09-25, 620aad9b). The header's internal tab
+  # caption (BOTHeader.tsx TAB_LABELS) still reads "PMV - Variables" — that is
+  # the product's own top-bar caption, not the clickable sidebar label the
+  # operator actually reads to navigate here.
   - id: bot.pmv-variables
-    title: PMV — Variables
+    title: PMV — Predeterminados
     children:
       - id: bot.pmv-variables.que-hace
         type: prose
@@ -693,7 +710,9 @@ children:
       - id: bot.pmv-variables.como-llegar
         type: prose
         props:
-          text: Despliegue **PMV** en el panel lateral y seleccione **Variables**.
+          text: >-
+            Despliegue **PMV** en el panel lateral y seleccione
+            **Predeterminados**.
 
       # Overview figure: the module/submodule at a glance, before any detail.
       - id: bot.pmv-variables.fig
