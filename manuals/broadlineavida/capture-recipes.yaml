@@ -244,6 +244,75 @@ recipes:
     dataReady: "::-p-text(PMV - Variables)"
     viewport: { width: 1600, height: 900 }
 
+  # PANEL LAYER MUST BE ENABLED FIRST — it is MV-only (LayersMap.tsx:136-138)
+  # and starts off. Clicking the "Panel" layer button ALREADY closes the menu
+  # itself: LayersMap.tsx:219-231 calls setAnchorEl(null) right after toggling
+  # any layer except AVL/Mobile on AMVA. A THIRD click meant to "close" the
+  # menu lands on the menu's own invisible MuiBackdrop (the thing that is
+  # actually on top once a Popover is open) and REOPENS it instead of closing
+  # an already-closed one — confirmed by instrumenting pointerdown/click
+  # targets live: every click after that extra step landed on the backdrop,
+  # never the card, so nothing downstream ever expanded. Two steps only.
+  - slot: bot.mapa.paneles.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: 'svg[data-testid="LayersOutlinedIcon"]'
+      - click: 'button[aria-label="Panel"]'
+    screenIs: ".gm-style"
+    dataReady: "div.cursor-pointer.bg-base-200.rounded-lg.shadow-2xl"
+    settleMs: 2000
+    viewport: { width: 1600, height: 900 }
+
+  # Expands whichever card the DOM lists first — panel identity is live data
+  # that rotates, and the manual's own text only promises "la tarjeta o el
+  # marcador de UN panel", never a named one. Clipped to whichever card ends
+  # up `ring-2`: PanelCard.tsx only puts that ring class on the expanded
+  # card, so the shot follows whichever one actually opened rather than a
+  # fixed position.
+  - slot: bot.mapa.paneles.paso.abrir
+    route: /#/broadsec-of-things
+    steps:
+      - click: 'svg[data-testid="LayersOutlinedIcon"]'
+      - click: 'button[aria-label="Panel"]'
+      - click: "div.cursor-pointer.bg-base-200.rounded-lg.shadow-2xl"
+    screenIs: ".gm-style"
+    dataReady: '::-p-xpath(//div[contains(@class,"ring-2")])'
+    settleMs: 1000
+    clip: '::-p-xpath(//div[contains(@class,"ring-2")])'
+    viewport: { width: 1600, height: 900 }
+
+  # PHOTOGRAPHED, NOT PRESSED. "Desactivar panel" / "Reactivar panel"
+  # (PanelCard.tsx:196-211) reaches a real PMV panel on a live road through
+  # `setPmvPanelStatus` — FORBIDDEN by this file's own boundary. This clips
+  # the button inside the expanded card; nothing here ever clicks it.
+  - slot: bot.mapa.paneles.paso.accionar
+    route: /#/broadsec-of-things
+    steps:
+      - click: 'svg[data-testid="LayersOutlinedIcon"]'
+      - click: 'button[aria-label="Panel"]'
+      - click: "div.cursor-pointer.bg-base-200.rounded-lg.shadow-2xl"
+    screenIs: ".gm-style"
+    dataReady: '::-p-xpath(//div[contains(@class,"ring-2")]//button)'
+    settleMs: 1000
+    clip: '::-p-xpath(//div[contains(@class,"ring-2")]//button)'
+    viewport: { width: 1600, height: 900 }
+
+  # "Haga clic en cualquier otro punto del mapa para volver a colapsarla" —
+  # there is no control to isolate for this step, only an instruction about
+  # WHERE NOT to click. No clip: the shot shows the same expanded state the
+  # reader is being told to click away from, framed wide enough to show the
+  # open map around it.
+  - slot: bot.mapa.paneles.paso.cerrar
+    route: /#/broadsec-of-things
+    steps:
+      - click: 'svg[data-testid="LayersOutlinedIcon"]'
+      - click: 'button[aria-label="Panel"]'
+      - click: "div.cursor-pointer.bg-base-200.rounded-lg.shadow-2xl"
+    screenIs: ".gm-style"
+    dataReady: '::-p-xpath(//div[contains(@class,"ring-2")])'
+    settleMs: 1000
+    viewport: { width: 1600, height: 900 }
+
   # The module as the operator meets it, with NO click: landing on it is the
   # whole point of "pantalla general". Shooting it on Recursos was the first
   # attempt and produced a near-duplicate of bot.recursos.fig — two captions,
@@ -429,6 +498,22 @@ recipes:
     clip: '::-p-xpath(//button[contains(., "Guardar")])'
     viewport: { width: 1600, height: 900 }
 
+  # The Parpadeo (flash) slider. Label from es.json ("pmv.programming.flash" =
+  # "Parpadeo"); rendered by PMVProgramming.tsx's own FieldLabel, a plain
+  # `<label>{children}</label>`, so the text node is a direct child the same way
+  # every other labelled field in this form is anchored. The wrapping `<div>`
+  # holds the label and the `input[type="range"]` as siblings — same shape as
+  # `bot.pmv.paso.contenido`'s textarea anchor. Untouched: the slider is a
+  # control to SHOW, not to move.
+  - slot: bot.pmv.paso.parpadeo
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Programación)"
+    screenIs: "::-p-text(PMV - Programación)"
+    dataReady: "::-p-text(Contenido de Mensaje)"
+    clip: '::-p-xpath(//*[normalize-space(text())="Parpadeo"]/ancestor::div[.//input[@type="range"]][1])'
+    viewport: { width: 1600, height: 900 }
+
   # The header row carries the select-all checkbox the step describes. Clipping
   # the row rather than the box alone keeps the columns visible, so the reader
   # can see WHAT is being selected.
@@ -482,6 +567,61 @@ recipes:
     clip: '::-p-xpath((//table//tbody//tr)[1])'
     viewport: { width: 1600, height: 900 }
 
+  # The marking dialog, with a TYPE chosen and Confirmar never touched.
+  # ResourcesTable.tsx:531 only renders the type radios while marking a
+  # resource that is not yet PJ — clicking the first UNCHECKED checkbox in
+  # the table (rather than the first row outright) guarantees that branch,
+  # since a row already marked opens the desmarcar dialog instead, which has
+  # no radios to select.
+  - slot: bot.recursos.paso.pj-tipo
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+      - click: 'table tbody input[type="checkbox"]:not(:checked)'
+      - click: 'input[name="pj-type"]'
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
+    dataReady: 'input[name="pj-type"]:checked'
+    clip: "dialog.modal.modal-open .modal-box"
+    viewport: { width: 1600, height: 900 }
+
+  # ResourceLogsModal.tsx — a plain `div.modal.modal-open`, not the `<dialog>`
+  # tag the PJ and delete confirmations use, so the two can never collide on
+  # the same selector. Clipped to the header block (vehicle_code + plate),
+  # which is what this step's own text promises: "identificado por su código
+  # de vehículo y su placa."
+  - slot: bot.recursos.paso.historial-abrir
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+      - click: 'button[title="Historial de casos"]'
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
+    dataReady: "div.modal.modal-open div.border-b"
+    clip: "div.modal.modal-open div.border-b"
+    viewport: { width: 1600, height: 900 }
+
+  # The body once the query has actually settled — matches OR the
+  # `noMatches` message (es.json: "No se encontraron casos para este
+  # recurso en el turno."), never the loading spinner in between. Sampled
+  # 75 resources live (3 pages) with no case history on any of them this
+  # shift, so the empty message is what this shot shows — which is exactly
+  # the other half of what this step's own text promises: "Si no hay casos
+  # para el recurso en el turno, la plataforma lo indica."
+  - slot: bot.recursos.paso.historial-consultar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Recursos)"
+      - click: 'button[title="Historial de casos"]'
+    screenIs: "::-p-text(Monitoreo y despacho operativo)"
+    dataReady: '::-p-xpath(//div[contains(@class,"modal-open")]//div[contains(@class,"overflow-y-auto")][.//p or .//li])'
+    clip: "div.modal.modal-open div.overflow-y-auto"
+    viewport: { width: 1600, height: 900 }
+
+  # bot.recursos.paso.historial-abrir-caso has NO recipe. Its step is
+  # explicitly conditional ("Abra un caso, SI LO NECESITA") and needs a
+  # resource with at least one logged case to click — sampled 75 resources
+  # live (see historial-consultar above) and none had one this shift.
+  # Nothing here creates a case to force the shot; re-run once one exists.
+
   - slot: bot.pmv-variables.paso.anadir
     route: /#/broadsec-of-things
     steps:
@@ -507,6 +647,49 @@ recipes:
   # tile ever shows is "mediaError: bufferAddCodecError" — so the clip returned
   # the error text instead of the transmission state. Not a selector problem.
   # Needs a headful run or a hand capture, like the mosaic.
+
+  - slot: bot.pmv-registros.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Registros)"
+    screenIs: 'input[placeholder="Buscar por título o texto..."]'
+    dataReady: "table tbody tr:nth-child(3) td"
+    viewport: { width: 1600, height: 900 }
+
+  # PMVMessageList.tsx:297 — one flex row holding the search box and every
+  # select/date filter together, the same wrapper the export step's own text
+  # refers to ("usuario creador" and "rango de fechas" sit inside it).
+  - slot: bot.pmv-registros.paso.filtrar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Registros)"
+    screenIs: 'input[placeholder="Buscar por título o texto..."]'
+    dataReady: "table tbody tr:nth-child(3) td"
+    clip: "div.flex.flex-wrap.items-center.gap-2.mb-3"
+    viewport: { width: 1600, height: 900 }
+
+  # GET, not a mutation, so this is the "pure local download" this file's own
+  # boundary allows: exportPmvMessages (pmvService.ts:181-191) is
+  # `apiLV.get("/pmv-message/export", { responseType: "blob" })`, and the
+  # blob it returns is handed to `downloadjs` (PMVMessageList.tsx:245-254),
+  # which only saves a file client-side. Nothing on the server changes.
+  #
+  # `not(ancestor::aside)` IS LOAD-BEARING. The BoT sidebar's ARS entry is
+  # ALSO labelled "Exportar CSV" (es.json:2383, BOTHeader.tsx:11) and sits
+  # earlier in the DOM than this screen's own button, so a bare
+  # `contains(.,"Exportar")` clicked THAT one instead — confirmed the wrong
+  # way, by clipping a screenshot that read "Exportar CSV" on a black
+  # background rather than the teal "Exportar" button this recipe means.
+  - slot: bot.pmv-registros.paso.exportar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Registros)"
+      - click: '::-p-xpath(//button[contains(.,"Exportar") and not(ancestor::aside)])'
+    screenIs: 'input[placeholder="Buscar por título o texto..."]'
+    dataReady: "table tbody tr:nth-child(3) td"
+    clip: '::-p-xpath(//button[contains(.,"Exportar") and not(ancestor::aside)])'
+    settleMs: 1500
+    viewport: { width: 1600, height: 900 }
 
   # ==========================================================================
   # SECURITY DASHBOARD — the filter drawer (section 09).
@@ -715,6 +898,80 @@ recipes:
     screenIs: '::-p-text(Rango de Comparación)'
     dataReady: '::-p-text(Rango de Comparación)'
     clip: '::-p-xpath(//*[normalize-space(text())="Rango de Comparación"]/ancestor::div[.//*[contains(text(),":00:")]][1]//button[1])'
+    viewport: { width: 1600, height: 900 }
+
+  # ---------------------------------------------------------------------
+  # ARS export dialog (ARSExportModal.tsx), opened from the sidebar's own
+  # ARS > Exportar CSV — the SAME label the pmv-registros.paso.exportar
+  # comment warns about, but here it is the intended target rather than a
+  # false match, since this dialog is what THAT button opens.
+  #
+  # `handleExport` (ARSExportModal.tsx:118-143) calls `exportTrafficHistory`
+  # (trafficService.ts:12-21), which is `apiLV.get("/traffic/history/export",
+  # { responseType: "blob" })` — a read, saved client-side. So the export
+  # itself would be the same "pure local download" the boundary allows. It is
+  # NOT what stops this file from clicking Aceptar: the boundary's OTHER,
+  # unconditional rule — "NEVER: final Guardar/Enviar/Confirmar/Aceptar" —
+  # applies regardless of what a confirm button does underneath, so
+  # bot.ars.paso.confirmar photographs it and nothing here ever clicks it.
+  # ---------------------------------------------------------------------
+
+  - slot: bot.ars.fig
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Exportar CSV)"
+    screenIs: "::-p-text(Exportar reporte ARS)"
+    dataReady: "::-p-text(Seleccionar todo)"
+    clip: '::-p-xpath(//div[contains(@class,"bg-[#1F212B]")])'
+    settleMs: 800
+    viewport: { width: 1600, height: 900 }
+
+  # The calendar-range custom element (cally) holds BOTH calendars and BOTH
+  # time inputs as children (ARSExportModal.tsx:172-243), so clipping the
+  # element alone shows the whole range control the step describes.
+  - slot: bot.ars.paso.rango
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Exportar CSV)"
+    screenIs: "::-p-text(Exportar reporte ARS)"
+    dataReady: "::-p-text(Seleccionar todo)"
+    clip: "calendar-range"
+    settleMs: 800
+    viewport: { width: 1600, height: 900 }
+
+  - slot: bot.ars.paso.intervalo
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Exportar CSV)"
+    screenIs: "::-p-text(Exportar reporte ARS)"
+    dataReady: "::-p-text(Seleccionar todo)"
+    clip: '::-p-xpath(//label[contains(text(),"Intervalo")]/parent::div)'
+    settleMs: 800
+    viewport: { width: 1600, height: 900 }
+
+  # The whole "Cruces y cámaras" column — label, search box and the
+  # intersection/lane list together, which is what "Seleccione los cruces y
+  # cámaras" covers as one step.
+  - slot: bot.ars.paso.cruces
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Exportar CSV)"
+    screenIs: "::-p-text(Exportar reporte ARS)"
+    dataReady: "::-p-text(Seleccionar todo)"
+    clip: '::-p-xpath(//label[contains(text(),"Cruces y c") and contains(text(),"maras")]/parent::div)'
+    settleMs: 800
+    viewport: { width: 1600, height: 900 }
+
+  # PHOTOGRAPHED, NOT PRESSED — see the boundary note above this section.
+  # `actions.acept` is "Aceptar" (es.json), the literal button text.
+  - slot: bot.ars.paso.confirmar
+    route: /#/broadsec-of-things
+    steps:
+      - click: "button::-p-text(Exportar CSV)"
+    screenIs: "::-p-text(Exportar reporte ARS)"
+    dataReady: "::-p-text(Seleccionar todo)"
+    clip: '::-p-xpath(//button[contains(.,"Aceptar")])'
+    settleMs: 800
     viewport: { width: 1600, height: 900 }
 
   # ---------------------------------------------------------------------
