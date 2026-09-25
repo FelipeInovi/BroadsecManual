@@ -1,0 +1,233 @@
+id: notas
+title: Actualización
+# Every change below is conditioned to mv, and med is a target of this manual,
+# so the lede names none of them — see the release-notes skill, "The lede is
+# the same for every target".
+lede: >-
+  Nuevas capacidades de filtrado, de gestión operativa y de exportación de
+  información, junto con ajustes en el funcionamiento de la plataforma.
+children:
+  - kind: block
+    id: notas.vigencia
+    type: term-list
+    props:
+      entries:
+        - id: notas.vigencia.1
+          term: Módulo de Comando y Control
+          definition: Actualización efectiva desde el 25 de septiembre de 2026.
+
+  # Producto: nuevo — 534fccc. canViewFilterTrafficDetails is on for mv alone
+  # (knowledge/module-map.json). Estación is gated by canViewFilterStation and
+  # no commit in the range declares it, so it is not listed.
+  - kind: section
+    id: notas.dashboard
+    title: Security Dashboard
+    when:
+      tenant: [mv]
+    children:
+      - kind: block
+        id: notas.dashboard.p1
+        type: prose
+        props:
+          text: >-
+            Se incorporaron nuevos filtros en las **Variables de Gestión** del
+            panel de Filtros: **Estado del Caso**, **Tipo de Caso**, **Clase de
+            Siniestro Vial**, **Recursos Asignados al Caso** y **Motivo de
+            Cierre**.
+      - kind: block
+        id: notas.dashboard.p2
+        type: prose
+        props:
+          text: >-
+            Cada uno se presenta como una lista de casillas de verificación, con
+            la opción **Todos** para seleccionarlas en conjunto. Una vez
+            seleccionados, pulse **Aplicar** en la parte inferior del panel para
+            acotar la información del dashboard.
+
+  # Producto: nuevo — 4db553c. Same selector as sections/10-fuerzas-en-campo.yaml.
+  - kind: section
+    id: notas.fuerzas
+    title: Fuerzas en Campo
+    when:
+      tenant: [mv, demo]
+    children:
+      - kind: block
+        id: notas.fuerzas.perfil
+        type: prose
+        props:
+          text: >-
+            Se incorporó el perfil del agente. Al hacer clic sobre un agente en
+            el listado de **Agentes** se accede a su perfil, que se abre en la
+            pestaña **Agente** con su identificación y su panel de
+            **Intendencia**, donde se listan los elementos de dotación
+            asignados.
+      - kind: block
+        id: notas.fuerzas.liberar
+        type: prose
+        props:
+          text: >-
+            Ahora es posible liberar a un agente en estado **Emergencia**. En
+            su perfil aparece un botón junto a su identificación; al pulsarlo,
+            la plataforma solicita confirmación y, al pulsar **Liberar**, el
+            agente vuelve a admitir despachos.
+      - kind: block
+        id: notas.fuerzas.asignar
+        type: prose
+        props:
+          text: >-
+            Se incorporó la pestaña **Asignar** en el detalle de un turno que
+            aún no ha finalizado. Desde ella se despacha un caso al agente de
+            ese turno sin salir de la pantalla, y el botón **Tarea** crea una
+            tarea dirigida únicamente a ese agente.
+
+  # Producto: nuevo — bd13a0c. The panel cards are [mv] inside the [mv, demo]
+  # module: the Panel layer that shows them exists only for mv (see
+  # bot.mapa.paneles.* in sections/12-broadsec-of-things.yaml). Atenuar Mapa
+  # (1de5ea4) follows the module's own selector.
+  - kind: section
+    id: notas.bot-mapa
+    title: Broadsec of Things — Mapa
+    when:
+      tenant: [mv, demo]
+    children:
+      - kind: block
+        id: notas.bot-mapa.tarjetas
+        type: prose
+        when:
+          tenant: [mv]
+        props:
+          text: >-
+            Con la capa de Panel activa, cada panel de mensajería variable se
+            muestra ahora en el mapa como una tarjeta junto a su marcador, que
+            reproduce en vivo el mensaje que el panel está mostrando, página
+            por página. Al hacer clic sobre la tarjeta o el marcador, la
+            tarjeta se expande con el mensaje completo y ofrece el botón
+            **Desactivar panel** o **Reactivar panel**.
+      - kind: block
+        id: notas.bot-mapa.atenuar
+        type: prose
+        props:
+          text: >-
+            Se incorporó el control **Atenuar Mapa**, que reduce el brillo del
+            mapa mediante el deslizador **Opacidad del Mapa** para resaltar los
+            elementos superpuestos.
+
+  # Producto: nuevo — 1de5ea4, bd13a0c; cambio — b8eca83.
+  - kind: section
+    id: notas.bot-recursos
+    title: Broadsec of Things — Recursos
+    when:
+      tenant: [mv, demo]
+    children:
+      - kind: block
+        id: notas.bot-recursos.historial
+        type: prose
+        props:
+          text: >-
+            Cada recurso ofrece ahora un acceso a su historial de casos del
+            turno en curso, con el tipo y el estado de cada caso; al
+            seleccionar uno, la plataforma lleva al detalle del incidente.
+      - kind: block
+        id: notas.bot-recursos.agente
+        type: prose
+        props:
+          text: >-
+            La columna **Agente** muestra un indicador del estado del agente en
+            tiempo real y puede filtrarse por conectividad móvil: **Sin
+            Mobile**, **Con Mobile**, **Comp. Activa** o **Comp. Inactiva**.
+      - kind: block
+        id: notas.bot-recursos.pj
+        type: prose
+        props:
+          text: >-
+            Al marcar un recurso como Policía Judicial, ahora es necesario
+            elegir su tipo, **En Puertas** o **Emergente**, antes de confirmar.
+            Desmarcarlo no cambia.
+
+  # Producto: nuevo — 1de5ea4, bd13a0c; cambio — b8eca83, 528ac19.
+  - kind: section
+    id: notas.bot-pmv
+    title: Broadsec of Things — Paneles de mensajería variable
+    when:
+      tenant: [mv, demo]
+    children:
+      - kind: block
+        id: notas.bot-pmv.menu
+        type: prose
+        props:
+          text: >-
+            En el menú **PMV** del panel lateral, **Gestión** pasó a llamarse
+            **Calendario** y **Variables** pasó a llamarse
+            **Predeterminados**. Las pantallas no cambiaron.
+      - kind: block
+        id: notas.bot-pmv.programacion
+        type: prose
+        props:
+          text: >-
+            En **Programación**, cada página del mensaje admite ahora un nivel
+            de **Parpadeo** propio, y la vigencia se completa con uno o varios
+            **Horarios**, cada uno con sus días de la semana y su franja
+            horaria. Un mensaje marcado como **Mensaje Prioritario** puede
+            guardarse aunque exista un conflicto de programación sobre el mismo
+            panel, y la advertencia indica que lo reemplaza. Al salir con
+            cambios sin guardar, la plataforma solicita confirmación.
+      - kind: block
+        id: notas.bot-pmv.registros
+        type: prose
+        props:
+          text: >-
+            Se incorporó la sección **Registros**, que lista el histórico de
+            mensajes con sus paneles, días, horarios y usuarios, permite
+            filtrarlo y exportarlo a un archivo CSV, y ofrece el registro de
+            actividad de quién realizó cada acción y cuándo.
+      - kind: block
+        id: notas.bot-pmv.calendario
+        type: prose
+        props:
+          text: >-
+            En **Calendario**, el detalle de un mensaje muestra ahora su texto,
+            página por página.
+      - kind: block
+        id: notas.bot-pmv.predeterminados
+        type: prose
+        props:
+          text: >-
+            En **Predeterminados**, los mensajes predefinidos ahora pueden
+            editarse, y al desplegar una subfamilia se listan sus mensajes con
+            un acceso directo para editarlos en **Programación**. Una familia
+            ya no puede eliminarse mientras tenga subfamilias, ni una
+            subfamilia mientras tenga mensajes.
+
+  # Producto: nuevo — 1de5ea4, bd13a0c.
+  - kind: section
+    id: notas.bot-alarmas
+    title: Broadsec of Things — Alarmas
+    when:
+      tenant: [mv, demo]
+    children:
+      - kind: block
+        id: notas.bot-alarmas.p1
+        type: prose
+        props:
+          text: >-
+            **Alarmas** reporta ahora también las fallas de hardware de los
+            paneles de mensajería variable, además de las del sistema de
+            semaforización. Al reconocer una alarma, la plataforma lo confirma
+            y la columna **Gestión** registra quién la reconoció y cuándo.
+
+  # Producto: nuevo — 1de5ea4.
+  - kind: section
+    id: notas.bot-ars
+    title: Broadsec of Things — ARS
+    when:
+      tenant: [mv, demo]
+    children:
+      - kind: block
+        id: notas.bot-ars.p1
+        type: prose
+        props:
+          text: >-
+            Ahora es posible exportar el historial de tráfico del sistema de
+            semaforización a un archivo CSV. Despliegue **ARS** en el panel
+            lateral y seleccione **Exportar CSV**; elija el rango de fechas, el
+            intervalo de agrupación y los cruces y cámaras a incluir.

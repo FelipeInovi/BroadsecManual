@@ -92,3 +92,20 @@ children:
           description: >-
             Incorpora el módulo Broadsec of Things, con la gestión de
             dispositivos en campo.
+
+        - id: historial.tabla.1-2-0
+          version: 1.2.0
+          date: 2026-09-25
+          # mv only: every module this row announces is conditioned to mv —
+          # Fuerzas en Campo and Broadsec of Things to [mv, demo], the new
+          # dashboard filters to [mv] — and med was not handed this version.
+          when:
+            tenant: [mv]
+          description: >-
+            Amplía **Security Dashboard** con nuevos filtros de Variables de
+            Gestión, **Fuerzas en Campo** con el perfil del agente, la
+            liberación de emergencia y la asignación desde el turno, y
+            **Broadsec of Things** con la exportación de ARS, los registros de
+            PMV y las tarjetas de los paneles en el mapa, e incorpora las
+            figuras de los tres módulos. Corrige además la descripción de las
+            capas del mapa en **Interfaz General**.
