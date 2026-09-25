@@ -20,8 +20,27 @@
 #   src/render/components/ResourcesTable/Columns.tsx    resource columns, incl. case history
 #   src/render/components/ResourcesTable/ResourceLogsModal.tsx  case history modal
 #   src/render/components/ResourcesTable/ResourcesTable.tsx     PJ marking dialog
-#   src/render/components/GoogleMap/GlobalGoogleMap.tsx  map dim control on the BoT map
+#   src/render/pages/Resources/useResourcesTable.ts       agentMobileFilter
+#   src/render/components/GoogleMap/GlobalGoogleMap.tsx  map dim control AND
+#                                                          panelPresentation="cards"
+#                                                          on the BoT map (mapa tab)
+#   src/render/components/GoogleMap/PanelCardsOverlay.tsx  panel cards layer
+#   src/render/components/GoogleMap/PanelCard.tsx          one panel's card
+#   src/render/components/GoogleMap/panelCards.constants.ts/geometry.ts  sizing/placement
+#   src/render/components/GoogleMap/CustomMarker.tsx      panel pin click -> card toggle
+#   src/render/components/LayersMap.tsx                   Panel layer control gating
+#   src/render/pages/PMV/components/PMVFamilyList.tsx     family/subfamily guards
+#   src/render/pages/PMV/components/PMVCalendar.tsx       event detail message preview
+#   src/render/pages/PMV/components/PMVMessageList.tsx    panel "+N" hover on Registros
+#   src/render/components/AlarmsTable/AlarmsManagmentPage.tsx  acknowledge feedback
 #   locales/translations/es.json                        every UI label quoted below
+#
+# Second pass, same day, on the SAME baseline (98210678): the first pass scoped
+# itself to pages/BroadsecOfThings, pages/PMV and pages/CCTV only and missed a
+# major feature living under components/GoogleMap/ — the PMV panel cards on the
+# BoT map — plus several smaller gaps in Recursos, Predeterminados, Calendario,
+# Programación, Registros and Alarmas, none of them under those three folders
+# either. `documents.paths` widened accordingly, below.
 #
 # Re-verified 2026-09-25 against origin/develop @ 98210678 (2026-09-23) — the
 # product's checked-out state, per the owner (see ESTADO.md, Unresolved #11,
@@ -249,6 +268,101 @@ children:
                 Reduce el brillo del mapa mediante un control deslizante de
                 **Opacidad del Mapa**, para resaltar los elementos superpuestos.
 
+      # ---------------------------------------------------- Tarjetas de paneles ---
+      # NEW integration: PMVPage.tsx:145 passes panelPresentation="cards" to
+      # GlobalGoogleMap — the BoT map is the ONLY map in the product that does;
+      # every other GlobalGoogleMap mount (the Home map among them) keeps the
+      # default "infoWindow" (GlobalGoogleMap.tsx:162), so panel pins there still
+      # open the pre-existing pop-up and show no card. Restricted here to [mv]
+      # rather than the module's own [mv, demo]: the "Panel" entry in the layer
+      # selector — the only control that turns the layer on — only exists when
+      # `config.name === "MV"` (LayersMap.tsx:136-138), so a demo operator has no
+      # way to switch the layer on and never sees a panel, a pin or a card.
+      - id: bot.mapa.paneles.header
+        type: detail-header
+        props:
+          text: Tarjetas de los paneles en el mapa
+        when:
+          tenant: [mv]
+
+      - id: bot.mapa.paneles.que-hace
+        type: prose
+        props:
+          text: >-
+            Con la capa de Panel activa, cada panel de mensajería variable se
+            muestra sobre el mapa como una tarjeta compacta, separada de su
+            marcador y unida a él por una línea. La tarjeta reproduce en vivo
+            el mensaje que el panel está mostrando en ese momento, con la
+            misma sucesión de páginas y la misma duración configuradas al
+            programarlo.
+        when:
+          tenant: [mv]
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.mapa.paneles.fig
+        type: figure
+        props:
+          caption: "Los paneles sobre el mapa, cada uno con su tarjeta de mensaje en vivo."
+          widthPercent: 90
+        when:
+          tenant: [mv]
+
+      - id: bot.mapa.paneles.funciones
+        type: term-list
+        props:
+          entries:
+            - id: bot.mapa.paneles.fn.encabezado
+              term: Encabezado de la tarjeta
+              definition: >-
+                Identifica el panel por su nombre y, cuando el panel tiene
+                sentido de circulación asignado, lo indica junto al nombre.
+            - id: bot.mapa.paneles.fn.ubicacion
+              term: Ubicación de la tarjeta
+              definition: >-
+                La plataforma la ubica en un espacio libre cercano al panel,
+                de modo que no cubra su marcador, otro elemento del mapa ni
+                otra tarjeta. Cuando varios paneles quedan muy próximos entre
+                sí en el nivel de acercamiento actual, sus tarjetas y líneas
+                se ocultan hasta acercar el mapa lo suficiente para
+                separarlos.
+            - id: bot.mapa.paneles.fn.ventanas
+              term: Ventanas de información abiertas
+              definition: >-
+                Ninguna tarjeta cubre una ventana de información que esté
+                abierta sobre otro elemento del mapa.
+        when:
+          tenant: [mv]
+
+      - id: bot.mapa.paneles.expandir
+        type: procedure
+        props:
+          lead: >-
+            Para ver el mensaje completo de un panel, y activarlo o
+            desactivarlo desde el propio mapa, siga estos pasos.
+          steps:
+            - id: bot.mapa.paneles.paso.abrir
+              layout: beside
+              title: Seleccione la tarjeta o el marcador del panel
+              text: >-
+                Haga clic sobre la tarjeta del panel, o sobre su marcador en
+                el mapa. La tarjeta se expande y muestra el mensaje completo.
+            # PanelCard.tsx:207-211 — literal button text, not an i18n key:
+            # "Desactivar panel" / "Reactivar panel".
+            - id: bot.mapa.paneles.paso.accionar
+              layout: beside
+              title: Active o desactive el panel, si lo necesita
+              text: >-
+                La tarjeta expandida ofrece el botón **Desactivar panel** o,
+                si el panel ya estaba desactivado, **Reactivar panel**.
+            - id: bot.mapa.paneles.paso.cerrar
+              layout: beside
+              title: Cierre la tarjeta
+              text: >-
+                Haga clic en cualquier otro punto del mapa para volver a
+                colapsarla.
+        when:
+          tenant: [mv]
+
   # =================================================================== PRT ===
   - id: bot.prt
     title: PRT
@@ -370,11 +484,16 @@ children:
             # Columns.tsx — a colour dot on the mobile-app icon reflects the
             # agent's real-time status when both shift_mobile and broad_mobile
             # are true.
+            # Columns.tsx:107-124 — agentMobileFilter, fixedOptions "Sin
+            # Mobile"/"Con Mobile"/"Comp. Activa"/"Comp. Inactiva" (literal
+            # strings, not i18n keys). useResourcesTable.ts:44-48.
             - id: bot.recursos.col.agente
               label: Agente
               description: >-
                 Agente a cargo. Un punto de color junto al ícono de la app
-                móvil indica su estado en tiempo real.
+                móvil indica su estado en tiempo real. La columna puede
+                filtrarse por conectividad móvil: **Sin Mobile**, **Con
+                Mobile**, **Comp. Activa** o **Comp. Inactiva**.
             - id: bot.recursos.col.placa
               label: Placa
               description: Placa del vehículo asociado.
@@ -698,6 +817,17 @@ children:
             indica que el mensaje prioritario lo reemplaza. Verifique la
             vigencia antes de guardarlo.
 
+      # PMVPage.tsx — leaving Programación con cambios sin guardar, hacia
+      # cualquier otra pestaña, pide confirmación
+      # (pmv.programming.unsavedChangesTitle/Body).
+      - id: bot.pmv.salir-sin-guardar
+        type: callout
+        props:
+          variant: info
+          text: >-
+            Si intenta salir de esta pantalla con cambios sin guardar, la
+            plataforma le pide confirmación antes de descartarlos.
+
   # =========================================================== PMV Calendario ===
   # botSidebar.navItems.calendario — "Calendario" (was documented as "Gestión";
   # re-verified 2026-09-25 against the current sidebar label).
@@ -762,12 +892,16 @@ children:
               label: Desactivado
               description: Retirado de la programación.
 
+      # PMVCalendar.tsx — the event detail popup now also previews the
+      # message content (pmv.calendar.detailMessage), page by page when the
+      # message has more than one.
       - id: bot.pmv-gestion.detalle
         type: prose
         props:
           text: >-
             El detalle de cada mensaje indica su **Horario**, su **Vigencia**,
-            su **Familia**, su **Grupo** y los **Paneles** afectados. Los
+            su **Familia**, su **Grupo**, los **Paneles** afectados y el
+            texto del mensaje, página por página si tiene más de una. Los
             mensajes prioritarios se distinguen con una marca.
 
       - id: bot.pmv-gestion.desactivar
@@ -962,7 +1096,8 @@ children:
             # trusting a stale count: a family is blocked while it still has
             # subfamilies (familyHasSubfamilies, es.json:1915-1916) and a
             # subfamily is blocked while it still has messages
-            # (subfamilyHasMessages).
+            # (subfamilyHasMessages). Expanding a subfamily lists its
+            # messages, each with a button that opens it in Programación.
             - id: bot.pmv-variables.s.familias
               label: Familias
               text: >-
@@ -970,7 +1105,9 @@ children:
                 familia indica cuántos elementos contiene, y puede editarse.
                 No puede eliminarse mientras tenga subfamilias, ni una
                 subfamilia mientras tenga mensajes: la plataforma lo indica.
-                Una subfamilia sin mensajes se señala como tal.
+                Al desplegar una subfamilia se listan sus mensajes, cada uno
+                con un acceso directo para abrirlo en **Programación** y
+                editarlo; si no tiene ninguno, la plataforma lo indica.
             - id: bot.pmv-variables.s.grupos
               label: Grupos
               text: >-
@@ -1080,9 +1217,14 @@ children:
               description: >-
                 Recurso afectado: la cámara y su ubicación para una alarma de
                 ARS, o el panel para una alarma de PMV.
+            # columns.tsx — once acknowledged, shows the operator's comment
+            # plus who acknowledged it and when (acknowledgment_by/_at).
             - id: bot.alarmas.col.gestion
               label: Gestión
-              description: Estado de atención de la alarma.
+              description: >-
+                Estado de atención de la alarma. Una alarma reconocida
+                muestra el comentario registrado, junto con quién la
+                reconoció y cuándo.
 
       - id: bot.alarmas.reconocer
         type: procedure
@@ -1107,13 +1249,16 @@ children:
               text: >-
                 La plataforma abre una ventana de confirmación, que indica si se
                 reconoce una alarma o varias, y permite escribir un comentario.
+            # AlarmsManagmentPage.tsx — enqueueSnackbar on success
+            # (alarmsPage.acknowledgeSuccess / acknowledgeSuccessMany).
             - id: bot.alarmas.paso.resultado
               layout: beside
               title: Verifique el resultado
               text: >-
-                Al confirmar, la columna **Gestión** refleja el reconocimiento.
-                Si no hay alarmas en el rango consultado, la plataforma lo
-                indica.
+                Al confirmar, la plataforma muestra un mensaje de
+                confirmación y la columna **Gestión** refleja el
+                reconocimiento. Si no hay alarmas en el rango consultado, la
+                plataforma lo indica.
 
   # ==================================================================== ARS ===
   # NEW submodule (18308a52, feat(ars): add CSV export modal). "ars" is a
