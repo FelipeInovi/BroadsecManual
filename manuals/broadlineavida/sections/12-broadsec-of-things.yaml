@@ -41,21 +41,31 @@ subtitle: Gestión de dispositivos en campo
 when:
   tenant: [mv, demo]
 
-# Resolved from the header's source list (lines 8-11), not from the product:
-# `AppRoutes.tsx` -> sources/registry.yaml:27 (extract.routes); the PMV and
-# BoT page paths -> sources/registry.yaml:32 (extract.pages); the i18n file ->
-# sources/registry.yaml:30 (extract.i18n). Design ADR-010 records that
-# `routes/AppRoutes.tsx` and `locales/translations/es.json` lie outside the
-# two scanned roots (`components/`, `pages/`) and so are UNJOINABLE — expected,
-# not a defect; `documents <manual>` annotates it. No `flags:` declared here:
-# whether this module documents `canSeeBoT` is a content judgement left to
-# whoever re-grounds the module (design ADR-010, "What could not be determined").
+# Resolved from the header's source list, not from the product:
+# `AppRoutes.tsx` -> sources/registry.yaml:27 (extract.routes); the PMV, BoT,
+# CCTV, PRT, Resources and Alarms page paths -> sources/registry.yaml:32
+# (extract.pages); the i18n file -> sources/registry.yaml:30 (extract.i18n).
+# Design ADR-010 records that `routes/AppRoutes.tsx` and
+# `locales/translations/es.json` lie outside the two scanned roots
+# (`components/`, `pages/`) and so are UNJOINABLE — expected, not a defect;
+# `documents <manual>` annotates it. No `flags:` declared here: whether this
+# module documents `canSeeBoT` is a content judgement left to whoever
+# re-grounds the module (design ADR-010, "What could not be determined").
+#
+# Widened 2026-09-25: the module always documented CCTV, PRT, Recursos and
+# Alarmas in full, but `documents:` only ever declared the PMV/BoT-sidebar
+# paths — so drift in the other four screens could never be reported. Each
+# now has its own directory entry.
 sourceBase: src/render/
 documents:
   paths:
     - routes/AppRoutes.tsx
-    - pages/PMV/PMVPage.tsx
+    - pages/PMV/
     - pages/BroadsecOfThings/*.tsx
+    - pages/CCTV/
+    - pages/PRT/
+    - pages/ResourcesManagment/
+    - pages/Alarms/
     - locales/translations/es.json
 
 children:

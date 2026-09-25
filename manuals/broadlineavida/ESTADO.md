@@ -261,6 +261,39 @@ state.
   trailers alone — which is why each declaration above now also lives in a
   commit of its own.
 
+- **`12-broadsec-of-things.yaml` was updated end to end against
+  `origin/develop @ 98210678` (2026-09-23), the owner's authorised baseline —
+  see the former Unresolved #11, now folded in here.** Added: a new **ARS**
+  submodule (the sidebar's "ars" nav item stopped being status-only and grew
+  its own "Exportar CSV" action, `18308a52`) with its export procedure; a new
+  **PMV — Registros** submodule (the message-list tab, `a89a20ff`) covering
+  the message log, its filters/export and the activity-log modal
+  (`pmv.logs`); a per-page **Parpadeo** step in PMV Programación
+  (`FLASH_LEVELS`); multi-day, multi-schedule support in the same procedure's
+  vigencia step (`pmv.programming.schedules`/`addScheduleButton`); an
+  **Atenuar Mapa** entry in BoT's Mapa (`GlobalGoogleMap.tsx` `dimmable`,
+  `3e46b7d4`); a case-history procedure and a real-time status-dot note on
+  Recursos (`5282bffb`); a PJ-subtype step ("En Puertas"/"Emergente") in the
+  PJ-marking procedure; an "editable" note on Mensajes Predefinidos
+  (`editTemplateTooltip`); and a callout plus column-description updates on
+  Alarmas for PMV-origin panel-hardware faults (`alarmsPage.pmvErrors`,
+  `5a5578ea`). Removed: ARS from the `bot.integraciones` status-only table —
+  it moved to its own submodule. Renamed (product-driven, `620aad9b`): "PMV —
+  Gestión" to **"PMV — Calendario"** and "PMV — Variables" to **"PMV —
+  Predeterminados"**, matching the sidebar's current labels — the header's own
+  internal tab caption (`BOTHeader.tsx` `TAB_LABELS`) still reads "PMV -
+  Variables", which is a product-side inconsistency between two internal
+  strings, not something this manual quotes. Widened `documents.paths` from
+  4 entries to 8: the module always documented CCTV, PRT, Recursos and
+  Alarmas in full but never declared their paths, so drift there could never
+  be reported; each now has a directory entry. PRT and the "auto-create
+  report"/`agent_id`/`station_number` dispatch-payload changes were checked
+  and found to carry no operator-visible content — nothing written for
+  either. 14 new image slots were declared, all pending (capture is out of
+  scope for this pass); `documents <manual>` still reads the module `clean`
+  after the widening. DF-32 (alarm levels, unmerged) stays out of scope — see
+  Unresolved #11.
+
 ## Ruled out
 
 - **Trusting the legacy manual's tenant badges.** Its `[LV]`/`[MV]` marks and
@@ -414,3 +447,13 @@ state.
     single-module update discards the drift of every module nobody has reviewed
     yet. **What settles it:** a deliberate whole-manual `extract`, run on its
     own, when somebody is ready to re-read every module's drift afterwards.
+
+11. **When DF-32 (alarm levels) merges to `develop`, `12-broadsec-of-things.yaml`
+    needs another pass.** The 2026-09-25 update (see Decided) deliberately left
+    it out — the branch was unmerged and out of scope by the owner's own
+    instruction. It carries, at minimum, a level-4 toast and a blocking
+    critical-alarm dialog INSIDE BoT, and a refactor of BoT's access rule
+    (`routes/accessRules.ts`), none of which is in this module's Alarmas
+    subsection today. **What settles it:** the branch merging to `develop`,
+    and a follow-up read of `routes/accessRules.ts` and the Alarmas screen
+    against it.
