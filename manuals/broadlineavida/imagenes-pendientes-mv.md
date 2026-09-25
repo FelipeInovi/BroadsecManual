@@ -8,4 +8,4 @@ Los números de página valen para la última construcción del manual. Regenere
 | Imagen | Pág. | Cómo obtenerla |
 | --- | --- | --- |
 | `fuerzas.turno-asignar.fig` — Pestaña Asignar del detalle del turno. | oculta |  |
-| `bot.recursos.paso.historial-abrir-caso` — Abra un caso, si lo necesita | 74 |  |
+| `bot.recursos.paso.historial-abrir-caso` — Abra un caso, si lo necesita | oculta |  |

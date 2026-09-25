@@ -1,5 +1,9 @@
 {
   "hidden": {
+    "bot.recursos.paso.historial-abrir-caso": {
+      "hiddenAt": "2026-09-25",
+      "note": "aún no se están asignando recursos en movilidad"
+    },
     "fuerzas.turno-asignar.fig": {
       "hiddenAt": "2026-09-22",
       "note": "mientras se arregla la funcionalidad"
