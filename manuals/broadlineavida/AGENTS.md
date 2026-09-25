@@ -59,9 +59,9 @@ re-deriving them.
 | Table | Deliverable | Why |
 |---|---|---|
 | eight map layers (`mapa.capa.*`) | **8 of 8** | The product's own `.webp`/`.png`, joined through `LayersMap.tsx` |
-| six BoT sections (`bot.seccion.*`) | **6 of 6** | Tabler outline SVGs via `BOTSidebar.tsx`, recoloured |
+| seven BoT sections (`bot.seccion.*`) | **7 of 7** | Tabler outline SVGs via `BOTSidebar.tsx`, recoloured |
 | six map controls (`mapa.ctrl.*`) | **0 of 6** | One MUI icon, one framework-white product SVG, four Google Maps native controls |
-| everything else in BoT (`bot.*`, 47 slots) | **0 of 47** | All figure-convention — screens, panels and procedure steps |
+| everything else in BoT (`bot.*`, 62 slots) | **0 of 62** | All figure-convention — screens, panels and procedure steps |
 
 **The first and third sit on the same page.** Judge per row, never per section.
 
@@ -71,10 +71,14 @@ layer catalogue, and both new rows were deliverable the same way. ARS is
 `t("layers.traffic_lights")` at `:114-117`) and Recorrido is `layer_route.webp`
 (`:6`, paired with `t("layers.route")` at `:126-129`). Level-2 joins — asset and
 UI string in one object literal — and photographic `.webp`, so no recolouring.
-**Every image slot in this manual is now delivered: 248 of 248.**
 
-Sorting by convention settled BoT in one query: of its 47 slots, 12 are `figure`,
-28 are `procedure` steps and 7 are `field-list` items — not one `icon-table` row,
+The section table grew from six rows to seven when ARS became a sidebar section
+of its own, and the new row was deliverable the same way: `IconTrafficLights`
+(`BOTSidebar.tsx:121`). Which slots are still pending is not written here —
+`image-requests.json` answers it and cannot be stale.
+
+Sorting by convention settled BoT in one query: of its 62 slots, 13 are `figure`,
+42 are `procedure` steps and 7 are `field-list` items — not one `icon-table` row,
 so nothing an asset file can answer. Confirmed the slow way too: across every page
 under `BroadsecOfThings/`, `CCTV/` and `PMV/` the product imports exactly TWO
 asset files, both product-drawn SVGs, and neither answers a pending slot.
