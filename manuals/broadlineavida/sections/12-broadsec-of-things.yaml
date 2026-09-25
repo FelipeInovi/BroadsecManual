@@ -5,15 +5,32 @@
 # functions and its procedures.
 #
 # Sources, all read rather than assumed:
-#   AppRoutes.tsx:202-214            route and gating
-#   pages/PMV/PMVPage.tsx            tab shell and polling
-#   pages/BroadsecOfThings/*.tsx     sidebar and header
-#   locales/translations/es.json     every UI label quoted below
+#   AppRoutes.tsx:202-214                             route and gating
+#   pages/PMV/PMVPage.tsx                             tab shell, panes and polling
+#   pages/PMV/components/PMVProgramming.tsx           flashing + multi-day schedules
+#   pages/PMV/components/PMVMessageList.tsx           PMV — Registros (message log)
+#   pages/PMV/components/PMVLogsList.tsx              PMV activity log (opened from Registros)
+#   pages/PMV/components/PMVTemplateList.tsx           editable predefined messages
+#   pages/BroadsecOfThings/BOTSidebar.tsx              sidebar nav items
+#   pages/BroadsecOfThings/BOTHeader.tsx                header tab captions
+#   pages/BroadsecOfThings/ARSExportModal.tsx          ARS — Exportar CSV
+#   pages/Alarms/AlarmsManagmentPage.tsx               Alarmas
+#   src/render/components/AlarmsTable/columns.tsx       alarm columns, incl. PMV panel faults
+#   pages/ResourcesManagment/ResourcesManagmentPage.tsx Recursos
+#   src/render/components/ResourcesTable/Columns.tsx    resource columns, incl. case history
+#   src/render/components/ResourcesTable/ResourceLogsModal.tsx  case history modal
+#   src/render/components/ResourcesTable/ResourcesTable.tsx     PJ marking dialog
+#   src/render/components/GoogleMap/GlobalGoogleMap.tsx  map dim control on the BoT map
+#   locales/translations/es.json                        every UI label quoted below
+#
+# Re-verified 2026-09-25 against origin/develop @ 98210678 (2026-09-23) — the
+# product's checked-out state, per the owner (see ESTADO.md, Unresolved #11,
+# now Decided). The unmerged DF-32 alarm-levels branch is OUT of scope.
 #
 # Whole-module gating: AppRoutes.tsx:207 — allowedProjects={["DEMO", "MV"]}.
-# Role gating (AppRoutes.tsx:205-206, allowedRoles ["admin"], denied to manager
-# and agent) cannot be a build axis today — only `tenant` is declared — so it is
-# stated in prose. First real case for a second axis.
+# Role gating (AppRoutes.tsx:205-206, allowedRoles ["admin"], deniedRoles
+# ["manager", "agent"]) cannot be a build axis today — only `tenant` is
+# declared — so it is stated in prose. First real case for a second axis.
 #
 # No image exists for this module. Per the image rule, every slot shows its
 # reference instead of a blank gap.
@@ -120,6 +137,13 @@ children:
             - id: bot.seccion.alarmas
               label: Alarmas
               description: Supervisión y reconocimiento de alarmas.
+            # BOTSidebar.tsx — "ars" is a nav item with its own sub-item
+            # ("Exportar CSV"), not just a status-only integration anymore.
+            - id: bot.seccion.ars
+              label: ARS
+              description: >-
+                Estado de la integración con el sistema de semaforización y
+                exportación de su historial de tráfico.
 
       - id: bot.integraciones.header
         type: detail-header
@@ -130,9 +154,11 @@ children:
         type: prose
         props:
           text: >-
-            En la parte inferior del panel lateral se listan las integraciones
-            del sistema. Estos elementos **no son secciones navegables**: cada
-            uno indica únicamente si la integración se encuentra activa.
+            En la parte inferior del panel lateral se listan otras
+            integraciones del sistema. Estos elementos **no son secciones
+            navegables**: cada uno indica únicamente si la integración se
+            encuentra activa. El estado de ARS se muestra junto a su propia
+            sección, más arriba en el panel.
 
       - id: bot.integraciones
         type: data-table
@@ -140,10 +166,9 @@ children:
           labelHeader: Integración
           descriptionHeader: Descripción
           rows:
-            # BOTSidebar.tsx — items marked `statusOnly: true`.
-            - id: bot.integracion.ars
-              label: ARS
-              description: Sistema de semaforización.
+            # BOTSidebar.tsx — items marked `statusOnly: true`. ARS moved out
+            # of this table: it is no longer status-only, see bot.seccion.ars
+            # and the ARS subsection below.
             - id: bot.integracion.citra
               label: CITRA
               description: Integración con la plataforma CITRA.
@@ -206,6 +231,13 @@ children:
               definition: >-
                 Al seleccionar una cámara sobre el mapa, el módulo abre el
                 mosaico de CCTV en vista individual con esa cámara ya cargada.
+            # GlobalGoogleMap.tsx:404,534 (dimmable prop, passed true from
+            # PMVPage.tsx for this map) — es.json → mapDimControl.
+            - id: bot.mapa.fn.atenuar
+              term: Atenuar Mapa
+              definition: >-
+                Reduce el brillo del mapa mediante un control deslizante de
+                **Opacidad del Mapa**, para resaltar los elementos superpuestos.
 
   # =================================================================== PRT ===
   - id: bot.prt
@@ -325,9 +357,14 @@ children:
             - id: bot.recursos.col.recurso
               label: Recurso
               description: Identificación del recurso.
+            # Columns.tsx — a colour dot on the mobile-app icon reflects the
+            # agent's real-time status when both shift_mobile and broad_mobile
+            # are true.
             - id: bot.recursos.col.agente
               label: Agente
-              description: Agente a cargo.
+              description: >-
+                Agente a cargo. Un punto de color junto al ícono de la app
+                móvil indica su estado en tiempo real.
             - id: bot.recursos.col.placa
               label: Placa
               description: Placa del vehículo asociado.
@@ -414,6 +451,42 @@ children:
                 Al confirmar, la plataforma informa que el recurso quedó marcado
                 como Policía Judicial. La misma acción, sobre un recurso ya
                 marcado, lo desmarca.
+
+      - id: bot.recursos.historial.header
+        type: detail-header
+        props:
+          text: Historial de casos de un recurso
+
+      - id: bot.recursos.historial.intro
+        type: prose
+        props:
+          text: >-
+            Cada recurso tiene un acceso a su historial de casos atendidos
+            durante el turno en curso.
+
+      - id: bot.recursos.historial
+        type: procedure
+        props:
+          lead: Para consultar el historial de casos de un recurso, siga estos pasos.
+          steps:
+            - id: bot.recursos.paso.historial-abrir
+              layout: beside
+              title: Accione el ícono de historial de la fila
+              text: >-
+                La plataforma abre el historial del recurso, identificado por
+                su código de vehículo y su placa.
+            - id: bot.recursos.paso.historial-consultar
+              layout: beside
+              title: Revise los casos listados
+              text: >-
+                Cada caso muestra su tipo y su estado. Si no hay casos para el
+                recurso en el turno, la plataforma lo indica.
+            - id: bot.recursos.paso.historial-abrir-caso
+              layout: beside
+              title: Abra un caso, si lo necesita
+              text: >-
+                Al seleccionar un caso de la lista, la plataforma lo lleva al
+                detalle de ese incidente.
 
       - id: bot.recursos.observacion.header
         type: detail-header
@@ -570,14 +643,29 @@ children:
                 pueden agregarse o eliminarse páginas según sea necesario. El
                 texto de una página no puede quedar vacío. Si corresponde,
                 seleccione un **Pictograma**.
+            # pmv.programming.flash / flashLevels — PMVProgramming.tsx, per-page
+            # flash slider.
+            - id: bot.pmv.paso.parpadeo
+              layout: beside
+              title: Configure el parpadeo de la página
+              text: >-
+                Cada página admite un nivel de **Parpadeo** independiente:
+                **Sin parpadeo**, **Lento**, **Normal**, **Rápido** o **Muy
+                rápido**.
+            # pmv.programming.dateRange / schedules / addScheduleButton —
+            # PMVProgramming.tsx, multi-day schedules added since this module
+            # was last written.
             - id: bot.pmv.paso.vigencia
               layout: beside
-              title: Defina la vigencia
+              title: Defina la vigencia y los horarios
               text: >-
-                Establezca el rango de fechas durante el cual el mensaje estará
-                activo. La plataforma no permite guardar con un rango inválido o
-                vencido, y advierte cuando el mensaje entra en conflicto de
-                programación con otro ya existente sobre el mismo panel.
+                Establezca el **Rango de Fechas** durante el cual el mensaje
+                estará vigente. Luego defina uno o varios **Horarios**: cada uno
+                combina los días de la semana en que rige y una franja horaria
+                de inicio y fin, y pueden agregarse tantos como se necesiten. La
+                plataforma no permite guardar con un rango inválido o vencido, y
+                advierte cuando el mensaje entra en conflicto de programación
+                con otro ya existente sobre el mismo panel.
             - id: bot.pmv.paso.guardar
               layout: beside
               title: Guarde el mensaje
@@ -690,6 +778,129 @@ children:
                 Un mensaje desactivado puede volver a ponerse en circulación con
                 **Activar**, siempre que su vigencia siga siendo válida.
 
+  # ============================================================ PMV Registros ===
+  # NEW submodule (a89a20ff, feat(pmv): add message list tab). Sidebar label is
+  # "Registros" (botSidebar.navItems.lista, renamed from "Lista" in 620aad9b).
+  - id: bot.pmv-registros
+    title: PMV — Registros
+    children:
+      - id: bot.pmv-registros.que-hace
+        type: prose
+        props:
+          text: >-
+            Lista el histórico de mensajes creados, con sus paneles, sus días y
+            horarios de programación y quién los creó o actualizó por última
+            vez. Desde aquí también se exporta el listado y se consulta el
+            registro de actividad de la programación.
+
+      - id: bot.pmv-registros.como-llegar
+        type: prose
+        props:
+          text: Despliegue **PMV** en el panel lateral y seleccione **Registros**.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.pmv-registros.fig
+        type: figure
+        props:
+          caption: "El histórico de mensajes, con sus filtros, su exportación y su registro de actividad."
+          widthPercent: 90
+
+      - id: bot.pmv-registros.columnas
+        type: data-table
+        props:
+          labelHeader: Columna
+          descriptionHeader: Descripción
+          rows:
+            # locales → pmv.management.list.columns
+            - id: bot.pmv-registros.col.titulo
+              label: Título
+              description: Título interno con el que se identificó el mensaje.
+            - id: bot.pmv-registros.col.texto
+              label: Texto
+              description: Contenido mostrado en la primera página del mensaje.
+            - id: bot.pmv-registros.col.panel
+              label: Panel
+              description: >-
+                Paneles de destino. Si el mensaje se programó por grupo,
+                muestra el nombre del grupo.
+            - id: bot.pmv-registros.col.dias
+              label: Días
+              description: Días de la semana en que el mensaje está programado.
+            - id: bot.pmv-registros.col.horarios
+              label: Horarios
+              description: Franjas horarias configuradas para el mensaje.
+            - id: bot.pmv-registros.col.creado
+              label: Creado por
+              description: Usuario que creó el mensaje.
+            - id: bot.pmv-registros.col.actualizado
+              label: Actualizado por
+              description: Usuario que realizó la última modificación.
+
+      - id: bot.pmv-registros.funciones
+        type: term-list
+        props:
+          entries:
+            # locales → pmv.management.list — search + selects + optional-column
+            # toggles (Tipo/Familia/Subfamilia) + date range.
+            - id: bot.pmv-registros.f.busqueda
+              term: Búsqueda y filtros
+              definition: >-
+                Localiza mensajes por título o texto, y permite acotar por
+                panel, familia, subfamilia, tipo, usuario creador y rango de
+                fechas.
+            - id: bot.pmv-registros.f.columnas
+              term: Columnas opcionales
+              definition: >-
+                Muestra u oculta las columnas **Tipo**, **Familia** y
+                **Subfamilia** del listado.
+
+      - id: bot.pmv-registros.exportar
+        type: procedure
+        props:
+          lead: Para exportar el listado de mensajes, siga estos pasos.
+          steps:
+            - id: bot.pmv-registros.paso.filtrar
+              layout: beside
+              title: Aplique los filtros deseados
+              text: >-
+                La exportación respeta el usuario creador y el rango de fechas
+                seleccionados.
+            - id: bot.pmv-registros.paso.exportar
+              layout: beside
+              title: Accione Exportar
+              text: >-
+                La plataforma descarga un archivo CSV con el listado. Si la
+                exportación falla, lo indica.
+
+      - id: bot.pmv-registros.logs.header
+        type: detail-header
+        props:
+          text: Registro de actividad
+
+      - id: bot.pmv-registros.logs.intro
+        type: prose
+        props:
+          text: >-
+            El botón **Registros** abre el historial de acciones realizadas
+            sobre mensajes, paneles, grupos, familias, subfamilias y mensajes
+            predefinidos: quién hizo qué y cuándo.
+
+      - id: bot.pmv-registros.logs.funciones
+        type: term-list
+        props:
+          entries:
+            # locales → pmv.logs — filters (action/entityType/entityId/operator/dates)
+            - id: bot.pmv-registros.logs.f.filtros
+              term: Filtros
+              definition: >-
+                Acota el registro por acción, tipo de entidad, ID de entidad,
+                operador y rango de fechas.
+            - id: bot.pmv-registros.logs.f.paneles
+              term: Detalle de paneles
+              definition: >-
+                Una acción sobre mensajes indica, cuando aplica, cuántos
+                paneles quedaron en blanco, activados o fallidos.
+
   # ========================================================== PMV Predeterminados ===
   # botSidebar.navItems.variables — "Predeterminados" (was documented as
   # "Variables"; re-verified 2026-09-25, 620aad9b). The header's internal tab
@@ -742,7 +953,7 @@ children:
               label: Mensajes Predefinidos
               text: >-
                 Textos guardados para reutilizar al componer una página, sin
-                volver a escribirlos.
+                volver a escribirlos. Cada uno puede editarse o eliminarse.
 
       - id: bot.pmv-variables.grupo
         type: procedure
@@ -790,6 +1001,18 @@ children:
             reconocimiento deja constancia de que un operador se hizo cargo de
             la alarma.
 
+      # columns.tsx SHORT_ERROR_BITS + alarmsPage.pmvErrors — panel-hardware
+      # faults reported by PMV now surface here alongside ARS alarms.
+      - id: bot.alarmas.origenes
+        type: callout
+        props:
+          variant: info
+          text: >-
+            Las alarmas provienen de dos orígenes: el sistema de semaforización
+            (**ARS**) y los paneles de mensajería variable (**PMV**), que
+            reportan aquí sus propias fallas de hardware — de comunicación, de
+            energía, de lámpara, de píxeles, entre otras.
+
       - id: bot.alarmas.como-llegar
         type: prose
         props:
@@ -823,10 +1046,12 @@ children:
               description: Criticidad de la alarma.
             - id: bot.alarmas.col.origen
               label: Origen
-              description: Sistema o dispositivo que la reportó.
+              description: Sistema que la reportó — ARS o PMV.
             - id: bot.alarmas.col.recurso
               label: Recurso
-              description: Recurso afectado.
+              description: >-
+                Recurso afectado: la cámara y su ubicación para una alarma de
+                ARS, o el panel para una alarma de PMV.
             - id: bot.alarmas.col.gestion
               label: Gestión
               description: Estado de atención de la alarma.
@@ -861,6 +1086,66 @@ children:
                 Al confirmar, la columna **Gestión** refleja el reconocimiento.
                 Si no hay alarmas en el rango consultado, la plataforma lo
                 indica.
+
+  # ==================================================================== ARS ===
+  # NEW submodule (18308a52, feat(ars): add CSV export modal). "ars" is a
+  # BOTSidebar nav item like PMV or CCTV, not merely a status-only integration
+  # anymore (see bot.seccion.ars and bot.integraciones above). Its only
+  # function is opening this export dialog — it has no work area of its own.
+  - id: bot.ars
+    title: ARS
+    children:
+      - id: bot.ars.que-hace
+        type: prose
+        props:
+          text: >-
+            Indica el estado de la integración con el sistema de
+            semaforización (ARS) y permite exportar su historial de tráfico
+            registrado a un archivo CSV.
+
+      - id: bot.ars.como-llegar
+        type: prose
+        props:
+          text: >-
+            Despliegue **ARS** en el panel lateral y seleccione **Exportar
+            CSV**.
+
+      # Overview figure: the module/submodule at a glance, before any detail.
+      - id: bot.ars.fig
+        type: figure
+        props:
+          caption: "El diálogo de exportación de ARS, con el rango de fechas, el intervalo y los cruces."
+          widthPercent: 90
+
+      - id: bot.ars.exportar
+        type: procedure
+        props:
+          lead: Para exportar el historial de tráfico de ARS, siga estos pasos.
+          steps:
+            - id: bot.ars.paso.rango
+              layout: beside
+              title: Seleccione el rango de fechas
+              text: Elija el rango de fechas y horas a exportar en el calendario.
+            - id: bot.ars.paso.intervalo
+              layout: beside
+              title: Elija el intervalo
+              text: >-
+                Seleccione cada cuánto se agrupan los datos: **Cada minuto**,
+                **Cada 5 minutos**, **Cada 15 minutos** o **Cada hora**.
+            - id: bot.ars.paso.cruces
+              layout: beside
+              title: Seleccione los cruces y cámaras
+              text: >-
+                Marque los cruces y sus cámaras a incluir, o use
+                **Seleccionar todo**. Un buscador permite localizar una
+                intersección por nombre.
+            - id: bot.ars.paso.confirmar
+              layout: beside
+              title: Confirme la exportación
+              text: >-
+                La plataforma descarga un archivo CSV con los datos
+                seleccionados. Si la exportación falla, o si no se
+                seleccionó un rango de fechas, la plataforma lo indica.
 
   # The "Aspectos pendientes de confirmación" callout was REMOVED on the
   # reviewer's call ("elimina este por ahora").

@@ -18,9 +18,9 @@
   ],
   "deploymentsConfigured": 2,
   "counts": {
-    "total": 253,
+    "total": 267,
     "delivered": 252,
-    "pending": 1
+    "pending": 15
   },
   "pending": [
     {
@@ -41,6 +41,286 @@
       "deliverTo": {
         "shared": "_common/fuerzas.turno-asignar.fig.png",
         "override": "<tenant>/fuerzas.turno-asignar.fig.png"
+      }
+    },
+    {
+      "slot": "bot.seccion.ars",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.seccion.ars",
+          "blockType": "icon-table",
+          "shows": "ARS"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.seccion.ars.png",
+        "override": "<tenant>/bot.seccion.ars.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.pj-tipo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.pj-tipo",
+          "blockType": "procedure",
+          "shows": "Elija el tipo, si está marcando"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.recursos.paso.pj-tipo.png",
+        "override": "<tenant>/bot.recursos.paso.pj-tipo.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.historial-abrir",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.historial-abrir",
+          "blockType": "procedure",
+          "shows": "Accione el ícono de historial de la fila"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.recursos.paso.historial-abrir.png",
+        "override": "<tenant>/bot.recursos.paso.historial-abrir.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.historial-consultar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.historial-consultar",
+          "blockType": "procedure",
+          "shows": "Revise los casos listados"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.recursos.paso.historial-consultar.png",
+        "override": "<tenant>/bot.recursos.paso.historial-consultar.png"
+      }
+    },
+    {
+      "slot": "bot.recursos.paso.historial-abrir-caso",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.recursos.paso.historial-abrir-caso",
+          "blockType": "procedure",
+          "shows": "Abra un caso, si lo necesita"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.recursos.paso.historial-abrir-caso.png",
+        "override": "<tenant>/bot.recursos.paso.historial-abrir-caso.png"
+      }
+    },
+    {
+      "slot": "bot.pmv.paso.parpadeo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv.paso.parpadeo",
+          "blockType": "procedure",
+          "shows": "Configure el parpadeo de la página"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv.paso.parpadeo.png",
+        "override": "<tenant>/bot.pmv.paso.parpadeo.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-registros.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-registros.fig",
+          "blockType": "figure",
+          "shows": "El histórico de mensajes, con sus filtros, su exportación y su registro de actividad."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv-registros.fig.png",
+        "override": "<tenant>/bot.pmv-registros.fig.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-registros.paso.filtrar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-registros.paso.filtrar",
+          "blockType": "procedure",
+          "shows": "Aplique los filtros deseados"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv-registros.paso.filtrar.png",
+        "override": "<tenant>/bot.pmv-registros.paso.filtrar.png"
+      }
+    },
+    {
+      "slot": "bot.pmv-registros.paso.exportar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.pmv-registros.paso.exportar",
+          "blockType": "procedure",
+          "shows": "Accione Exportar"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.pmv-registros.paso.exportar.png",
+        "override": "<tenant>/bot.pmv-registros.paso.exportar.png"
+      }
+    },
+    {
+      "slot": "bot.ars.fig",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.ars.fig",
+          "blockType": "figure",
+          "shows": "El diálogo de exportación de ARS, con el rango de fechas, el intervalo y los cruces."
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.ars.fig.png",
+        "override": "<tenant>/bot.ars.fig.png"
+      }
+    },
+    {
+      "slot": "bot.ars.paso.rango",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.ars.paso.rango",
+          "blockType": "procedure",
+          "shows": "Seleccione el rango de fechas"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.ars.paso.rango.png",
+        "override": "<tenant>/bot.ars.paso.rango.png"
+      }
+    },
+    {
+      "slot": "bot.ars.paso.intervalo",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.ars.paso.intervalo",
+          "blockType": "procedure",
+          "shows": "Elija el intervalo"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.ars.paso.intervalo.png",
+        "override": "<tenant>/bot.ars.paso.intervalo.png"
+      }
+    },
+    {
+      "slot": "bot.ars.paso.cruces",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.ars.paso.cruces",
+          "blockType": "procedure",
+          "shows": "Seleccione los cruces y cámaras"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.ars.paso.cruces.png",
+        "override": "<tenant>/bot.ars.paso.cruces.png"
+      }
+    },
+    {
+      "slot": "bot.ars.paso.confirmar",
+      "neededBy": [
+        "mv"
+      ],
+      "uses": [
+        {
+          "nodeId": "bot.ars.paso.confirmar",
+          "blockType": "procedure",
+          "shows": "Confirme la exportación"
+        }
+      ],
+      "pendingFor": [
+        "mv"
+      ],
+      "deliverTo": {
+        "shared": "_common/bot.ars.paso.confirmar.png",
+        "override": "<tenant>/bot.ars.paso.confirmar.png"
       }
     }
   ],
@@ -3890,7 +4170,7 @@
         {
           "nodeId": "bot.pmv.paso.vigencia",
           "blockType": "procedure",
-          "shows": "Defina la vigencia"
+          "shows": "Defina la vigencia y los horarios"
         }
       ],
       "files": [
