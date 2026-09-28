@@ -22,9 +22,10 @@ So every image still pending is a capture. There is nothing left in the product
 repository that this manual is asking for.
 
 Since then the capture side has run, many times over. The manual stands at
-**152 of 162 delivered**, and six sections ask for nothing more: **Home**,
-**Fuerzas en Campo**, **Bridge of Things**, **Crear Incidente**, **Seatmap**
-(bar one figure) and the shared force filters.
+**161 of 162 delivered**, and seven sections ask for nothing more: **Home**,
+**Llamada**, **Fuerzas en Campo**, **Bridge of Things**, **Crear Incidente**,
+**Seatmap** (bar one figure, for `agencia-propia` only) and the shared force
+filters.
 See "What is still pending" below — and trust that table over this paragraph if
 they ever disagree, because a count goes stale and a reason does not.
 
@@ -216,18 +217,27 @@ factor.
 
 ### What is still pending, and what each needs
 
-Ten, and **not one of them is "an interaction not yet found"** any more. That
-row used to hold nine slots and every one of them was a selector — see the
-section after this table. What is left blocks on data, on an account, or on the
-owner's own decision. Nothing left blocks on the harness, and nothing left
-blocks on the world outside the product: the one slot that did was an authoring
-defect and is gone.
+One, and only for `agencia-propia`: `todas-las-agencias` has nothing left and
+was sealed at v1.0.0. **Not one slot is "an interaction not yet found"** any
+more. That row used to hold nine slots and every one of them was a selector —
+see the section after this table. Nothing left blocks on the harness, and
+nothing left blocks on the world outside the product: the one slot that did was
+an authoring defect and is gone.
 
 | Blocked on | Slots |
 |---|---|
-| A call in progress | `llamada.camaras.fig`, the five `llamada.fuerzas.*` and `llamada.mapa.ubicacion.aceptar` — seven |
-| A second account without `canViewAllAgencies` | `seatmap.fig` |
-| **The owner held them back** | `llamada.chat.fig` and `llamada.video.fig` |
+| A second account without `canViewAllAgencies` | `seatmap.fig`, for `agencia-propia` |
+
+**`seatmap.fig` was rejected once, and why matters.** Support's capture for
+`agencia-propia` still showed the agency tabs — BOMBEROS, POLICÍA, RECEPCIÓN
+CENTRAL, SALUD — which are `seatmap.distribucion.agencias`, rendered only under
+`canViewAllAgencies` (`sitemap-view.tsx:138`). It was taken from an account that
+holds that permission, and at low resolution (565x296). The figure needs an
+account WITHOUT it, at full resolution. `todas-las-agencias` has its own
+`seatmap.fig` and is unaffected.
+
+The rest of this section records how the call slots were finally closed. They
+are all delivered; what follows is what a RETAKE of any of them needs.
 
 **Home and Fuerzas en Campo are COMPLETE.** Both closed the same way, and it is
 worth knowing how, because in each case the file said "blocked" and the truth
@@ -247,8 +257,8 @@ was "nobody had produced the data yet":
   same test calls produced cases — rows badged `Abierto` and `En Despacho` — and
   on one of those the type chip becomes a picker.
 
-**What the seven call slots each need, because two calls have now missed
-them.** `Confirmar ubicación` must be pressed BEFORE `Realizar despacho`. Both
+**What the seven call slots each needed, because two calls missed them
+before they landed.** `Confirmar ubicación` must be pressed BEFORE `Realizar despacho`. Both
 sit in the `Flujo de la llamada` bar, and that is the order the PRODUCT itself
 declares: `store/step-config.ts:30` lists the bar as `Identificar tipo` ->
 `Confirmar ubicación` -> `Enviar enlace de video` -> `Revisar sistemas
@@ -280,12 +290,11 @@ address has to be typed into `Buscar dirección…` AND a suggestion chosen off 
 list. Beside it sits `Descartar dirección`, the red X, which backs the candidate
 out without moving the case's real address.
 
-**Two slots are not blocked at all: the owner held them.**
-`llamada.chat.fig` and `llamada.video.fig` both framed their captions exactly,
-and both carried an identifiable face. They are pending until a retake with the
-caller's camera, and any image shared into the chat, pointed at something that
-is not a person. Do not re-deliver the existing frames believing they were near
-misses.
+**Two slots were held back by the owner, not blocked.**
+`llamada.chat.fig` and `llamada.video.fig` first framed their captions exactly,
+but both carried an identifiable face. They stayed pending until support
+delivered them (`ebce6e0`). A retake of either must keep the caller's camera,
+and any image shared into the chat, pointed at something that is not a person.
 
 **Not blocked, but not self-contained either:** the six `crear-incidente` step
 slots ARE delivered. Their recipes need the general step filled first — an
