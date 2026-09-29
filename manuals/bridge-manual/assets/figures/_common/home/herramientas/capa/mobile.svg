@@ -1,0 +1,27 @@
+<!-- Bridge360's own asset src/assets/layers/layer_mobile.svg, imported at components/panels/map-tools-panel.tsx:29 and paired with its label in layersConfig / layersIntegrationsConfig (:72-80); shipped as is, no recolouring needed -->
+<svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="39" height="39" rx="5" fill="#343DBE" fill-opacity="0.71"/>
+<rect x="3" y="3" width="33" height="33" rx="5" fill="#2E9088" fill-opacity="0.2"/>
+<g clip-path="url(#clip0_5944_2211)">
+<path d="M20.1233 28.9999H19.9534L13 26.4522V22.8508L19.9973 25.3886L26.989 22.8508L26.9945 26.4522L20.2767 28.9158L20.1233 28.9999Z" fill="white"/>
+<g filter="url(#filter2_d_5944_2211)">
+<path d="M20.0052 16.9145L16.1312 18.7449L16.8655 14.8565L13.7422 12.1011L18.0655 11.5371L19.9997 8L21.9285 11.5322L26.2573 12.106L23.134 14.8565L23.8682 18.7498L20.0052 16.9145Z" fill="white"/>
+</g>
+<path d="M27 21.99L20.0411 24.5427L13 21.995V18.3936L19.9973 20.9264L26.9836 18.3985L27 21.99Z" fill="white"/>
+</g>
+<defs>
+<filter id="filter2_d_5944_2211" x="9.74219" y="8" width="20.5156" height="18.7498" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_5944_2211"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_5944_2211" result="shape"/>
+</filter>
+<clipPath id="clip0_5944_2211">
+<rect width="14" height="21" fill="white" transform="translate(13 8)"/>
+</clipPath>
+</defs>
+</svg>

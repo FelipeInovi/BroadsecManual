@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 201,
-    "delivered": 131,
-    "pending": 70
+    "delivered": 151,
+    "pending": 50
   },
   "pending": [
     {
@@ -307,182 +307,6 @@
       "deliverTo": {
         "shared": "_common/home.caso.reporte.fig.png",
         "override": "<permission>/home.caso.reporte.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.editar-tipo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.editar-tipo",
-          "blockType": "icon-table",
-          "shows": "Editar tipo de emergencia"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.editar-tipo.png",
-        "override": "<permission>/home.caso.reporte.control.editar-tipo.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.terminar-tipo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.terminar-tipo",
-          "blockType": "icon-table",
-          "shows": "Terminar edición del tipo de emergencia"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.terminar-tipo.png",
-        "override": "<permission>/home.caso.reporte.control.terminar-tipo.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.cancelar-tipo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.cancelar-tipo",
-          "blockType": "icon-table",
-          "shows": "Cancelar edición y volver al tipo original"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.cancelar-tipo.png",
-        "override": "<permission>/home.caso.reporte.control.cancelar-tipo.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.editar-ubicacion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.editar-ubicacion",
-          "blockType": "icon-table",
-          "shows": "Editar ubicacion"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.editar-ubicacion.png",
-        "override": "<permission>/home.caso.reporte.control.editar-ubicacion.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.guardar-ubicacion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.guardar-ubicacion",
-          "blockType": "icon-table",
-          "shows": "Guardar ubicación"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.guardar-ubicacion.png",
-        "override": "<permission>/home.caso.reporte.control.guardar-ubicacion.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.cancelar-ubicacion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.cancelar-ubicacion",
-          "blockType": "icon-table",
-          "shows": "Cancelar edición de la ubicación"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.cancelar-ubicacion.png",
-        "override": "<permission>/home.caso.reporte.control.cancelar-ubicacion.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.revisado-tipo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.revisado-tipo",
-          "blockType": "icon-table",
-          "shows": "Marcar tipo de emergencia como revisado"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.revisado-tipo.png",
-        "override": "<permission>/home.caso.reporte.control.revisado-tipo.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.control.revisado-ubicacion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.control.revisado-ubicacion",
-          "blockType": "icon-table",
-          "shows": "Marcar ubicación como revisada"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.control.revisado-ubicacion.png",
-        "override": "<permission>/home.caso.reporte.control.revisado-ubicacion.png"
       }
     },
     {
@@ -948,50 +772,6 @@
       }
     },
     {
-      "slot": "home.caso.accion.validar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.accion.validar",
-          "blockType": "icon-table",
-          "shows": "Validar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.accion.validar.png",
-        "override": "<permission>/home.caso.accion.validar.png"
-      }
-    },
-    {
-      "slot": "home.caso.accion.mas-tarde",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.accion.mas-tarde",
-          "blockType": "icon-table",
-          "shows": "Ver más tarde"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.accion.mas-tarde.png",
-        "override": "<permission>/home.caso.accion.mas-tarde.png"
-      }
-    },
-    {
       "slot": "home.caso.validar.revisar",
       "neededBy": [
         "agencia-propia",
@@ -1190,116 +970,6 @@
       }
     },
     {
-      "slot": "home.paneles.control.bloqueo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.control.bloqueo",
-          "blockType": "icon-table",
-          "shows": "Edición bloqueada"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.control.bloqueo.png",
-        "override": "<permission>/home.paneles.control.bloqueo.png"
-      }
-    },
-    {
-      "slot": "home.paneles.control.restablecer",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.control.restablecer",
-          "blockType": "icon-table",
-          "shows": "Restablecer disposición"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.control.restablecer.png",
-        "override": "<permission>/home.paneles.control.restablecer.png"
-      }
-    },
-    {
-      "slot": "home.paneles.control.disminuir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.control.disminuir",
-          "blockType": "icon-table",
-          "shows": "Disminuir tamaño del panel"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.control.disminuir.png",
-        "override": "<permission>/home.paneles.control.disminuir.png"
-      }
-    },
-    {
-      "slot": "home.paneles.control.aumentar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.control.aumentar",
-          "blockType": "icon-table",
-          "shows": "Aumentar tamaño del panel"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.control.aumentar.png",
-        "override": "<permission>/home.paneles.control.aumentar.png"
-      }
-    },
-    {
-      "slot": "home.paneles.control.cerrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.control.cerrar",
-          "blockType": "icon-table",
-          "shows": "Cerrar panel"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.control.cerrar.png",
-        "override": "<permission>/home.paneles.control.cerrar.png"
-      }
-    },
-    {
       "slot": "home.paneles.abrir.barra",
       "neededBy": [
         "agencia-propia",
@@ -1432,116 +1102,6 @@
       }
     },
     {
-      "slot": "home.herramientas.capa.trafico",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.capa.trafico",
-          "blockType": "icon-table",
-          "shows": "Tráfico"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.capa.trafico.png",
-        "override": "<permission>/home.herramientas.capa.trafico.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.capa.satelital",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.capa.satelital",
-          "blockType": "icon-table",
-          "shows": "Satelital"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.capa.satelital.png",
-        "override": "<permission>/home.herramientas.capa.satelital.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.capa.avl",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.capa.avl",
-          "blockType": "icon-table",
-          "shows": "AVL"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.capa.avl.png",
-        "override": "<permission>/home.herramientas.capa.avl.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.capa.mobile",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.capa.mobile",
-          "blockType": "icon-table",
-          "shows": "Mobile"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.capa.mobile.png",
-        "override": "<permission>/home.herramientas.capa.mobile.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.capa.camaras",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.capa.camaras",
-          "blockType": "icon-table",
-          "shows": "Cámaras"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.capa.camaras.png",
-        "override": "<permission>/home.herramientas.capa.camaras.png"
-      }
-    },
-    {
       "slot": "seatmap.fig",
       "neededBy": [
         "agencia-propia",
@@ -1585,6 +1145,142 @@
       ]
     },
     {
+      "slot": "home.caso.reporte.control.editar-tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.editar-tipo",
+          "blockType": "icon-table",
+          "shows": "Editar tipo de emergencia"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/editar-tipo.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.control.terminar-tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.terminar-tipo",
+          "blockType": "icon-table",
+          "shows": "Terminar edición del tipo de emergencia"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/terminar-tipo.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.control.cancelar-tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.cancelar-tipo",
+          "blockType": "icon-table",
+          "shows": "Cancelar edición y volver al tipo original"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/cancelar-tipo.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.control.editar-ubicacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.editar-ubicacion",
+          "blockType": "icon-table",
+          "shows": "Editar ubicacion"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/editar-ubicacion.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.control.guardar-ubicacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.guardar-ubicacion",
+          "blockType": "icon-table",
+          "shows": "Guardar ubicación"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/guardar-ubicacion.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.control.cancelar-ubicacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.cancelar-ubicacion",
+          "blockType": "icon-table",
+          "shows": "Cancelar edición de la ubicación"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/cancelar-ubicacion.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.control.revisado-tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.revisado-tipo",
+          "blockType": "icon-table",
+          "shows": "Marcar tipo de emergencia como revisado"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/revisado-tipo.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.control.revisado-ubicacion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.control.revisado-ubicacion",
+          "blockType": "icon-table",
+          "shows": "Marcar ubicación como revisada"
+        }
+      ],
+      "files": [
+        "_common/home/caso/reporte/control/revisado-ubicacion.svg"
+      ]
+    },
+    {
       "slot": "home.caso.accion.llamar",
       "neededBy": [
         "agencia-propia",
@@ -1599,6 +1295,125 @@
       ],
       "files": [
         "_common/home/caso/accion/llamar.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.accion.validar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.accion.validar",
+          "blockType": "icon-table",
+          "shows": "Validar"
+        }
+      ],
+      "files": [
+        "_common/home/caso/accion/validar.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.accion.mas-tarde",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.accion.mas-tarde",
+          "blockType": "icon-table",
+          "shows": "Ver más tarde"
+        }
+      ],
+      "files": [
+        "_common/home/caso/accion/mas-tarde.svg"
+      ]
+    },
+    {
+      "slot": "home.paneles.control.bloqueo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.control.bloqueo",
+          "blockType": "icon-table",
+          "shows": "Edición bloqueada"
+        }
+      ],
+      "files": [
+        "_common/home/paneles/control/bloqueo.svg"
+      ]
+    },
+    {
+      "slot": "home.paneles.control.restablecer",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.control.restablecer",
+          "blockType": "icon-table",
+          "shows": "Restablecer disposición"
+        }
+      ],
+      "files": [
+        "_common/home/paneles/control/restablecer.svg"
+      ]
+    },
+    {
+      "slot": "home.paneles.control.disminuir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.control.disminuir",
+          "blockType": "icon-table",
+          "shows": "Disminuir tamaño del panel"
+        }
+      ],
+      "files": [
+        "_common/home/paneles/control/disminuir.svg"
+      ]
+    },
+    {
+      "slot": "home.paneles.control.aumentar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.control.aumentar",
+          "blockType": "icon-table",
+          "shows": "Aumentar tamaño del panel"
+        }
+      ],
+      "files": [
+        "_common/home/paneles/control/aumentar.svg"
+      ]
+    },
+    {
+      "slot": "home.paneles.control.cerrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.control.cerrar",
+          "blockType": "icon-table",
+          "shows": "Cerrar panel"
+        }
+      ],
+      "files": [
+        "_common/home/paneles/control/cerrar.svg"
       ]
     },
     {
@@ -1718,6 +1533,91 @@
       ],
       "files": [
         "_common/home/herramientas/control/street-view.png"
+      ]
+    },
+    {
+      "slot": "home.herramientas.capa.trafico",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.capa.trafico",
+          "blockType": "icon-table",
+          "shows": "Tráfico"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/capa/trafico.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.capa.satelital",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.capa.satelital",
+          "blockType": "icon-table",
+          "shows": "Satelital"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/capa/satelital.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.capa.avl",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.capa.avl",
+          "blockType": "icon-table",
+          "shows": "AVL"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/capa/avl.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.capa.mobile",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.capa.mobile",
+          "blockType": "icon-table",
+          "shows": "Mobile"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/capa/mobile.svg"
+      ]
+    },
+    {
+      "slot": "home.herramientas.capa.camaras",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.capa.camaras",
+          "blockType": "icon-table",
+          "shows": "Cámaras"
+        }
+      ],
+      "files": [
+        "_common/home/herramientas/capa/camaras.svg"
       ]
     },
     {
