@@ -1,21 +1,82 @@
-# Llamada — written against the Bridge360 source, cited by file and line.
+# Llamada — written against the Bridge360 source (`bridge`, branch `develop`,
+# 465f5eb9), cited by file and line.
 #
 # There is no module map for this product yet (no extractor exists for its
 # shape), so every claim here carries its own provenance comment instead of
-# tracing to `knowledge/`. There is no i18n catalogue either: every label below
-# is a QUOTATION of a literal in the component, with the line it sits on. If the
-# product rewords one, nothing here notices — that is recorded in ESTADO.md.
+# tracing to `knowledge/`. Every quoted UI label is a QUOTATION, cited in the
+# `labels` list below and checked by `broadsec-manual labels bridge-manual`.
+# Since the product gained an i18n catalogue, a quotation is cited from the
+# Spanish catalogue (`src/i18n/locales/es/*.json`) when the product keys it,
+# and from the component when the product hardcodes the literal. The catalogue
+# spells some strings without accents ("Transcripcion", "Camaras", "Teclado
+# numerico", "Reenviar enlace a otro numero"): a quotation is copied as the
+# catalogue writes it, while the manual's own prose is written correctly.
 #
-# Checked before writing, per ESTADO's own instruction: `call-view.tsx` reads NO
-# divergence signal at all — no `agencyType`, no `permissions`, no `role`, no
-# `agencyId`. Unlike Home, this view is uniform for every agency type, so the
-# RECEPTION scope of the manual costs it nothing. And nothing here is conditioned
-# on the `permission` axis either, for the same reason Home was not: both
-# predicates are consumed only in sitemap-view.tsx:36-37. No `when` in this file.
+# This module was rewritten in full on 2026-09-29, with the owner's
+# authorisation, from the previous version that was written against `58e2cc4d`.
+# The unmerged `feat/dashboard/role-based-views` branch is NOT what this section
+# documents.
 #
-# What DOES vary this view is the state of the call itself — whether the link was
-# sent, whether units are available, whether the call has ended. Those are
-# runtime states, not build axes: they are documented as states, in prose.
+# ORGANISATION. The view is one rail view made of dock panels around the map, and
+# the module follows how an operator meets it: the view and its panels; the call
+# controls and the guided flow that sit on the map window; then each panel in
+# turn (transcription and translation, video, chat), what sits on the map itself
+# (tools, location bar), the response forces with the route cards, the cameras,
+# the case book, Flow AI and the case log.
+#
+# WRAP-UP IS NOT HERE. Ending a call always goes to Home: every branch of
+# `onCallEnded` ends in `setActiveView("home")` (pages/dashboard.tsx:198-227),
+# and Post-Llamada is documented in `01-home.yaml`. The call view still carries a
+# wrap-up branch (the bar at views/call-view.tsx:1066-1088 with "Enviar a la
+# agencia", the `incident-info` panel, `WrapUpPanelScrim`), but nothing reaches
+# it: the wrap-up store is opened at one place only, `onCallEnded`
+# (pages/dashboard.tsx:222-223), which then calls `setActiveView("home")`
+# (:226). It is not documented, and the `incident-info` toggle is
+# `dockable: false` (views/call-view.tsx:204-210), so it is never in the panel
+# bar either. The section points at Post-Llamada by the TITLE of the section,
+# "la sección **Home**": `{{ref:…}}` is not supported by the pipeline (ESTADO.md).
+#
+# PERMISSIONS AND AGENCY TYPE. Nothing in this view is conditioned on the manual's
+# OWN axis (`permission`, from `canViewAllAgencies`): that predicate is consumed
+# only in sitemap-view.tsx:36-37, so there is no `when` in this file. That is
+# true ONLY of the manual's axis. The view DOES read `agencyType`, which is not an
+# axis of this manual: `layoutRules = HOME_LAYOUT_RULES[agencyType ?? "OTHER"]`
+# (views/call-view.tsx:591) drops the `cameras` and `right-2` (Fuerzas de
+# Respuesta) entries from the panel manifest (:599-602) and keeps them closed
+# (:780-783). The rules are views/home-right-slot.ts:67-116: RECEPTION shows both
+# (:72-73), DISPATCH shows the forces only (:84-85), SUPERVISOR and OTHER neither
+# (:98-99, :108-109). `agencyType` comes from the agent context
+# (pages/dashboard.tsx:322, passed at :1002). The manual is scoped to RECEPTION
+# (ESTADO.md, Decided), so for its reader both panels exist and this file carries
+# no `when`; Home states that scope in its `home.alcance`. The code comment at
+# views/call-view.tsx:588-590 ("Recepción only verifies a case, it never
+# dispatches forces or watches CCTV") is stale against those flags and must not
+# be believed over `home-right-slot.ts:72-73`.
+#
+# What ALSO varies the view is the state of the call — whether the link was
+# sent, whether the incident has a location, whether a unit was dispatched.
+# Those are runtime states, not build axes: they are documented as states, in
+# prose.
+#
+# NOT DOCUMENTED, and not a gap: the Información del Incidente panel and the
+# wrap-up bar (above); `SupportAgenciesPanel`
+# (components/panels/flow/support-agencies-panel.tsx), which no view mounts; the
+# `VITE_FLOW_USE_MOCK` fixture path; the location-bar "minimal" variant that only
+# appears in the call banner when a bottom panel is expanded upward
+# (pages/dashboard.tsx:689-693, :724-745) — this view passes no `onExpandUpward`
+# to the case book or Flow AI (views/call-view-panels/case-book-panel-content.tsx:9-25,
+# flow-ai-panel-content.tsx:5-19), so nothing here fills `expandedUpwardIds`; the
+# marker-grouping switch, which the map window draws only while no call is
+# active (views/call-view-panels/map-panel-content.tsx:119-123); and the
+# "Despachado" text of a dispatched row, which a live call replaces with the
+# status dot (components/panels/available-agent-row.tsx:100, :433-436).
+#
+# QUOTATIONS LEFT OUT ON PURPOSE. Some catalogue strings are in the familiar
+# register the client PDF cannot carry, so the section describes the control
+# without quoting them: `translation.writeInYourLanguage` (calls.json:522,
+# voseo), `agentLink.invalidNumber` (agents.json:136, voseo),
+# `callAi.refreshCooldown` (calls.json:338) and `chat.placeholder`
+# (calls.json:379), both "tú".
 #
 # Paths in comments are relative to `src/modules/dashboard/presentation/ui/` in
 # the `bridge` source repository, except where another module is named in full.
@@ -26,259 +87,935 @@ subtitle: Atención de la llamada en curso, sobre el mapa del incidente
 
 sourceBase: src/modules/dashboard/presentation/ui/
 
+# The screens of Llamada that the PRODUCT has not finished. Each is documented
+# around and never named in the content, and each is exported by
+# `broadsec-manual awaiting bridge-manual` to `awaiting-product.json`.
+pending:
+  - id: llamada.libro-despacho-tarjetas-demo
+    covers: [llamada.libro.pasos]
+    missing: >-
+      The read-only cards at the top of the "Despacho del incidente" step of the
+      case book (the block above the manual-assignment repeater). The repeater
+      ("Agregar asignación de recursos") and the dispatch notes are documented;
+      the cards are not mentioned.
+    because: >-
+      `Step2Body` renders `getAssignmentResourcesDemo()` as six cards
+      (`components/panels/incident-book/steps/step2-body.tsx:37-48`, import at
+      `:8`), whose values are literals — "Policía Metropolitana", "PAT-045",
+      "Patrulla", "14/03/2026  08:32", "14/03/2026  08:41" and "14/03/2026
+      09:15" (`components/panels/incident-book/general.demo.ts:7-15`, "datos demo
+      / semilla … no se persisten", `:1-4`). The mapper says they are not sent:
+      `general.mapper.ts:16` ("`resources` (tarjetas demo read-only) NO se
+      envían").
+    settles: >-
+      The product reading the case's real dispatched resources into those cards
+      (or removing them), or the owner deciding how a manual describes a block
+      that is on screen and fabricated.
+
+  - id: llamada.libro-recursos-demo
+    covers: [llamada.libro.pasos]
+    missing: >-
+      The "Medios y Recursos" block of the "Información extendida" step of the
+      case book, with its "Grabación / Audio" and "Cámaras CCTV" groups and the
+      remove button of each item. The involved parties, the injured and deceased
+      counters and the securing notes of that step are documented; the block is
+      not mentioned.
+    because: >-
+      The form is seeded with `resources: getResourcesDemo()`
+      (`components/panels/incident-book/general.types.ts:97`), eight literal
+      entries — "Grabación llamada", "Audio radio", "Grabación backup", "Cámara
+      corporal", "Dashcam unidad", "CCTV Escena G14", "CCTV Entrada norte" and
+      "CCTV Vía principal" (`general.demo.ts:17-35`). `Step3Body` draws them
+      (`steps/step3-body.tsx:59-67`, `:182-226`) and the mapper does not send
+      them (`general.mapper.ts:16`).
+    settles: >-
+      The product attaching the case's real recording and camera resources (or
+      removing the block), or the owner deciding how a manual describes a block
+      that is on screen and fabricated.
+
+  - id: llamada.flow-identidad-sin-guardar
+    covers: [llamada.flow.datos]
+    missing: >-
+      That the caller-identity block of Flow AI can be edited: the yes / no
+      choice, the editable rows and the "Agregar dato" control. The block is
+      documented as the identification data the analysis detected; nothing is
+      said about correcting it.
+    because: >-
+      `handleIdentityChange` only writes a local draft: its own comment reads
+      "PENDIENTE BACKEND: `POST /callAI/:id/flow` solo acepta typeEmergency,
+      dynamicProtocol e is_manual_order … la corrección del operador no se
+      persiste" (`components/panels/call-ai-content.tsx:957-962`). The editing
+      controls are `CallerIdentificationSection`
+      (`components/panels/call-ai-content.tsx:416-548`).
+    settles: >-
+      The backend accepting the structured identity in the flow endpoint and the
+      panel saving it, or the owner deciding how a manual describes an edit that
+      is not kept.
+
+  - id: llamada.bitacora-comentarios-sin-guardar
+    covers: [llamada.bitacora.controles]
+    missing: >-
+      The comment composer at the foot of the case log ("Agregar comentario…",
+      "Enviar comentario", Enter to send). The timeline, its events and the Log
+      tab are documented; writing a comment is not mentioned.
+    because: >-
+      `addComment` only appends to a client-side zustand store
+      (`components/panels/incident-events/incident-events.store.ts:65-85`,
+      emptied by `resetEvents` at `:87`). The log drawer's composer calls it
+      directly (`components/panels/logs-content.tsx:42`, `:128-130`). Nothing
+      sends the comment to the backend, so it is gone once the store resets.
+    settles: >-
+      The product persisting case comments to the backend, or the owner deciding
+      how a manual describes a comment that is not kept.
+
 # Where every quoted UI label in this section was copied from. Checked by
 # `broadsec-manual labels bridge-manual`.
 #
 # NOT cited, because they are the MANUAL's own naming and the product never said
-# them: the column headings `Panel`, `Cuándo aparece`, `Fuerza`, `Qué deja a la
-# vista`, `Dato` and `Qué indica`.
+# them: the column headings (`Panel`, `Cuándo aparece`, `Control`, `Qué hace`,
+# `Fuerza`, `Qué deja a la vista`, `Distintivo`, `Qué indica`, `Dato`, `Parte`,
+# `Qué contiene`) and `Chat con la unidad`, the manual's name for a control whose
+# product label carries the unit's name (`agentRoute.chatWith`, common.json:683).
 labels:
-  # CALL_MANIFEST — the dock labels of the panels this view offers. Verified
-  # against the manifest rather than assumed from the order the manual lists
-  # them in, which is not the manifest's order.
-  - at: llamada.aparicion.video
-    from: views/call-view.tsx:93
-  - at: llamada.aparicion.transcripcion
-    from: views/call-view.tsx:104
-  - at: llamada.aparicion.camaras
-    from: views/call-view.tsx:116
-  - at: llamada.aparicion.fuerzas
-    from: views/call-view.tsx:127
-  - at: llamada.aparicion.incidente
-    from: views/call-view.tsx:142
-  - at: llamada.aparicion.chat
-    from: views/call-view.tsx:153
+  # The panel names (`callView.*`) as the panel bar lists them.
+  - at: llamada.paneles.transcripcion
+    from: ../../../../i18n/locales/es/calls.json:231
+  - at: llamada.paneles.libro
+    from: ../../../../i18n/locales/es/calls.json:235
+  - at: llamada.paneles.flow
+    from: ../../../../i18n/locales/es/calls.json:236
+  - at: llamada.paneles.video
+    from: ../../../../i18n/locales/es/calls.json:230
+  - at: llamada.paneles.camaras
+    from: ../../../../i18n/locales/es/calls.json:232
+  - at: llamada.paneles.fuerzas
+    from: ../../../../i18n/locales/es/calls.json:233
+  - at: llamada.paneles.chat
+    from: ../../../../i18n/locales/es/calls.json:241
 
-  # The caller's progress steps.
+  # The call controls (`banner.*`, `park.parkCall`).
+  - at: llamada.controles.control.teclado
+    from: ../../../../i18n/locales/es/calls.json:28
+  - at: llamada.controles.control.espera
+    from: ../../../../i18n/locales/es/calls.json:30
+  - at: llamada.controles.control.aparcar
+    from: ../../../../i18n/locales/es/calls.json:69
+  - at: llamada.controles.control.mutear
+    from: ../../../../i18n/locales/es/calls.json:32
+  - at: llamada.controles.control.finalizar
+    from: ../../../../i18n/locales/es/calls.json:33
+  - at: llamada.controles.control.enlace
+    from: ../../../../i18n/locales/es/calls.json:35
+  - at: llamada.controles.control.reenviar
+    from: ../../../../i18n/locales/es/calls.json:36
+  - at: llamada.controles.control.resumen
+    from: ../../../../i18n/locales/es/calls.json:237
+
+  # The top bar's call states (`topBar.*`) and the five steps of the call flow (`steps.*`).
+  - at: llamada.controles.flujo.estado.curso
+    from: ../../../../i18n/locales/es/calls.json:385
+  - at: llamada.controles.flujo.estado.espera
+    from: ../../../../i18n/locales/es/calls.json:383
+  - at: llamada.controles.flujo.estado.transferencia
+    from: ../../../../i18n/locales/es/calls.json:384
+  - at: llamada.controles.flujo.paso.tipo
+    from: ../../../../i18n/locales/es/calls.json:620
+  - at: llamada.controles.flujo.paso.ubicacion
+    from: ../../../../i18n/locales/es/calls.json:622
+  - at: llamada.controles.flujo.paso.enlace
+    from: ../../../../i18n/locales/es/calls.json:624
+  - at: llamada.controles.flujo.paso.sistemas
+    from: ../../../../i18n/locales/es/calls.json:626
+  - at: llamada.controles.flujo.paso.despacho
+    from: ../../../../i18n/locales/es/calls.json:628
+
+  # Transcription: the speaker names (`transcription.*`), the TTS mark (a literal), the language selector and the translation drawer.
+  - at: llamada.transcripcion.hablante.llamante
+    from: ../../../../i18n/locales/es/calls.json:249
+  - at: llamada.transcripcion.hablante.operador
+    from: ../../../../i18n/locales/es/calls.json:250
+  - at: llamada.transcripcion.hablante.tts
+    from: components/panels/transcription-panel.tsx:298
+  - at: llamada.transcripcion.idioma.selector
+    from: ../../../../i18n/locales/es/calls.json:646
+  - at: llamada.transcripcion.traducir.campo
+    from: ../../../../i18n/locales/es/calls.json:527
+  - at: llamada.transcripcion.traducir.enviar
+    from: ../../../../i18n/locales/es/calls.json:528
+  - at: llamada.transcripcion.traducir.reproducir
+    from: ../../../../i18n/locales/es/calls.json:533
+
+  # The caller's progress steps (`callerProgress.*`).
   - at: llamada.video.avance.enlace
-    from: components/caller-progress-stepper.tsx:8
+    from: ../../../../i18n/locales/es/calls.json:255
   - at: llamada.video.avance.video
-    from: components/caller-progress-stepper.tsx:9
+    from: ../../../../i18n/locales/es/calls.json:256
   - at: llamada.video.avance.gps
-    from: components/caller-progress-stepper.tsx:10
+    from: ../../../../i18n/locales/es/calls.json:257
 
-  # `FORCE_FILTERS`, all seven.
+  # The location bar (`location.*`, `callAi.*`).
+  - at: llamada.ubicacion.control.street-view
+    from: ../../../../i18n/locales/es/incidents.json:130
+  - at: llamada.ubicacion.control.editar
+    from: ../../../../i18n/locales/es/incidents.json:136
+  - at: llamada.ubicacion.control.buscar
+    from: ../../../../i18n/locales/es/incidents.json:129
+  - at: llamada.ubicacion.control.aceptar
+    from: ../../../../i18n/locales/es/incidents.json:133
+  - at: llamada.ubicacion.control.pin
+    from: ../../../../i18n/locales/es/incidents.json:140
+  - at: llamada.ubicacion.control.reanalizar
+    from: ../../../../i18n/locales/es/calls.json:339
+  - at: llamada.ubicacion.control.alternas
+    from: ../../../../i18n/locales/es/calls.json:340
+  - at: llamada.ubicacion.control.historial
+    from: ../../../../i18n/locales/es/incidents.json:142
+
+  # The force filters: `calls:review.all` and `common:agencies.*`, then the directory toggle.
   - at: llamada.fuerzas.filtro.todos
-    from: components/panels/available-agents-list.tsx:28
+    from: ../../../../i18n/locales/es/calls.json:131
   - at: llamada.fuerzas.filtro.salud
-    from: components/panels/available-agents-list.tsx:29
+    from: ../../../../i18n/locales/es/common.json:133
   - at: llamada.fuerzas.filtro.bomberos
-    from: components/panels/available-agents-list.tsx:30
+    from: ../../../../i18n/locales/es/common.json:131
   - at: llamada.fuerzas.filtro.policia
-    from: components/panels/available-agents-list.tsx:31
+    from: ../../../../i18n/locales/es/common.json:132
   - at: llamada.fuerzas.filtro.transito
-    from: components/panels/available-agents-list.tsx:32
+    from: ../../../../i18n/locales/es/common.json:137
   - at: llamada.fuerzas.filtro.defensa-civil
-    from: components/panels/available-agents-list.tsx:33
+    from: ../../../../i18n/locales/es/common.json:136
   - at: llamada.fuerzas.filtro.gaula
-    from: components/panels/available-agents-list.tsx:34
+    from: ../../../../i18n/locales/es/common.json:138
+  - at: llamada.fuerzas.filtro.directorio
+    from: ../../../../i18n/locales/es/agents.json:124
 
-  # The tooltip the operator reads, not the `aria-label` at :257 that says the
-  # same thing to a screen reader.
-  - at: llamada.fuerzas.rapida.marca
-    from: components/panels/available-agent-row.tsx:260
+  # The recommendation markers (`agentsOnShift.*`).
+  - at: llamada.fuerzas.distintivo.mejor
+    from: ../../../../i18n/locales/es/calls.json:405
+  - at: llamada.fuerzas.distintivo.rapida
+    from: ../../../../i18n/locales/es/calls.json:402
+  - at: llamada.fuerzas.distintivo.cercana
+    from: ../../../../i18n/locales/es/calls.json:403
+  - at: llamada.fuerzas.distintivo.fuerza
+    from: ../../../../i18n/locales/es/calls.json:404
 
+  # The agent directory, the external-agent form and the panel's empty answers (`agents.json`).
+  - at: llamada.fuerzas.directorio.buscar
+    from: ../../../../i18n/locales/es/agents.json:125
+  - at: llamada.fuerzas.directorio.externo
+    from: ../../../../i18n/locales/es/agents.json:129
+  - at: llamada.fuerzas.directorio.enviar
+    from: ../../../../i18n/locales/es/agents.json:132
+  - at: llamada.fuerzas.aviso.sin-fuerzas
+    from: ../../../../i18n/locales/es/agents.json:120
+  - at: llamada.fuerzas.aviso.otros
+    from: ../../../../i18n/locales/es/agents.json:121
+  - at: llamada.fuerzas.aviso.sin-coincidencias
+    from: ../../../../i18n/locales/es/agents.json:126
+  - at: llamada.fuerzas.aviso.sin-agentes
+    from: ../../../../i18n/locales/es/agents.json:144
+
+  # The route card (`agentRoute.*`).
   - at: llamada.fuerzas.ruta.dato.distancia
-    from: components/panels/agent-route-card.tsx:143
+    from: ../../../../i18n/locales/es/common.json:685
   - at: llamada.fuerzas.ruta.dato.llegada
-    from: components/panels/agent-route-card.tsx:148
-  # Bare JSX text, not a `label=` prop like the three above it.
+    from: ../../../../i18n/locales/es/common.json:686
   - at: llamada.fuerzas.ruta.dato.intendencia
-    from: components/panels/agent-route-card.tsx:167
-  - at: llamada.fuerzas.ruta.dato.agencia
-    from: components/panels/agent-route-card.tsx:182
+    from: ../../../../i18n/locales/es/common.json:688
+  - at: llamada.fuerzas.ruta.estado.camino
+    from: ../../../../i18n/locales/es/common.json:689
+  - at: llamada.fuerzas.ruta.estado.atendido
+    from: ../../../../i18n/locales/es/common.json:690
+  - at: llamada.fuerzas.ruta.estado.cerrado
+    from: ../../../../i18n/locales/es/common.json:691
+  - at: llamada.fuerzas.ruta.control.atendido
+    from: ../../../../i18n/locales/es/common.json:692
+  - at: llamada.fuerzas.ruta.control.finalizar
+    from: ../../../../i18n/locales/es/common.json:695
 
-  # The location bar's controls, each quoted from its `title`.
-  - at: llamada.mapa.ubicacion.street-view
-    from: components/panels/incident-location-bar.tsx:151
-  - at: llamada.mapa.ubicacion.buscar
-    from: components/panels/incident-location-bar.tsx:182
-  - at: llamada.mapa.ubicacion.aceptar
-    from: components/panels/incident-location-bar.tsx:225
-  - at: llamada.mapa.ubicacion.editar
-    from: components/panels/incident-location-bar.tsx:245
-  - at: llamada.mapa.ubicacion.copiar
-    from: components/panels/incident-location-bar.tsx:260
+  # The cameras panel's empty answer (`cameras.noCamerasNearby`).
+  - at: llamada.camaras.aviso.sin-camaras
+    from: ../../../../i18n/locales/es/common.json:203
 
-  # `SOURCE_BADGE`, all four.
-  - at: llamada.mapa.bitacora.origen.llamante
-    from: components/panels/incident-events/incident-events.tsx:50
-  - at: llamada.mapa.bitacora.origen.call-ai
-    from: components/panels/incident-events/incident-events.tsx:54
-  - at: llamada.mapa.bitacora.origen.operador
-    from: components/panels/incident-events/incident-events.tsx:58
-  - at: llamada.mapa.bitacora.origen.sistema
-    from: components/panels/incident-events/incident-events.tsx:62
-  - at: llamada.mapa.bitacora.comentar.campo
-    from: components/panels/incident-events/incident-events.tsx:239
+  # The case book: the two tabs are hardcoded literals; the steps are `book.step*`; the import button is `callAi.importFromCallAi`.
+  - at: llamada.libro.vista.notas
+    from: components/panels/incident-book.tsx:132
+  - at: llamada.libro.vista.libro
+    from: components/panels/incident-book.tsx:135
+  - at: llamada.libro.paso.recepcion
+    from: ../../../../i18n/locales/es/incidents.json:187
+  - at: llamada.libro.paso.despacho
+    from: ../../../../i18n/locales/es/incidents.json:188
+  - at: llamada.libro.paso.extendida
+    from: ../../../../i18n/locales/es/incidents.json:189
+  - at: llamada.libro.importar.boton
+    from: ../../../../i18n/locales/es/calls.json:369
 
-  - at: llamada.banda.ia.vista.resumen
-    from: components/panels/call-ai-panel.tsx:30
-  - at: llamada.banda.ia.vista.resolucion
-    from: components/panels/call-ai-panel.tsx:31
+  # Flow AI (`callAi.*`).
+  - at: llamada.flow.dato.resumen
+    from: ../../../../i18n/locales/es/calls.json:365
+  - at: llamada.flow.dato.ubicacion
+    from: ../../../../i18n/locales/es/calls.json:366
+  - at: llamada.flow.dato.vehiculos
+    from: ../../../../i18n/locales/es/calls.json:367
+  - at: llamada.flow.dato.armas
+    from: ../../../../i18n/locales/es/calls.json:333
+  - at: llamada.flow.dato.heridos
+    from: ../../../../i18n/locales/es/calls.json:330
+  - at: llamada.flow.dato.sospechosos
+    from: ../../../../i18n/locales/es/calls.json:332
+  - at: llamada.flow.dato.identidad
+    from: ../../../../i18n/locales/es/calls.json:348
+  - at: llamada.flow.resolucion.parte.hacer
+    from: ../../../../i18n/locales/es/calls.json:357
+  - at: llamada.flow.resolucion.parte.decir
+    from: ../../../../i18n/locales/es/calls.json:358
+  - at: llamada.flow.resolucion.parte.fuerzas
+    from: ../../../../i18n/locales/es/calls.json:360
 
-  # The wrap-up states. Rendered as bare text and inside template literals, not
-  # as label props — which is why the citation names a line and not a prop.
-  - at: llamada.cierre.aviso.error
-    from: views/call-view.tsx:556
-  - at: llamada.cierre.aviso.cargando
-    from: views/call-view.tsx:563
-  - at: llamada.cierre.aviso.sin-detalle
-    from: views/call-view.tsx:568
+  # The case log: the timeline events (`logsEvents.*`), the vertical tab (a literal) and the comment composer (`incidentEvents.*`).
+  - at: llamada.bitacora.evento.atendida
+    from: ../../../../i18n/locales/es/calls.json:787
+  - at: llamada.bitacora.evento.despachado
+    from: ../../../../i18n/locales/es/calls.json:784
+  - at: llamada.bitacora.evento.sitio
+    from: ../../../../i18n/locales/es/calls.json:785
+  - at: llamada.bitacora.evento.terminado
+    from: ../../../../i18n/locales/es/calls.json:786
+  - at: llamada.bitacora.control.pestana
+    from: components/panels/logs-side-drawer.tsx:53
 
 children:
   - id: llamada.proposito
     type: prose
     props:
+      # The wrap-up (Post-Llamada) is documented in Home, not here: every branch
+      # of `onCallEnded` ends in `setActiveView("home")`
+      # (pages/dashboard.tsx:198-227).
       text: >-
         La vista **Llamada** es donde se atiende la llamada en curso. Reúne
-        alrededor del mapa lo que el operador necesita mientras habla: la
-        transcripción, el video que comparte el llamante, la ubicación del
-        incidente, las fuerzas disponibles para despachar y el libro donde queda
-        el registro del caso.
+        alrededor del mapa lo que el operador necesita mientras habla: los
+        controles de la llamada, la transcripción, el video que comparte el
+        llamante, la ubicación del incidente, las fuerzas de respuesta, las
+        cámaras cercanas y el libro donde queda el registro del caso. Al
+        terminar la llamada, la plataforma devuelve al operador a **Home**, donde
+        se completa el caso: ese tramo se describe en la sección **Home**.
 
   - id: llamada.acceso
     type: prose
     props:
-      # components/layout/icon-sidebar.tsx:53 — nav item id `call`, label
-      # "Llamada", marcado `isCall: true`; pages/dashboard.tsx:684 monta la
-      # vista.
+      # components/layout/icon-sidebar.tsx:145 — the rail item only renders while
+      # a call is active (`item.isCall && !isCallActive`); the label is
+      # `navigation.call` (common.json:66). pages/dashboard.tsx:189-193 selects
+      # the view when the call is answered. Answer button and its label:
+      # components/layout/incoming-call-banner.tsx:227-241 (`banner.answer`,
+      # calls.json:27), disabled while `acceptDisabled`
+      # (pages/dashboard.tsx:806, `micStatus !== "ready"`); the Enter shortcut is
+      # :164-179 and ignores keystrokes typed into a field (:137-142).
       text: >-
-        Diríjase a **Llamada** en la barra lateral de iconos. Los paneles no
-        aparecen todos a la vez: cada uno se suma cuando hay algo que mostrar en
-        él, de modo que la pantalla acompaña el avance de la llamada en lugar de
-        presentar paneles vacíos.
+        La vista **Llamada** aparece en la barra lateral de iconos solo mientras
+        hay una llamada en curso, y la plataforma la abre por su cuenta al
+        contestar. La llamada se contesta con **Contestar**, en el aviso de
+        llamada entrante, o con la tecla Enter cuando no está escribiendo en un
+        campo. El botón permanece deshabilitado hasta que el micrófono esté
+        listo.
 
-  - id: llamada.fig
+  - id: llamada.general.fig
     type: figure
     props:
-      caption: "Vista Llamada durante una llamada en curso, con la transcripción a la izquierda y el mapa del incidente al centro."
+      caption: "Vista Llamada con una llamada en curso: la transcripción a la izquierda, el mapa con los controles de la llamada al centro y, bajo el mapa, el libro del caso, Flow AI y las fuerzas de respuesta."
       widthPercent: 90
 
-  - id: llamada.aparicion
-    type: data-table
-    props:
-      # Reglas de visibilidad citadas de call-view.tsx:396 (`left-1`), :400
-      # (`right-2`), :401 (`cameras`) y :402 (`incident-info`). Los rótulos de
-      # los paneles, de CALL_MANIFEST: :93, :104, :116, :127, :142 y :153.
-      labelHeader: Panel
-      descriptionHeader: Cuándo aparece
-      rows:
-        - id: llamada.aparicion.transcripcion
-          label: Transcripción
-          description: >-
-            Desde que abre la vista. Es el único panel presente de entrada.
-        - id: llamada.aparicion.video
-          label: Video en Vivo
-          description: >-
-            Cuando se envía el enlace al llamante, o cuando el video ya está en
-            curso.
-        - id: llamada.aparicion.camaras
-          label: Cámaras
-          description: >-
-            Cuando hay cámaras próximas a la ubicación del incidente.
-        - id: llamada.aparicion.fuerzas
-          label: Fuerzas de Respuesta
-          description: >-
-            Cuando hay recursos disponibles para el incidente.
-        - id: llamada.aparicion.chat
-          label: Chat
-          description: >-
-            A pedido, desde la barra de paneles.
-        - id: llamada.aparicion.incidente
-          label: Información del Incidente
-          description: >-
-            Al terminar la llamada, para el cierre del caso.
+  # --- La vista y sus paneles --------------------------------------------------
+  - id: llamada.vista
+    title: La vista y sus paneles
+    children:
+      - id: llamada.vista.proposito
+        type: prose
+        props:
+          # Panel dock: views/call-view.tsx:1048-1063 (`PanelDock`, layout key
+          # "call"). The seven panels the operator can open are the manifest
+          # entries with `dockable` left on: views/call-view.tsx:181-213.
+          text: >-
+            La vista es un tablero de paneles acoplados alrededor del mapa. Cada
+            panel se abre, se cierra, se mueve y cambia de tamaño como en
+            **Home**; lo propio de esta vista es qué paneles ofrece y cuándo se
+            abren por sí solos.
 
-  # --- Transcripción ---------------------------------------------------------
+      - id: llamada.vista.ubicacion
+        type: prose
+        props:
+          # Seeds: views/call-view.tsx:299-462 — `left-2` at the dock's left
+          # edge (:299-310), `bottom-1` below the map (:311-334), `bottom-2`
+          # right of it (:335-357), `right-2` right of that (:358-380), `cameras`
+          # right of the map (:381-393), `chat` below `left-2` (:394-414),
+          # `left-1` above it (:415-436).
+          text: >-
+            Al abrir la vista, la transcripción ocupa la columna izquierda. Bajo
+            el mapa se acomodan, de izquierda a derecha, el libro del caso, Flow
+            AI y las fuerzas de respuesta. Las cámaras se abren a la derecha del
+            mapa; el video y el chat se suman a la columna izquierda cuando se
+            abren.
+
+      - id: llamada.vista.fig
+        type: figure
+        props:
+          caption: "Vista Llamada con todos sus paneles abiertos, alrededor del mapa."
+          widthPercent: 90
+
+      - id: llamada.paneles
+        type: data-table
+        props:
+          # The labels are the manifest's (`MANIFEST_LABEL_KEYS`,
+          # views/call-view.tsx:170-179, calls.json:230-236 and :241) and are what
+          # the panel bar lists. When each opens: `usePanelVisibility`,
+          # views/call-view.tsx:767 (video: `linkSent || isVideoActive`, with
+          # `linkSent` from :619-621) and :780-785 (forces and cameras:
+          # `hasIncidentLocation && !isWrapUp && layoutRules.…`). The chat is
+          # `initiallyInactive` (:184-189) and nothing opens it.
+          labelHeader: Panel
+          descriptionHeader: Cuándo aparece
+          rows:
+            - id: llamada.paneles.transcripcion
+              label: Transcripcion
+              description: >-
+                Desde que abre la vista.
+            - id: llamada.paneles.libro
+              label: Libro del Caso
+              description: >-
+                Desde que abre la vista.
+            - id: llamada.paneles.flow
+              label: Flow AI
+              description: >-
+                Desde que abre la vista.
+            - id: llamada.paneles.video
+              label: Video en Vivo
+              description: >-
+                Cuando envía el enlace de video al llamante, o cuando el video
+                ya está en curso.
+            - id: llamada.paneles.camaras
+              label: Camaras
+              description: >-
+                Cuando el incidente tiene una ubicación.
+            - id: llamada.paneles.fuerzas
+              label: Fuerzas de Respuesta
+              description: >-
+                Cuando el incidente tiene una ubicación.
+            - id: llamada.paneles.chat
+              label: Chat
+              description: >-
+                Solo cuando usted lo abre, desde la barra de paneles.
+
+      - id: llamada.vista.barra
+        type: prose
+        props:
+          # `ToolKitPanel` lists the manifest entries except `dockable: false`
+          # ones (components/panels/tool-kit-panel.tsx:155) and shows an unread
+          # count on a closed panel's icon (:191, :213). The only panel that
+          # notifies is the chat (views/call-view.tsx:809-813; no other caller of
+          # `usePanelNotification`), and opening the panel clears it
+          # (hooks/use-panel-notification.ts:24-28). The panel bar itself is
+          # documented in Home.
+          text: >-
+            La barra de paneles es la misma que se describe en la sección
+            **Home**, en Barra de paneles y disposición: allí encuentra los
+            controles para abrir y cerrar paneles, bloquear la edición y
+            restablecer la disposición. En esta vista lista siete paneles. Cuando
+            llega un mensaje y el chat está cerrado, el icono del chat muestra
+            cuántos mensajes sin ver tiene; al abrir el panel, la cuenta se borra.
+
+      - id: llamada.vista.aviso
+        type: callout
+        props:
+          # stores/use-panel-dock-store.ts:29-45 — the arrangement is never
+          # stored; every mount rebuilds it from the seeds. The view is mounted
+          # only while it is the active view (pages/dashboard.tsx:1000).
+          variant: info
+          text: >-
+            Las posiciones y los tamaños que usted cambie duran mientras la vista
+            está abierta. Si pasa a otra vista de la barra lateral y vuelve, los
+            paneles regresan a su disposición inicial.
+
+  # --- Controles de la llamada -------------------------------------------------
+  - id: llamada.controles
+    title: Controles de la llamada
+    children:
+      - id: llamada.controles.proposito
+        type: prose
+        props:
+          text: >-
+            Reúnen lo que se usa mientras se habla: el teclado de transferencia,
+            la espera, el aparcado, el silencio, el fin de la llamada y el envío
+            del enlace de video al llamante.
+
+      - id: llamada.controles.ubicacion
+        type: prose
+        props:
+          # views/call-view-panels/map-panel-content.tsx:97-106 — the controls
+          # are drawn inside the map window, centred on its top edge; they are
+          # built by pages/dashboard.tsx:771 (`callControlsInMapWindow`) and
+          # the row itself is components/layout/incoming-call-banner.tsx:403-720.
+          text: >-
+            Están centrados sobre el borde superior de la ventana del mapa y se
+            mueven con ella cuando los paneles se reacomodan.
+
+      - id: llamada.controles.fig
+        type: figure
+        props:
+          caption: "Controles de la llamada sobre el borde superior del mapa."
+          widthPercent: 90
+
+      - id: llamada.controles.lista
+        type: icon-table
+        props:
+          # components/layout/incoming-call-banner.tsx: keypad :416-440
+          # (`banner.numericKeypad`, calls.json:28); hold :450-461
+          # (`banner.putOnHold` / `resumeCall`, :29-30); park :472-486
+          # (`park.parkCall`, calls.json:69); mute :497-506 (`banner.mute` /
+          # `unmute`, :31-32); end :516-525 (`banner.endCall`, :33); send link
+          # :557-572 (`banner.sendVideoLink` / `linkSent`, :34-35, and the
+          # button returns to idle after 3 s, :394); resend badge :611-618
+          # (`banner.resendToOther`, :36); summary button :728-757 (only with a
+          # summary, :725; `banner.viewAiSummary`, :41).
+          labelHeader: Control
+          descriptionHeader: Qué hace
+          rows:
+            - id: llamada.controles.control.teclado
+              label: Teclado numerico
+              description: >-
+                Abre el panel **Transferir Llamada**, para pasar la llamada a
+                otro destino. Se describe en el procedimiento de transferencia.
+            - id: llamada.controles.control.espera
+              label: Poner en espera
+              description: >-
+                Deja la llamada en espera. Mientras está en espera, el mismo
+                control pasa a **Continuar llamada** y sirve para retomarla.
+            - id: llamada.controles.control.aparcar
+              label: Aparcar llamada
+              description: >-
+                Deja la llamada aparcada para que se tome más tarde. Al
+                aparcarla, la plataforma lo devuelve a **Home** sin abrir el
+                Post-Llamada; la llamada aparcada figura entre las llamadas en
+                espera del teclado de esa sección.
+            - id: llamada.controles.control.mutear
+              label: Mutear
+              description: >-
+                Silencia su micrófono. Mientras está silenciado, el mismo
+                control pasa a **Desmutear**.
+            - id: llamada.controles.control.finalizar
+              label: Finalizar llamada
+              description: >-
+                Termina la llamada. La plataforma lo devuelve a **Home**, donde
+                se completa el caso.
+            - id: llamada.controles.control.enlace
+              label: Enviar enlace de video
+              description: >-
+                Envía al teléfono de quien llama un enlace con el que puede
+                compartir su video y su ubicación. Al enviarse, el control
+                muestra una marca de confirmación unos segundos y se abre el
+                panel **Video en Vivo**.
+            - id: llamada.controles.control.reenviar
+              label: Reenviar enlace a otro numero
+              description: >-
+                Es la insignia con un numeral, en la esquina del botón de envío.
+                Permite mandar el enlace a un teléfono distinto del de la
+                llamada.
+            - id: llamada.controles.control.resumen
+              label: Resumen AI
+              description: >-
+                Aparece bajo los controles cuando el análisis de la llamada ya
+                tiene un resumen. Abre una ventana con el texto del resumen.
+
+      - id: llamada.controles.enlace
+        type: procedure
+        props:
+          # Send: components/layout/incoming-call-banner.tsx:383-401 — on success
+          # the "send-link" step is completed (:393) and the panel opens
+          # (views/call-view.tsx:619-621, :767). The link goes to the number of
+          # the call itself: `createSessionUC.execute(callData.numero, …)`
+          # (hooks/use-chime-session.ts:130). Resend: popover :530-719 — country
+          # prefix select :650-672, number field :676-683 (placeholder
+          # `phoneInput.phoneNumber`, calls.json:649), send button :686-716 with
+          # the states `banner.send` / `sending` / `sent` / `errorRetry`
+          # (calls.json:37-40); a resend starts the caller's progress again
+          # (hooks/use-chime-session.ts:177-178).
+          lead: >-
+            Para enviar el enlace de video al llamante:
+          steps:
+            - id: llamada.controles.enlace.enviar
+              title: Haga clic en Enviar enlace de video
+              text: >-
+                El botón muestra un indicador de avance mientras se envía. Al
+                terminar, muestra una marca de confirmación y se abre el panel
+                **Video en Vivo**, con el avance del llamante.
+              layout: beside
+
+            - id: llamada.controles.enlace.reenviar
+              title: Para otro teléfono, haga clic en Reenviar enlace a otro numero
+              text: >-
+                Se abre un cuadro con el prefijo del país y el campo **Número
+                Telefónico**. Elija el prefijo, escriba el número y confirme con
+                **Enviar**. El botón muestra un indicador de avance mientras se
+                envía y una marca de confirmación al terminar; si el envío falla,
+                vuelve a su icono para reintentar. El avance del llamante vuelve
+                a empezar.
+              layout: beside
+
+      - id: llamada.controles.transferir
+        type: procedure
+        props:
+          # components/layout/keypad-modal.tsx: title `transfer.transferCall`
+          # (calls.json:54); number field :66-73 and the digit grid :85-96;
+          # the phone button :142-148 transfers to the typed number; the
+          # directory dropdown :99-140 (`transfer.awsDirectory`, `quickContacts`,
+          # `noContactsInDirectory`, calls.json:55-57) transfers to the chosen
+          # contact at once (:121-124). The agent list is
+          # components/softphone/transfer-panel.tsx: `transfer.transferTo`
+          # (calls.json:44), search (:171, `transfer.searchPlaceholder`),
+          # confirmation button :216-229 (`transfer.confirmTransfer`, :53). A
+          # transferred call sends the operator to Home without Post-Llamada
+          # (pages/dashboard.tsx:200-204).
+          lead: >-
+            Para transferir la llamada:
+          steps:
+            - id: llamada.controles.transferir.abrir
+              title: Haga clic en Teclado numerico
+              text: >-
+                Se abre el panel **Transferir Llamada**, con un teclado
+                numérico, un directorio y, debajo, la lista de agentes.
+              layout: beside
+
+            - id: llamada.controles.transferir.destino
+              title: Elija el destino de la transferencia
+              text: >-
+                Escriba el número o la extensión con el teclado y use el botón
+                del teléfono; o abra el directorio, con **Contactos Rapidos**, y
+                elija un contacto; o elija un agente de la lista **Transferir a:**
+                y confirme con **Confirmar transferencia**.
+              layout: beside
+
+      - id: llamada.controles.transferir.resultado
+        type: prose
+        props:
+          text: >-
+            La llamada pasa al destino elegido y la plataforma lo devuelve a
+            **Home**. Mientras la transferencia está en curso, la barra superior
+            indica **Transfiriendo**.
+
+      # --- Flujo de la llamada -------------------------------------------------
+      - id: llamada.controles.flujo.titulo
+        type: detail-header
+        props:
+          text: Barra superior y flujo de la llamada
+
+      - id: llamada.controles.flujo.texto
+        type: prose
+        props:
+          # components/layout/top-bar.tsx:238-289 — while a call is active the top
+          # bar carries the type badge, the timer and the state
+          # (`topBar.inProgress` / `onHold` / `transferring`, calls.json:383-385),
+          # the caller's number, the case id (`topBar.caseId`) and the
+          # `GuideStep` strip (:287). The strip is components/layout/guide-step.tsx
+          # (group label `guideStep.callFlow`, common.json:550); its order and its
+          # labels are store/step-config.ts:37-71 and calls.json:620-628.
+          text: >-
+            Mientras hay una llamada en curso, la barra superior de la
+            plataforma muestra el tipo de incidente, la duración de la llamada,
+            su estado, el teléfono de quien llama y el número del caso. A la
+            derecha, un recorrido de cinco pasos resume qué falta hacer en la
+            llamada. Los pasos se marcan solos cuando se cumplen; no hay que
+            pulsarlos.
+
+      - id: llamada.controles.flujo.fig
+        type: figure
+        props:
+          caption: "Barra superior con los datos de la llamada y el flujo de la llamada a la derecha."
+          widthPercent: 90
+
+      - id: llamada.controles.flujo.estados
+        type: term-list
+        props:
+          entries:
+            # components/layout/top-bar.tsx:265-269.
+            - id: llamada.controles.flujo.estado.curso
+              term: En Curso
+              definition: >-
+                La llamada está activa.
+            - id: llamada.controles.flujo.estado.espera
+              term: En Espera
+              definition: >-
+                La llamada está en espera.
+            - id: llamada.controles.flujo.estado.transferencia
+              term: Transfiriendo
+              definition: >-
+                La llamada se está transfiriendo.
+
+      - id: llamada.controles.flujo.pasos
+        type: term-list
+        props:
+          entries:
+            # When each step is completed: `useIncidentTypeStep`
+            # (hooks/use-incident-type-step.ts:29-34, a type from the analysis or
+            # from the operator), pages/dashboard.tsx:605-609 (an incident
+            # location exists), components/layout/incoming-call-banner.tsx:393
+            # (link sent), components/panels/cameras-panel.tsx:170 (a camera
+            # opened) and hooks/use-dispatch-agent.ts:55 (a unit dispatched).
+            - id: llamada.controles.flujo.paso.tipo
+              term: Identificar tipo de incidente
+              definition: >-
+                Se marca cuando el incidente tiene un tipo, ya sea el que
+                detectó el análisis o el que usted asignó.
+            - id: llamada.controles.flujo.paso.ubicacion
+              term: Confirmar ubicación
+              definition: >-
+                Se marca cuando el incidente tiene una ubicación, sea la del GPS
+                del llamante, la que estimó el análisis o una corrección suya.
+            - id: llamada.controles.flujo.paso.enlace
+              term: Enviar enlace de video
+              definition: >-
+                Se marca cuando el enlace de video se envió al llamante.
+            - id: llamada.controles.flujo.paso.sistemas
+              term: Revisar sistemas periféricos
+              definition: >-
+                Se marca cuando abre una cámara desde el panel de cámaras.
+            - id: llamada.controles.flujo.paso.despacho
+              term: Realizar despacho
+              definition: >-
+                Se marca cuando despacha una unidad.
+
+      - id: llamada.controles.flujo.resaltado
+        type: callout
+        props:
+          # components/layout/guide-step.tsx:39-49 — a pending step with a
+          # spotlight highlights its control on hover; the steps that have one
+          # are `send-link`, `system-review` and `dispatch`
+          # (store/step-config.ts:55, :62, :69). The strip turns green when every
+          # step is done (components/layout/guide-step.tsx:17-23).
+          variant: info
+          text: >-
+            Al pasar el puntero por un paso pendiente de enlace, sistemas o
+            despacho, la pantalla se atenúa y resalta el control que lo cumple.
+            Cuando los cinco pasos están marcados, el recorrido se pone verde.
+
+  # --- Transcripción y traducción ---------------------------------------------
   - id: llamada.transcripcion
-    title: Transcripción
+    title: Transcripción y traducción
     children:
       - id: llamada.transcripcion.proposito
         type: prose
         props:
           text: >-
             Transcribe la conversación a medida que ocurre, separando lo que dice
-            el llamante de lo que dice el operador. Permite volver sobre un dato
-            que se pasó por alto sin interrumpir a quien está hablando.
+            el llamante de lo que dice el operador. Cuando el llamante habla otro
+            idioma, muestra lo que dice traducido y permite escribirle en su
+            idioma.
 
       - id: llamada.transcripcion.ubicacion
         type: prose
         props:
-          # CALL_MANIFEST, entrada `left-2` (call-view.tsx:102-111): region
-          # "left", sin `initiallyInactive`. Encabezado citado de
-          # components/panels/transcription-panel.tsx:137; el punto verde que lo
-          # acompaña se muestra con `isConnected` (:138-140).
+          # `left-2` (views/call-view.tsx:182, without `initiallyInactive`),
+          # seeded at the dock's left edge (:299-310). Header
+          # `transcription.title` (calls.json:248, components/panels/transcription-panel.tsx:408-410);
+          # the language selector sits in the header (:411-416,
+          # components/panels/language-selector.tsx:113-129).
           text: >-
-            Ocupa la columna izquierda y está abierta desde que carga la vista.
-            El panel se titula **Transcripción** y acompaña el título con un
-            indicador mientras la transcripción está conectada.
+            Ocupa la columna izquierda y está abierta desde que se abre la vista.
+            Su encabezado dice **Transcripcion** y, a la derecha, lleva el
+            selector del idioma del llamante.
 
-      - id: llamada.transcripcion.fig
+      - id: llamada.transcripcion.vista.fig
         type: figure
         props:
           caption: "Panel de transcripción con las intervenciones del llamante y del operador."
           widthPercent: 90
 
+      - id: llamada.transcripcion.hablantes
+        type: term-list
+        props:
+          entries:
+            # components/panels/transcription-panel.tsx:284-294 (speaker names,
+            # `transcription.caller` / `operator`, calls.json:249-250), :295-300
+            # (the TTS mark, a literal at :298), :318-320 (time of day, 24 h).
+            - id: llamada.transcripcion.hablante.llamante
+              term: "Llamante:"
+              definition: >-
+                Encabeza lo que dijo quien llamó.
+            - id: llamada.transcripcion.hablante.operador
+              term: "Operador:"
+              definition: >-
+                Encabeza lo que dijo usted.
+            - id: llamada.transcripcion.hablante.tts
+              term: TTS
+              definition: >-
+                Marca las intervenciones que se leyeron en voz alta a partir de
+                un texto, como las traducciones que usted envía al llamante.
+
+      - id: llamada.transcripcion.lectura
+        type: prose
+        props:
+          # components/panels/transcription-panel.tsx:334-372 — the line being
+          # spoken appears in italics with `transcription.transcribing`
+          # (calls.json:251) until it is final; :318-320 — every final
+          # intervention carries its time of day.
+          text: >-
+            Cada intervención lleva la hora a la que se dijo. Mientras alguien
+            está hablando, su línea aparece en cursiva, con la indicación
+            **Transcribiendo...** cuando empieza a hablar alguien distinto del
+            anterior, y se fija cuando termina.
+
       - id: llamada.transcripcion.espera
         type: prose
         props:
-          # transcription-panel.tsx:51-68 — sin `sessionId` el cuerpo del panel
-          # muestra únicamente la animación de espera.
+          # transcription-panel.tsx:254-272 — without `sessionId` the body is
+          # only the waiting animation.
           text: >-
-            Mientras no haya una sesión de llamada, el panel muestra una
-            animación de espera en lugar de texto. No es un error: la
-            transcripción empieza a escribirse con la primera intervención.
+            Mientras no hay una sesión de transcripción, el panel muestra una
+            animación de espera en lugar de texto. No es un error.
 
-  # --- Video en Vivo ---------------------------------------------------------
+      - id: llamada.transcripcion.idioma.titulo
+        type: detail-header
+        props:
+          text: Idioma del llamante
+
+      - id: llamada.transcripcion.idioma.texto
+        type: prose
+        props:
+          # components/panels/language-selector.tsx:14-21 (the four options,
+          # calls.json:642-645), :58-79 (the change is posted for the speaker
+          # CLIENTE), :150-152 (the current one is marked). Translated line with
+          # the original in brackets beneath: transcription-panel.tsx:301-314.
+          # The drawer mounts only when the caller's language differs from the
+          # operator's: :379-392.
+          text: >-
+            Elija el idioma en que habla quien llama. La lista ofrece
+            **Español**, **Inglés**, **Francés** y **Portugués**, y marca el que
+            está elegido. Cuando el idioma del llamante es distinto del suyo,
+            cada intervención del llamante se muestra traducida y, debajo, en
+            cursiva, el texto original precedido del idioma entre corchetes; y
+            al pie del panel aparece el cajón de traducción, para escribirle.
+
+      - id: llamada.transcripcion.idioma.control
+        type: field-list
+        props:
+          items:
+            # components/panels/language-selector.tsx:118 (`title`,
+            # calls.json:646).
+            - id: llamada.transcripcion.idioma.selector
+              label: Idioma del llamante
+              text: >-
+                Botón con el icono de idiomas, en el encabezado del panel. Abre
+                la lista de idiomas y aplica el que elija.
+              layout: beside
+
+      - id: llamada.transcripcion.traducir.titulo
+        type: detail-header
+        props:
+          text: Escribir al llamante en su idioma
+
+      - id: llamada.transcripcion.traducir.texto
+        type: prose
+        props:
+          # components/panels/translation-chat-drawer.tsx: header
+          # `translation.translateForCaller` (:120-122, a template with the
+          # language), the drawer opens expanded (:56) and collapses with its
+          # header (:115-124); translated message :217-241 with the original
+          # in brackets; "Ver anteriores" :179-189. Speech: hooks/use-translation-chat.ts:196-215
+          # — with autoplay on (default on, :68-71) a translation into Spanish
+          # or English (:11) is queued for voice on the call's leg (`fsUuid`),
+          # and the operator's microphone is muted while the queue plays
+          # (:163-172). The toggle titles are `translation.autoplayOn` /
+          # `autoplayOff` (calls.json:537-538).
+          text: >-
+            El cajón al pie del panel lleva, en su encabezado, el idioma del
+            llamante, y se pliega con un clic sobre él. Escriba su mensaje en su
+            idioma: el cajón lo traduce y muestra la traducción con el original
+            debajo. Con la reproducción automática activada, que es como viene,
+            la traducción a español o a inglés se lee en voz alta en la llamada, y
+            su micrófono queda silenciado mientras se reproduce. El icono de
+            altavoz del encabezado del cajón activa o desactiva esa reproducción
+            automática.
+
+      - id: llamada.transcripcion.traducir.controles
+        type: field-list
+        props:
+          items:
+            # components/panels/translation-chat-drawer.tsx:260-274 (field,
+            # `translation.writeMessagePlaceholder`, calls.json:527), :275-287
+            # (send, `translation.sendTranslation`, calls.json:528), :335-355
+            # (per-message play button; `translation.ttsPlay`, calls.json:533).
+            - id: llamada.transcripcion.traducir.campo
+              label: Escribir mensaje…
+              text: >-
+                Campo donde escribe, en su idioma, lo que quiere decirle al
+                llamante. Enter también lo envía.
+              layout: beside
+
+            - id: llamada.transcripcion.traducir.enviar
+              label: Enviar traducción
+              text: >-
+                Traduce el mensaje al idioma del llamante y lo agrega al cajón.
+              layout: beside
+
+            - id: llamada.transcripcion.traducir.reproducir
+              label: Reproducir traducción
+              text: >-
+                Icono de altavoz junto a cada traducción. La lee en voz alta en
+                la llamada, cuando la reproducción automática no lo hizo.
+              layout: beside
+
+  # --- Video en vivo y avance del llamante -------------------------------------
   - id: llamada.video
-    title: Video en Vivo
+    title: Video en vivo y avance del llamante
     children:
       - id: llamada.video.proposito
         type: prose
         props:
           text: >-
             Muestra el video que el llamante comparte desde su teléfono, de modo
-            que el operador vea la escena en lugar de reconstruirla del relato.
+            que el operador vea la escena en lugar de reconstruirla del relato, y
+            indica hasta dónde llegó el llamante con el enlace que se le envió.
 
       - id: llamada.video.ubicacion
         type: prose
         props:
-          # CALL_MANIFEST, entrada `left-1` (call-view.tsx:91-101):
-          # `initiallyInactive`, y la visibilidad se resuelve en :396 con
-          # `linkSent || isVideoActive`. Encabezado citado de
-          # components/panels/live-video-panel.tsx:80.
+          # `left-1` (views/call-view.tsx:183, `initiallyInactive`), opened by
+          # `usePanelVisibility("left-1", linkSent || isVideoActive)` (:767),
+          # seeded above `left-2` (:415-436). Height: views/call-view.tsx:94
+          # (190 px while only the stepper shows), :678-688 (half the dock's
+          # height once the caller's video is active). Header
+          # `liveVideo.title` (components/panels/live-video-panel.tsx:94).
           text: >-
-            Aparece en la parte superior de la columna izquierda en cuanto se
-            envía el enlace al llamante, y se mantiene mientras el video esté en
-            curso. El panel se titula **Video en Vivo**.
+            Se abre por sí solo cuando envía el enlace de video al llamante, en
+            la parte superior de la columna izquierda. Mientras el llamante no
+            comparte video, el panel es bajo y muestra solo su avance; cuando el
+            video llega, el panel crece hasta la mitad de la altura del área de
+            paneles.
 
-      - id: llamada.video.fig
+      - id: llamada.video.vista.fig
         type: figure
         props:
           caption: "Panel de video en vivo con el avance del llamante al pie."
           widthPercent: 90
 
-      - id: llamada.video.avance.titulo
-        type: detail-header
-        props:
-          text: Avance del llamante
-
       - id: llamada.video.avance.texto
         type: prose
         props:
-          # `CallerProgressStepper` montado al pie del video una vez enviado el
-          # enlace (call-view.tsx:424-432).
+          # components/panels/live-video-panel-content.tsx (views/call-view-panels/
+          # live-video-panel-content.tsx:38-46): the stepper is drawn once the
+          # link was sent. components/caller-progress-stepper.tsx:66-100 — each
+          # step shows the time it happened (:98) or `callerProgress.waiting`
+          # (calls.json:258).
           text: >-
             Al pie del video, tres marcas indican hasta dónde llegó el llamante
-            con el enlace que se le envió. Sirven para saber qué falta pedirle
-            sin volver a preguntárselo.
+            con el enlace. Cada marca muestra la hora a la que se cumplió, y
+            mientras no se cumple indica **Esperando...**. Sirven para saber qué
+            falta pedirle sin volver a preguntárselo.
 
       - id: llamada.video.avance.pasos
         type: term-list
         props:
           entries:
-            # Rótulos citados de components/caller-progress-stepper.tsx:8-10.
+            # components/caller-progress-stepper.tsx:11-15 and calls.json:255-257.
             - id: llamada.video.avance.enlace
               term: Enlace abierto
               definition: >-
@@ -292,7 +1029,7 @@ children:
               definition: >-
                 El llamante autorizó el envío de su ubicación.
 
-  # --- Chat ------------------------------------------------------------------
+  # --- Chat ---------------------------------------------------------------------
   - id: llamada.chat
     title: Chat
     children:
@@ -300,72 +1037,239 @@ children:
         type: prose
         props:
           text: >-
-            Permite intercambiar mensajes escritos con el recurso en campo,
-            cuando lo que hay que pasar no conviene decirlo por voz o hay que
-            dejarlo por escrito.
+            Permite intercambiar mensajes escritos con el llamante, cuando lo que
+            hay que pasar no conviene decirlo por voz o hay que dejarlo por
+            escrito.
 
       - id: llamada.chat.ubicacion
         type: prose
         props:
-          # CALL_MANIFEST, entrada `chat` (call-view.tsx:151-161):
-          # `initiallyInactive`, se abre desde la barra de paneles. Encabezado
-          # citado de components/panels/chat-panel.tsx:50; el campo de escritura,
-          # de :108.
+          # `chat` (views/call-view.tsx:184-189, `initiallyInactive`), seeded
+          # below `left-2` (:394-414). Header: components/panels/chat-panel.tsx:53.
+          # Incoming messages are labelled `chat.caller` (:127, calls.json:378),
+          # the operator's own `chat.operator` (:377). Empty state
+          # `chat.noMessages` (:84, calls.json:375).
           text: >-
-            No está a la vista al abrir la llamada. Se abre desde la barra de
-            paneles y ocupa la columna izquierda, bajo el título **Chat**. El
-            campo al pie indica **Escribe un mensaje...**.
+            No está a la vista al abrir la llamada: se abre desde la barra de
+            paneles y ocupa la columna izquierda, bajo el título **Chat**. Cada
+            mensaje indica su autor, **Llamante** u **Operador**, y la fecha y la
+            hora. Sin mensajes, el panel indica **Sin mensajes**.
 
-      - id: llamada.chat.fig
+      - id: llamada.chat.vista.fig
         type: figure
         props:
           caption: "Panel de chat con el intercambio de mensajes y el campo de escritura."
           widthPercent: 90
 
+      - id: llamada.chat.enviar
+        type: procedure
+        props:
+          # Send: components/panels/chat-panel.tsx:41-45 and :146-153 (Enter also
+          # sends), button `chat.sendMessage` (:157, calls.json:373). Own
+          # messages are labelled `chat.operator` (:127, calls.json:377).
+          # `sendMessage` returns early without a Chime `meetingSession`
+          # (hooks/use-chime-session.ts:305), which exists only once the video
+          # link was sent.
+          lead: >-
+            Para escribirle al llamante:
+          steps:
+            - id: llamada.chat.enviar.abrir
+              title: Abra el panel Chat desde la barra de paneles
+              text: >-
+                El panel se abre en la columna izquierda.
+              layout: beside
+
+            - id: llamada.chat.enviar.escribir
+              title: Escriba el mensaje y haga clic en Enviar mensaje
+              text: >-
+                El mensaje aparece en el panel bajo la indicación **Operador**.
+                Enter también lo envía. El chat funciona una vez enviado el
+                enlace de video al llamante.
+              layout: beside
+
       - id: llamada.chat.aviso
         type: callout
         props:
           # `usePanelNotification("chat", incomingMessageCount)`
-          # (call-view.tsx:409), con la cuenta computada solo sobre los mensajes
-          # que NO son propios (:405-408).
+          # (views/call-view.tsx:813), counted only over messages that are not
+          # the operator's own (:809-812).
           variant: info
           text: >-
-            El chat avisa con un distintivo cuando llega un mensaje del recurso
-            en campo. La cuenta solo considera los mensajes recibidos: los que
-            usted envía no generan aviso.
+            El icono del chat en la barra de paneles avisa con una cuenta cuando
+            llega un mensaje del llamante y el panel está cerrado. La cuenta solo
+            considera los mensajes recibidos: los que usted envía no generan
+            aviso.
 
-  # --- Cámaras ---------------------------------------------------------------
-  - id: llamada.camaras
-    title: Cámaras
+  # --- Sobre el mapa -------------------------------------------------------------
+  - id: llamada.mapa
+    title: Sobre el mapa
     children:
-      - id: llamada.camaras.proposito
+      - id: llamada.mapa.proposito
         type: prose
         props:
+          # views/call-view-panels/map-panel-content.tsx:97-170 — the map window
+          # carries the call controls (top edge, :97-106), the map tools (right
+          # edge, mid-height, :108-112) and, on the bottom edge, the location bar
+          # and the route cards (:136-170).
           text: >-
-            Lista las cámaras próximas a la ubicación del incidente, para
-            confirmar lo que el llamante describe desde una fuente propia.
+            El mapa ocupa el centro de la vista. Sobre su borde superior van los
+            controles de la llamada, que se describen arriba; sobre su borde
+            derecho, a media altura, las herramientas de mapa; y sobre su borde
+            inferior, la barra de ubicación del incidente y las tarjetas de ruta
+            de las unidades.
 
-      - id: llamada.camaras.ubicacion
-        type: prose
-        props:
-          # CALL_MANIFEST, entrada `cameras` (call-view.tsx:114-124):
-          # `initiallyInactive`, visibilidad en :401 —
-          # `hasNearbyCameras && !isWrapUp`. Montado con
-          # `onlyNearbyCameras={true}` (:545). Encabezado citado de
-          # components/panels/cameras-panel.tsx:354.
-          text: >-
-            Aparece en la parte superior de la columna derecha en cuanto hay
-            cámaras cercanas al incidente, bajo el título **CCTV**. Lista
-            únicamente esas cámaras: no ofrece el listado completo ni su
-            búsqueda.
-
-      - id: llamada.camaras.fig
+      - id: llamada.mapa.vista.fig
         type: figure
         props:
-          caption: "Panel de cámaras con las cámaras próximas al incidente."
+          caption: "Mapa del incidente con la barra de ubicación y una tarjeta de ruta sobre su borde inferior."
           widthPercent: 90
 
-  # --- Fuerzas de Respuesta --------------------------------------------------
+      - id: llamada.mapa.herramientas
+        type: prose
+        props:
+          # components/panels/map-tools-panel.tsx:244-377 — the same
+          # `MapToolsPanel` as Home; the centre control runs `centerOnIncident`
+          # (:307), which needs no case. Placement: map-panel-content.tsx:108-112.
+          text: >-
+            Las herramientas de mapa son las mismas que se describen en la sección
+            **Home**, en Herramientas de mapa. En esta vista el control de centrar
+            lleva el mapa a la ubicación del incidente.
+
+      - id: llamada.ubicacion.titulo
+        type: detail-header
+        props:
+          text: Ubicación del incidente
+
+      - id: llamada.ubicacion.texto
+        type: prose
+        props:
+          # `IncidentLocationBar` (views/call-view-panels/map-panel-content.tsx:144-161),
+          # opened as soon as an incident location exists (views/call-view.tsx:719-721)
+          # and again by clicking the incident's pin (:724-728;
+          # components/panels/incident-pin-marker.tsx:77). Where the location comes
+          # from and their order: pages/dashboard.tsx:568-577 — the operator's
+          # correction, then the caller's GPS, then the analysis's estimate, then
+          # the contact attribute. Close control: incident-location-bar.tsx:424-434
+          # (`common:buttons.close`).
+          text: >-
+            La barra aparece por su cuenta en cuanto el incidente tiene una
+            ubicación, y muestra la dirección y las coordenadas. La ubicación sale
+            de la corrección que usted haga, si la hay; si no, del GPS del
+            llamante; si no, de la estimación del análisis de la llamada. Es la
+            que usan las cámaras y las fuerzas de respuesta. Si cierra la barra,
+            vuelve a abrirse al hacer clic en el punto del incidente sobre el
+            mapa.
+
+      - id: llamada.ubicacion.controles
+        type: field-list
+        props:
+          items:
+            # components/panels/incident-location-bar.tsx: preview and Street View
+            # :435-463 (`location.openStreetView`, incidents.json:130;
+            # `location.noCoverage`, :132); edit :603-616 (`location.editAddress`,
+            # :136; `cancelEdit`, :135); search field :486-497
+            # (`location.searchAddress`, :129); accept / discard :580-601
+            # (:133-134); pin drop :558-579 (`location.confirmPinLocation`, :140;
+            # `discardPinLocation`, :141; `pinUnconfirmed`, :138;
+            # `noAddressForPoint`, :139); reanalyze :621-645
+            # (`callAi.reanalyzeLocation`, calls.json:339) with a cooldown of
+            # 6 s (:45, :354-361); other locations
+            # components/panels/location-candidates-menu.tsx:77-78
+            # (`callAi.otherLocations`, calls.json:340); history :669-680
+            # (`location.locationHistory`, incidents.json:142) and its rows
+            # :365-417 (`location.useThisLocation`, :143).
+            - id: llamada.ubicacion.control.street-view
+              label: Abrir Street View
+              text: >-
+                Es la vista previa a nivel de calle, a la izquierda de la barra;
+                al hacer clic, abre Street View en ese punto. Cuando no hay
+                imágenes para ese punto, en su lugar se lee **Sin cobertura**.
+              layout: beside
+
+            - id: llamada.ubicacion.control.editar
+              label: Editar dirección
+              text: >-
+                Habilita la corrección de la dirección. Mientras la edita, el
+                mismo control pasa a **Cancelar edición**.
+              layout: beside
+
+            - id: llamada.ubicacion.control.buscar
+              label: Buscar dirección…
+              text: >-
+                Campo donde escribir la dirección correcta. Elija una de las
+                direcciones propuestas: el mapa muestra el punto como vista
+                previa.
+              layout: beside
+
+            - id: llamada.ubicacion.control.aceptar
+              label: Aceptar dirección
+              text: >-
+                Confirma la dirección elegida como ubicación del incidente. Al
+                lado, **Descartar dirección** la deja como estaba.
+              layout: beside
+
+            - id: llamada.ubicacion.control.pin
+              label: Confirmar ubicación del pin
+              text: >-
+                Mientras edita, puede arrastrar el pin del incidente a otro
+                punto. La barra pasa a mostrar **Pin sin confirmar**, con las
+                coordenadas, y un campo con la dirección del punto, que puede
+                completar. Este control confirma la nueva ubicación;
+                **Descartar ubicación del pin** la descarta.
+              layout: beside
+
+            - id: llamada.ubicacion.control.reanalizar
+              label: Volver a analizar la ubicación
+              text: >-
+                Pide al análisis de la llamada que busque la ubicación de nuevo.
+                Después de usarlo, el control queda deshabilitado unos segundos.
+                Si usted ya fijó la ubicación a mano, el análisis no la
+                reemplaza: la ayuda emergente lo indica.
+              layout: beside
+
+            - id: llamada.ubicacion.control.alternas
+              label: Otras ubicaciones posibles
+              text: >-
+                Aparece cuando el análisis encontró lugares homónimos. Abre la
+                lista de candidatos; al elegir uno, la barra lo propone y usted
+                lo confirma con **Confirmar ubicación del pin**.
+              layout: beside
+
+            - id: llamada.ubicacion.control.historial
+              label: Historial de ubicaciones
+              text: >-
+                Abre la lista de las ubicaciones que tuvo el caso, con la hora y
+                el origen de cada una. Al elegir una, la barra la propone y
+                usted la confirma con **Confirmar ubicación del pin**.
+              layout: beside
+
+      - id: llamada.ubicacion.corregir
+        type: procedure
+        props:
+          lead: >-
+            Para corregir la dirección del incidente:
+          steps:
+            - id: llamada.ubicacion.corregir.editar
+              title: Haga clic en Editar dirección
+              text: >-
+                El campo de búsqueda queda listo para escribir.
+              layout: beside
+
+            - id: llamada.ubicacion.corregir.buscar
+              title: Escriba la dirección en Buscar dirección… y elija una propuesta
+              text: >-
+                El mapa muestra el punto elegido como vista previa.
+              layout: beside
+
+            - id: llamada.ubicacion.corregir.aceptar
+              title: Haga clic en Aceptar dirección
+              text: >-
+                La barra muestra la nueva dirección, el pin del mapa se mueve y
+                las cámaras y las fuerzas de respuesta se buscan sobre esa
+                ubicación.
+              layout: beside
+
+  # --- Fuerzas de Respuesta ------------------------------------------------------
   - id: llamada.fuerzas
     title: Fuerzas de Respuesta
     children:
@@ -373,564 +1277,921 @@ children:
         type: prose
         props:
           text: >-
-            Lista los recursos disponibles para atender el incidente y permite
-            despachar uno. Es el panel desde el que la llamada se convierte en
-            una respuesta en campo.
+            Lista las unidades cercanas al incidente y permite despachar una. Es
+            el panel desde el que la llamada se convierte en una respuesta en
+            campo.
 
       - id: llamada.fuerzas.ubicacion
         type: prose
         props:
-          # CALL_MANIFEST, entrada `right-2` (call-view.tsx:125-135):
-          # `initiallyInactive`, visibilidad en :400 —
-          # `availableAgents.length > 0 && !isWrapUp`. La consulta se habilita
-          # con la posición del incidente, no con el GPS del llamante
-          # (:325-328), de modo que una dirección corregida a mano alcanza.
-          # Encabezado citado de
-          # components/panels/available-agents-panel.tsx:50.
+          # `right-2` (views/call-view.tsx:191-196, `initiallyInactive`), opened by
+          # `usePanelVisibility("right-2", showFieldForces)` (:780-781, :784)
+          # and seeded right of `bottom-2` (:358-380). The search runs on the
+          # incident's location: `useAvailableAgents({ locationReady:
+          # hasIncidentLocation, … })` (:737-740). The Mobile and Cámaras layers
+          # switch on with the panels (:803-806). Header `callView.responseForces`
+          # (components/panels/available-agents-panel.tsx:60, calls.json:233).
+          # Where it exists at all: views/call-view.tsx:591, :599-602, :780-783.
           text: >-
-            Aparece en la mitad inferior de la columna derecha en cuanto hay
-            recursos disponibles, bajo el título **Fuerzas de Respuesta**. La
-            búsqueda de recursos se habilita con la ubicación del incidente, de
-            modo que alcanza con haber corregido la dirección a mano: no es
-            necesario que el llamante haya compartido su GPS.
+            Se abre por sí solo cuando el incidente tiene una ubicación, en la
+            banda bajo el mapa, a la derecha de Flow AI, con el título **Fuerzas
+            de Respuesta**. Las unidades se buscan sobre esa ubicación. Al
+            abrirse, la capa **Mobile** del mapa se enciende por sí sola, de modo
+            que las unidades también aparecen sobre el mapa.
 
-      - id: llamada.fuerzas.fig
+      - id: llamada.fuerzas.vista.fig
         type: figure
         props:
-          caption: "Panel de fuerzas de respuesta con el filtro por fuerza y los recursos disponibles."
+          caption: "Panel de fuerzas de respuesta con el filtro por fuerza y las unidades cercanas."
           widthPercent: 90
 
       - id: llamada.fuerzas.filtros
         type: icon-table
         props:
-          # Rótulos citados de
-          # components/panels/available-agents-list.tsx:28-34, usados como
-          # `title` de cada botón del filtro (:96).
+          # The seven force filters (components/panels/available-agents-list.tsx:33-49,
+          # each drawn as a button with `title={label}`, :153-176; labels
+          # `calls:review.all`, calls.json:131, and `common:agencies.*`,
+          # common.json:131-138) and the directory toggle (:181-194,
+          # `agents:directory.openTitle`, agents.json:124).
           labelHeader: Fuerza
           descriptionHeader: Qué deja a la vista
           rows:
             - id: llamada.fuerzas.filtro.todos
               label: Todos
               description: >-
-                Todos los recursos disponibles, sin distinguir fuerza.
+                Todas las unidades disponibles, sin distinguir fuerza.
             - id: llamada.fuerzas.filtro.salud
               icon: fuerza.salud
               label: Salud
               description: >-
-                Solo los recursos de salud.
+                Solo las unidades de salud.
             - id: llamada.fuerzas.filtro.bomberos
               icon: fuerza.bomberos
               label: Bomberos
               description: >-
-                Solo los recursos de bomberos.
+                Solo las unidades de bomberos.
             - id: llamada.fuerzas.filtro.policia
               icon: fuerza.policia
               label: Policía
               description: >-
-                Solo los recursos de policía.
+                Solo las unidades de policía.
             - id: llamada.fuerzas.filtro.transito
               icon: fuerza.transito
               label: Tránsito
               description: >-
-                Solo los recursos de tránsito.
+                Solo las unidades de tránsito.
             - id: llamada.fuerzas.filtro.defensa-civil
               icon: fuerza.defensa-civil
               label: Defensa Civil
               description: >-
-                Solo los recursos de defensa civil.
+                Solo las unidades de defensa civil.
             - id: llamada.fuerzas.filtro.gaula
               icon: fuerza.gaula
               label: Gaula
               description: >-
-                Solo los recursos de Gaula.
+                Solo las unidades de Gaula.
+            - id: llamada.fuerzas.filtro.directorio
+              label: Directorio de agentes
+              description: >-
+                No filtra la lista: la reemplaza por el directorio de agentes,
+                que se describe más abajo. Al elegir una fuerza, el panel vuelve
+                a la lista de unidades.
 
-      - id: llamada.fuerzas.rapida
+      - id: llamada.fuerzas.fila
+        type: prose
+        props:
+          # components/panels/available-agent-row.tsx:256-350 (the row: force logo
+          # :285-306, name :308-321, callsign :322-324, estimated arrival and
+          # distance :334-348) and :367-444 (markers, endowment, dispatch).
+          text: >-
+            Cada fila muestra el logo de la fuerza, el nombre y el indicativo del
+            agente, el tiempo estimado de llegada y la distancia hasta el
+            incidente, los distintivos de recomendación, el equipamiento y el
+            control de despacho. Al hacer clic en la fila de una unidad se traza
+            su ruta sobre el mapa; un segundo clic la quita, siempre que la
+            unidad no esté despachada.
+
+      - id: llamada.fuerzas.distintivos.titulo
+        type: detail-header
+        props:
+          text: Distintivos de recomendación
+
+      - id: llamada.fuerzas.distintivos
+        type: icon-table
+        props:
+          # components/panels/available-agent-row.tsx: best agent :367-380
+          # (`agentsOnShift.bestAgent`, calls.json:405; a single row, :363-366),
+          # fastest arrival :388-400 (`fastestArrival`, :402; computed over the
+          # visible units, components/panels/available-agents-list.tsx:114-117),
+          # closest :406-418 (`closestDistance`, :403; computed over the visible
+          # units, :122-125), recommended force :285-290 (`bestForce`, :404;
+          # computed over all units, :131). Why the closest is not always the
+          # fastest: the ETA "weights vehicle speed and a route factor"
+          # (components/panels/available-agent-row.tsx:326-333).
+          labelHeader: Distintivo
+          descriptionHeader: Qué indica
+          rows:
+            - id: llamada.fuerzas.distintivo.mejor
+              label: Mejor opción
+              description: >-
+                Una estrella. La unidad que la plataforma recomienda; solo una
+                fila la lleva.
+            - id: llamada.fuerzas.distintivo.rapida
+              label: Llegada más rápida
+              description: >-
+                Un indicador de velocidad. La unidad que llegaría antes al
+                incidente entre las que el filtro deja a la vista: al cambiar de
+                fuerza, la marca pasa a la más rápida de esa fuerza.
+            - id: llamada.fuerzas.distintivo.cercana
+              label: Más cercano
+              description: >-
+                Un pin con una marca de verificación. La unidad más cercana al
+                incidente entre las que el filtro deja a la vista. Puede no ser
+                la más rápida: el tiempo estimado pondera la velocidad del
+                vehículo.
+            - id: llamada.fuerzas.distintivo.fuerza
+              label: Fuerza recomendada
+              description: >-
+                Un anillo tenue alrededor del logo de la fuerza que la
+                plataforma recomienda para el incidente. La ayuda emergente lo
+                nombra al pasar el puntero.
+
+      - id: llamada.fuerzas.despacho
+        type: procedure
+        props:
+          # Dispatch: components/panels/available-agent-dispatch-action.tsx:32-56
+          # (`dispatch.dispatchAgent`, calls.json:547, tooltip `dispatch.dispatch`,
+          # :548) → components/panels/available-agent-row.tsx:148-170 and
+          # hooks/use-dispatch-agent.ts:31-66; the step "dispatch" of the call
+          # flow is completed (:55). A refused dispatch prints its reason under
+          # the row for 4 s (available-agent-row.tsx:116-120, :449-451). In a live
+          # call the corner dot replaces the button once dispatched (:100,
+          # :215-231, :433-436).
+          lead: >-
+            Para despachar una unidad al incidente:
+          steps:
+            - id: llamada.fuerzas.despacho.filtrar
+              title: Elija la fuerza
+              text: >-
+                Use los filtros del encabezado para dejar a la vista solo las
+                unidades de la fuerza que corresponde al incidente.
+              layout: beside
+
+            - id: llamada.fuerzas.despacho.evaluar
+              title: Haga clic en la fila de la unidad
+              text: >-
+                La plataforma traza su ruta sobre el mapa y muestra su tarjeta
+                con la distancia y la llegada. Compare con los distintivos de
+                recomendación.
+              layout: beside
+
+            - id: llamada.fuerzas.despacho.confirmar
+              title: Haga clic en Despachar
+              text: >-
+                El botón está al final de la fila y su ayuda emergente dice
+                **Despachar**. La unidad queda asignada al incidente y, en lugar
+                del botón, la fila muestra el estado del despacho. Si la
+                plataforma no puede despachar, la fila muestra el motivo debajo
+                por unos segundos.
+              layout: beside
+
+      - id: llamada.fuerzas.directorio.titulo
+        type: detail-header
+        props:
+          text: Directorio de agentes y despacho de agente externo
+
+      - id: llamada.fuerzas.directorio.texto
+        type: prose
+        props:
+          # components/panels/available-agents-list.tsx:206-222 — with the
+          # directory open the panel shows `agentLink.sectionTitle`
+          # (agents.json:129), the link form (components/panels/agent-link-dispatch.tsx)
+          # and the directory search (components/panels/phonebook/agent-directory-search.tsx),
+          # whose rows are the same `AvailableAgentRow` (:113-119). The list is
+          # the roster of agents that can be dispatched
+          # (`DISPATCHABLE_ROSTER_FILTER`, :51-56); it filters as you type by
+          # name, callsign or phone (`matchesAgentQuery`, :58-64). The form's
+          # button is disabled without a call session, an incident location,
+          # the caller's shared video or a valid number (agent-link-dispatch.tsx:50-51).
+          # Its reason goes only to `title` (:127), which a disabled button with
+          # `disabled:pointer-events-none` (:129) never shows, so it is not
+          # quoted; it sends
+          # `useQuickDispatch` (hooks/use-quick-dispatch.ts:34-55).
+          text: >-
+            El botón **Directorio de agentes** reemplaza la lista de unidades
+            cercanas por el directorio de los agentes que se pueden despachar,
+            con un campo de búsqueda. Las filas son las mismas de la lista y se
+            despachan igual. En la parte superior, la misma vista ofrece el
+            despacho de un agente externo: usted escribe su teléfono y la
+            plataforma envía al agente un enlace de despacho.
+
+      - id: llamada.fuerzas.directorio.controles
         type: field-list
         props:
           items:
-            # Rótulo citado de
-            # components/panels/available-agent-row.tsx:257 y :260. Se calcula
-            # sobre los recursos VISIBLES, no sobre todos
-            # (available-agents-list.tsx:79-82), de modo que respeta el filtro
-            # activo.
-            - id: llamada.fuerzas.rapida.marca
-              label: Llegada más rápida
+            # agents.json:125 (`directory.searchPlaceholder`), :129
+            # (`agentLink.sectionTitle`) and :132 (`agentLink.send`).
+            - id: llamada.fuerzas.directorio.buscar
+              label: Buscar por nombre, indicativo o teléfono...
               text: >-
-                Marca al recurso que llegaría antes al incidente. La marca se
-                calcula sobre los recursos que el filtro deja a la vista, no
-                sobre todos: al cambiar de fuerza, la marca pasa al más rápido
-                de esa fuerza.
+                Reduce el directorio a los agentes que coinciden con lo que
+                escribe. Filtra mientras escribe.
               layout: beside
 
-      - id: llamada.fuerzas.despachar
-        type: procedure
+            - id: llamada.fuerzas.directorio.externo
+              label: Despacho de agente externo
+              text: >-
+                Encabeza el formulario para despachar a alguien que no está en la
+                lista: elija el prefijo del país y escriba el teléfono del
+                agente.
+              layout: beside
+
+            - id: llamada.fuerzas.directorio.enviar
+              label: Enviar link de despacho
+              text: >-
+                Envía al teléfono indicado un enlace de despacho al incidente. El
+                botón está deshabilitado mientras no haya una sesión de video con
+                el llamante, una ubicación del incidente, el video del llamante
+                y un número de teléfono válido.
+              layout: beside
+
+      - id: llamada.fuerzas.avisos
+        type: term-list
         props:
-          # Control citado de
-          # components/panels/available-agent-dispatch-action.tsx:53
-          # (`aria-label` "Despachar agente", :38).
-          lead: >-
-            Para despachar un recurso al incidente:
-          steps:
-            - id: llamada.fuerzas.despachar.filtrar
-              title: Elija la fuerza
-              text: >-
-                Use los filtros del encabezado para dejar a la vista únicamente
-                los recursos de la fuerza que corresponde al incidente.
-              layout: beside
+          entries:
+            # components/panels/available-agents-list.tsx:243-269 (empty answer,
+            # `availableAgents.noNearbyForces`, agents.json:120, and the button
+            # `availableAgents.otherAgents`, :121); components/panels/phonebook/
+            # agent-directory-search.tsx:102-110 (`directory.noMatches`,
+            # agents.json:126; `phonebook.noAgents`, :144).
+            - id: llamada.fuerzas.aviso.sin-fuerzas
+              term: No hay fuerzas cercanas para este incidente
+              definition: >-
+                La plataforma no encontró unidades cerca de la ubicación.
+            - id: llamada.fuerzas.aviso.otros
+              term: Otros agentes
+              definition: >-
+                Botón que acompaña al aviso anterior y abre el directorio de
+                agentes, para buscar una unidad a mano.
+            - id: llamada.fuerzas.aviso.sin-coincidencias
+              term: Sin coincidencias en el directorio
+              definition: >-
+                Ningún agente del directorio coincide con lo que escribió.
+            - id: llamada.fuerzas.aviso.sin-agentes
+              term: No hay agentes en el directorio
+              definition: >-
+                El directorio está vacío.
 
-            - id: llamada.fuerzas.despachar.elegir
-              title: Elija el recurso
-              text: >-
-                Recorra la lista y confirme la fuerza y el distintivo del
-                recurso. La marca de **Llegada más rápida** indica cuál llegaría
-                antes.
-              layout: beside
-
-            - id: llamada.fuerzas.despachar.confirmar
-              title: Haga clic en Despachar
-              text: >-
-                El recurso queda asignado al incidente y la plataforma traza su
-                ruta sobre el mapa.
-              layout: beside
-
+      # --- Tarjeta de ruta -------------------------------------------------------
       - id: llamada.fuerzas.ruta.titulo
         type: detail-header
         props:
-          text: Ruta del recurso despachado
+          text: Tarjeta de ruta
 
       - id: llamada.fuerzas.ruta.texto
         type: prose
         props:
-          # `AgentRouteBar` (call-view.tsx:729-733) cuando hay despacho, y en el
-          # costado de la bitácora cuando todavía no lo hay (:706, decidido por
-          # `useHasDispatch` en :349). Rótulos de la ficha citados de
-          # components/panels/agent-route-card.tsx.
+          # views/call-view-panels/map-panel-content.tsx:162-169 — `AgentRouteBar`
+          # sits on the bottom edge, beside the location bar. Previews replace
+          # each other and a dispatched unit keeps its card
+          # (components/panels/agent-route-bar.tsx:24-35, :51-68). The force is a
+          # logo with a tooltip naming it (agent-route-card.tsx:250-274).
           text: >-
-            Una vez despachado el recurso, una ficha sobre el mapa acompaña su
-            recorrido. Antes del despacho, una ruta trazada para evaluar una
-            opción se muestra junto a la bitácora del caso, no en ese lugar
-            destacado.
+            Una tarjeta sobre el borde inferior del mapa, junto a la barra de
+            ubicación, sigue a cada unidad. Aparece al hacer clic en la fila de
+            una unidad, como vista previa de su ruta, y se queda para las
+            unidades despachadas. Una sola vista previa a la vez: al elegir otra
+            unidad, la anterior se reemplaza. El logo de la fuerza encabeza la
+            tarjeta, y su ayuda emergente da el nombre.
+
+      - id: llamada.fuerzas.ruta.fig
+        type: figure
+        props:
+          caption: "Tarjeta de ruta de una unidad despachada sobre el borde inferior del mapa."
+          widthPercent: 90
 
       - id: llamada.fuerzas.ruta.datos
         type: data-table
         props:
+          # components/panels/agent-route-card.tsx:429-438 (`agentRoute.distance`,
+          # `arrival`; common.json:685-686), :454-470 (`agentRoute.endowment`,
+          # common.json:688, and only for a preview: `showEndowment =
+          # hasEndowment && !dispatched`, :143), :440-444 (`calculatingRoute`,
+          # common.json:687).
           labelHeader: Dato
           descriptionHeader: Qué indica
           rows:
-            # Rótulos citados de agent-route-card.tsx:143, :148, :167 y :182.
             - id: llamada.fuerzas.ruta.dato.distancia
               label: Distancia
               description: >-
-                Cuánto le falta recorrer al recurso hasta el incidente.
+                Cuánto le falta recorrer a la unidad hasta el incidente.
             - id: llamada.fuerzas.ruta.dato.llegada
               label: Llegada
               description: >-
                 Cuánto tiempo le falta para llegar.
-            - id: llamada.fuerzas.ruta.dato.agencia
-              label: Agencia
-              description: >-
-                Agencia a la que pertenece el recurso.
             - id: llamada.fuerzas.ruta.dato.intendencia
               label: Intendencia
               description: >-
-                Equipamiento con el que cuenta el recurso. La ficha omite este
-                apartado cuando no hay equipamiento registrado.
+                El equipamiento de la unidad. Solo figura en la vista previa: una
+                vez despachada, ese lugar lo ocupa el estado.
 
       - id: llamada.fuerzas.ruta.espera
         type: prose
         props:
-          # agent-route-card.tsx:155 — mientras el servicio de rutas no
-          # responde.
           text: >-
-            En los primeros instantes posteriores al despacho, la ficha indica
-            **Calculando ruta…** mientras se resuelve el recorrido. La distancia
-            y la llegada aparecen en cuanto está resuelto.
+            Mientras se resuelve el recorrido, la tarjeta indica **Calculando
+            ruta…**. La distancia y la llegada aparecen en cuanto está resuelto.
 
-  # --- Sobre el mapa ---------------------------------------------------------
-  - id: llamada.mapa
-    title: Sobre el mapa
-    children:
-      - id: llamada.mapa.proposito
+      - id: llamada.fuerzas.ruta.estados
+        type: term-list
+        props:
+          entries:
+            # components/panels/agent-route-card.tsx:383-398 (the status line of a
+            # dispatched card, `agentRoute.enRoute` / `attended` / `closed`,
+            # common.json:689-691) and :411-414 (the departure date and time under
+            # the line, only while en route).
+            - id: llamada.fuerzas.ruta.estado.camino
+              term: En camino
+              definition: >-
+                La unidad fue despachada y todavía no llegó. Bajo el estado, la
+                tarjeta muestra la fecha y la hora de salida.
+            - id: llamada.fuerzas.ruta.estado.atendido
+              term: Atendido
+              definition: >-
+                La unidad llegó al lugar.
+            - id: llamada.fuerzas.ruta.estado.cerrado
+              term: Cerrado
+              definition: >-
+                El despacho de esa unidad terminó.
+
+      - id: llamada.fuerzas.ruta.agrupar
         type: prose
         props:
+          # components/panels/agent-route-bar.tsx:22 (`AVATAR_GROUP_THRESHOLD =
+          # 2`), :105-117 (a unit still travelling keeps its card; every other
+          # route collapses), :147-154, and the close control
+          # components/panels/agent-route-card.tsx:329-337 (`agentRoute.close`,
+          # common.json:698). Avatars are grouped by force:
+          # components/panels/agent-route-avatar-group.tsx:82-97.
           text: >-
-            El mapa ocupa el centro de la vista y lleva apoyados sobre él la
-            barra de ubicación del incidente, la bitácora del caso y las
-            herramientas de mapa. No son paneles de la grilla: acompañan al mapa
-            y se corren para no taparse entre sí.
+            Con más de dos rutas en el mapa, las tarjetas de las unidades que
+            siguen en camino se conservan completas y las demás —una vista
+            previa, una unidad que ya llegó o un despacho cerrado— se pliegan en
+            avatares, agrupados por fuerza. Al hacer clic en un avatar, su tarjeta
+            se despliega, y **Cerrar** la vuelve a plegar.
 
-      - id: llamada.mapa.fig
-        type: figure
-        props:
-          caption: "Mapa del incidente con la barra de ubicación y la bitácora del caso apoyadas sobre él."
-          widthPercent: 90
-
-      - id: llamada.mapa.ubicacion.titulo
-        type: detail-header
-        props:
-          text: Ubicación del incidente
-
-      - id: llamada.mapa.ubicacion.texto
-        type: prose
-        props:
-          # `IncidentLocationBar` (call-view.tsx:717-726). Se abre por su cuenta
-          # en cuanto hay una posición del incidente (:307-309) y vuelve a
-          # abrirse al hacer clic en el punto del mapa (:311-316). La posición
-          # puede venir del GPS del llamante o de la estimación previa
-          # (:211-214).
-          text: >-
-            La barra aparece por su cuenta en cuanto hay una ubicación del
-            incidente y muestra la dirección resuelta. Si la cerró, vuelve a
-            abrirse al hacer clic en el punto del incidente sobre el mapa.
-
-      - id: llamada.mapa.ubicacion.controles
+      - id: llamada.fuerzas.ruta.controles
         type: field-list
         props:
           items:
-            # Rótulos citados de
-            # components/panels/incident-location-bar.tsx:245, :182, :225, :235,
-            # :260, :151 y :169.
-            - id: llamada.mapa.ubicacion.editar
-              label: Editar dirección
+            # components/panels/agent-route-card.tsx: chat :499-517 (only with a
+            # dispatched unit and an active case, :146; the unread mark :510-516),
+            # the state button :531-556 with the labels of STATE_STEPS :76-90 —
+            # `agentRoute.markAttended` (common.json:692) and `markClosed`
+            # (:695). Both act through `useSetAgentState` (:189-208): the first
+            # marks the unit as arrived, the second closes its dispatch.
+            - id: llamada.fuerzas.ruta.control.chat
+              label: Chat con la unidad
               text: >-
-                Habilita la corrección de la dirección. Al hacerlo, el control
-                pasa a ofrecer **Cancelar edición**.
+                Solo en una unidad despachada. La tarjeta cede su lugar a una
+                conversación con la unidad, con su campo de escritura y el botón
+                **Enviar mensaje**; **Cerrar chat** vuelve a la tarjeta. Un punto
+                sobre el botón avisa que hay mensajes sin leer.
               layout: beside
 
-            - id: llamada.mapa.ubicacion.buscar
-              label: Buscar dirección…
+            - id: llamada.fuerzas.ruta.control.atendido
+              label: Marcar atendido
               text: >-
-                Campo donde escribir la dirección correcta. Elija una de las
-                direcciones propuestas.
+                Solo en una unidad en camino. Registra que la unidad llegó al
+                lugar; la plataforma lo confirma con un aviso y el estado pasa a
+                **Atendido**.
               layout: beside
 
-            - id: llamada.mapa.ubicacion.aceptar
-              label: Aceptar dirección
+            - id: llamada.fuerzas.ruta.control.finalizar
+              label: Finalizar Caso
               text: >-
-                Confirma la dirección elegida como ubicación del incidente. Es
-                la que habilita la búsqueda de recursos, incluso si el llamante
-                nunca compartió su GPS. **Descartar dirección** deja la
-                ubicación como estaba.
+                Solo en una unidad atendida. Cierra el despacho de esa unidad; la
+                plataforma lo confirma con un aviso y el estado pasa a
+                **Cerrado**. Ese es el último paso de la unidad.
               layout: beside
 
-            - id: llamada.mapa.ubicacion.copiar
-              label: Copiar dirección
-              text: >-
-                Copia la dirección resuelta, para pasarla por otro medio sin
-                retipearla.
-              layout: beside
-
-            - id: llamada.mapa.ubicacion.street-view
-              label: Abrir Street View
-              text: >-
-                Muestra la ubicación a nivel de calle. Cuando no hay imágenes
-                disponibles para ese punto, el control indica **Sin cobertura**.
-              layout: beside
-
-      - id: llamada.mapa.bitacora.titulo
-        type: detail-header
-        props:
-          text: Bitácora del caso
-
-      - id: llamada.mapa.bitacora.texto
-        type: prose
-        props:
-          # `IncidentEventsOverlay`, montado solo mientras la llamada está en
-          # curso (call-view.tsx:702-708). El control de apertura se cita de
-          # components/panels/incident-events/incident-events.tsx:260. Los
-          # eventos se registran sin condicionar nada de lo que el operador esté
-          # haciendo (call-view.tsx:333-344).
-          text: >-
-            Registra en orden lo que va ocurriendo en el caso: lo que comparte
-            el llamante, lo que resuelve el análisis de la llamada y lo que hace
-            el operador. Está disponible mientras la llamada está en curso, y se
-            abre y cierra con **Ver bitácora del caso**.
-
-      - id: llamada.mapa.bitacora.origenes
-        type: term-list
-        props:
-          entries:
-            # Rótulos citados de `SOURCE_BADGE`,
-            # incident-events/incident-events.tsx:50, :54, :58 y :62 — las cuatro
-            # entradas, en el orden en que el producto las declara.
-            - id: llamada.mapa.bitacora.origen.llamante
-              term: Llamante
-              definition: >-
-                El evento lo originó quien llamó: abrir el enlace, compartir el
-                video o la ubicación.
-            - id: llamada.mapa.bitacora.origen.call-ai
-              term: CALL AI
-              definition: >-
-                El evento lo originó el análisis de la llamada, el mismo que
-                alimenta la sección **Call AI** de la banda inferior. El rótulo
-                de la bitácora está en mayúsculas, a diferencia del encabezado
-                de esa sección.
-            - id: llamada.mapa.bitacora.origen.operador
-              term: Operador
-              definition: >-
-                El evento lo originó usted, incluidos los comentarios que
-                agregue.
-            - id: llamada.mapa.bitacora.origen.sistema
-              term: Sistema
-              definition: >-
-                El evento lo originó la plataforma.
-
-      - id: llamada.mapa.bitacora.comentar
-        type: field-list
-        props:
-          items:
-            # Rótulos citados de incident-events/incident-events.tsx:239 y
-            # :246.
-            - id: llamada.mapa.bitacora.comentar.campo
-              label: Agregar comentario…
-              text: >-
-                Campo al pie de la bitácora para dejar por escrito algo que
-                ningún evento automático registra. Use **Enviar comentario**
-                para incorporarlo; el comentario queda en la bitácora como
-                evento del operador.
-              layout: beside
-
-      - id: llamada.mapa.herramientas
-        type: prose
-        props:
-          # Mismo `MapToolsPanel` que Home, pero montado con la ubicación real
-          # (`hasLocation={hasLocation}`, call-view.tsx:681, donde `hasLocation`
-          # es `clientLocation != null`, :302). En Home llega deshabilitado.
-          text: >-
-            Las herramientas de mapa son las mismas que se describen en la
-            sección **Home**, apoyadas aquí a la izquierda de la columna
-            derecha. A diferencia de Home, el control de centrado funciona en
-            esta vista: en cuanto hay una ubicación del llamante, lleva el mapa
-            hasta ella.
-
-      - id: llamada.mapa.aviso
-        type: callout
-        props:
-          # Al expandir hacia arriba un panel de la banda inferior durante la
-          # llamada, la barra de ubicación y las herramientas se mudan al
-          # banner de llamada (`movedToBanner`, call-view.tsx:373-374), y sus
-          # instancias en la vista se ocultan (:679 y :709).
-          variant: info
-          text: >-
-            Al expandir hacia arriba uno de los paneles de la banda inferior
-            durante la llamada, la barra de ubicación y las herramientas de mapa
-            se mudan a la franja de la llamada. No desaparecen: cierre la
-            expansión y vuelven a su lugar sobre el mapa.
-
-  # --- La banda inferior -----------------------------------------------------
-  - id: llamada.banda
-    title: La banda inferior
+  # --- Cámaras ---------------------------------------------------------------------
+  - id: llamada.camaras
+    title: Cámaras
     children:
-      - id: llamada.banda.proposito
+      - id: llamada.camaras.proposito
         type: prose
         props:
           text: >-
-            Bajo el mapa se acomodan las tres piezas que producen el registro
-            del caso: el libro donde se escribe, el análisis automático de la
-            llamada y la franja con su resumen.
+            Lista las cámaras cercanas al incidente, para confirmar lo que el
+            llamante describe desde una fuente propia.
 
-      - id: llamada.banda.fig
+      - id: llamada.camaras.ubicacion
+        type: prose
+        props:
+          # `cameras` (views/call-view.tsx:190, `initiallyInactive`), opened by
+          # `usePanelVisibility("cameras", showCctv)` (:782-783, :785) and seeded
+          # right of the map (:381-393). Radius `NEARBY_RADIUS_M = 2000`
+          # (components/panels/use-map-data.ts:20, :112-123), only the nearby ones
+          # (`onlyNearbyCameras`, views/call-view-panels/cameras-panel-content.tsx:35).
+          # The toggle is `callView.cameras` (calls.json:232); the panel draws its
+          # own header, which the code hardcodes as `CCTV`
+          # (components/panels/cameras-panel.tsx:427) — whether the operator sees
+          # that or the toggle's name in the dock needs a live call. It is not
+          # named in the content for that reason.
+          text: >-
+            Se abre por sí sola cuando el incidente tiene una ubicación, a la
+            derecha del mapa. En la barra de paneles figura como **Camaras**.
+            Lista únicamente las cámaras a menos de 2 km del incidente: no ofrece
+            el listado completo ni su búsqueda. Al abrirse, la capa **Cámaras**
+            del mapa se enciende por sí sola.
+
+      - id: llamada.camaras.vista.fig
         type: figure
         props:
-          caption: "Banda inferior con el libro del caso, el análisis de la llamada y la franja de resumen."
+          caption: "Panel de cámaras con las cámaras cercanas al incidente."
           widthPercent: 90
 
-      - id: llamada.banda.libro.titulo
-        type: detail-header
-        props:
-          # Rótulo de CALL_MANIFEST citado de call-view.tsx:164.
-          text: Libro del Caso
-
-      - id: llamada.banda.libro.texto
+      - id: llamada.camaras.filas
         type: prose
         props:
-          # `IncidentBookPanel` con `initialView="notes"` (call-view.tsx:480-482)
-          # y `bottom-1` como panel del libro de ESTA vista (:582). Es el mismo
-          # panel que documenta Home; la diferencia es que aquí está en la banda
-          # desde el comienzo, no a pedido.
+          # components/panels/cameras-panel.tsx:243-312 (row: name, distance
+          # `formatDistance` :67-70, lane; tooltip "Abrir en el mapa" :318) and
+          # :225 (`max-h-[184px]`); hover pulses the pin (:110-118, :244).
           text: >-
-            Es el mismo libro del caso que se describe en la sección **Home**,
-            con su ficha de notas y su informe por pasos, y abre igualmente en
-            las notas. La diferencia es cuándo aparece: aquí está en la banda
-            desde el comienzo de la llamada, porque escribir mientras se habla
-            es parte de atenderla.
+            Cada fila muestra el nombre de la cámara, su distancia al incidente y
+            el carril o la vía. Al pasar el puntero por una fila, el pin de esa
+            cámara late en el mapa.
 
-      - id: llamada.banda.libro.aviso
-        type: callout
-        props:
-          # El libro cede ancho a la ficha vecina cuando está en la vista de
-          # notas (`yieldsWidthTo: "bottom-2"`, call-view.tsx:172-173).
-          variant: info
-          text: >-
-            En la ficha de notas, el libro ocupa menos ancho y el análisis de la
-            llamada toma el espacio que deja libre. Al pasar al informe por
-            pasos, el libro recupera el ancho completo de la banda.
-
-      - id: llamada.banda.ia.titulo
-        type: detail-header
-        props:
-          # Encabezado del panel citado de
-          # components/panels/call-ai-panel.tsx:104.
-          text: Call AI
-
-      - id: llamada.banda.ia.texto
-        type: prose
-        props:
-          # ATENCIÓN: dos nombres para el mismo panel. El encabezado dice "Call
-          # AI" (call-ai-panel.tsx:104); el control de la barra de paneles dice
-          # "FLOW AI" (CALL_MANIFEST, call-view.tsx:176). Ambos están en
-          # pantalla, así que el manual nombra los dos en lugar de elegir uno.
-          text: >-
-            Analiza la llamada mientras transcurre y propone la clasificación
-            del incidente y los pasos a seguir. El panel se titula **Call AI**;
-            en la barra de paneles el mismo panel figura como **FLOW AI**.
-
-      - id: llamada.banda.ia.vistas
-        type: term-list
-        props:
-          entries:
-            # Rótulos citados de call-ai-panel.tsx:30-31.
-            - id: llamada.banda.ia.vista.resumen
-              term: Resumen
-              definition: >-
-                Lo que el análisis entendió de la llamada.
-            - id: llamada.banda.ia.vista.resolucion
-              term: Resolución
-              definition: >-
-                Los pasos que el análisis propone para resolver el caso.
-
-      - id: llamada.banda.resumen.titulo
-        type: detail-header
-        props:
-          # Rótulo de CALL_MANIFEST citado de call-view.tsx:186.
-          text: Resumen IA
-
-      - id: llamada.banda.resumen.texto
-        type: prose
-        props:
-          # `bottom-3` se muestra solo si hay resumen Y el panel está activo
-          # (call-view.tsx:368). Con la franja activa, el análisis deja de
-          # repetir el resumen en su interior (`showInlineSummary`, :508).
-          text: >-
-            Una franja al pie de la banda deja el resumen del análisis a la
-            vista de corrido, sin abrir el panel. Aparece cuando hay un resumen
-            disponible y la franja está activa; mientras está a la vista, el
-            panel de análisis deja de repetirlo en su interior.
-
-      - id: llamada.banda.logs.titulo
-        type: detail-header
-        props:
-          text: Logs
-
-      - id: llamada.banda.logs.texto
-        type: prose
-        props:
-          # `LogsDrawer` (call-view.tsx:700); control citado de
-          # components/panels/logs-drawer.tsx:25.
-          text: >-
-            Al costado derecho de la vista, un cajón guarda el registro técnico
-            de la llamada. Se abre y cierra con **Abrir logs**, que pasa a
-            ofrecer **Cerrar logs** mientras está abierto.
-
-  # --- Cierre de la llamada --------------------------------------------------
-  - id: llamada.cierre
-    title: Cierre de la llamada
-    children:
-      - id: llamada.cierre.proposito
-        type: prose
-        props:
-          # `isWrapUp` se resuelve con el reporte de la llamada terminada
-          # (call-view.tsx:288-290). La vista NO devuelve al operador al tablero:
-          # el cierre ocurre acá (:284-287).
-          text: >-
-            Al terminar la llamada, la vista no lo devuelve al tablero: se
-            reacomoda para que termine de registrar el caso antes de enviarlo.
-
-      - id: llamada.cierre.ubicacion
-        type: prose
-        props:
-          # Los paneles que el cierre conserva son `bottom-1`, `bottom-2` e
-          # `incident-info` (WRAP_UP_FOCUS_PANELS, call-view.tsx:57). Cámaras y
-          # fuerzas se CIERRAN, no se atenúan (:400-401, con el motivo en
-          # :397-399). `incident-info` toma la columna derecha completa (:402).
-          text: >-
-            El libro del caso y el análisis de la llamada quedan en primer plano
-            en la banda inferior, y la información del incidente toma la columna
-            derecha completa. Las cámaras y las fuerzas de respuesta se cierran:
-            ya no son parte de la tarea.
-
-      - id: llamada.cierre.fig
-        type: figure
-        props:
-          caption: "Vista de cierre: el libro del caso y el análisis en primer plano, y la barra de envío al pie."
-          widthPercent: 90
-
-      - id: llamada.cierre.atenuados
-        type: callout
-        props:
-          # `WRAP_UP_BLOCKS_PANELS = true` (call-view.tsx:67): los paneles
-          # atenuados dejan de responder, no solo se ven apagados
-          # (:635-657).
-          variant: important
-          text: >-
-            Durante el cierre, los paneles que no forman parte de la tarea
-            quedan atenuados y dejan de responder. No están fallando: terminar
-            el caso es lo único que la vista ofrece en ese momento.
-
-      - id: llamada.cierre.avisos
-        type: term-list
-        props:
-          entries:
-            # Los tres estados de la información del incidente durante el
-            # cierre, citados de call-view.tsx:554-569. El producto los separa a
-            # propósito: "one sentence for all of them is what made this
-            # undiagnosable from the screen" (:551-553).
-            - id: llamada.cierre.aviso.cargando
-              term: Cargando detalles del incidente
-              definition: >-
-                El detalle del caso todavía se está recuperando. Aparece en
-                cuanto llega.
-
-            - id: llamada.cierre.aviso.error
-              term: No se pudieron cargar los detalles del incidente
-              definition: >-
-                La consulta falló. El aviso acompaña el motivo informado por la
-                plataforma.
-
-            - id: llamada.cierre.aviso.sin-detalle
-              term: No se encontraron los detalles del incidente
-              definition: >-
-                La consulta se completó y no hay detalle registrado para esa
-                llamada. Informe al administrador.
-
-      - id: llamada.cierre.enviar
+      - id: llamada.camaras.ver
         type: procedure
         props:
-          # Barra de cierre citada de call-view.tsx:745 ("Llamada finalizada"),
-          # :748 (la indicación) y :758 (el control de envío).
+          # `openCameraDisplay` (components/panels/cameras-panel.tsx:157-185):
+          # a second click on the selected row closes it and recentres on the
+          # incident (:160-167); otherwise it completes the call-flow step
+          # (:170), turns the Cámaras layer on (:172, :142-148), selects the
+          # marker so its live window opens and frames the camera with the
+          # incident (:173-180).
           lead: >-
-            Para cerrar el caso y enviarlo:
+            Para ver una cámara:
           steps:
-            - id: llamada.cierre.enviar.completar
-              title: Complete el libro del caso
+            - id: llamada.camaras.ver.elegir
+              title: Haga clic en la fila de la cámara
               text: >-
-                La barra al pie de la vista indica **Llamada finalizada** y
-                recuerda completar el libro del caso antes de enviarlo. Repase
-                los tres pasos del informe.
+                La fila se resalta, se abre sobre el mapa la ventana con la
+                imagen en vivo de la cámara y el mapa se encuadra para mostrar la
+                cámara junto al incidente. El paso **Revisar sistemas
+                periféricos** del flujo de la llamada se marca.
               layout: beside
 
-            - id: llamada.cierre.enviar.guardar
-              title: Guarde el informe
+            - id: llamada.camaras.ver.cerrar
+              title: Vuelva a hacer clic en la fila para cerrarla
               text: >-
-                Use el control de guardado del libro y confirme que la
-                plataforma acusa el guardado. Lo que no esté guardado no se
-                envía.
+                La ventana se cierra y el mapa vuelve al incidente.
               layout: beside
 
-            - id: llamada.cierre.enviar.confirmar
-              title: Haga clic en Enviar a la agencia
+      - id: llamada.camaras.avisos
+        type: term-list
+        props:
+          entries:
+            # components/panels/cameras-panel.tsx:206-213 (`cameras.noCamerasNearby`,
+            # common.json:203) — an empty answer for the nearby list.
+            - id: llamada.camaras.aviso.sin-camaras
+              term: Sin cámaras cercanas
+              definition: >-
+                No hay cámaras a menos de 2 km del incidente.
+
+  # --- Libro del caso --------------------------------------------------------------
+  - id: llamada.libro
+    title: Libro del caso
+    children:
+      - id: llamada.libro.proposito
+        type: prose
+        props:
+          text: >-
+            Es donde queda el registro del caso mientras se atiende la llamada:
+            las notas libres de lo que cuenta el llamante y el informe por pasos.
+
+      - id: llamada.libro.ubicacion
+        type: prose
+        props:
+          # `bottom-1` (views/call-view.tsx:211, not `initiallyInactive`),
+          # seeded below the map (:311-334), with the header's own tabs as its
+          # title (`headerContentAsTitle`, :319). It opens on the notes:
+          # `initialView="notes"` (views/call-view-panels/case-book-panel-content.tsx:23-28).
+          # Tabs: components/panels/incident-book.tsx:130-137 (literals).
+          text: >-
+            Está abierto desde que se abre la vista, en la banda bajo el mapa,
+            a la izquierda de Flow AI. Su encabezado lleva dos pestañas, **Notas**
+            y **Libro del caso**, y abre en **Notas**.
+
+      - id: llamada.libro.vista.fig
+        type: figure
+        props:
+          caption: "Libro del caso en la banda bajo el mapa, con las pestañas Notas y Libro del caso."
+          widthPercent: 90
+
+      - id: llamada.libro.vistas
+        type: term-list
+        props:
+          entries:
+            # components/panels/incident-book.tsx:132 and :135 (hardcoded). Notes:
+            # components/panels/incident-book/incident-notes.tsx:23-40 (a free
+            # textarea, disabled without a case, :33) saved with the book
+            # (incidents.json:355, `incidentNotes.saveHint`); the save button of the
+            # notes view is components/forms/form-kit/stepped-form.tsx:197-211.
+            - id: llamada.libro.vista.notas
+              term: Notas
+              definition: >-
+                Un campo de texto libre para el relato del llamante, las
+                referencias del lugar y cualquier dato que no entre en otro
+                campo. Se habilita cuando el caso ya está abierto en la
+                plataforma y se guarda con el libro.
+            - id: llamada.libro.vista.libro
+              term: Libro del caso
+              definition: >-
+                El informe por pasos, con los datos del llamante, del despacho y
+                del incidente.
+
+      - id: llamada.libro.pasos
+        type: term-list
+        props:
+          entries:
+            # components/panels/incident-book/general-form.tsx:228-242 (the three
+            # steps, `book.stepCallReception` / `stepDispatch` / `stepExtendedInfo`,
+            # incidents.json:187-189). Step 1 is `Step1Body` without
+            # `hideIncidentType` (components/panels/incident-book/steps/step1-body.tsx:216-231),
+            # so it also carries the incident type; the fields are the ones
+            # Home's book cites. Step 2: the repeater
+            # (steps/step2-body.tsx:51-144) is sent as the report's dispatched
+            # resources (general.mapper.ts:55-63) and the notes as
+            # `dispatchNotes` (:64). Step 3: involved items
+            # (steps/step3-body.tsx:79-86), injured and deceased
+            # (:97-179), securing notes (:229-234), all sent
+            # (general.mapper.ts:67-83).
+            - id: llamada.libro.paso.recepcion
+              term: Recepción de llamada
+              definition: >-
+                Los datos del llamante, la ubicación del incidente, el tipo de
+                incidente, la prioridad y las notas adicionales. Los campos son
+                los del libro de la sección **Home**, con el tipo de incidente
+                además.
+            - id: llamada.libro.paso.despacho
+              term: Despacho del incidente
+              definition: >-
+                Permite registrar asignaciones de recursos, con
+                **Agregar asignación de recursos**, y dejar notas del despacho
+                con **Agregar notas del despacho**.
+            - id: llamada.libro.paso.extendida
+              term: Información extendida
+              definition: >-
+                Las partes involucradas, con **Agregar involucrado**; los
+                lesionados y los fallecidos, con su identificación; y las notas
+                de aseguramiento, con **Agregar notas de aseguramiento**.
+
+      - id: llamada.libro.navegacion
+        type: prose
+        props:
+          # components/forms/form-kit/stepped-form.tsx:147-176 (numbered step
+          # buttons, `title` = step label, current step marked), :229-238 and
+          # :270-282 (previous / next, `steppedForm.previousStep` / `nextStep`,
+          # common.json:832-833), :240-268 (the submit button reads
+          # `book.save` / `book.update`, and `book.send` on the last step;
+          # incidents.json:180-182), :106-108 (the toasts, incidents.json:183-186).
+          text: >-
+            En la pestaña **Libro del caso**, un recorrido numerado en la parte
+            superior permite ir de un paso a otro, y las flechas **Paso anterior**
+            y **Paso siguiente** hacen lo mismo. El botón del pie dice
+            **Guardar** la primera vez y **Actualizar** después; en el último paso
+            dice **Enviar**. La plataforma confirma con **Formulario guardado** o
+            **Formulario actualizado**, y si no puede guardar avisa con **Error
+            al guardar** o **Error al actualizar**.
+
+      - id: llamada.libro.importar
+        type: field-list
+        props:
+          items:
+            # components/panels/incident-book/call-ia-import-button.tsx:38-45
+            # (`callAi.importFromCallAi`, calls.json:369); shown only on the
+            # report's view (general-form.tsx:257-264) and not auto-run here —
+            # the call view sets no `autoImportCallIa`. Its hint is
+            # `callAi.importFromCallAiHint` (calls.json:370).
+            - id: llamada.libro.importar.boton
+              label: Importar de Call AI
               text: >-
-                El caso queda enviado y la vista deja de mostrar la barra de
-                cierre. La plataforma decide a qué pantalla lo lleva a
-                continuación.
+                Aparece en el encabezado, junto a las pestañas, cuando está en la
+                pestaña **Libro del caso**. Completa los campos vacíos del libro
+                con los datos que el análisis de la llamada detectó, y nunca
+                reemplaza lo que usted ya escribió.
               layout: beside
+
+      - id: llamada.libro.registrar
+        type: procedure
+        props:
+          lead: >-
+            Para dejar el caso registrado mientras atiende la llamada:
+          steps:
+            - id: llamada.libro.registrar.notas
+              title: Escriba en Notas lo que cuenta el llamante
+              text: >-
+                No necesita ordenar la información: es un campo libre.
+              layout: beside
+
+            - id: llamada.libro.registrar.pasos
+              title: Pase a la pestaña Libro del caso y complete los pasos
+              text: >-
+                Use **Importar de Call AI** para adelantar lo que el análisis ya
+                detectó, y corrija lo que no corresponda.
+              layout: beside
+
+            - id: llamada.libro.registrar.guardar
+              title: Haga clic en Guardar
+              text: >-
+                La plataforma confirma con **Formulario guardado**. Use
+                **Actualizar** para conservar los cambios posteriores.
+              layout: beside
+
+  # --- Flow AI ----------------------------------------------------------------------
+  - id: llamada.flow
+    title: Flow AI
+    children:
+      - id: llamada.flow.proposito
+        type: prose
+        props:
+          text: >-
+            Analiza la llamada mientras transcurre. Clasifica el incidente,
+            extrae los datos que el llamante va diciendo y propone qué hacer, qué
+            decir y a qué fuerzas despachar.
+
+      - id: llamada.flow.ubicacion
+        type: prose
+        props:
+          # `bottom-2` (views/call-view.tsx:212, not `initiallyInactive`),
+          # seeded right of `bottom-1` (:335-357); label `callView.flowAi`
+          # (calls.json:236). The header carries the type badge and the agencies
+          # (components/panels/call-ai-panel.tsx:102-127): while there is no type
+          # the badge reads `emergencyBadge.analyzing` (calls.json:514;
+          # components/emergency-type-badge.tsx:325-345), and it is editable
+          # (`editable`, call-ai-panel.tsx:118; `emergencyBadge.editTypes`,
+          # calls.json:516). The body has two zones and stacks below 520 px of
+          # panel width (components/panels/call-ai-content.tsx:1058-1067).
+          text: >-
+            Está abierto desde que se abre la vista, en la banda bajo el mapa, a
+            la derecha del libro del caso, con el título **Flow AI**. En su
+            encabezado lleva la insignia del tipo de incidente, que dice
+            **Analizando…** hasta que el análisis clasifica y se puede corregir
+            desde **Editar tipos de incidente**, y las agencias que el análisis
+            propone. El cuerpo tiene dos zonas: a la izquierda, lo que el
+            análisis entendió de la llamada; a la derecha, la resolución y el
+            guión guiado. Si el panel es angosto, las dos zonas se apilan.
+
+      - id: llamada.flow.vista.fig
+        type: figure
+        props:
+          caption: "Panel Flow AI con los datos de la llamada a la izquierda y la resolución y el guión guiado a la derecha."
+          widthPercent: 90
+
+      - id: llamada.flow.datos.titulo
+        type: detail-header
+        props:
+          text: Lo que el análisis entendió de la llamada
+
+      - id: llamada.flow.datos
+        type: data-table
+        props:
+          # Left zone, components/panels/call-ai-content.tsx:1068-1128: the chips
+          # :573-620, the summary :1077-1087 (`callAi.summary`, calls.json:365),
+          # the location row :1097-1104 (`callAi.incidentLocation`, :366; the
+          # search `callAi.searchAddress`, :347; the chip
+          # `callAi.approximateLocation`, :341) and the four data rows
+          # :1105-1120 that draw only when the analysis extracts them
+          # (:105, `InputField`): `vehiclesInvolved` :367, `weapons` :333,
+          # `wounded` :330, `suspects` :332. The identity block
+          # :416-548 (`callAi.callerIdentity`, :348; the fields `identityName`,
+          # `identityDocument`, `identityPhone`, `identityRelationship`,
+          # `identityPresent`, :349-353), whose title appears with the first datum
+          # (:443-455). Location edits are saved
+          # (:986-1012, `handleLocationConfirm`). The identity block's edits are
+          # not: see `pending` in this file's header.
+          labelHeader: Dato
+          descriptionHeader: Qué indica
+          rows:
+            - id: llamada.flow.dato.resumen
+              label: Resumen
+              description: >-
+                Lo que el análisis entendió de la llamada, con un botón para
+                copiarlo.
+            - id: llamada.flow.dato.ubicacion
+              label: Ubicación
+              description: >-
+                El lugar del incidente. Siempre figura, aunque el análisis
+                todavía no haya extraído nada, y se puede corregir aquí con el
+                mismo buscador de direcciones de la barra de ubicación. Si el
+                punto es aproximado, un distintivo indica **Ubicación
+                aproximada**.
+            - id: llamada.flow.dato.vehiculos
+              label: Vehículos Involucrados
+              description: >-
+                Los vehículos que el llamante mencionó. Solo figura cuando el
+                análisis lo extrajo.
+            - id: llamada.flow.dato.armas
+              label: Armas
+              description: >-
+                Las armas que el llamante mencionó. Solo figura cuando el
+                análisis lo extrajo.
+            - id: llamada.flow.dato.heridos
+              label: Heridos
+              description: >-
+                Las personas heridas que el llamante mencionó. Solo figura
+                cuando el análisis lo extrajo.
+            - id: llamada.flow.dato.sospechosos
+              label: Sospechosos
+              description: >-
+                Los sospechosos que el llamante describió. Solo figura cuando el
+                análisis lo extrajo.
+            - id: llamada.flow.dato.identidad
+              label: Identidad del llamante
+              description: >-
+                Los datos de identificación que el análisis detectó: nombre,
+                documento, teléfono, relación con la emergencia y si el llamante
+                está en el lugar. El título aparece con el primer dato.
+
+      - id: llamada.flow.resolucion.titulo
+        type: detail-header
+        props:
+          text: Resolución y guión guiado
+
+      - id: llamada.flow.resolucion.texto
+        type: prose
+        props:
+          # Right zone, components/panels/call-ai-content.tsx:1130-1143 — drawn
+          # only when there is a script or a resolution (:953-955). The
+          # resolution is collapsible (:784-859, `callAi.resolution`, calls.json:363;
+          # `expandResolution` / `collapseResolution`, :361-362) and starts
+          # closed with a red mark until it is opened (:787-788, :832-838). With
+          # it open, the Fuerzas de Respuesta panel is ringed
+          # (components/panels/available-agents-panel.tsx:48-56).
+          text: >-
+            La zona derecha aparece solo cuando el análisis tiene una resolución
+            o un guión. La **Resolución** está plegada al principio, con un punto
+            rojo que avisa que hay algo sin ver; se despliega con un clic sobre su
+            título y se pliega con otro. Mientras está desplegada, el panel de
+            fuerzas de respuesta, si está abierto, se resalta con un anillo,
+            porque es el panel donde se ejecuta lo que propone.
+
+      - id: llamada.flow.resolucion.partes
+        type: data-table
+        props:
+          # components/panels/call-ai-content.tsx:659-707 (`callAi.whatToDo`,
+          # calls.json:357; the first action is the dispatch and carries
+          # `callAi.dispatch`, :359, :673-698), :710-735 (`whatToSay`, :358),
+          # :742-761 (`callAi.dispatchForces`, :360, with the agencies).
+          labelHeader: Parte
+          descriptionHeader: Qué contiene
+          rows:
+            - id: llamada.flow.resolucion.parte.hacer
+              label: Qué hacer
+              description: >-
+                Las acciones que el análisis propone, numeradas por orden. La
+                primera es el despacho y aparece destacada con la etiqueta
+                **Despacho**.
+            - id: llamada.flow.resolucion.parte.decir
+              label: Qué decir
+              description: >-
+                Las frases que el análisis sugiere decirle al llamante.
+            - id: llamada.flow.resolucion.parte.fuerzas
+              label: Despachar fuerzas
+              description: >-
+                Las agencias que el análisis propone despachar.
+
+      - id: llamada.flow.guion.texto
+        type: prose
+        props:
+          # components/panels/flow/guided-script.tsx:440-490 (title
+          # `guidedScript.title`, calls.json:614; the answered counter
+          # `guidedScript.answered`, :615; the progress bar :43-73). Each question
+          # is answered by choosing an option or typing (:328-351) and is saved
+          # (components/panels/call-ai-content.tsx:1027-1038,
+          # `handleProtocolAnswer`). Questions whose datum the analysis already
+          # has are left out (components/panels/flow/protocol-fields.ts:38-45, :54-62); a
+          # place question carries `guidedScript.refineLocation` while the
+          # location is approximate (guided-script.tsx:16, :487-490;
+          # calls.json:617).
+          text: >-
+            Bajo la resolución, el **Guión guiado** lista las preguntas que el
+            análisis propone hacerle al llamante para este incidente, con una
+            barra que muestra cuántas están respondidas. La plataforma omite las
+            preguntas cuyo dato ya conoce. Mientras la ubicación es aproximada,
+            las preguntas de lugar llevan la indicación **Afine la ubicación**.
+
+      - id: llamada.flow.guion.responder
+        type: procedure
+        props:
+          lead: >-
+            Para responder el guión guiado:
+          steps:
+            - id: llamada.flow.guion.responder.preguntar
+              title: Formule la pregunta al llamante
+              text: >-
+                Cada pregunta se muestra con un indicador que se completa al
+                responderla.
+              layout: beside
+
+            - id: llamada.flow.guion.responder.registrar
+              title: Elija la respuesta o escríbala
+              text: >-
+                Las preguntas con opciones se responden con un clic; las demás,
+                escribiendo. La respuesta se guarda y la barra de avance
+                progresa. Puede corregir una respuesta ya dada.
+              layout: beside
+
+  # --- Bitácora del caso ---------------------------------------------------------------
+  - id: llamada.bitacora
+    title: Bitácora del caso
+    children:
+      - id: llamada.bitacora.proposito
+        type: prose
+        props:
+          # `LogsDrawer` (views/call-view.tsx:1062) → `LogsContent`
+          # (components/panels/logs-drawer.tsx:9-13, components/panels/logs-content.tsx:18-135):
+          # the case's timeline built from four sources (logs-events.ts:102-107).
+          text: >-
+            Registra en orden lo que va ocurriendo en el caso: lo que hace el
+            llamante, lo que resuelve el análisis y los despachos. Se lee de arriba abajo y queda posicionada
+            en lo último.
+
+      - id: llamada.bitacora.ubicacion
+        type: prose
+        props:
+          # components/panels/logs-side-drawer.tsx:22-87 — a vertical tab at the
+          # right edge (`open` false at :24; the tab :35-55, hardcoded "Log" at
+          # :53, `title` = `logsDrawer.open` / `close`, calls.json:221-222), and a
+          # 360 px drawer (:8) that takes its room from the panels
+          # (`MAP_OCCLUDER_ATTR`, :64).
+          text: >-
+            Es una pestaña vertical, titulada **Log**, en el borde derecho de la
+            pantalla. Empieza cerrada. Al abrirla se desliza un cajón de 360
+            píxeles y los paneles se reacomodan para dejarle lugar.
+
+      - id: llamada.bitacora.vista.fig
+        type: figure
+        props:
+          caption: "Pestaña Log abierta en el borde derecho, con la línea de tiempo del caso."
+          widthPercent: 90
+
+      - id: llamada.bitacora.eventos
+        type: term-list
+        props:
+          entries:
+            # components/panels/logs-events.ts:35-41 (`logsEvents.dispatched` /
+            # `inSite` / `terminated`, calls.json:784-786; each is prefixed with
+            # the unit's callsign, :76) and :51-63 (`logsEvents.answeredCall`,
+            # calls.json:787, with the operator's name). The call's own events —
+            # link sent, location received, incident type set — come from
+            # components/panels/map-call-events-to-timeline.ts:26-54, :71, :130.
+            - id: llamada.bitacora.evento.atendida
+              term: Atendió la llamada
+              definition: >-
+                El operador que atendió la llamada, con la hora.
+            - id: llamada.bitacora.evento.despachado
+              term: Despachado
+              definition: >-
+                Una unidad fue despachada. Va precedido del indicativo de la
+                unidad.
+            - id: llamada.bitacora.evento.sitio
+              term: En sitio
+              definition: >-
+                Una unidad llegó al lugar. Va precedido del indicativo de la
+                unidad.
+            - id: llamada.bitacora.evento.terminado
+              term: Terminado
+              definition: >-
+                El despacho de una unidad terminó. Va precedido del indicativo
+                de la unidad.
+
+      - id: llamada.bitacora.tiempo
+        type: prose
+        props:
+          # components/panels/logs-content.tsx:101-118 (`logs.holdDuration`,
+          # common.json:787).
+          text: >-
+            Junto a esos eventos, la bitácora registra los de la propia llamada,
+            como el envío del enlace, la recepción de la ubicación o el tipo de
+            incidente asignado. Cuando se conoce, encabeza la lista la
+            **Duración en espera** de la llamada.
+
+      - id: llamada.bitacora.controles
+        type: field-list
+        props:
+          items:
+            # components/panels/logs-side-drawer.tsx:53 (literal "Log"). The
+            # comment composer at the foot of the drawer is withheld: see the
+            # `llamada.bitacora-comentarios-sin-guardar` pending entry.
+            - id: llamada.bitacora.control.pestana
+              label: Log
+              text: >-
+                Abre el cajón de la bitácora; un segundo clic lo cierra. Su
+                ayuda emergente dice **Abrir bitácora** o **Cerrar bitácora**,
+                según el estado.
+              layout: beside
+

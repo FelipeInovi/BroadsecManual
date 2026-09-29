@@ -15,8 +15,8 @@
   ],
   "targetsConfigured": 2,
   "counts": {
-    "gaps": 10,
-    "sections": 3
+    "gaps": 14,
+    "sections": 4
   },
   "awaiting": [
     {
@@ -108,6 +108,66 @@
       "missing": "The \"Transferido\" status of a case. It cannot be seen on screen today; the declaration exists so the status is not forgotten if it becomes reachable.",
       "because": "`transferido` is a member of `CallReviewReceptionStatusKey` (`components/panels/dashboard/calls-review/calls-review.types.ts:193`) and has a label, a colour and an icon (`:224-229`, label `calls:receptionStatus.transferred`), but it is not in `CALL_REVIEW_RECEPTION_STATUS_ORDER` (`:265-266`) — so the Estado filter never lists it — and `resolveReceptionStatusKey` never returns it (`:268-282`).",
       "settles": "The product assigning the status to a case, or deleting it."
+    },
+    {
+      "id": "llamada.libro-despacho-tarjetas-demo",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "llamada",
+      "declaredIn": "sections/02-llamada.yaml",
+      "covers": [
+        "llamada.libro.pasos"
+      ],
+      "missing": "The read-only cards at the top of the \"Despacho del incidente\" step of the case book (the block above the manual-assignment repeater). The repeater (\"Agregar asignación de recursos\") and the dispatch notes are documented; the cards are not mentioned.",
+      "because": "`Step2Body` renders `getAssignmentResourcesDemo()` as six cards (`components/panels/incident-book/steps/step2-body.tsx:37-48`, import at `:8`), whose values are literals — \"Policía Metropolitana\", \"PAT-045\", \"Patrulla\", \"14/03/2026  08:32\", \"14/03/2026  08:41\" and \"14/03/2026 09:15\" (`components/panels/incident-book/general.demo.ts:7-15`, \"datos demo / semilla … no se persisten\", `:1-4`). The mapper says they are not sent: `general.mapper.ts:16` (\"`resources` (tarjetas demo read-only) NO se envían\").",
+      "settles": "The product reading the case's real dispatched resources into those cards (or removing them), or the owner deciding how a manual describes a block that is on screen and fabricated."
+    },
+    {
+      "id": "llamada.libro-recursos-demo",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "llamada",
+      "declaredIn": "sections/02-llamada.yaml",
+      "covers": [
+        "llamada.libro.pasos"
+      ],
+      "missing": "The \"Medios y Recursos\" block of the \"Información extendida\" step of the case book, with its \"Grabación / Audio\" and \"Cámaras CCTV\" groups and the remove button of each item. The involved parties, the injured and deceased counters and the securing notes of that step are documented; the block is not mentioned.",
+      "because": "The form is seeded with `resources: getResourcesDemo()` (`components/panels/incident-book/general.types.ts:97`), eight literal entries — \"Grabación llamada\", \"Audio radio\", \"Grabación backup\", \"Cámara corporal\", \"Dashcam unidad\", \"CCTV Escena G14\", \"CCTV Entrada norte\" and \"CCTV Vía principal\" (`general.demo.ts:17-35`). `Step3Body` draws them (`steps/step3-body.tsx:59-67`, `:182-226`) and the mapper does not send them (`general.mapper.ts:16`).",
+      "settles": "The product attaching the case's real recording and camera resources (or removing the block), or the owner deciding how a manual describes a block that is on screen and fabricated."
+    },
+    {
+      "id": "llamada.flow-identidad-sin-guardar",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "llamada",
+      "declaredIn": "sections/02-llamada.yaml",
+      "covers": [
+        "llamada.flow.datos"
+      ],
+      "missing": "That the caller-identity block of Flow AI can be edited: the yes / no choice, the editable rows and the \"Agregar dato\" control. The block is documented as the identification data the analysis detected; nothing is said about correcting it.",
+      "because": "`handleIdentityChange` only writes a local draft: its own comment reads \"PENDIENTE BACKEND: `POST /callAI/:id/flow` solo acepta typeEmergency, dynamicProtocol e is_manual_order … la corrección del operador no se persiste\" (`components/panels/call-ai-content.tsx:957-962`). The editing controls are `CallerIdentificationSection` (`components/panels/call-ai-content.tsx:416-548`).",
+      "settles": "The backend accepting the structured identity in the flow endpoint and the panel saving it, or the owner deciding how a manual describes an edit that is not kept."
+    },
+    {
+      "id": "llamada.bitacora-comentarios-sin-guardar",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "llamada",
+      "declaredIn": "sections/02-llamada.yaml",
+      "covers": [
+        "llamada.bitacora.controles"
+      ],
+      "missing": "The comment composer at the foot of the case log (\"Agregar comentario…\", \"Enviar comentario\", Enter to send). The timeline, its events and the Log tab are documented; writing a comment is not mentioned.",
+      "because": "`addComment` only appends to a client-side zustand store (`components/panels/incident-events/incident-events.store.ts:65-85`, emptied by `resetEvents` at `:87`). The log drawer's composer calls it directly (`components/panels/logs-content.tsx:42`, `:128-130`). Nothing sends the comment to the backend, so it is gone once the store resets.",
+      "settles": "The product persisting case comments to the backend, or the owner deciding how a manual describes a comment that is not kept."
     },
     {
       "id": "dashboard.historial-columnas-inertes",

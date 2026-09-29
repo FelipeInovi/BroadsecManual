@@ -474,13 +474,13 @@ Treat this as a proposal to confirm, not as an agreed scope.
      from Mi turno.
 
    **Still open after the rewrite** (the owner decides each):
-   - Statements about Home that are now false in other sections:
-     - `02-llamada` `llamada.mapa.herramientas` and `05-bridge-of-things`
-       `bot.herramientas`: "centrado deshabilitado" in Home.
-     - `02-llamada` `llamada.banda.libro.texto`: the book "por pasos".
+   - Statements about Home that are now false in other sections (the two in
+     `02-llamada` went with its rewrite, see #5):
+     - `05-bridge-of-things` `bot.herramientas`: "centrado deshabilitado" in
+       Home.
      - `06-forces-in-field` `fuerzas-campo.asignacion.proposito`: "Revisión de
        Llamadas".
-   - Sections 02-05 carry the same i18n citation drift: 173 labels to review.
+   - Sections 03-05 carry the same i18n citation drift: 137 labels to review.
    - The quote "Estás editando este caso. Guardá o cancelá los cambios…"
      (`es/calls.json:475`) is voseo in the client PDF. It is kept as an exact
      quote until the owner says whether to paraphrase it.
@@ -492,7 +492,48 @@ Treat this as a proposal to confirm, not as an agreed scope.
    window sits on a map that keeps re-centring itself. Retaking either needs a
    person at the controls again.
 
-*(Questions 4 and 5 were the two per-section forms of one question. It has been
+5. **`sections/02-llamada.yaml` was rewritten against develop `465f5eb9`
+   (2026-09-29), uncommitted and not yet verified.** From `58e2cc4d`, the same
+   range as Home. The owner asked for a full update and authorized a complete
+   rewrite. The per-submodule audit is in engram,
+   `bridge-manual/llamada-drift-audit-2026-09-29`.
+
+   What decided the new shape, all from the code:
+   - Ending a call always goes to Home (`pages/dashboard.tsx` `onCallEnded`,
+     #192). The call view's own wrap-up, the Información del Incidente panel
+     and "Enviar a la agencia" are dead code, so none of it is documented.
+     This is consistent with Post-Llamada being documented in Home (#4).
+   - `call-view.tsx:591` DOES read `agencyType` now, through
+     `HOME_LAYOUT_RULES`, to drop Cámaras and Fuerzas de Respuesta. RECEPTION
+     gets both, so under this manual's RECEPTION scope nothing is conditioned.
+     The old finding "`call-view.tsx` carries NO divergence signal" (above) is
+     no longer true.
+   - Four `pending` entries, by the standing policy: Libro del Caso step 2
+     demo cards, step 3 demo resources, Flow AI identity edits that are not
+     saved, and the log drawer's comments, which live only in a client-side
+     store.
+
+   **The rewrite's product news, declared by the owner (2026-09-29)**, split as
+   for Home: the rewrite is committed as `cambio`, and the lines below reach a
+   `nuevo` and a `retirado` trailer.
+
+   **Still open (the owner decides each):**
+   - Two figures will show what the text withholds: the open Log drawer always
+     carries the comment composer (`logs-content.tsx:126-131`), and Flow AI's
+     overview carries the identity block. Crop them out at capture, or accept
+     it.
+   - 22 old Llamada deliveries are orphans now (`images` lists them). None
+     were deleted.
+   - Claims to confirm on a live call: the Cámaras panel header (`CCTV` in the
+     component, `Camaras` on the toggle); the translated text being read aloud
+     in the call; Aparcar llamada returning to Home without Post-Llamada; the
+     video panel growing to half the dock.
+   - Four catalogue strings in voseo or `tú` (`calls.json:338`, `:379`,
+     `:522`, `agents.json:136`) are described rather than quoted.
+   - `verified --module sections/02-llamada.yaml` only after the owner has seen
+     the drift addressed.
+
+*(An earlier pair of questions numbered 4 and 5, not the ones above, were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
 now declared, not narrated. They live in `awaiting-product.json`, which is
 derivable and therefore not restated here.)*
