@@ -516,6 +516,10 @@ Treat this as a proposal to confirm, not as an agreed scope.
    **The rewrite's product news, declared by the owner (2026-09-29)**, split as
    for Home: the rewrite is committed as `cambio`, and the lines below reach a
    `nuevo` and a `retirado` trailer.
+   - Nuevo: the call controls in the map window with the video-link send and
+     resend, the five-step Flujo de la llamada, caller-language translation,
+     the agent directory and external agent link, the recommendation markers,
+     chat and state advance on the route card, and the case log drawer.
 
    **Still open (the owner decides each):**
    - Two figures will show what the text withholds: the open Log drawer always
