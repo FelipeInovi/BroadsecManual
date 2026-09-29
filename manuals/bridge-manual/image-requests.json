@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 201,
-    "delivered": 195,
-    "pending": 6
+    "delivered": 198,
+    "pending": 3
   },
   "pending": [
     {
@@ -65,72 +65,6 @@
       "deliverTo": {
         "shared": "_common/home.caso.cctv.ver.cerrar.png",
         "override": "<permission>/home.caso.cctv.ver.cerrar.png"
-      }
-    },
-    {
-      "slot": "home.caso.post-llamada.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.post-llamada.fig",
-          "blockType": "figure",
-          "shows": "Home en Post-Llamada: el caso abierto y la cuenta regresiva bajo la barra superior."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.post-llamada.fig.png",
-        "override": "<permission>/home.caso.post-llamada.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.post-llamada.cerrar.revisar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.post-llamada.cerrar.revisar",
-          "blockType": "procedure",
-          "shows": "Revise el caso"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.post-llamada.cerrar.revisar.png",
-        "override": "<permission>/home.caso.post-llamada.cerrar.revisar.png"
-      }
-    },
-    {
-      "slot": "home.caso.post-llamada.cerrar.terminar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.post-llamada.cerrar.terminar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Validar o en Ver más tarde"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.post-llamada.cerrar.terminar.png",
-        "override": "<permission>/home.caso.post-llamada.cerrar.terminar.png"
       }
     },
     {
@@ -990,6 +924,57 @@
       ],
       "files": [
         "_common/home.caso.volver.lista.png"
+      ]
+    },
+    {
+      "slot": "home.caso.post-llamada.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.post-llamada.fig",
+          "blockType": "figure",
+          "shows": "Home en Post-Llamada: el caso abierto y la cuenta regresiva bajo la barra superior."
+        }
+      ],
+      "files": [
+        "_common/home.caso.post-llamada.fig.png"
+      ]
+    },
+    {
+      "slot": "home.caso.post-llamada.cerrar.revisar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.post-llamada.cerrar.revisar",
+          "blockType": "procedure",
+          "shows": "Revise el caso"
+        }
+      ],
+      "files": [
+        "_common/home.caso.post-llamada.cerrar.revisar.png"
+      ]
+    },
+    {
+      "slot": "home.caso.post-llamada.cerrar.terminar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.post-llamada.cerrar.terminar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Validar o en Ver más tarde"
+        }
+      ],
+      "files": [
+        "_common/home.caso.post-llamada.cerrar.terminar.png"
       ]
     },
     {
