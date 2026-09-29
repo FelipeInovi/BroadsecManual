@@ -19,54 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 201,
-    "delivered": 198,
-    "pending": 3
+    "delivered": 200,
+    "pending": 1
   },
   "pending": [
-    {
-      "slot": "home.caso.cctv.ver.elegir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.cctv.ver.elegir",
-          "blockType": "procedure",
-          "shows": "Haga clic en la fila de la cámara"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.cctv.ver.elegir.png",
-        "override": "<permission>/home.caso.cctv.ver.elegir.png"
-      }
-    },
-    {
-      "slot": "home.caso.cctv.ver.cerrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.cctv.ver.cerrar",
-          "blockType": "procedure",
-          "shows": "Vuelva a hacer clic en la fila para cerrarla"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.cctv.ver.cerrar.png",
-        "override": "<permission>/home.caso.cctv.ver.cerrar.png"
-      }
-    },
     {
       "slot": "seatmap.fig",
       "neededBy": [
@@ -720,6 +676,40 @@
       ],
       "files": [
         "_common/home.caso.cctv.fig.png"
+      ]
+    },
+    {
+      "slot": "home.caso.cctv.ver.elegir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.cctv.ver.elegir",
+          "blockType": "procedure",
+          "shows": "Haga clic en la fila de la cámara"
+        }
+      ],
+      "files": [
+        "_common/home.caso.cctv.ver.elegir.png"
+      ]
+    },
+    {
+      "slot": "home.caso.cctv.ver.cerrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.cctv.ver.cerrar",
+          "blockType": "procedure",
+          "shows": "Vuelva a hacer clic en la fila para cerrarla"
+        }
+      ],
+      "files": [
+        "_common/home.caso.cctv.ver.cerrar.png"
       ]
     },
     {
