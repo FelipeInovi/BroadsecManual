@@ -1655,3 +1655,281 @@ recipes:
   #
   # The tooltip is read back from the page before the shot: a tooltip stays
   # mounted across reads and returns the PREVIOUS control's text every other time.
+
+  # --- Home with a case open ----------------------------------------------------
+  #
+  # PRECONDITION, set by a person or by a probe BEFORE the run, because a card
+  # click is not something a shot should do on its own: open a case from
+  # `Reportes pendientes` (click the card's empty top-right, away from its Copiar
+  # buttons). Opening is local — `selectCase` writes to a store, and the layer
+  # `Mobile` switches on — and `Volver a la lista de incidentes` undoes it. The tell
+  # that the window is in this state is the `Libro del Caso` tab, which Home mounts
+  # only while a case is open (and `Mi turno` and `Teclado` are gone).
+  #
+  # NEVER pressed from here, whatever the caption says: `Validar`, `Ver más
+  # tarde`, `Llamar`, `Actualizar` (the book's save), `Despachar agente`, the
+  # location editor's check (`Guardar ubicación`). They are clipped and left alone.
+
+  - slot: home.caso.reporte.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Editar tipo de emergencia"]
+    clip: div[role="tab"][aria-label="Revisión de reporte"]
+    clipUp: div.dv-groupview
+    settleMs: 2000
+
+  # "Información de la llamada bajo la tarjeta": everything the panel holds below
+  # the card. Entered through the call's slider and climbed to `div.p-3`, the
+  # wrapper the panel gives it (calls-review-panel.tsx:481-486).
+  - slot: home.caso.informacion.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: input[aria-label="Progreso de la llamada"]
+    clip: input[aria-label="Progreso de la llamada"]
+    clipUp: div.p-3
+    settleMs: 2000
+
+  - slot: home.caso.informacion.escuchar.reproducir
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[title="Reproducir"]
+    clip: button[title="Reproducir"]
+    settleMs: 1200
+
+  # The slider and the two times under it. The slider itself is `opacity-0` over a
+  # drawn bar, so the clip climbs to the block that holds bar and times.
+  - slot: home.caso.informacion.escuchar.posicion
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: input[aria-label="Progreso de la llamada"]
+    clip: input[aria-label="Progreso de la llamada"]
+    clipUp: div[class*="sticky"][class*="bottom-0"]
+    settleMs: 1200
+
+  # The transcript is already expanded when the case opens (`aria-pressed` true,
+  # title `Ocultar transcripción`), so the block below is the state the step ends
+  # on. The block is the transcript line plus the player, entered through the
+  # player's slider.
+  - slot: home.caso.informacion.escuchar.transcripcion
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[title="Ocultar transcripción"]
+    clip: input[aria-label="Progreso de la llamada"]
+    clipUp: div[class*="relative"][class*="flex-col"][class*="gap-4"][class*="p-4"]
+    settleMs: 1200
+
+  - slot: home.caso.acciones.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Finalizar y pasar a la siguiente llamada"]
+    clip: button[aria-label="Finalizar y pasar a la siguiente llamada"]
+    clipUp: div[class*="border-t"][class*="justify-center"]
+    settleMs: 1200
+
+  # The open card. `abrir.comprobar` asks to check type, address and phone on it.
+  - slot: home.revision.abrir.comprobar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Editar tipo de emergencia"]
+    clip: button[aria-label="Editar tipo de emergencia"]
+    clipUp: div[role="button"]
+    settleMs: 1200
+
+  # Same card, with the pointer on the location's check so the two review marks
+  # are what the frame is about. Hovered, never clicked: the check marks the
+  # location reviewed.
+  - slot: home.caso.validar.revisar
+    view: home
+    steps:
+      - hover: button[aria-label="Marcar ubicación como revisada"]
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Editar tipo de emergencia"]
+    clip: button[aria-label="Editar tipo de emergencia"]
+    clipUp: div[role="button"]
+    settleMs: 1200
+
+  # "Ubique la flecha en el encabezado del panel": the header, which holds the
+  # zoom pair, the arrow and the close.
+  - slot: home.caso.volver.flecha
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[title="Volver a la lista de incidentes"]
+    clip: button[title="Volver a la lista de incidentes"]
+    clipUp: div.dv-tabs-and-actions-container
+    settleMs: 1200
+
+  # --- the case book --------------------------------------------------------------
+  #
+  # The book's form is taller than its panel and scrolls inside it. A clip on a
+  # field below the fold makes the shot scroll the form to reach it; put the form
+  # back on top afterwards.
+  - slot: home.libro.vista.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: input[placeholder="Nombre completo"]
+    clip: div[role="tab"][aria-label="Libro del Caso"]
+    clipUp: div.dv-groupview
+    settleMs: 2000
+
+  - slot: home.libro.registrar.revisar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: input[placeholder="Nombre completo"]
+    clip: input[placeholder="Nombre completo"]
+    clipUp: div[class*="rounded-lg"][class*="p-3"][class*="m-2"]
+    settleMs: 1500
+
+  - slot: home.caso.validar.libro
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: 'input[placeholder="Ej: Cra 45 # 23-10"]'
+    clip: 'input[placeholder="Ej: Cra 45 # 23-10"]'
+    clipUp: div[class*="rounded-lg"][class*="p-3"][class*="m-2"]
+    settleMs: 1500
+
+  - slot: home.libro.registrar.completar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: textarea[aria-label="Notas generales del incidente"]
+    clip: textarea[aria-label="Notas generales del incidente"]
+    clipUp: div[class*="flex-col"][class*="px-4"][class*="pb-3"]
+    settleMs: 1500
+
+  # The save control and the bar it sits in. Clipped, NEVER pressed: it writes the
+  # book onto a real case. Its label is `Actualizar` on this case; the step also
+  # names `Guardar`, which is the label of a book that was never saved.
+  - slot: home.libro.registrar.guardado
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[title="Actualizar"]
+    clip: button[title="Actualizar"]
+    clipUp: div[class*="sticky"][class*="bottom-0"][class*="border-t"]
+    settleMs: 1200
+
+  - slot: home.caso.fuerzas.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[title="Policía"]
+    clip: div[role="tab"][aria-label="Fuerzas en Campo"]
+    clipUp: div.dv-groupview
+    settleMs: 2500
+
+  # --- correcting the type of an open case ---------------------------------------
+  #
+  # Three shots of ONE edit session, in this order, all against a case whose type
+  # can be edited (`canEditType = item.matchId != null`, calls-review-card.tsx:210):
+  #
+  #   1. `elegir`     the picker open. Reached by clicking the chip that says
+  #                   `Seleccionar tipo de incidente` once edit mode is on.
+  #   2. `editar`     edit mode with the picker CLOSED (Escape).
+  #   3. `terminar`   the same frame, clipped to the check and the X.
+  #
+  # The person driving the window does the two clicks that are not in `steps`:
+  # the pencil (`Editar tipo de emergencia`) and, at the end, the CHECK
+  # (`Terminar edición del tipo de emergencia`), never the X. Why the check:
+  # `Cancelar` writes the original type back to the backend
+  # (calls-review-type-edit-controls.tsx:78-90), while the check only sets a
+  # component-local flag (`typeVerified`, calls-review-card.tsx:188). The picker
+  # persists on close only when its draft DIFFERS from the case's types
+  # (incident-type-picker.tsx:131-140), so no option is ever clicked here.
+  - slot: home.caso.corregir-tipo.elegir
+    view: home
+    # The harness clicks the rail first, and that outside click closes a picker
+    # somebody left open, so the chip is clicked here.
+    steps:
+      - click: button::-p-text(Seleccionar tipo de incidente)
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: input[placeholder="Buscar tipo…"]
+    clip: input[placeholder="Buscar tipo…"]
+    clipUp: '[data-radix-popper-content-wrapper]'
+    settleMs: 1200
+
+  - slot: home.caso.corregir-tipo.editar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Terminar edición del tipo de emergencia"]
+    clip: button[aria-label="Terminar edición del tipo de emergencia"]
+    clipUp: div[role="button"]
+    settleMs: 1200
+
+  - slot: home.caso.corregir-tipo.terminar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Terminar edición del tipo de emergencia"]
+    clip: button[aria-label="Terminar edición del tipo de emergencia"]
+    clipUp: div[class*="shrink-0"][class*="items-center"][class*="gap-1"]
+    settleMs: 1200
+
+  # --- correcting the location of an open case -----------------------------------
+  #
+  # ONE edit session again. The person driving the window clicks the pencil
+  # (`Editar ubicacion`) and, for `buscar` and `guardar`, types a street name
+  # into `Buscar dirección…` (the recipe vocabulary has no `type`). The session
+  # ends on the X (`Cancelar edición de la ubicación`), which only resets the
+  # editor's own state (calls-review-address-editor.tsx:218-222).
+  #
+  # NO suggestion is ever clicked and the check is NEVER pressed. Its component
+  # says clicking a prediction only fills `selectedPlace` and the check persists it
+  # (:224-230, :95-165), and the persist path writes the address to the live call
+  # (`updateFlow`) AND to the case (`updateLocation`). The figures need the list of
+  # suggestions and the check on screen; neither needs a choice.
+  - slot: home.caso.corregir-ubicacion.editar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: input[placeholder="Buscar dirección…"]
+    clip: input[placeholder="Buscar dirección…"]
+    clipUp: div[role="button"]
+    settleMs: 1200
+
+  # The whole panel, because the suggestion list hangs BELOW the card
+  # (`absolute inset-x-0 top-full`) and no smaller ancestor reaches it.
+  - slot: home.caso.corregir-ubicacion.buscar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: 'ul[class*="absolute"] button'
+    clip: input[placeholder="Buscar dirección…"]
+    clipUp: div.dv-groupview
+    settleMs: 1200
+
+  - slot: home.caso.corregir-ubicacion.guardar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Guardar ubicación"]
+    clip: button[aria-label="Guardar ubicación"]
+    clipUp: div[class*="z-20"][class*="items-center"][class*="gap-1"]
+    settleMs: 1200
+
+  # --- the Log drawer --------------------------------------------------------------
+  #
+  # The tab is a literal `Log` with a `title` that alternates between
+  # `Abrir bitácora` and `Cerrar bitácora` (logs-side-drawer.tsx:53). `pestana`
+  # is shot with the drawer CLOSED; `fig` opens it in its own steps and the person
+  # closes it afterwards.
+  - slot: home.caso.bitacora.pestana
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[title="Abrir bitácora"]
+    clip: button[title="Abrir bitácora"]
+    settleMs: 1200
+
+  # The drawer OPEN: the tab (now on the drawer's left edge) and the timeline in
+  # one frame. Opened by the person before the run; the tab's title then reads
+  # `Cerrar bitácora`, which is also this recipe's gate.
+  - slot: home.caso.bitacora.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[title="Cerrar bitácora"]
+    clip: button[title="Cerrar bitácora"]
+    clipUp: div[class*="shrink-0"][class*="pointer-events-none"]
+    settleMs: 1500
+
+  # "Haga clic en el icono del panel": the bar with a case open, where more panels
+  # are lit (Revisión de reporte, Fuerzas en Campo, Libro del Caso) and CCTV and
+  # the others are not. The click itself is not repeated for the shot: it reshapes
+  # the dock, and the frame that matters is the bar it lights.
+  - slot: home.paneles.abrir.alternar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: div[class*="bottom-24"][class*="left-5.5"] button
+    clip: div[class*="bottom-24"][class*="left-5.5"]
+    settleMs: 1500

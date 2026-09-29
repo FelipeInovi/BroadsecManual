@@ -19,32 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 201,
-    "delivered": 167,
-    "pending": 34
+    "delivered": 191,
+    "pending": 10
   },
   "pending": [
-    {
-      "slot": "home.revision.abrir.comprobar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.abrir.comprobar",
-          "blockType": "procedure",
-          "shows": "Verifique que abrió el caso correcto"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.abrir.comprobar.png",
-        "override": "<permission>/home.revision.abrir.comprobar.png"
-      }
-    },
     {
       "slot": "home.caso.vista.fig",
       "neededBy": [
@@ -65,336 +43,6 @@
       "deliverTo": {
         "shared": "_common/home.caso.vista.fig.png",
         "override": "<permission>/home.caso.vista.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.reporte.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.reporte.fig",
-          "blockType": "figure",
-          "shows": "Panel Revisión de reporte con la tarjeta del caso abierto, sus controles de edición y la barra de acciones."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.reporte.fig.png",
-        "override": "<permission>/home.caso.reporte.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.corregir-ubicacion.editar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.corregir-ubicacion.editar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Editar ubicacion"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.corregir-ubicacion.editar.png",
-        "override": "<permission>/home.caso.corregir-ubicacion.editar.png"
-      }
-    },
-    {
-      "slot": "home.caso.corregir-ubicacion.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.corregir-ubicacion.buscar",
-          "blockType": "procedure",
-          "shows": "Busque y elija la dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.corregir-ubicacion.buscar.png",
-        "override": "<permission>/home.caso.corregir-ubicacion.buscar.png"
-      }
-    },
-    {
-      "slot": "home.caso.corregir-ubicacion.guardar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.corregir-ubicacion.guardar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Guardar ubicación"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.corregir-ubicacion.guardar.png",
-        "override": "<permission>/home.caso.corregir-ubicacion.guardar.png"
-      }
-    },
-    {
-      "slot": "home.caso.corregir-tipo.editar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.corregir-tipo.editar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Editar tipo de emergencia"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.corregir-tipo.editar.png",
-        "override": "<permission>/home.caso.corregir-tipo.editar.png"
-      }
-    },
-    {
-      "slot": "home.caso.corregir-tipo.elegir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.corregir-tipo.elegir",
-          "blockType": "procedure",
-          "shows": "Elija el tipo"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.corregir-tipo.elegir.png",
-        "override": "<permission>/home.caso.corregir-tipo.elegir.png"
-      }
-    },
-    {
-      "slot": "home.caso.corregir-tipo.terminar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.corregir-tipo.terminar",
-          "blockType": "procedure",
-          "shows": "Termine la edición"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.corregir-tipo.terminar.png",
-        "override": "<permission>/home.caso.corregir-tipo.terminar.png"
-      }
-    },
-    {
-      "slot": "home.caso.informacion.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.informacion.fig",
-          "blockType": "figure",
-          "shows": "Información de la llamada bajo la tarjeta: reproductor, resumen de Call AI e historial de ubicaciones."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.informacion.fig.png",
-        "override": "<permission>/home.caso.informacion.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.informacion.escuchar.reproducir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.informacion.escuchar.reproducir",
-          "blockType": "procedure",
-          "shows": "Haga clic en Reproducir"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.informacion.escuchar.reproducir.png",
-        "override": "<permission>/home.caso.informacion.escuchar.reproducir.png"
-      }
-    },
-    {
-      "slot": "home.caso.informacion.escuchar.posicion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.informacion.escuchar.posicion",
-          "blockType": "procedure",
-          "shows": "Elija el punto de la llamada"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.informacion.escuchar.posicion.png",
-        "override": "<permission>/home.caso.informacion.escuchar.posicion.png"
-      }
-    },
-    {
-      "slot": "home.caso.informacion.escuchar.transcripcion",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.informacion.escuchar.transcripcion",
-          "blockType": "procedure",
-          "shows": "Muestre la transcripción"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.informacion.escuchar.transcripcion.png",
-        "override": "<permission>/home.caso.informacion.escuchar.transcripcion.png"
-      }
-    },
-    {
-      "slot": "home.libro.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.libro.vista.fig",
-          "blockType": "figure",
-          "shows": "Libro del caso abierto bajo el mapa, con los datos del llamante y del incidente y las notas."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.libro.vista.fig.png",
-        "override": "<permission>/home.libro.vista.fig.png"
-      }
-    },
-    {
-      "slot": "home.libro.registrar.revisar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.libro.registrar.revisar",
-          "blockType": "procedure",
-          "shows": "Revise los campos completados"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.libro.registrar.revisar.png",
-        "override": "<permission>/home.libro.registrar.revisar.png"
-      }
-    },
-    {
-      "slot": "home.libro.registrar.completar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.libro.registrar.completar",
-          "blockType": "procedure",
-          "shows": "Complete lo que falte y tome las notas"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.libro.registrar.completar.png",
-        "override": "<permission>/home.libro.registrar.completar.png"
-      }
-    },
-    {
-      "slot": "home.libro.registrar.guardado",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.libro.registrar.guardado",
-          "blockType": "procedure",
-          "shows": "Guarde el libro"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.libro.registrar.guardado.png",
-        "override": "<permission>/home.libro.registrar.guardado.png"
       }
     },
     {
@@ -464,138 +112,6 @@
       }
     },
     {
-      "slot": "home.caso.fuerzas.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.fuerzas.fig",
-          "blockType": "figure",
-          "shows": "Panel de Fuerzas en Campo con el filtro por fuerza y las unidades cercanas al incidente."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.fuerzas.fig.png",
-        "override": "<permission>/home.caso.fuerzas.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.bitacora.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.bitacora.fig",
-          "blockType": "figure",
-          "shows": "Pestaña Log abierta en el borde derecho, con la línea de tiempo del caso."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.bitacora.fig.png",
-        "override": "<permission>/home.caso.bitacora.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.bitacora.pestana",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.bitacora.pestana",
-          "blockType": "field-list",
-          "shows": "Log"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.bitacora.pestana.png",
-        "override": "<permission>/home.caso.bitacora.pestana.png"
-      }
-    },
-    {
-      "slot": "home.caso.acciones.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.acciones.fig",
-          "blockType": "figure",
-          "shows": "Barra de acciones al pie del panel Revisión de reporte."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.acciones.fig.png",
-        "override": "<permission>/home.caso.acciones.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.validar.revisar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.validar.revisar",
-          "blockType": "procedure",
-          "shows": "Revise el tipo y la ubicación"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.validar.revisar.png",
-        "override": "<permission>/home.caso.validar.revisar.png"
-      }
-    },
-    {
-      "slot": "home.caso.validar.libro",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.validar.libro",
-          "blockType": "procedure",
-          "shows": "Complete el libro del caso"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.validar.libro.png",
-        "override": "<permission>/home.caso.validar.libro.png"
-      }
-    },
-    {
       "slot": "home.caso.validar.enviar",
       "neededBy": [
         "agencia-propia",
@@ -615,28 +131,6 @@
       "deliverTo": {
         "shared": "_common/home.caso.validar.enviar.png",
         "override": "<permission>/home.caso.validar.enviar.png"
-      }
-    },
-    {
-      "slot": "home.caso.volver.flecha",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.volver.flecha",
-          "blockType": "procedure",
-          "shows": "Ubique la flecha en el encabezado del panel"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.volver.flecha.png",
-        "override": "<permission>/home.caso.volver.flecha.png"
       }
     },
     {
@@ -725,28 +219,6 @@
       "deliverTo": {
         "shared": "_common/home.caso.post-llamada.cerrar.terminar.png",
         "override": "<permission>/home.caso.post-llamada.cerrar.terminar.png"
-      }
-    },
-    {
-      "slot": "home.paneles.abrir.alternar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.abrir.alternar",
-          "blockType": "procedure",
-          "shows": "Haga clic en el icono del panel"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.abrir.alternar.png",
-        "override": "<permission>/home.paneles.abrir.alternar.png"
       }
     },
     {
@@ -895,6 +367,23 @@
       ]
     },
     {
+      "slot": "home.revision.abrir.comprobar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.abrir.comprobar",
+          "blockType": "procedure",
+          "shows": "Verifique que abrió el caso correcto"
+        }
+      ],
+      "files": [
+        "_common/home.revision.abrir.comprobar.png"
+      ]
+    },
+    {
       "slot": "home.teclado.vista.fig",
       "neededBy": [
         "agencia-propia",
@@ -960,6 +449,23 @@
       ],
       "files": [
         "_common/home.turno.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "home.caso.reporte.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.reporte.fig",
+          "blockType": "figure",
+          "shows": "Panel Revisión de reporte con la tarjeta del caso abierto, sus controles de edición y la barra de acciones."
+        }
+      ],
+      "files": [
+        "_common/home.caso.reporte.fig.png"
       ]
     },
     {
@@ -1099,6 +605,312 @@
       ]
     },
     {
+      "slot": "home.caso.corregir-ubicacion.editar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.corregir-ubicacion.editar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Editar ubicacion"
+        }
+      ],
+      "files": [
+        "_common/home.caso.corregir-ubicacion.editar.png"
+      ]
+    },
+    {
+      "slot": "home.caso.corregir-ubicacion.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.corregir-ubicacion.buscar",
+          "blockType": "procedure",
+          "shows": "Busque y elija la dirección"
+        }
+      ],
+      "files": [
+        "_common/home.caso.corregir-ubicacion.buscar.png"
+      ]
+    },
+    {
+      "slot": "home.caso.corregir-ubicacion.guardar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.corregir-ubicacion.guardar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Guardar ubicación"
+        }
+      ],
+      "files": [
+        "_common/home.caso.corregir-ubicacion.guardar.png"
+      ]
+    },
+    {
+      "slot": "home.caso.corregir-tipo.editar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.corregir-tipo.editar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Editar tipo de emergencia"
+        }
+      ],
+      "files": [
+        "_common/home.caso.corregir-tipo.editar.png"
+      ]
+    },
+    {
+      "slot": "home.caso.corregir-tipo.elegir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.corregir-tipo.elegir",
+          "blockType": "procedure",
+          "shows": "Elija el tipo"
+        }
+      ],
+      "files": [
+        "_common/home.caso.corregir-tipo.elegir.png"
+      ]
+    },
+    {
+      "slot": "home.caso.corregir-tipo.terminar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.corregir-tipo.terminar",
+          "blockType": "procedure",
+          "shows": "Termine la edición"
+        }
+      ],
+      "files": [
+        "_common/home.caso.corregir-tipo.terminar.png"
+      ]
+    },
+    {
+      "slot": "home.caso.informacion.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.informacion.fig",
+          "blockType": "figure",
+          "shows": "Información de la llamada bajo la tarjeta: reproductor, resumen de Call AI e historial de ubicaciones."
+        }
+      ],
+      "files": [
+        "_common/home.caso.informacion.fig.png"
+      ]
+    },
+    {
+      "slot": "home.caso.informacion.escuchar.reproducir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.informacion.escuchar.reproducir",
+          "blockType": "procedure",
+          "shows": "Haga clic en Reproducir"
+        }
+      ],
+      "files": [
+        "_common/home.caso.informacion.escuchar.reproducir.png"
+      ]
+    },
+    {
+      "slot": "home.caso.informacion.escuchar.posicion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.informacion.escuchar.posicion",
+          "blockType": "procedure",
+          "shows": "Elija el punto de la llamada"
+        }
+      ],
+      "files": [
+        "_common/home.caso.informacion.escuchar.posicion.png"
+      ]
+    },
+    {
+      "slot": "home.caso.informacion.escuchar.transcripcion",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.informacion.escuchar.transcripcion",
+          "blockType": "procedure",
+          "shows": "Muestre la transcripción"
+        }
+      ],
+      "files": [
+        "_common/home.caso.informacion.escuchar.transcripcion.png"
+      ]
+    },
+    {
+      "slot": "home.libro.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.libro.vista.fig",
+          "blockType": "figure",
+          "shows": "Libro del caso abierto bajo el mapa, con los datos del llamante y del incidente y las notas."
+        }
+      ],
+      "files": [
+        "_common/home.libro.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "home.libro.registrar.revisar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.libro.registrar.revisar",
+          "blockType": "procedure",
+          "shows": "Revise los campos completados"
+        }
+      ],
+      "files": [
+        "_common/home.libro.registrar.revisar.png"
+      ]
+    },
+    {
+      "slot": "home.libro.registrar.completar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.libro.registrar.completar",
+          "blockType": "procedure",
+          "shows": "Complete lo que falte y tome las notas"
+        }
+      ],
+      "files": [
+        "_common/home.libro.registrar.completar.png"
+      ]
+    },
+    {
+      "slot": "home.libro.registrar.guardado",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.libro.registrar.guardado",
+          "blockType": "procedure",
+          "shows": "Guarde el libro"
+        }
+      ],
+      "files": [
+        "_common/home.libro.registrar.guardado.png"
+      ]
+    },
+    {
+      "slot": "home.caso.fuerzas.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.fuerzas.fig",
+          "blockType": "figure",
+          "shows": "Panel de Fuerzas en Campo con el filtro por fuerza y las unidades cercanas al incidente."
+        }
+      ],
+      "files": [
+        "_common/home.caso.fuerzas.fig.png"
+      ]
+    },
+    {
+      "slot": "home.caso.bitacora.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.bitacora.fig",
+          "blockType": "figure",
+          "shows": "Pestaña Log abierta en el borde derecho, con la línea de tiempo del caso."
+        }
+      ],
+      "files": [
+        "_common/home.caso.bitacora.fig.png"
+      ]
+    },
+    {
+      "slot": "home.caso.bitacora.pestana",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.bitacora.pestana",
+          "blockType": "field-list",
+          "shows": "Log"
+        }
+      ],
+      "files": [
+        "_common/home.caso.bitacora.pestana.png"
+      ]
+    },
+    {
+      "slot": "home.caso.acciones.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.acciones.fig",
+          "blockType": "figure",
+          "shows": "Barra de acciones al pie del panel Revisión de reporte."
+        }
+      ],
+      "files": [
+        "_common/home.caso.acciones.fig.png"
+      ]
+    },
+    {
       "slot": "home.caso.accion.llamar",
       "neededBy": [
         "agencia-propia",
@@ -1147,6 +959,57 @@
       ],
       "files": [
         "_common/home/caso/accion/mas-tarde.svg"
+      ]
+    },
+    {
+      "slot": "home.caso.validar.revisar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.validar.revisar",
+          "blockType": "procedure",
+          "shows": "Revise el tipo y la ubicación"
+        }
+      ],
+      "files": [
+        "_common/home.caso.validar.revisar.png"
+      ]
+    },
+    {
+      "slot": "home.caso.validar.libro",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.validar.libro",
+          "blockType": "procedure",
+          "shows": "Complete el libro del caso"
+        }
+      ],
+      "files": [
+        "_common/home.caso.validar.libro.png"
+      ]
+    },
+    {
+      "slot": "home.caso.volver.flecha",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.volver.flecha",
+          "blockType": "procedure",
+          "shows": "Ubique la flecha en el encabezado del panel"
+        }
+      ],
+      "files": [
+        "_common/home.caso.volver.flecha.png"
       ]
     },
     {
@@ -1266,6 +1129,23 @@
       ],
       "files": [
         "_common/home.paneles.abrir.barra.png"
+      ]
+    },
+    {
+      "slot": "home.paneles.abrir.alternar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.abrir.alternar",
+          "blockType": "procedure",
+          "shows": "Haga clic en el icono del panel"
+        }
+      ],
+      "files": [
+        "_common/home.paneles.abrir.alternar.png"
       ]
     },
     {
