@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 204,
-    "pending": 41
+    "delivered": 206,
+    "pending": 39
   },
   "pending": [
     {
@@ -747,50 +747,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.ruta.control.finalizar.png",
         "override": "<permission>/llamada.fuerzas.ruta.control.finalizar.png"
-      }
-    },
-    {
-      "slot": "llamada.camaras.ver.elegir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.camaras.ver.elegir",
-          "blockType": "procedure",
-          "shows": "Haga clic en la fila de la cámara"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.camaras.ver.elegir.png",
-        "override": "<permission>/llamada.camaras.ver.elegir.png"
-      }
-    },
-    {
-      "slot": "llamada.camaras.ver.cerrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.camaras.ver.cerrar",
-          "blockType": "procedure",
-          "shows": "Vuelva a hacer clic en la fila para cerrarla"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.camaras.ver.cerrar.png",
-        "override": "<permission>/llamada.camaras.ver.cerrar.png"
       }
     },
     {
@@ -2759,6 +2715,40 @@
       ],
       "files": [
         "_common/llamada.camaras.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.camaras.ver.elegir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.camaras.ver.elegir",
+          "blockType": "procedure",
+          "shows": "Haga clic en la fila de la cámara"
+        }
+      ],
+      "files": [
+        "_common/llamada.camaras.ver.elegir.png"
+      ]
+    },
+    {
+      "slot": "llamada.camaras.ver.cerrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.camaras.ver.cerrar",
+          "blockType": "procedure",
+          "shows": "Vuelva a hacer clic en la fila para cerrarla"
+        }
+      ],
+      "files": [
+        "_common/llamada.camaras.ver.cerrar.png"
       ]
     },
     {
