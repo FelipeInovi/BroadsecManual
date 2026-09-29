@@ -1,0 +1,4 @@
+<!-- lucide-react v1.3.0 (ISC) "gauge", used at available-agent-row.tsx:391 (product colour orange-400; recoloured to match the column), stroke recoloured to #0F766E for the manual's icon column -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+     stroke="#0F766E" stroke-width="2" stroke-linecap="round"
+     stroke-linejoin="round"><path d="m12 14 4-4" /><path d="M3.34 19a10 10 0 1 1 17.32 0" /></svg>

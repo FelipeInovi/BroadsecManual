@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 178,
-    "pending": 67
+    "delivered": 189,
+    "pending": 56
   },
   "pending": [
     {
@@ -87,160 +87,6 @@
       "deliverTo": {
         "shared": "_common/llamada.controles.fig.png",
         "override": "<permission>/llamada.controles.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.control.teclado",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.teclado",
-          "blockType": "icon-table",
-          "shows": "Teclado numerico"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.teclado.png",
-        "override": "<permission>/llamada.controles.control.teclado.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.control.espera",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.espera",
-          "blockType": "icon-table",
-          "shows": "Poner en espera"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.espera.png",
-        "override": "<permission>/llamada.controles.control.espera.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.control.aparcar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.aparcar",
-          "blockType": "icon-table",
-          "shows": "Aparcar llamada"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.aparcar.png",
-        "override": "<permission>/llamada.controles.control.aparcar.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.control.mutear",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.mutear",
-          "blockType": "icon-table",
-          "shows": "Mutear"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.mutear.png",
-        "override": "<permission>/llamada.controles.control.mutear.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.control.finalizar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.finalizar",
-          "blockType": "icon-table",
-          "shows": "Finalizar llamada"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.finalizar.png",
-        "override": "<permission>/llamada.controles.control.finalizar.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.control.enlace",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.enlace",
-          "blockType": "icon-table",
-          "shows": "Enviar enlace de video"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.enlace.png",
-        "override": "<permission>/llamada.controles.control.enlace.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.control.reenviar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.reenviar",
-          "blockType": "icon-table",
-          "shows": "Reenviar enlace a otro numero"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.reenviar.png",
-        "override": "<permission>/llamada.controles.control.reenviar.png"
       }
     },
     {
@@ -857,94 +703,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.vista.fig.png",
         "override": "<permission>/llamada.fuerzas.vista.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.filtro.directorio",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.filtro.directorio",
-          "blockType": "icon-table",
-          "shows": "Directorio de agentes"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.filtro.directorio.png",
-        "override": "<permission>/llamada.fuerzas.filtro.directorio.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.distintivo.mejor",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.distintivo.mejor",
-          "blockType": "icon-table",
-          "shows": "Mejor opción"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.distintivo.mejor.png",
-        "override": "<permission>/llamada.fuerzas.distintivo.mejor.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.distintivo.rapida",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.distintivo.rapida",
-          "blockType": "icon-table",
-          "shows": "Llegada más rápida"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.distintivo.rapida.png",
-        "override": "<permission>/llamada.fuerzas.distintivo.rapida.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.distintivo.cercana",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.distintivo.cercana",
-          "blockType": "icon-table",
-          "shows": "Más cercano"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.distintivo.cercana.png",
-        "override": "<permission>/llamada.fuerzas.distintivo.cercana.png"
       }
     },
     {
@@ -2828,6 +2586,125 @@
       ]
     },
     {
+      "slot": "llamada.controles.control.teclado",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.teclado",
+          "blockType": "icon-table",
+          "shows": "Teclado numerico"
+        }
+      ],
+      "files": [
+        "_common/llamada/controles/control/teclado.svg"
+      ]
+    },
+    {
+      "slot": "llamada.controles.control.espera",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.espera",
+          "blockType": "icon-table",
+          "shows": "Poner en espera"
+        }
+      ],
+      "files": [
+        "_common/llamada/controles/control/espera.svg"
+      ]
+    },
+    {
+      "slot": "llamada.controles.control.aparcar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.aparcar",
+          "blockType": "icon-table",
+          "shows": "Aparcar llamada"
+        }
+      ],
+      "files": [
+        "_common/llamada/controles/control/aparcar.svg"
+      ]
+    },
+    {
+      "slot": "llamada.controles.control.mutear",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.mutear",
+          "blockType": "icon-table",
+          "shows": "Mutear"
+        }
+      ],
+      "files": [
+        "_common/llamada/controles/control/mutear.svg"
+      ]
+    },
+    {
+      "slot": "llamada.controles.control.finalizar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.finalizar",
+          "blockType": "icon-table",
+          "shows": "Finalizar llamada"
+        }
+      ],
+      "files": [
+        "_common/llamada/controles/control/finalizar.svg"
+      ]
+    },
+    {
+      "slot": "llamada.controles.control.enlace",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.enlace",
+          "blockType": "icon-table",
+          "shows": "Enviar enlace de video"
+        }
+      ],
+      "files": [
+        "_common/llamada/controles/control/enlace.svg"
+      ]
+    },
+    {
+      "slot": "llamada.controles.control.reenviar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.reenviar",
+          "blockType": "icon-table",
+          "shows": "Reenviar enlace a otro numero"
+        }
+      ],
+      "files": [
+        "_common/llamada/controles/control/reenviar.svg"
+      ]
+    },
+    {
       "slot": "llamada.fuerzas.filtro.todos",
       "neededBy": [
         "agencia-propia",
@@ -2974,6 +2851,74 @@
       ],
       "files": [
         "_common/fuerza/gaula.webp"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.filtro.directorio",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.filtro.directorio",
+          "blockType": "icon-table",
+          "shows": "Directorio de agentes"
+        }
+      ],
+      "files": [
+        "_common/llamada/fuerzas/filtro/directorio.svg"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.distintivo.mejor",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.distintivo.mejor",
+          "blockType": "icon-table",
+          "shows": "Mejor opción"
+        }
+      ],
+      "files": [
+        "_common/llamada/fuerzas/distintivo/mejor.svg"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.distintivo.rapida",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.distintivo.rapida",
+          "blockType": "icon-table",
+          "shows": "Llegada más rápida"
+        }
+      ],
+      "files": [
+        "_common/llamada/fuerzas/distintivo/rapida.svg"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.distintivo.cercana",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.distintivo.cercana",
+          "blockType": "icon-table",
+          "shows": "Más cercano"
+        }
+      ],
+      "files": [
+        "_common/llamada/fuerzas/distintivo/cercana.svg"
       ]
     },
     {

@@ -91,6 +91,28 @@ alternating tone.
   now extracted, recoloured and cited — the same treatment the four cardinal
   chevrons already had. The "cannot" was never about extraction at all.
 
+### Llamada's call controls and badges (2026-09-29): 11 of 13
+
+The rewritten Llamada asked for thirteen more icon slots; eleven came from the
+same two files as before, under `_common/llamada/`. Ten are `lucide-react`
+v1.3.0 (`controles.*` espera, aparcar, mutear, finalizar, enlace, reenviar;
+`fuerzas.filtro.directorio`; `fuerzas.distintivo.mejor`, `rapida`, `cercana`) and
+one is the banner's own inline keypad grid (`teclado`, incoming-call-banner.tsx:424).
+Same `#0F766E`, so the same 5.47:1 / 4.99:1. Calls worth knowing:
+
+- **Toggles are delivered in the state the row describes**: Pause, Mic and Send,
+  not Play, MicOff or Check.
+- **End call keeps no red.** The red is the button's background; the glyph is
+  white, so a teal PhoneOff loses nothing the product puts on the glyph.
+- **The star is filled** (the product uses `fill="currentColor"`), and the three
+  badges lose their amber/orange/teal glow: amber-300 is ~1.5:1 on white.
+- **`reenviar` is a judgement call**: the badge is its own button holding a lone
+  `Hash`, so the glyph is complete, but its meaning is the position on the send
+  button. Delete the file if the reader should see it only in place.
+- **Pending on purpose**: `controles.control.resumen` (a text button, `Resumen AI`,
+  with a gradient-masked Sparkles icon) and `fuerzas.distintivo.fuerza` (a CSS
+  ring around the logo, no glyph at all).
+
 ## Traps this manual hit, and will hit again
 
 **The prop is `icon`, not `image`.** An `icon-table` row declares its image under
