@@ -1,20 +1,56 @@
-# Home — written against the Bridge360 source, cited by file and line.
+# Home — written against the Bridge360 source (`bridge`, branch `develop`,
+# 465f5eb9), cited by file and line.
 #
 # There is no module map for this product yet (no extractor exists for its
 # shape), so every claim here carries its own provenance comment instead of
-# tracing to `knowledge/`. There is no i18n catalogue either: every label below
-# is a QUOTATION of a literal in the component, with the line it sits on. If the
-# product rewords one, nothing here notices — that is recorded in ESTADO.md.
+# tracing to `knowledge/`. Every quoted UI label is a QUOTATION, cited in the
+# `labels` list below and checked by `broadsec-manual labels bridge-manual`.
+# Since the product gained an i18n catalogue, a quotation is cited from the
+# Spanish catalogue (`src/i18n/locales/es/*.json`) when the product keys it,
+# and from the component when the product hardcodes the literal. The catalogue
+# spells some strings without accents ("Sin ubicacion", "Buscar por tipo,
+# direccion..."): a quotation is copied as the catalogue writes it, while the
+# manual's own prose is written correctly.
 #
-# NOTHING in this view is conditioned on the `permission` axis, and that is a
-# finding rather than an omission: both permission predicates are consumed only
-# in sitemap-view.tsx:36-37. There is no `when` in this file for that reason.
+# ORGANISATION. Home is ONE rail view composed of dock panels, and what the
+# operator does there depends on one thing: whether a case is open. So the
+# module is organised by STATE, not by panel:
 #
-# What DOES vary this view is `agencyType`, which is not an axis of this manual.
-# `HomeView` reads it at home-view.tsx:320 and keys HOME_LAYOUT_RULES
-# (home-view.tsx:57-80) off it. This section describes the RECEPTION rules
-# (home-view.tsx:58-62) — the manual's agreed scope, and the backend's own
-# default (domain/types/agency.types.ts:9). See ESTADO.md.
+#   - without a case: Reportes pendientes, Teclado, Mi turno;
+#   - with a case: the report card and the call information, the case book,
+#     CCTV, Fuerzas en Campo, the Log drawer, the action bar, and the
+#     Post-Llamada that opens the case by itself when a call ends;
+#   - across both: the panel bar and the panel arrangement, and the map tools.
+#
+# PERMISSIONS. Nothing in this view is conditioned on the manual's OWN axis
+# (`permission`, from `canViewAllAgencies`): that predicate is consumed only in
+# sitemap-view.tsx:36-37, so there is no `when` in this file. That sentence is
+# true ONLY of the manual's axis. Two other permissions do reach Home, and they
+# are stated in prose where they matter, with no `when`, because they are not
+# what this manual builds its targets from:
+#   - `dispatch.forces` (domain/can-dispatch-forces.ts:1) decides whether the
+#     dispatch-workflow panels exist in Home at all
+#     (views/home-right-slot.ts:233-235, `resolveExcludedHomePanels`), so it
+#     decides two entries of the panel bar;
+#   - `case.view.all` decides how much of the queue an operator sees on the map
+#     (pages/dashboard.tsx:914-917, `onlyMyCases`) and is the reason a
+#     reception supervisor sees other operators' cases.
+#
+# AGENCY TYPE. What ALSO varies this view is `agencyType`, which is not an axis
+# of this manual: `HomeView` keys `HOME_LAYOUT_RULES` off it
+# (views/home-right-slot.ts:67-116). This section describes the RECEPTION rules
+# (views/home-right-slot.ts:68-79) — the manual's agreed scope, and the backend's
+# own default (domain/types/agency.types.ts:9). See ESTADO.md. On `develop` those
+# rules show Fuerzas en Campo and CCTV for RECEPTION
+# (views/home-right-slot.ts:72-73, `showFieldForcesOnCase`, `showCctvOnCase`).
+# The unmerged `feat/dashboard/role-based-views` branch would change that; it is
+# NOT what this section documents.
+#
+# NOT DOCUMENTED, and not a gap: the Agencias panel and the DISPATCH agency's
+# own case view (`agency-*` panels, views/home-view.tsx:304-341) only mount for
+# other agency types, and `CaseRecommendedAgencies`
+# (components/panels/dashboard/incident-summary/case-recommended-agencies.tsx)
+# is not mounted by any RECEPTION layout.
 #
 # Paths in comments are relative to `src/modules/dashboard/presentation/ui/` in
 # the `bridge` source repository, except where another module is named in full.
@@ -25,1021 +61,2337 @@ subtitle: Punto de entrada del operador, sobre el mapa de la operación
 
 sourceBase: src/modules/dashboard/presentation/ui/
 
+# The screens of Home that the PRODUCT has not finished. Each is documented
+# around and never named in the content, and each is exported by
+# `broadsec-manual awaiting bridge-manual` to `awaiting-product.json`.
+pending:
+  - id: home.teclado-favoritos-simulados
+    covers: [home.teclado.fichas]
+    missing: >-
+      The "Favoritos" tab of the Teclado panel, and the control beside the
+      number field that adds the typed number to it. The other tabs of the
+      panel (Teclado, Recientes, Directorio, Agentes en turno) are documented;
+      this one is not mentioned.
+    because: >-
+      The tab lists `MOCK_FAVORITOS` (`components/panels/keypad-panel.tsx:73-77`),
+      three literal entries with Argentine numbers ("Centro Médico", "Bomberos",
+      "Policía Federal"). The list is component state seeded from that constant
+      (`:287`); adding a number only prepends to that state
+      (`handleAddFavorite`, `:294-297`) and nothing is persisted or fetched. The
+      phone button of every row has no `onClick` (`:738-740`).
+    settles: >-
+      The product persisting favourites per operator and wiring the row's phone
+      button, or the owner deciding how a manual describes a tab that is on
+      screen and fabricated.
+
+  - id: home.teclado-directorio-sin-marcado
+    covers: [home.teclado.fichas]
+    missing: >-
+      That the rows of the "Directorio" tab offer no way to dial the agency. The
+      tab is documented as a list of the registered agencies with their type,
+      which is what it does.
+    because: >-
+      `DirectorioView` renders each agency as a name and a type and nothing
+      else (`components/panels/keypad-panel.tsx:782-794`): there is no phone
+      number in the row and no button, unlike the rows of "Recientes"
+      (`:707-713`).
+    settles: >-
+      The product giving the directory a dial action, or the owner deciding how
+      a manual describes a list that looks like a dialler and is not.
+
+  - id: home.teclado-agentes-sin-accion
+    covers: [home.teclado.fichas]
+    missing: >-
+      The two buttons on each row of the "Agentes en turno" tab (the eye and the
+      phone, titled "Ver" and "Llamar"). The list itself — the connected agents,
+      their status and their station — is real and documented.
+    because: >-
+      `AgentsTable` renders both buttons for every row
+      (`components/panels/agents-on-shift-list.tsx:73-86`, `showActions` is
+      passed as `true` at `:26`) and neither has an `onClick`.
+    settles: >-
+      The product wiring "Ver" and "Llamar", or removing them.
+
+  - id: home.paneles-toggle-informacion-incidente
+    covers: [home.paneles.lista]
+    missing: >-
+      The toggle labelled "Información del incidente" in the panel bar. Every
+      other panel of the bar is documented; this one is not mentioned.
+    because: >-
+      `incident-info` is the id of the right-column SLOT
+      (`RIGHT_SLOT_PANEL_ID`, `views/home-view.tsx:138`), registered in the
+      manifest with the static label `homeView.incidentInfo`
+      (`:275-285`, calls.json:419) and not excluded for RECEPTION
+      (`views/home-right-slot.ts:224-257`). Its open state is driven by an
+      effect from the slot's occupant (`:1201-1212`: `rightSlot != null`),
+      and for RECEPTION with a case open `rightSlot` is null (`:782-789`),
+      so the toggle opens a panel whose render branch returns null
+      (`:1554-1619`, `default`). Without a case it acts as a second switch for
+      Mi turno.
+    settles: >-
+      The product hiding the toggle for RECEPTION (or giving it a purpose), or
+      the owner deciding how a manual describes a control that is on screen and
+      does nothing.
+
+  - id: home.revision-orden-inerte
+    covers: [home.revision.controles]
+    missing: >-
+      The sort toggle in the toolbar of "Reportes pendientes" (the up-down
+      arrows, titled "Mas recientes primero" / "Mas antiguos primero"). The
+      search, the filters and the history control beside it are documented.
+    because: >-
+      The toggle flips `sortAscending`
+      (`components/panels/dashboard/calls-review/calls-review-search.tsx:345-363`
+      and `calls-review-panel.tsx:176`, `:430-431`), but Recepción's panel never
+      reads it: its list is filtered and re-ordered at `:363-381` without
+      touching `sortAscending`, so pressing the toggle changes the button's title
+      and nothing on the list. (The legacy panel for other agency types does
+      read it, `:594`.)
+    settles: >-
+      The product applying the order to Recepción's list, or removing the
+      toggle.
+
+  - id: home.revision-estado-transferido
+    covers: [home.revision.estados]
+    missing: >-
+      The "Transferido" status of a case. It cannot be seen on screen today; the
+      declaration exists so the status is not forgotten if it becomes reachable.
+    because: >-
+      `transferido` is a member of `CallReviewReceptionStatusKey`
+      (`components/panels/dashboard/calls-review/calls-review.types.ts:193`) and
+      has a label, a colour and an icon (`:224-229`, label
+      `calls:receptionStatus.transferred`), but it is not in
+      `CALL_REVIEW_RECEPTION_STATUS_ORDER` (`:265-266`) — so the Estado filter
+      never lists it — and `resolveReceptionStatusKey` never returns it
+      (`:268-282`).
+    settles: >-
+      The product assigning the status to a case, or deleting it.
+
 # Where every quoted UI label in this section was copied from. Checked by
 # `broadsec-manual labels bridge-manual`.
 #
-# Roughly half of this section's label props are NOT citable, and the reasons are
-# worth keeping because they are the reasons a checker cannot be pointed at
-# everything:
+# NOT cited, because the manual is naming a REGION or a concept, not quoting a
+# rótulo (and a citation would report the manual's own words as drifted from a
+# screen that never said them):
 #
-#  - **The manual naming a REGION.** The review card's `Tipo de incidente`,
-#    `Antigüedad`, `Dirección`, `Teléfono`, `Duración` and `Estado` name areas of
-#    the card, not rótulos on it — the card shows a relative time, it does not
-#    print the word "Antigüedad". Only `Prioridad` is a rótulo. Same for the
-#    agency row's `Nombre` and `Tipo`, and for `Recursos`, which groups three
-#    counts the product prints separately.
-#  - **Controls with no rótulo at all.** Every entry in `home.herramientas` is an
-#    icon button with neither `title` nor `aria-label`
-#    (`components/panels/map-tools-panel.tsx:228-275`), so the six names in that
-#    table are the manual describing a function. `Acercar` and `Alejar` DO appear
-#    elsewhere in the product — citing those hits would be citing a different
-#    control that happens to share a word.
-#  - **Column headings** — `Dato`, `Qué indica`, `Recuento`, `Qué cuenta`,
-#    `Ficha`, `Qué contiene`, `Acción`, `Qué hace`, `Paso`, `Qué registra`,
-#    `Control`.
+#  - **The state names**: `Sin un caso abierto`, `Con un caso abierto`.
+#  - **The card's regions**: `Tipo de incidente` (the card shows the badge, not
+#    that phrase), `Número del caso`, `Antigüedad`, `Dirección`, `Teléfono` and
+#    `Duración` name areas of the card; the card prints values.
+#  - **The block of the call information that has no heading**: `Grabación`
+#    (the player carries no title of its own).
+#  - **What Post-Llamada changes**: `Cuenta regresiva`, `Bloqueo`, `Teclado`,
+#    `Al terminar` are the manual describing effects, not product labels. (The
+#    two banner captions, `Tiempo post-llamada` and `Tiempo superado`, ARE
+#    quoted and cited.)
+#  - **The manual's name for a control that has no rótulo**: `Vista de calle`.
+#    The street-view control is an image button with no `title` and no
+#    `aria-label` (components/panels/map-tools-panel.tsx:349-374); its `alt` is
+#    a code identifier, not a label.
+#  - **Column headings** — `Estado de trabajo`, `Qué muestra Home`, `Dato`,
+#    `Qué indica`, `Paso`, `Qué registra`, `Campo`, `Ficha`, `Qué contiene`,
+#    `Bloque`, `Recuento`, `Qué cuenta`, `Control`, `Qué hace`, `Acción`,
+#    `Panel`, `Cuándo figura`, `Capa`, `Qué muestra`, `Qué cambia`,
+#    `Cómo se comporta`.
 labels:
-  # The review card. Only the one rótulo it actually prints.
-  - at: home.revision.tarjeta.prioridad
-    from: components/panels/dashboard/calls-review/calls-review-card.tsx:388
-
-  # `CASE_STATUS`. A call with no dispatch record falls into "Cerrado".
-  - at: home.revision.estado.abierto
-    from: components/panels/dashboard/calls-review/calls-review.types.ts:13
-  - at: home.revision.estado.despacho
-    from: components/panels/dashboard/calls-review/calls-review.types.ts:15
-  - at: home.revision.estado.cerrado
-    from: components/panels/dashboard/calls-review/calls-review.types.ts:18
-
-  # The review controls. Two of these alternate — the citation names the line
-  # holding the state the manual documents, and the alternate is in its prose.
-  - at: home.revision.control.buscar
-    from: components/panels/dashboard/calls-review/calls-review-search.tsx:214
-  - at: home.revision.control.teclado
-    from: components/panels/dashboard/calls-review/calls-review-search.tsx:226
+  # The Reportes pendientes toolbar and its notices. The search placeholder is
+  # `review.searchPlaceholder`; the filters button is `review.filters`; the
+  # history control alternates with `review.back` once it is active.
+  - at: home.revision.control.busqueda
+    from: ../../../../i18n/locales/es/calls.json:126
   - at: home.revision.control.filtros
-    from: components/panels/dashboard/calls-review/calls-review-search.tsx:243
-  - at: home.revision.control.orden
-    from: components/panels/dashboard/calls-review/calls-review-search.tsx:345
+    from: ../../../../i18n/locales/es/calls.json:128
+  - at: home.revision.control.historial
+    from: ../../../../i18n/locales/es/calls.json:161
 
-  - at: home.revision.aviso.sin-llamadas
-    from: components/panels/dashboard/calls-review/calls-review-list.tsx:36
+  # `receptionStatus` and `reviewStatus.closed`: the values of the Estado filter.
+  - at: home.revision.estado.pendiente
+    from: ../../../../i18n/locales/es/calls.json:178
+  - at: home.revision.estado.abierto-con-despacho
+    from: ../../../../i18n/locales/es/calls.json:179
+  - at: home.revision.estado.abierto-sin-despacho
+    from: ../../../../i18n/locales/es/calls.json:180
+  - at: home.revision.estado.cerrado
+    from: ../../../../i18n/locales/es/calls.json:173
+
   - at: home.revision.aviso.error
-    from: components/panels/dashboard/call-summary/call-summary-panel.tsx:90
+    from: ../../../../i18n/locales/es/calls.json:121
+  - at: home.revision.aviso.al-dia
+    from: ../../../../i18n/locales/es/calls.json:162
+  - at: home.revision.aviso.sin-historial
+    from: ../../../../i18n/locales/es/calls.json:164
 
-  # `AGENCY_TYPE_LABEL` — display labels over the four backend `AgencyType`
-  # values, which is also the axis this manual is scoped to (RECEPTION).
-  - at: home.agencias.tipo.recepcion
-    from: components/panels/agencies-panel.tsx:29
-  - at: home.agencias.tipo.despacho
-    from: components/panels/agencies-panel.tsx:30
-  - at: home.agencias.tipo.supervision
-    from: components/panels/agencies-panel.tsx:31
-  - at: home.agencias.tipo.otra
-    from: components/panels/agencies-panel.tsx:32
-  - at: home.agencias.fila.casos
-    from: components/panels/agencies-panel.tsx:149
-  - at: home.agencias.aviso.error
-    from: components/panels/agencies-panel.tsx:224
-  - at: home.agencias.aviso.vacio
-    from: components/panels/agencies-panel.tsx:239
+  # The Teclado tabs (`keypad.tabs`). "Favoritos" is deliberately absent.
+  - at: home.teclado.ficha.teclado
+    from: ../../../../i18n/locales/es/calls.json:88
+  - at: home.teclado.ficha.recientes
+    from: ../../../../i18n/locales/es/calls.json:89
+  - at: home.teclado.ficha.directorio
+    from: ../../../../i18n/locales/es/calls.json:91
+  - at: home.teclado.ficha.agentes
+    from: ../../../../i18n/locales/es/calls.json:92
 
-  # `shiftMetrics`.
+  # `keypad.recentFilters`.
+  - at: home.teclado.reciente.entrantes
+    from: ../../../../i18n/locales/es/calls.json:99
+  - at: home.teclado.reciente.salientes
+    from: ../../../../i18n/locales/es/calls.json:100
+  - at: home.teclado.reciente.espera
+    from: ../../../../i18n/locales/es/calls.json:101
+  - at: home.teclado.reciente.abandonadas
+    from: ../../../../i18n/locales/es/calls.json:102
+
+  # `myShift` (namespace `calls`): the panel's four counts and its history.
   - at: home.turno.metrica.atendidos
-    from: components/panels/my-shift-panel.tsx:16
+    from: ../../../../i18n/locales/es/calls.json:272
   - at: home.turno.metrica.rechazados
-    from: components/panels/my-shift-panel.tsx:17
-  - at: home.turno.metrica.transferidas
-    from: components/panels/my-shift-panel.tsx:19
+    from: ../../../../i18n/locales/es/calls.json:273
+  - at: home.turno.metrica.validadas
+    from: ../../../../i18n/locales/es/calls.json:277
+  - at: home.turno.metrica.enviadas
+    from: ../../../../i18n/locales/es/calls.json:278
 
-  # The case summary's tabs.
-  - at: home.caso.informacion.ficha.capturas
-    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:30
-  - at: home.caso.informacion.ficha.ubicacion
-    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:31
-  - at: home.caso.informacion.ficha.logs
-    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:32
-  - at: home.caso.informacion.ficha.call-ia
-    from: components/panels/dashboard/incident-summary/incident-summary-content.tsx:33
+  # The controls of the report card. Two of them alternate with another state
+  # (`review.done` is the tooltip of the check while editing the type).
+  - at: home.caso.reporte.control.editar-tipo
+    from: ../../../../i18n/locales/es/calls.json:144
+  - at: home.caso.reporte.control.terminar-tipo
+    from: ../../../../i18n/locales/es/calls.json:482
+  - at: home.caso.reporte.control.cancelar-tipo
+    from: ../../../../i18n/locales/es/calls.json:481
+  - at: home.caso.reporte.control.editar-ubicacion
+    from: ../../../../i18n/locales/es/calls.json:147
+  - at: home.caso.reporte.control.guardar-ubicacion
+    from: ../../../../i18n/locales/es/calls.json:480
+  - at: home.caso.reporte.control.cancelar-ubicacion
+    from: ../../../../i18n/locales/es/calls.json:479
+  - at: home.caso.reporte.control.revisado-tipo
+    from: ../../../../i18n/locales/es/calls.json:168
+  - at: home.caso.reporte.control.revisado-ubicacion
+    from: ../../../../i18n/locales/es/calls.json:483
 
-  - at: home.caso.agencias.dato.operacion
-    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:214
-  - at: home.caso.agencias.dato.disponibles
-    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:221
-  - at: home.caso.agencias.dato.cercana
-    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:229
-  # Alternates with "Agencia transferida" once the transfer is done.
-  - at: home.caso.agencias.transferir.control
-    from: components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:264
+  # The blocks of the call information. `Call AI` is a hardcoded literal.
+  - at: home.caso.informacion.bloque.call-ai
+    from: components/panels/dashboard/incident-summary/incident-summary-call-ai.tsx:80
+  - at: home.caso.informacion.bloque.transferencias
+    from: ../../../../i18n/locales/es/incidents.json:261
+  - at: home.caso.informacion.bloque.ubicaciones
+    from: ../../../../i18n/locales/es/incidents.json:142
+  - at: home.caso.informacion.bloque.capturas
+    from: ../../../../i18n/locales/es/incidents.json:71
 
-  - at: home.caso.accion.centrar
-    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:38
-  - at: home.caso.accion.archivar
-    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:48
-  - at: home.caso.accion.llamar
-    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:62
-  - at: home.caso.accion.libro
-    from: components/panels/dashboard/incident-summary/agency-case-actions.tsx:79
+  # The notices of the recording.
+  - at: home.caso.informacion.aviso.procesando
+    from: ../../../../i18n/locales/es/incidents.json:106
+  - at: home.caso.informacion.aviso.sin-audio
+    from: ../../../../i18n/locales/es/incidents.json:105
+  - at: home.caso.informacion.aviso.sin-transcripcion
+    from: ../../../../i18n/locales/es/incidents.json:99
 
-  - at: home.libro.ficha.notas
-    from: components/panels/incident-book.tsx:69
-  - at: home.libro.ficha.libro
-    from: components/panels/incident-book.tsx:72
+  # The case book. The single step and its fields (`incidents:book`, `step1`).
   - at: home.libro.paso.recepcion
-    from: components/panels/incident-book/general-form.tsx:94
-  - at: home.libro.paso.despacho
-    from: components/panels/incident-book/general-form.tsx:95
-  - at: home.libro.paso.extendida
-    from: components/panels/incident-book/general-form.tsx:96
+    from: ../../../../i18n/locales/es/incidents.json:187
+  - at: home.libro.campo.nombre
+    from: ../../../../i18n/locales/es/incidents.json:270
+  - at: home.libro.campo.relacion
+    from: ../../../../i18n/locales/es/incidents.json:272
+  - at: home.libro.campo.telefono
+    from: ../../../../i18n/locales/es/incidents.json:275
+  - at: home.libro.campo.involucrado
+    from: ../../../../i18n/locales/es/incidents.json:280
+  - at: home.libro.campo.direccion
+    from: ../../../../i18n/locales/es/incidents.json:284
+  - at: home.libro.campo.ciudad
+    from: ../../../../i18n/locales/es/incidents.json:286
+  - at: home.libro.campo.piso
+    from: ../../../../i18n/locales/es/incidents.json:288
+  - at: home.libro.campo.referencia
+    from: ../../../../i18n/locales/es/incidents.json:290
+  - at: home.libro.campo.prioridad
+    from: ../../../../i18n/locales/es/incidents.json:294
+  - at: home.libro.campo.notas-adicionales
+    from: ../../../../i18n/locales/es/incidents.json:296
+
+  # The CCTV panel's notices (`cameras`, namespace `common`).
+  - at: home.caso.cctv.aviso.sin-camaras
+    from: ../../../../i18n/locales/es/common.json:203
+  - at: home.caso.cctv.aviso.error
+    from: ../../../../i18n/locales/es/common.json:202
+  - at: home.caso.cctv.aviso.sin-ubicacion
+    from: ../../../../i18n/locales/es/common.json:211
+
+  # The Fuerzas en Campo panel's states. The first is `fieldForces.dispatched`.
+  - at: home.caso.fuerzas.estado.despacho
+    from: ../../../../i18n/locales/es/calls.json:202
+  - at: home.caso.fuerzas.estado.sin-fuerzas
+    from: ../../../../i18n/locales/es/agents.json:120
+  - at: home.caso.fuerzas.estado.finalizado
+    from: ../../../../i18n/locales/es/calls.json:205
+  # The sentence continues on the next line of the JSX; the first half is the
+  # same words as `cameras.noLocationForCameras`.
+  - at: home.caso.fuerzas.estado.sin-ubicacion
+    from: components/panels/dashboard/calls-review/calls-review-field-forces.tsx:185
+
+  # The Log drawer's tab is a hardcoded literal.
+  - at: home.caso.bitacora.pestana
+    from: components/panels/logs-side-drawer.tsx:53
+  - at: home.caso.bitacora.aviso.sin-registros
+    from: ../../../../i18n/locales/es/incidents.json:120
+
+  # The action bar (`caseActions`).
+  - at: home.caso.accion.llamar
+    from: ../../../../i18n/locales/es/calls.json:584
+  - at: home.caso.accion.validar
+    from: ../../../../i18n/locales/es/calls.json:585
+  - at: home.caso.accion.mas-tarde
+    from: ../../../../i18n/locales/es/calls.json:590
+
+  # What a refused Validar says (`caseActions`).
+  - at: home.caso.validar.aviso.ubicacion
+    from: ../../../../i18n/locales/es/calls.json:594
+  - at: home.caso.validar.aviso.tipo
+    from: ../../../../i18n/locales/es/calls.json:595
+  - at: home.caso.validar.aviso.sin-ruta
+    from: ../../../../i18n/locales/es/calls.json:593
+  - at: home.caso.validar.aviso.sincronizando
+    from: ../../../../i18n/locales/es/calls.json:592
+
+  # The Post-Llamada banner: two hardcoded literals on one line.
+  - at: home.caso.post-llamada.contador.normal
+    from: components/layout/handle-time-countdown.tsx:133
+  - at: home.caso.post-llamada.contador.superado
+    from: components/layout/handle-time-countdown.tsx:133
+
+  # The panel bar.
+  - at: home.paneles.panel.revision
+    from: ../../../../i18n/locales/es/calls.json:414
+  - at: home.paneles.panel.teclado
+    from: ../../../../i18n/locales/es/calls.json:754
+  - at: home.paneles.panel.turno
+    from: ../../../../i18n/locales/es/calls.json:424
+  - at: home.paneles.panel.fuerzas
+    from: ../../../../i18n/locales/es/calls.json:201
+  - at: home.paneles.panel.cctv
+    from: ../../../../i18n/locales/es/calls.json:425
+  - at: home.paneles.panel.libro
+    from: ../../../../i18n/locales/es/calls.json:748
+  - at: home.paneles.panel.asignacion
+    from: ../../../../i18n/locales/es/calls.json:208
+  - at: home.paneles.panel.tarea
+    from: ../../../../i18n/locales/es/calls.json:210
+
+  # Layout controls: two literals in the Toolkit, three catalogue keys in the
+  # panel header (`panel.*`).
+  - at: home.paneles.control.bloqueo
+    from: components/panels/tool-kit-layout-actions.tsx:56
+  - at: home.paneles.control.restablecer
+    from: components/panels/tool-kit-layout-actions.tsx:71
+  - at: home.paneles.control.disminuir
+    from: ../../../../i18n/locales/es/common.json:159
+  - at: home.paneles.control.aumentar
+    from: ../../../../i18n/locales/es/common.json:160
+  - at: home.paneles.control.cerrar
+    from: ../../../../i18n/locales/es/common.json:161
+
+  # Map tools (`mapTools`, namespace `common`). The street-view control has no
+  # rótulo, see the note above the list.
+  - at: home.herramientas.control.centrar
+    from: ../../../../i18n/locales/es/common.json:820
+  - at: home.herramientas.control.integraciones
+    from: ../../../../i18n/locales/es/common.json:821
+  - at: home.herramientas.control.acercar
+    from: ../../../../i18n/locales/es/common.json:823
+  - at: home.herramientas.control.alejar
+    from: ../../../../i18n/locales/es/common.json:824
+  - at: home.herramientas.control.base
+    from: ../../../../i18n/locales/es/common.json:822
+  - at: home.herramientas.control.agrupar
+    from: ../../../../i18n/locales/es/common.json:825
+
+  # The layers. Tráfico, Satelital and Cámaras are keys of `mapLayers`; AVL and
+  # Mobile are hardcoded in the layer table.
+  - at: home.herramientas.capa.trafico
+    from: ../../../../i18n/locales/es/common.json:185
+  - at: home.herramientas.capa.satelital
+    from: ../../../../i18n/locales/es/common.json:186
+  - at: home.herramientas.capa.avl
+    from: components/panels/map-tools-panel.tsx:78
+  - at: home.herramientas.capa.mobile
+    from: components/panels/map-tools-panel.tsx:79
+  - at: home.herramientas.capa.camaras
+    from: ../../../../i18n/locales/es/common.json:187
 
 children:
   - id: home.proposito
     type: prose
     props:
       text: >-
-        La vista **Home** es el puesto de trabajo del operador. Sobre el mapa de
-        la operación se acomodan paneles con las llamadas pendientes de revisar,
-        las agencias disponibles, el resumen del turno y, cuando se abre un
-        caso, todo lo necesario para atenderlo sin cambiar de pantalla.
+        La vista **Home** es el puesto de trabajo del operador de recepción.
+        Sobre el mapa de la operación se acomodan paneles que cambian según el
+        estado del trabajo: mientras no hay un caso abierto muestran los
+        reportes pendientes de revisar, el teclado y el resumen del turno; al
+        abrir un caso se reacomodan para atenderlo, con la información de la
+        llamada, el libro del caso, las cámaras cercanas y las fuerzas en
+        campo, todo en la misma pantalla.
 
   - id: home.alcance
     type: prose
     props:
-      # HOME_LAYOUT_RULES (home-view.tsx:57-80) define un juego de paneles por
-      # tipo de agencia. Esta sección documenta RECEPTION. La aclaración es
-      # necesaria: sin ella, el lector de una agencia de otro tipo buscaría
-      # paneles que su plataforma no monta. Rótulo del tipo citado de
-      # components/panels/agencies-panel.tsx:29.
+      # HOME_LAYOUT_RULES (views/home-right-slot.ts:67-116) define un juego de
+      # paneles por tipo de agencia; se documenta RECEPTION (:68-79). La
+      # aclaración es necesaria: sin ella, el lector de una agencia de otro tipo
+      # buscaría paneles que su plataforma no monta. Lo que una persona ve de la
+      # cola depende además del permiso de ver todos los casos
+      # (pages/dashboard.tsx:914-917 y calls-review-panel.tsx:178-182).
       text: >-
         La distribución de paneles descrita en esta sección corresponde a una
         agencia de **Recepción**. La plataforma acomoda Home según el tipo de
         agencia asignada a su usuario, de modo que una agencia de otro tipo
-        presenta un juego de paneles distinto.
+        presenta un juego de paneles distinto. Lo que ve dentro de esos paneles
+        depende además de los permisos de su perfil: un operador de recepción ve
+        los casos que le corresponden, y un supervisor, con permiso para ver
+        todos los casos, ve también los de los demás operadores, tanto en la
+        lista como en el mapa.
 
   - id: home.acceso
     type: prose
     props:
-      # components/layout/icon-sidebar.tsx:52 — nav item id `home`, label
-      # "Home", en el riel de iconos; pages/dashboard.tsx:667 conmuta la vista.
+      # components/layout/icon-sidebar.tsx:61-65 — nav item id `home`, label
+      # `navigation.home` = "Home" (common.json:65); pages/dashboard.tsx:91 lo
+      # deja como vista inicial y :198-233 (`onCallEnded`) devuelve al operador
+      # a Home al terminar una llamada.
       text: >-
         Diríjase a **Home** en la barra lateral de iconos. Es la vista con la
-        que abre la plataforma. Ocupa la pantalla completa: el mapa de fondo, la
-        columna izquierda con la revisión de llamadas y la columna derecha con
-        las agencias y el turno.
+        que abre la plataforma, y a ella lo devuelve la plataforma cuando
+        termina una llamada. Ocupa la pantalla completa: el mapa de fondo y,
+        encima, los paneles.
 
-  - id: home.fig
+  - id: home.general.fig
     type: figure
     props:
-      caption: "Vista Home sin caso abierto: el mapa de fondo, la revisión de llamadas a la izquierda, y las agencias y el turno a la derecha."
+      caption: "Vista Home sin caso abierto: el mapa de fondo, con el teclado y los reportes pendientes a la izquierda y el resumen del turno a la derecha."
       widthPercent: 90
 
-  # --- Revisión de llamadas --------------------------------------------------
-  - id: home.revision
-    title: Revisión de llamadas
-    children:
-      - id: home.revision.proposito
-        type: prose
-        props:
-          text: >-
-            Lista las llamadas registradas y el estado del caso que cada una
-            generó. Es el punto de partida del trabajo del operador: de esta
-            lista se abre el caso que se va a atender.
-
-      - id: home.revision.ubicacion
-        type: prose
-        props:
-          # HOME_MANIFEST, entrada `calls-review` (home-view.tsx:88-98):
-          # region "left", sin `initiallyInactive`, de modo que está activa al
-          # abrir la vista. Encabezado citado de
-          # components/panels/dashboard/calls-review/calls-review-panel.tsx:241.
-          text: >-
-            Ocupa la columna izquierda y está abierta desde que carga la vista.
-            El panel se titula **Revisión de llamadas** y no requiere ninguna
-            acción previa.
-
-      - id: home.revision.fig
-        type: figure
-        props:
-          caption: "Panel de revisión de llamadas con la barra de búsqueda y la lista de tarjetas."
-          widthPercent: 90
-
-      - id: home.revision.tarjeta.titulo
-        type: detail-header
-        props:
-          text: Qué muestra cada tarjeta
-
-      - id: home.revision.tarjeta
-        type: data-table
-        props:
-          labelHeader: Dato
-          descriptionHeader: Qué indica
-          rows:
-            # components/panels/dashboard/calls-review/calls-review-card.tsx:
-            # tipo :376-384, "Prioridad" :385-389, antigüedad :391-401,
-            # dirección :496 (con "Sin ubicación" en :233), teléfono :501,
-            # duración :506, estado :510.
-            - id: home.revision.tarjeta.tipo
-              label: Tipo de incidente
-              description: >-
-                Clasificación del incidente reportado en la llamada. Encabeza la
-                tarjeta.
-            - id: home.revision.tarjeta.prioridad
-              label: Prioridad
-              description: >-
-                Distintivo que acompaña a toda llamada que ningún operador abrió
-                todavía. Desaparece en cuanto la tarjeta se abre por primera
-                vez.
-            - id: home.revision.tarjeta.antiguedad
-              label: Antigüedad
-              description: >-
-                Cuánto tiempo pasó desde que ingresó la llamada.
-            - id: home.revision.tarjeta.direccion
-              label: Dirección
-              description: >-
-                Ubicación reportada del incidente. Cuando la llamada no trae
-                ubicación, la tarjeta indica **Sin ubicación**.
-            - id: home.revision.tarjeta.telefono
-              label: Teléfono
-              description: >-
-                Número desde el que se originó la llamada.
-            - id: home.revision.tarjeta.duracion
-              label: Duración
-              description: >-
-                Cuánto duró la llamada.
-            - id: home.revision.tarjeta.estado
-              label: Estado
-              description: >-
-                Situación actual del caso que la llamada generó. Cierra la
-                tarjeta.
-
-      - id: home.revision.estados
-        type: term-list
-        props:
-          entries:
-            # Rótulos citados de
-            # components/panels/dashboard/calls-review/calls-review.types.ts:13,
-            # :15 y :18. Una llamada sin registro de despacho cae en "Cerrado"
-            # (misma unidad, :40-43).
-            - id: home.revision.estado.abierto
-              term: Abierto
-              definition: >-
-                El caso está registrado y todavía no se despachó a ninguna
-                agencia.
-            - id: home.revision.estado.despacho
-              term: En Despacho
-              definition: >-
-                El caso ya fue transferido a una agencia y está en curso.
-            - id: home.revision.estado.cerrado
-              term: Cerrado
-              definition: >-
-                El caso está terminado. También es el estado que muestra una
-                llamada que nunca llegó a generar un despacho.
-
-      - id: home.revision.controles
-        type: field-list
-        props:
-          items:
-            # Rótulos citados de
-            # components/panels/dashboard/calls-review/calls-review-search.tsx.
-            - id: home.revision.control.buscar
-              # placeholder en :214.
-              label: Buscar por ID, dir...
-              text: >-
-                Reduce la lista a las llamadas cuyo identificador, tipo,
-                teléfono, dirección o ciudad contienen lo que escriba. Filtra
-                mientras escribe, sin necesidad de confirmar.
-              layout: beside
-
-            - id: home.revision.control.filtros
-              # title en :243; secciones "Estado" (:282) y "Tipo de incidente"
-              # (:308).
-              label: Filtros
-              text: >-
-                Abre las dos listas por las que puede acotar la lista,
-                **Estado** y **Tipo de incidente**. Cada opción indica cuántas
-                llamadas quedarían si la eligiera, de modo que la cuenta se
-                actualiza a medida que escribe o cambia la otra lista.
-              layout: beside
-
-            - id: home.revision.control.orden
-              # title alterna en :344-346 entre "Más recientes primero" y "Más
-              # antiguos primero", según `sortAscending`.
-              label: Más recientes primero
-              text: >-
-                Invierte el orden de la lista. Al alternarlo, el control pasa a
-                ofrecer **Más antiguos primero**.
-              layout: beside
-
-            - id: home.revision.control.teclado
-              # El `title` de :226 es el ternario
-              # `keypadActive ? "Ocultar teclado" : "Mostrar teclado"`, y la
-              # rama verdadera NO es alcanzable. `CallsReviewSearch` se monta
-              # únicamente desde calls-review-panel.tsx:204, y abrir el teclado
-              # desactiva ese panel: home-view.tsx:453-457 recorre el camino
-              # inverso, reactivando `calls-review` al cerrar el teclado.
-              # Comprobado contra la app: con el teclado abierto no hay ningún
-              # control con ese título en pantalla. Leer lo que el código HACE,
-              # no las dos ramas de un ternario.
-              label: Mostrar teclado
-              text: >-
-                Reemplaza la lista por el teclado telefónico en la misma
-                columna. La lista vuelve a su lugar desde el propio teclado.
-              layout: beside
-
-      - id: home.revision.avisos
-        type: term-list
-        props:
-          entries:
-            # components/panels/dashboard/calls-review/calls-review-list.tsx:36
-            # y :28.
-            - id: home.revision.aviso.sin-llamadas
-              term: Sin llamadas para mostrar
-              definition: >-
-                No hay llamadas que cumplan con la búsqueda y los filtros
-                activos. Vacíe la búsqueda o vuelva a activar los filtros para
-                ver la lista completa.
-
-            - id: home.revision.aviso.error
-              term: No se pudieron cargar los casos
-              definition: >-
-                No fue posible recuperar la lista. Reintente más tarde y, si el
-                aviso persiste, informe al administrador.
-
-      - id: home.revision.abrir
-        type: procedure
-        props:
-          # Al abrir un caso, la lista deja a la vista únicamente esa tarjeta
-          # (calls-review-list.tsx:44-47) y el mapa se centra en el incidente
-          # cuando la llamada trae coordenadas (calls-review-panel.tsx:83-97).
-          # La tarjeta es el control: `role="button"` con su manejador en
-          # calls-review-card.tsx:339-341.
-          lead: >-
-            Para abrir el caso de una llamada:
-          steps:
-            - id: home.revision.abrir.ubicar
-              title: Ubique la llamada en la lista
-              text: >-
-                Recorra las tarjetas o acote la lista con la búsqueda y los
-                filtros. Las llamadas que nadie revisó todavía llevan el
-                distintivo **Prioridad**.
-              layout: beside
-
-            - id: home.revision.abrir.seleccionar
-              title: Haga clic en la tarjeta
-              text: >-
-                La vista pasa al caso: la lista deja a la vista únicamente esa
-                tarjeta y el mapa se centra en el incidente cuando la llamada
-                trae ubicación.
-              layout: beside
-
-            - id: home.revision.abrir.verificar
-              title: Verifique que abrió el caso correcto
-              text: >-
-                Confirme el tipo de incidente, la dirección y el teléfono en la
-                tarjeta que quedó a la vista antes de trabajar sobre el caso.
-              layout: beside
-
-      - id: home.revision.corregir
-        type: procedure
-        props:
-          # Controles citados de calls-review-card.tsx:436 ("Editar"), :413
-          # ("Cancelar"), :422 ("Guardar") y :475 (buscador de dirección). Los
-          # controles aparecen solo en la tarjeta abierta (:402). El tipo puede
-          # corregirse únicamente cuando la llamada tiene caso asociado
-          # (`canEditType = item.matchId != null`, :98).
-          lead: >-
-            Para corregir la dirección o el tipo de incidente de un caso
-            abierto:
-          steps:
-            - id: home.revision.corregir.editar
-              title: Haga clic en Editar
-              text: >-
-                El control aparece en la tarjeta abierta. La dirección y el tipo
-                de incidente quedan habilitados para modificarse.
-              layout: beside
-
-            - id: home.revision.corregir.direccion
-              title: Corrija la dirección
-              text: >-
-                Escriba en **Buscar dirección…** y elija una de las direcciones
-                propuestas.
-              layout: beside
-
-            - id: home.revision.corregir.tipo
-              title: Corrija el tipo de incidente
-              text: >-
-                Haga clic en el tipo que encabeza la tarjeta y elija el que
-                corresponde. El tipo solo puede corregirse cuando la llamada
-                tiene un caso asociado.
-              layout: beside
-
-            - id: home.revision.corregir.guardar
-              title: Haga clic en Guardar
-              text: >-
-                La tarjeta vuelve a su estado de lectura con los datos
-                corregidos. **Cancelar** descarta lo modificado y deja la
-                tarjeta como estaba.
-              layout: beside
-
-      - id: home.revision.aviso-nueva
-        type: callout
-        props:
-          # calls-review-new-case-toast.tsx:22, disparado por
-          # `useCallsReviewNewCase` junto con el sonido de notificación
-          # (home-view.tsx:294-309).
-          variant: info
-          text: >-
-            Cuando ingresa una llamada nueva, la plataforma emite un sonido de
-            notificación y muestra el aviso **Nuevo registro de llamada
-            pendiente por revisar** durante unos segundos. El aviso desaparece
-            solo; la llamada queda en la lista con el distintivo **Prioridad**.
-
-  # --- Agencias --------------------------------------------------------------
-  - id: home.agencias
-    title: Agencias
-    children:
-      - id: home.agencias.proposito
-        type: prose
-        props:
-          text: >-
-            Lista las agencias que su usuario tiene disponibles, con la cantidad
-            de casos que cada una está gestionando. Sirve para saber a quién se
-            puede transferir un caso antes de abrirlo.
-
-      - id: home.agencias.ubicacion
-        type: prose
-        props:
-          # HOME_MANIFEST, entrada `agencies` (home-view.tsx:158-168):
-          # region "right", `requiresNoCase`. Activada en :394-398 solo mientras
-          # no hay caso abierto. Encabezado citado de
-          # components/panels/agencies-panel.tsx:208.
-          text: >-
-            Ocupa la mitad superior de la columna derecha mientras no haya un
-            caso abierto. Al abrir un caso, el panel deja su lugar a la
-            información de ese caso.
-
-      - id: home.agencias.fig
-        type: figure
-        props:
-          caption: "Panel de agencias con una fila por agencia disponible."
-          widthPercent: 90
-
-      - id: home.agencias.fila
-        type: data-table
-        props:
-          labelHeader: Dato
-          descriptionHeader: Qué indica
-          rows:
-            # components/panels/agencies-panel.tsx: nombre :133-138, tipo
-            # :139-145, cantidad de casos :147-155 (title "Casos con esta
-            # agencia", :149).
-            - id: home.agencias.fila.nombre
-              label: Nombre
-              description: >-
-                Nombre de la agencia.
-            - id: home.agencias.fila.tipo
-              label: Tipo
-              description: >-
-                Clase de agencia, que indica qué rol cumple en la operación.
-            - id: home.agencias.fila.casos
-              label: Casos con esta agencia
-              description: >-
-                Cuántos casos tiene esa agencia en gestión. No se muestra
-                mientras el dato todavía se está recuperando, para no informar
-                un cero que no es real.
-
-      - id: home.agencias.tipos
-        type: term-list
-        props:
-          entries:
-            # Rótulos citados de components/panels/agencies-panel.tsx:29-32.
-            - id: home.agencias.tipo.recepcion
-              term: Recepción
-              definition: >-
-                Recibe las llamadas y registra el caso.
-            - id: home.agencias.tipo.despacho
-              term: Despacho
-              definition: >-
-                Asigna y coordina los recursos que atienden el caso en campo.
-            - id: home.agencias.tipo.supervision
-              term: Supervisión
-              definition: >-
-                Sigue la operación sin intervenir en la atención del caso.
-            - id: home.agencias.tipo.otra
-              term: Otra
-              definition: >-
-                Agencia cuyo tipo no corresponde a ninguno de los anteriores.
-
-      - id: home.agencias.avisos
-        type: term-list
-        props:
-          entries:
-            # components/panels/agencies-panel.tsx:224 y :239. El control de
-            # reintento se cita de :232.
-            - id: home.agencias.aviso.error
-              term: No se pudieron cargar las agencias
-              definition: >-
-                No fue posible recuperar la lista. Use **Reintentar** para
-                repetir la consulta.
-
-            - id: home.agencias.aviso.vacio
-              term: No tenés agencias disponibles
-              definition: >-
-                Su usuario no tiene ninguna agencia habilitada como destino.
-                Solicite la habilitación al administrador.
-
-  # --- Mi Turno --------------------------------------------------------------
-  - id: home.turno
-    title: Mi Turno
-    children:
-      - id: home.turno.proposito
-        type: prose
-        props:
-          text: >-
-            Resume su propia jornada: cuántas llamadas atendió, cuántas rechazó
-            y cuántas transfirió, y deja el registro de lo que hizo durante el
+  - id: home.estados
+    type: data-table
+    props:
+      # The two states are the manual's own organising idea, not a product
+      # label. What decides the state is `selectedCase`
+      # (views/home-view.tsx:374): the panels that follow it are the effects at
+      # :1272-1304 (Fuerzas en Campo), :1319-1334 (CCTV), :1336-1344 (libro del
+      # caso) and :1384-1393 (teclado).
+      labelHeader: Estado de trabajo
+      descriptionHeader: Qué muestra Home
+      rows:
+        - id: home.estado.sin-caso
+          label: Sin un caso abierto
+          description: >-
+            Es el estado con el que abre Home y al que vuelve al salir de un
+            caso. Muestra los reportes pendientes, el teclado y el resumen del
             turno.
+        - id: home.estado.con-caso
+          label: Con un caso abierto
+          description: >-
+            Se entra al abrir un reporte de la lista o, por sí solo, cuando
+            termina una llamada. Muestra el reporte con la información de la
+            llamada, el libro del caso, las cámaras cercanas y las fuerzas en
+            campo.
 
-      - id: home.turno.ubicacion
+  # --- Sin un caso abierto ---------------------------------------------------
+  - id: home.sin-caso
+    title: Sin un caso abierto
+    children:
+      - id: home.sin-caso.proposito
         type: prose
         props:
-          # `noCaseRightSlot: "my-shift"` para RECEPTION
-          # (home-view.tsx:58-62), montado en el slot `incident-info`
-          # (:522-524). Encabezado citado de
-          # components/panels/my-shift-panel.tsx:49.
+          # rightSlot = "my-shift" while no case is open
+          # (views/home-right-slot.ts:69 and :127-138); the keypad is opened
+          # whenever there is no case (views/home-view.tsx:1384-1393).
           text: >-
-            Ocupa la mitad inferior de la columna derecha mientras no haya un
-            caso abierto, debajo de las agencias. El panel se titula **Mi
-            Turno**.
+            Es el estado de espera y de revisión. La columna izquierda lleva el
+            teclado y, debajo, la lista de reportes pendientes; la derecha lleva
+            el resumen de su turno. Desde aquí se abre el caso que se va a
+            atender.
 
-      - id: home.turno.fig
-        type: figure
-        props:
-          caption: "Panel del turno con los tres recuentos de la jornada y el historial."
-          widthPercent: 90
+      # --- Reportes pendientes ---------------------------------------------
+      - id: home.revision
+        title: Reportes pendientes
+        children:
+          - id: home.revision.proposito
+            type: prose
+            props:
+              # Recepción's panel: CallsReviewReceptionCasePanel
+              # (components/panels/dashboard/calls-review/calls-review-panel.tsx:105-498).
+              # The default narrowing to "pendiente" is at :333-340.
+              text: >-
+                Lista los casos que le corresponden, uno por tarjeta, para que
+                los revise y los valide. Muestra por defecto solo los
+                **pendientes**: los casos cuya llamada ya terminó y que todavía
+                no se validaron. Es el punto de partida del trabajo: de esta
+                lista se abre el caso que se va a atender.
 
-      - id: home.turno.metricas
-        type: data-table
-        props:
-          labelHeader: Recuento
-          descriptionHeader: Qué cuenta
-          rows:
-            # Rótulos citados de components/panels/my-shift-panel.tsx:16, :17
-            # y :19.
-            - id: home.turno.metrica.atendidos
-              label: Atendidos
-              description: >-
-                Llamadas que usted atendió en la jornada.
-            - id: home.turno.metrica.rechazados
-              label: Rechazados
-              description: >-
-                Llamadas que usted rechazó.
-            - id: home.turno.metrica.transferidas
-              label: Llamadas transferidas
-              description: >-
-                Llamadas que usted derivó a otra agencia.
+          - id: home.revision.ubicacion
+            type: prose
+            props:
+              # HOME_DOCK_MANIFEST_KEYS `calls-review` (views/home-view.tsx:247-252,
+              # without `initiallyInactive`, so it opens with the view) and its
+              # seed (:97-116: below the keypad, left column). The title without
+              # a case is `homeView.incidentReviewDetail` (calls.json:417, chosen
+              # at home-view.tsx:1076-1083); the Toolkit lists the same panel as
+              # `homeView.incidentReview` (calls.json:414, manifest label at
+              # home-view.tsx:249). Both are visible to the operator, so both are
+              # named — the shape a rename in progress leaves behind.
+              text: >-
+                Ocupa la columna izquierda, debajo del teclado, y está abierta
+                desde que carga la vista. Su encabezado dice **Reportes
+                pendientes**; en la barra de paneles el mismo panel figura como
+                **Revisión de Incidentes**. No requiere ninguna acción previa.
 
-      - id: home.turno.historial.titulo
-        type: detail-header
-        props:
-          # Citado de components/panels/my-shift-panel.tsx:86.
-          text: Historial de turno
+          - id: home.revision.lista.fig
+            type: figure
+            props:
+              caption: "Panel de reportes pendientes con la barra de búsqueda y las tarjetas de los casos."
+              widthPercent: 90
 
-      - id: home.turno.historial.texto
-        type: prose
-        props:
-          # Estado vacío en :98.
-          text: >-
-            Debajo de los recuentos, lista en orden lo que ocurrió durante su
-            jornada. Cuando todavía no hay nada registrado, muestra **Sin
-            actividad registrada hoy**.
+          - id: home.revision.tarjeta.titulo
+            type: detail-header
+            props:
+              text: Qué muestra cada tarjeta
 
-  # --- El caso abierto -------------------------------------------------------
+          - id: home.revision.tarjeta
+            type: data-table
+            props:
+              # components/panels/dashboard/calls-review/calls-review-card.tsx:
+              # type badge :427-434 (with "+N" for extra types,
+              # emergency-type-badge.tsx:425-429), relative time :453-459,
+              # case id with copy :468-485, address :487-545 ("Sin ubicacion" at
+              # :301 from `review.noLocation`, calls.json:124), phone :546-549,
+              # duration :550-553.
+              labelHeader: Dato
+              descriptionHeader: Qué indica
+              rows:
+                - id: home.revision.tarjeta.tipo
+                  label: Tipo de incidente
+                  description: >-
+                    Clasificación del incidente, con su icono, en la parte
+                    superior de la tarjeta. Si el caso tiene varios tipos, se
+                    muestra el primero seguido de la cantidad de los demás
+                    (por ejemplo, +2).
+                - id: home.revision.tarjeta.caso
+                  label: Número del caso
+                  description: >-
+                    El identificador del reporte, con un botón para copiarlo.
+                - id: home.revision.tarjeta.antiguedad
+                  label: Antigüedad
+                  description: >-
+                    Cuánto tiempo pasó desde que ingresó la llamada. Se muestra
+                    mientras la tarjeta está en la lista; al abrir el caso se
+                    reemplaza por la fecha y la hora exactas.
+                - id: home.revision.tarjeta.direccion
+                  label: Dirección
+                  description: >-
+                    Ubicación del incidente, con un botón para copiarla. Cuando
+                    el caso no tiene ubicación, la tarjeta indica **Sin
+                    ubicacion**.
+                - id: home.revision.tarjeta.telefono
+                  label: Teléfono
+                  description: >-
+                    Número desde el que se originó la llamada.
+                - id: home.revision.tarjeta.duracion
+                  label: Duración
+                  description: >-
+                    Cuánto duró la llamada.
+
+          - id: home.revision.estados.titulo
+            type: detail-header
+            props:
+              text: Estados de un caso
+
+          - id: home.revision.estados
+            type: term-list
+            props:
+              entries:
+                # Recepción's ladder is derived from the real case
+                # (calls-review.types.ts:268-282, `resolveReceptionStatusKey`):
+                # DRAFT is pendiente; ROUTED is abierto con despacho when the
+                # case has at least one agency assignment and sin despacho when
+                # it has none; CLOSED and CANCELLED are both cerrado. Labels:
+                # `receptionStatus` (calls.json:178-180) and
+                # `reviewStatus.closed` (calls.json:173). The list is the Estado
+                # filter's (calls-review.types.ts:265-266) and is seen there,
+                # not as a badge on the card.
+                - id: home.revision.estado.pendiente
+                  term: Pendiente
+                  definition: >-
+                    La llamada terminó y el caso todavía no se validó. Es el
+                    único estado que la lista muestra mientras no cambie el
+                    filtro.
+                - id: home.revision.estado.abierto-con-despacho
+                  term: Abierto con despacho
+                  definition: >-
+                    El caso se validó y tiene una o más agencias asignadas.
+                - id: home.revision.estado.abierto-sin-despacho
+                  term: Abierto sin despacho
+                  definition: >-
+                    El caso se validó y no tiene ninguna agencia asignada.
+                - id: home.revision.estado.cerrado
+                  term: Cerrado
+                  definition: >-
+                    El caso terminó o se canceló.
+
+          - id: home.revision.controles
+            type: field-list
+            props:
+              items:
+                # components/panels/dashboard/calls-review/calls-review-search.tsx:
+                # search :250-257 (filters mientras escribe; the panel also sends
+                # the term to the server, debounced 400 ms, calls-review-panel.tsx:120
+                # and :183-188; the local match covers id, type, phone, address
+                # and city, :312-321); filters :259-343; history :365-385.
+                - id: home.revision.control.busqueda
+                  label: Buscar por tipo, direccion...
+                  text: >-
+                    Reduce la lista a los casos cuyo identificador, tipo,
+                    teléfono, dirección o ciudad contienen lo que escriba. Filtra
+                    mientras escribe, sin necesidad de confirmar.
+                  layout: beside
+
+                # Filters :259-343: two lists (Estado :307-323, Tipo de incidente
+                # :325-341) with a count per option; the first pick isolates that
+                # option (`isolateOrToggleFilter`, :34-45); "Ver todos" resets one
+                # list (:121-129) — in Estado that shows every status
+                # (calls-review-panel.tsx:333-340) — and "Limpiar" (:297-303)
+                # resets both and returns to the pending-only default
+                # (calls-review-panel.tsx:135-140). The badge counts the lists
+                # that are narrowing (:276-280).
+                - id: home.revision.control.filtros
+                  label: Filtros
+                  text: >-
+                    Abre las dos listas por las que puede acotar la lista,
+                    **Estado** y **Tipo de incidente**. Cada opción indica
+                    cuántos casos quedarían si la eligiera. La primera opción
+                    que elija deja solo esa; las siguientes se suman o se
+                    quitan. **Ver todos** deja una lista sin acotar (en
+                    **Estado**, muestra los casos de todos los estados) y
+                    **Limpiar** descarta ambas y vuelve a la lista de
+                    pendientes. Un distintivo sobre el botón indica cuántas de
+                    las dos listas están acotando.
+                  layout: beside
+
+                # History :365-385 toggles `isHistoryView`
+                # (calls-review-panel.tsx:141-152): it clears the Estado filter
+                # (every status visible) and the same button then reads "Volver"
+                # (`review.back`, calls.json:160).
+                - id: home.revision.control.historial
+                  label: Historial de incidentes
+                  text: >-
+                    Muestra los casos de todos los estados, incluidos los que ya
+                    validó, sin tener que vaciar antes los pendientes. Mientras
+                    está activo, el mismo botón pasa a llamarse **Volver** y
+                    devuelve la lista a los pendientes.
+                  layout: beside
+
+          - id: home.revision.contadores
+            type: prose
+            props:
+              # "N casos" is `review.caseCount` (calls.json:118-119) fed with the
+              # SERVER total (`total` from `useCases` with `includeHistory`,
+              # calls-review-panel.tsx:183, :439), not with the cards on screen;
+              # drawn only while the list has cards and no case is open (:437-441); the selector is `review.maxRecords`
+              # "Mostrar" (calls.json:127) with 25/50/100/200 (:456) and 50 as
+              # the initial value (:121).
+              text: >-
+                Bajo la barra de herramientas, la lista indica el total de casos
+                que devuelve la consulta con la búsqueda actual, historial
+                incluido (por ejemplo, **3 casos**); no es la cantidad de
+                tarjetas que ve, que depende además de los filtros. El selector **Mostrar** permite
+                elegir cuántos registros se cargan: 25, 50, 100 o 200. El valor
+                inicial es 50.
+
+          - id: home.revision.avisos
+            type: term-list
+            props:
+              entries:
+                # components/panels/dashboard/calls-review/calls-review-list.tsx:
+                # error :66-72, empty list outside history :104-128 (it shows for ANY
+                # empty filtered list, also after a search or filter with no
+                # match), empty history :75-101. The words under each title are the catalogue's
+                # calls.json:163, :123, :165 and :166.
+                - id: home.revision.aviso.error
+                  term: No se pudieron cargar los casos
+                  definition: >-
+                    No fue posible recuperar la lista. Reintente más tarde y, si
+                    el aviso persiste, informe al administrador.
+                - id: home.revision.aviso.al-dia
+                  term: Vas muy bien, estás al día
+                  definition: >-
+                    La lista no tiene ninguna tarjeta que mostrar fuera del
+                    historial. Puede significar que no quedan casos pendientes o
+                    que la búsqueda o los filtros activos no dejan ninguno. El
+                    aviso lo acompaña con **No tienes incidentes pendientes por
+                    revisar.** y con el botón **Ver historial de incidentes**,
+                    que muestra los casos de todos los estados.
+                - id: home.revision.aviso.sin-historial
+                  term: No hay historial de incidentes para revisar
+                  definition: >-
+                    El historial está vacío. El aviso indica que **Todavía no
+                    hay incidentes registrados en este turno.** y ofrece
+                    **Volver a incidentes pendientes**.
+
+          - id: home.revision.aviso-nueva
+            type: callout
+            props:
+              # `useCallsReviewNewCase` (hooks/use-calls-review-new-case.ts:11-32)
+              # fires the sound and `toast.info(t("homeView.newCallPending"))`
+              # (views/home-view.tsx:748-753); the text is calls.json:420.
+              variant: info
+              text: >-
+                Cuando ingresa una llamada nueva, la plataforma emite un sonido
+                de notificación y muestra el aviso **Nuevo registro de llamada
+                pendiente por revisar** durante unos segundos.
+
+          - id: home.revision.abrir
+            type: procedure
+            props:
+              # The card is the control: `role="button"` with its handler
+              # (calls-review-card.tsx:389-399). Selecting it runs
+              # `handleSelectCase` (calls-review-panel.tsx:291-304): it turns on
+              # the Mobile layer when the agency shows field forces
+              # (:301, `showFieldForcesOnCase`), and `useFocusSelectedCase`
+              # (hooks/use-focus-selected-case.ts:32-) centres the map on the
+              # incident. While a case is open only its card is on screen
+              # (calls-review-list.tsx:143-154).
+              lead: >-
+                Para abrir el caso de un reporte:
+              steps:
+                - id: home.revision.abrir.lista
+                  title: Ubique el reporte en la lista
+                  text: >-
+                    Recorra las tarjetas o acote la lista con la búsqueda y los
+                    filtros. Por defecto se muestran los casos pendientes; use
+                    el historial para llegar a uno que ya validó.
+                  layout: beside
+
+                - id: home.revision.abrir.tarjeta
+                  title: Haga clic en la tarjeta
+                  text: >-
+                    Home pasa al estado con un caso abierto: la lista deja a la
+                    vista únicamente esa tarjeta, el mapa se centra en el
+                    incidente cuando el caso trae ubicación y la capa
+                    **Mobile** del mapa se activa para que se vean los agentes
+                    de campo.
+                  layout: beside
+
+                - id: home.revision.abrir.comprobar
+                  title: Verifique que abrió el caso correcto
+                  text: >-
+                    Confirme el tipo de incidente, la dirección y el teléfono en
+                    la tarjeta que quedó a la vista antes de trabajar sobre el
+                    caso.
+                  layout: beside
+
+      # --- Teclado ---------------------------------------------------------
+      - id: home.teclado
+        title: Teclado
+        children:
+          - id: home.teclado.proposito
+            type: prose
+            props:
+              text: >-
+                Permite marcar un número y llamar desde la plataforma sin salir
+                de Home, y consultar las llamadas recientes, el directorio de
+                agencias y los agentes en turno.
+
+          - id: home.teclado.ubicacion
+            type: prose
+            props:
+              # HOME_DOCK_MANIFEST_KEYS `keypad` (views/home-view.tsx:269-274,
+              # open by default) and its seed (:117-135: above `calls-review`).
+              # The effect at :1384-1393 opens it only while there is no case and
+              # no post-call lock; RECEPTION shows it (home-right-slot.ts:76).
+              # Title `dockPanels.keypad` (calls.json:754).
+              text: >-
+                Es un panel propio, titulado **Teclado**. Está abierto al cargar
+                Home, en la parte superior de la columna izquierda, sobre
+                **Reportes pendientes**. Se cierra por sí solo mientras hay un
+                caso abierto —para llamar desde un caso use **Llamar**— y
+                reaparece al volver a la lista. Si lo cierra, recupérelo desde
+                la barra de paneles.
+
+          - id: home.teclado.vista.fig
+            type: figure
+            props:
+              caption: "Panel del teclado con sus fichas y el teclado numérico."
+              widthPercent: 90
+
+          - id: home.teclado.fichas
+            type: data-table
+            props:
+              # components/panels/keypad-panel.tsx: TABS :53-71 (labels
+              # `keypad.tabs`, calls.json:88-92). The Favoritos tab is NOT listed
+              # and its control is not mentioned: it is declared in `pending`
+              # (home.teclado-favoritos-simulados). Directorio and Agentes en
+              # turno are listed for what they show; their inert buttons and rows
+              # are declared in `pending` too.
+              labelHeader: Ficha
+              descriptionHeader: Qué contiene
+              rows:
+                - id: home.teclado.ficha.teclado
+                  label: Teclado
+                  description: >-
+                    El campo del número, con el selector de país, y el teclado
+                    de doce teclas. El botón **Llamar** inicia la llamada y solo
+                    está disponible cuando su estado es **Disponible**.
+                - id: home.teclado.ficha.recientes
+                  label: Recientes
+                  description: >-
+                    Las llamadas recientes, filtradas por **Entrantes**,
+                    **Salientes**, **En espera** y **Abandonadas**. Cada fila
+                    ofrece un botón para llamar al número.
+                - id: home.teclado.ficha.directorio
+                  label: Directorio
+                  description: >-
+                    Las agencias registradas, con su tipo.
+                - id: home.teclado.ficha.agentes
+                  label: Agentes en turno
+                  description: >-
+                    Los agentes conectados de su agencia, con su estado y el
+                    puesto que ocupan. Se actualiza en vivo.
+
+          - id: home.teclado.recientes
+            type: term-list
+            props:
+              entries:
+                # RecientesView (keypad-panel.tsx:465-721): filters :88-118; each
+                # row shows the caller's name or number, the queue and the
+                # relative time (:689-714); "En espera" adds queued calls
+                # ("Sonando"/"Sin atender", calls.json:106-107), calls held by an
+                # agent (resume only for the operator's own, :607-637) and parked
+                # calls (:642-676). Dialling needs the "Disponible" status
+                # (:682).
+                - id: home.teclado.reciente.entrantes
+                  term: Entrantes
+                  definition: >-
+                    Las llamadas que recibió, con el nombre o el número de quien
+                    llamó, la cola por la que entraron y cuánto tiempo pasó.
+                - id: home.teclado.reciente.salientes
+                  term: Salientes
+                  definition: >-
+                    Las llamadas que realizó.
+                - id: home.teclado.reciente.espera
+                  term: En espera
+                  definition: >-
+                    Las llamadas que aguardan respuesta: las que esperan en la
+                    cola (**Sonando** o **Sin atender**), las que un agente puso
+                    en espera y las aparcadas, con el tiempo que llevan así. Una
+                    llamada suya en espera se puede retomar y una aparcada se
+                    puede tomar.
+                - id: home.teclado.reciente.abandonadas
+                  term: Abandonadas
+                  definition: >-
+                    Las llamadas que se abandonaron antes de ser atendidas.
+
+          - id: home.teclado.llamar
+            type: procedure
+            props:
+              # TecladoView (keypad-panel.tsx:368-442): the call button is
+              # disabled without a number or without the "Disponible" status
+              # (:383) and its tooltip then reads `keypad.mustBeAvailableToCall`
+              # (calls.json:96, shown at :407-420); the button's own title is
+              # `keypad.callTooltip` (calls.json:95). An answered call sends the
+              # operator to the Llamada view (pages/dashboard.tsx:189-192).
+              lead: >-
+                Para llamar a un número:
+              steps:
+                - id: home.teclado.llamar.numero
+                  title: Escriba el número
+                  text: >-
+                    En la ficha **Teclado**, elija el país en el selector y
+                    escriba el número en el campo, o márquelo con las teclas en
+                    pantalla.
+                  layout: beside
+
+                - id: home.teclado.llamar.iniciar
+                  title: Haga clic en Llamar
+                  text: >-
+                    Solo está disponible cuando su estado es **Disponible**; en
+                    otro estado, el botón indica **Debes estar disponible para
+                    llamar**. Cuando el destinatario contesta, la plataforma lo
+                    lleva a la vista **Llamada**.
+                  layout: beside
+
+      # --- Mi turno --------------------------------------------------------
+      - id: home.turno
+        title: Mi turno
+        children:
+          - id: home.turno.proposito
+            type: prose
+            props:
+              text: >-
+                Resume su jornada: qué tan eficiente es su gestión, cuántas
+                llamadas atendió y rechazó, cuántos casos validó y envió a las
+                agencias, cuánto tiempo pasó en cada estado, y deja el
+                historial de lo que hizo durante el turno.
+
+          - id: home.turno.ubicacion
+            type: prose
+            props:
+              # `noCaseRightSlot: "my-shift"` for RECEPTION
+              # (views/home-right-slot.ts:69), rendered in the right column
+              # (views/home-view.tsx:1554-1557). With a case open the column
+              # belongs to CCTV and Fuerzas en Campo (:782-789, `rightSlot` is
+              # null). Title `homeView.myShift` (calls.json:424); the toggle in
+              # the panel bar is offered only without a case (:1017-1023).
+              text: >-
+                Ocupa la columna derecha mientras no hay un caso abierto. Su
+                encabezado dice **Mi turno**. Al abrir un caso, la columna pasa
+                a mostrar las cámaras y las fuerzas en campo, y Mi turno
+                vuelve al regresar a la lista. También puede abrirlo y cerrarlo
+                desde la barra de paneles.
+
+          - id: home.turno.vista.fig
+            type: figure
+            props:
+              caption: "Panel del turno con el indicador de eficiencia, los recuentos de la jornada, los gráficos y el historial."
+              widthPercent: 90
+
+          - id: home.turno.rendimiento
+            type: prose
+            props:
+              # components/panels/my-performance-panel.tsx: the gauge is
+              # validated / (answered + rejected), capped at 100 (:101-105),
+              # parked at 0 with no calls (:107-109); its tooltip is
+              # `performance.efficiencyTooltip` (calls.json:691, drawn at
+              # :294-296). The messages rotate every 5 s (:21, :223-230) and are
+              # only built from metrics that have a value (:119-207); the empty
+              # state is `performance.emptyState` (calls.json:700).
+              text: >-
+                En la parte superior, un indicador semicircular muestra la
+                **Eficiencia de gestión**: el porcentaje de casos que validó
+                sobre las llamadas que atendió y rechazó. Permanece en 0 % hasta
+                que haya llamadas. Debajo, un mensaje cambia cada cinco segundos
+                con un dato de su turno, como su tiempo de gestión promedio, el
+                tiempo promedio para contestar o cuántas gestiones incompletas
+                tiene. Mientras no haya nada que medir, el panel lo indica.
+
+          - id: home.turno.metricas
+            type: data-table
+            props:
+              # components/panels/my-shift-panel.tsx: `shiftMetricStyles` :28-39
+              # (labels `myShift.*`, calls.json:272-278) and values :97-102.
+              # Atendidos and Rechazados come from the shift feed
+              # (`useMyShift`); Validadas counts the cases this operator
+              # validated today (:65-70); Enviadas a agencias counts, among those,
+              # the ones typed as a real emergency — "No Emergencia" does not
+              # count (:72-91).
+              labelHeader: Recuento
+              descriptionHeader: Qué cuenta
+              rows:
+                - id: home.turno.metrica.atendidos
+                  label: Atendidos
+                  description: >-
+                    Llamadas que usted atendió en la jornada.
+                - id: home.turno.metrica.rechazados
+                  label: Rechazados
+                  description: >-
+                    Llamadas que usted rechazó.
+                - id: home.turno.metrica.validadas
+                  label: Validadas
+                  description: >-
+                    Casos que usted validó en la jornada.
+                - id: home.turno.metrica.enviadas
+                  label: Enviadas a agencias
+                  description: >-
+                    Casos validados en la jornada que se enviaron a una agencia.
+                    No cuentan los tipificados como **No Emergencia**.
+
+          - id: home.turno.graficos
+            type: prose
+            props:
+              # my-shift-panel.tsx:147-157: MyShiftDonutChart (the four counts,
+              # "Total" at the centre, common.json:485) and
+              # MyShiftStatusDonutChart (time per status,
+              # components/panels/my-shift-status-donut-chart.tsx:56-100) with its
+              # legend; the empty message is `shifts.noActivityToday`
+              # (common.json:458, drawn at :119).
+              text: >-
+                Bajo los recuentos, dos gráficos de anillo: el primero reparte
+                los cuatro recuentos, con el total al centro; el segundo reparte
+                el tiempo de la jornada entre los estados por los que pasó, con
+                su leyenda debajo. Si todavía no hay actividad, indica **Sin
+                actividad registrada hoy**.
+
+          - id: home.turno.historial.titulo
+            type: detail-header
+            props:
+              # `myShift.history` (calls.json:275), my-shift-panel.tsx:161-164.
+              text: Historial de turno
+
+          - id: home.turno.historial.texto
+            type: prose
+            props:
+              # components/panels/use-shift-history-groups.ts:44-: groups by
+              # category (Sesión, Llamadas, Cambio de estado), most recent first;
+              # the last 10 calls and 8 status changes stay individual, older
+              # ones settle into 2-hour ranges (:50-51, :73-90). The calls group
+              # opens expanded (my-shift-panel.tsx:186). Empty state
+              # `myShift.noActivity` (calls.json:276, drawn at :173-175).
+              text: >-
+                Debajo de los gráficos, lista lo que ocurrió durante su jornada
+                en bloques que se abren y se cierran: la sesión, las llamadas y
+                los cambios de estado, siempre de lo más reciente a lo más
+                antiguo. Las diez llamadas y los ocho cambios de estado más
+                recientes se muestran uno por uno; lo anterior se agrupa por
+                franjas de dos horas. Cuando todavía no hay nada registrado,
+                muestra **Sin actividad registrada hoy**.
+
+  # --- Con un caso abierto ---------------------------------------------------
   - id: home.caso
-    title: El caso abierto
+    title: Con un caso abierto
     children:
       - id: home.caso.proposito
         type: prose
         props:
           text: >-
             Al abrir un caso, Home se reacomoda para atenderlo: reúne en una
-            sola pantalla la información de la llamada, las agencias sugeridas
-            para atenderla, las cámaras cercanas y las acciones sobre el caso.
+            sola pantalla el reporte con la información de la llamada, el libro
+            del caso, las cámaras cercanas al incidente, las fuerzas en campo y
+            las acciones para validar el caso o dejarlo para más tarde.
 
       - id: home.caso.ubicacion
         type: prose
         props:
-          # `threeColumnCaseView: true` para RECEPTION (home-view.tsx:58-62),
-          # con los paneles activados en :422-434. El panel tabulado del
-          # incidente se desactiva en ese momento (:378-382), y el panel de
-          # agencias se retira por `requiresNoCase` (:167).
+          # RECEPTION: `threeColumnCaseView`, `showFieldForcesOnCase` and
+          # `showCctvOnCase` are all true (views/home-right-slot.ts:72-74), so
+          # `fieldOpsReplacesCaseBook` holds (views/home-view.tsx:776-779) and the
+          # right column stops being a slot with an occupant
+          # (`rightSlot = null`, :782-789): it carries CCTV above Fuerzas en Campo
+          # (seeds :163-183 and :1111-1132) and the case book goes under the map
+          # (:1133-1146, `pinnedWidth: CASE_BOOK_WIDTH`, :234). Keypad and Mi
+          # turno step aside (:1384-1393, and `myShift` requires no case,
+          # :1017-1023). The map shows only that case
+          # (pages/dashboard.tsx:904-909, `onlySelectedCase`). The Log drawer
+          # mounts at :1739-1747. CCTV opens only with a camera in range
+          # (:1319-1334, radius 2000 m at calls-review-cctv.tsx:8).
           text: >-
-            La vista pasa a tres columnas: a la izquierda la revisión de
-            llamadas con la información de la llamada debajo, y a la derecha las
-            agencias sugeridas, las cámaras y las acciones. El mapa sigue de
-            fondo.
+            Se abre un caso de dos maneras: haciendo clic en su tarjeta en
+            **Reportes pendientes**, o por sí solo cuando termina una llamada
+            (vea **Post-Llamada** más abajo). Los paneles pasan entonces a esta
+            disposición: a la izquierda, **Revisión de reporte**, con la
+            información de la llamada debajo de la tarjeta; a la derecha,
+            **CCTV** sobre **Fuerzas en Campo**; bajo el mapa, **Libro del
+            Caso**; y en el borde derecho de la pantalla, la pestaña **Log**. El
+            mapa muestra únicamente ese caso. El teclado y Mi turno se retiran
+            hasta que vuelva a la lista. **CCTV** se abre solo cuando hay al
+            menos una cámara a menos de 2 km del incidente.
 
-      - id: home.caso.fig
+      - id: home.caso.vista.fig
         type: figure
         props:
-          caption: "Vista Home con un caso abierto, en tres columnas."
+          caption: "Vista Home con un caso abierto: el reporte y la información de la llamada a la izquierda, las cámaras y las fuerzas en campo a la derecha, y el libro del caso bajo el mapa."
           widthPercent: 90
 
-      - id: home.caso.informacion.titulo
-        type: detail-header
-        props:
-          # Citado de home-view.tsx:144 y :567.
-          text: Información de la llamada
-
-      - id: home.caso.informacion.texto
-        type: prose
-        props:
-          text: >-
-            Se ubica en la columna izquierda, debajo de la revisión de llamadas,
-            y reúne en fichas todo lo que la plataforma registró de la llamada.
-
-      - id: home.caso.informacion.fichas
-        type: data-table
-        props:
-          labelHeader: Ficha
-          descriptionHeader: Qué contiene
-          rows:
-            # Rótulos citados de
-            # components/panels/dashboard/incident-summary/incident-summary-content.tsx:30-33.
-            # "Ubicación", "Logs" y "Call IA" están siempre disponibles; solo
-            # "Capturas" depende de que haya datos (:121-122).
-            - id: home.caso.informacion.ficha.capturas
-              label: Capturas
-              description: >-
-                Imágenes asociadas a la llamada. Está disponible únicamente
-                cuando la llamada trae imágenes.
-            - id: home.caso.informacion.ficha.ubicacion
-              label: Ubicación
-              description: >-
-                Recorrido de las ubicaciones registradas durante la llamada.
-            - id: home.caso.informacion.ficha.logs
-              label: Logs
-              description: >-
-                Registro de los eventos del caso en orden.
-            - id: home.caso.informacion.ficha.call-ia
-              label: Call IA
-              description: >-
-                Análisis automático de la llamada.
-
-      - id: home.caso.agencias.titulo
-        type: detail-header
-        props:
-          # Citado de home-view.tsx:189 y :579.
-          text: AGENCIAS
-
-      - id: home.caso.agencias.texto
-        type: prose
-        props:
-          # `CaseRecommendedAgencies` (home-view.tsx:580). Esta ficha reemplaza
-          # a la de fuerzas en campo, que en una agencia de Recepción no se
-          # monta: el comentario del producto en :186-188 lo justifica — solo
-          # consulta información previa al despacho.
-          text: >-
-            Encabeza la columna derecha y propone las agencias que corresponden
-            al tipo de incidente del caso, con el estado de sus recursos. Es
-            información para decidir la transferencia.
-
-      - id: home.caso.agencias.datos
-        type: data-table
-        props:
-          labelHeader: Dato
-          descriptionHeader: Qué indica
-          rows:
-            # Rótulos citados de
-            # components/panels/dashboard/incident-summary/case-recommended-agencies.tsx:214,
-            # :221 y :229; las cuentas de recursos, de :135, :139 y :143.
-            - id: home.caso.agencias.dato.operacion
-              label: Agentes en operación
-              description: >-
-                Cuántos agentes de esa agencia están atendiendo un caso.
-            - id: home.caso.agencias.dato.disponibles
-              label: Agentes disponibles ahora
-              description: >-
-                Cuántos agentes de esa agencia pueden tomar el caso en este
-                momento.
-            - id: home.caso.agencias.dato.cercana
-              label: Unidad más cercana
-              description: >-
-                Distancia de la unidad de esa agencia más próxima al incidente.
-            - id: home.caso.agencias.dato.recursos
-              label: Recursos
-              description: >-
-                Cuántos de esos agentes cuentan con vehículo, con radio y con
-                chaleco.
-
-      - id: home.caso.agencias.transferir
-        type: field-list
-        props:
-          items:
-            # Rótulo citado de case-recommended-agencies.tsx:264, que alterna
-            # con "Agencia transferida" una vez hecha la transferencia.
-            - id: home.caso.agencias.transferir.control
-              label: Transferir agencia
+      # --- El reporte del caso ---------------------------------------------
+      - id: home.caso.reporte
+        title: Reporte del caso
+        children:
+          - id: home.caso.reporte.proposito
+            type: prose
+            props:
               text: >-
-                Deriva el caso a esa agencia. Una vez hecha la transferencia, el
-                control pasa a indicar **Agencia transferida**.
-              layout: beside
+                Reúne, en una sola tarjeta, lo que la plataforma sabe del
+                reporte y lo que usted debe confirmar antes de validarlo: el
+                tipo de incidente y la ubicación.
 
-      - id: home.caso.cctv.titulo
-        type: detail-header
-        props:
-          # Citado de components/panels/cameras-panel.tsx:354.
-          text: CCTV
+          - id: home.caso.reporte.ubicacion
+            type: prose
+            props:
+              # Same panel as the list, with `selectedCase` set: its dock title is
+              # `homeView.incidentReviewSingle` (calls.json:423, views/home-view.tsx:1076-1079)
+              # and the toolbar is replaced (calls-review-panel.tsx:412-435 draw
+              # it only with no case). The back arrow lives in the dock tab
+              # (:871-896). The call information goes under the card inside the
+              # same scroll area (calls-review-panel.tsx:464-487) and the action
+              # bar is a footer that never scrolls (:488-494).
+              text: >-
+                Es el panel **Revisión de reporte**, en la columna izquierda: la
+                lista deja a la vista únicamente el caso abierto. La
+                información de la llamada queda debajo de la tarjeta, en el
+                mismo panel, y la barra de acciones queda fija al pie.
 
-      - id: home.caso.cctv.texto
+          - id: home.caso.reporte.fig
+            type: figure
+            props:
+              caption: "Panel Revisión de reporte con la tarjeta del caso abierto, sus controles de edición y la barra de acciones."
+              widthPercent: 90
+
+          - id: home.caso.reporte.datos
+            type: prose
+            props:
+              # calls-review-card.tsx:554-561: the exact timestamp row is drawn
+              # only for the selected card; the relative time is hidden then
+              # (:453). Edit controls: :436-445 (type) and :516-535 (address).
+              text: >-
+                Además de lo que muestra en la lista, la tarjeta abierta indica
+                la fecha y la hora exactas de la llamada, en lugar del tiempo
+                transcurrido, y ofrece los controles para corregir el tipo y la
+                ubicación.
+
+          - id: home.caso.reporte.revision
+            type: callout
+            props:
+              # `pulseReview = isSelected && isReception && !isArchived`
+              # (calls-review-card.tsx:339-341): the type and the address pulse
+              # until each one is marked as reviewed (:188-189, :446-451,
+              # :536-541). Saving by hand marks them (`onVerified`, :443; `onDone`,
+              # :495-497) and so does Validar (`onConfirmed`, :570-575).
+              variant: info
+              text: >-
+                Mientras el caso no está validado, el tipo y la dirección
+                parpadean con suavidad: son lo que debe confirmar. Junto a cada
+                uno aparece un check para marcarlo como revisado; corregirlo o
+                validar el caso también lo da por revisado.
+
+          - id: home.caso.reporte.controles
+            type: icon-table
+            props:
+              # Type: components/panels/dashboard/calls-review/calls-review-type-edit-controls.tsx
+              # :97-137 (pencil `review.editEmergencyType`, calls.json:144;
+              # while editing the check is `callsReview.finishTypeEdit`,
+              # calls.json:482, tooltip `review.done`, and the X is
+              # `callsReview.cancelTypeEdit`, calls.json:481). The type can be
+              # edited only when `canEditType = item.matchId != null &&
+              # !isArchived` (calls-review-card.tsx:210). Location: pencil
+              # `review.editLocation` (calls-review-card.tsx:525, calls.json:147),
+              # and in the editor `callsReview.saveLocation` / `cancelLocationEdit`
+              # (calls-review-address-editor.tsx:257, :273; calls.json:480, :479),
+              # available while `!isArchived` (:209). The two checks are
+              # `review.markTypeAsReviewed` (calls.json:168) and
+              # `callsReview.markLocationReviewed` (calls.json:483).
+              labelHeader: Control
+              descriptionHeader: Qué hace
+              rows:
+                - id: home.caso.reporte.control.editar-tipo
+                  label: Editar tipo de emergencia
+                  description: >-
+                    Convierte el tipo del reporte en un selector. Está
+                    disponible cuando el caso tiene una llamada asociada y
+                    todavía no se validó.
+                - id: home.caso.reporte.control.terminar-tipo
+                  label: Terminar edición del tipo de emergencia
+                  description: >-
+                    Confirma la corrección del tipo y cierra el selector.
+                - id: home.caso.reporte.control.cancelar-tipo
+                  label: Cancelar edición y volver al tipo original
+                  description: >-
+                    Descarta la corrección y deja el tipo como estaba.
+                - id: home.caso.reporte.control.editar-ubicacion
+                  label: Editar ubicacion
+                  description: >-
+                    Convierte la dirección en un campo de búsqueda. Está
+                    disponible mientras el caso no se validó.
+                - id: home.caso.reporte.control.guardar-ubicacion
+                  label: Guardar ubicación
+                  description: >-
+                    Confirma la dirección elegida y actualiza el caso.
+                - id: home.caso.reporte.control.cancelar-ubicacion
+                  label: Cancelar edición de la ubicación
+                  description: >-
+                    Descarta el cambio y deja la dirección como estaba.
+                - id: home.caso.reporte.control.revisado-tipo
+                  label: Marcar tipo de emergencia como revisado
+                  description: >-
+                    Da por revisado el tipo sin modificarlo.
+                - id: home.caso.reporte.control.revisado-ubicacion
+                  label: Marcar ubicación como revisada
+                  description: >-
+                    Da por revisada la ubicación sin modificarla.
+
+          - id: home.caso.corregir-ubicacion
+            type: procedure
+            props:
+              # components/panels/dashboard/calls-review/calls-review-address-editor.tsx:
+              # a Google Places search field, "nada de texto libre"
+              # (:55-58); placeholder `callsReview.searchAddress` (calls.json:478).
+              # Saving persists to the case and re-selects it with the corrected
+              # coordinates, which re-centres the map
+              # (hooks/use-focus-selected-case.ts:17-27).
+              lead: >-
+                Para corregir la ubicación del caso:
+              steps:
+                - id: home.caso.corregir-ubicacion.editar
+                  title: Haga clic en Editar ubicacion
+                  text: >-
+                    La dirección de la tarjeta se convierte en un campo de
+                    búsqueda.
+                  layout: beside
+
+                - id: home.caso.corregir-ubicacion.buscar
+                  title: Busque y elija la dirección
+                  text: >-
+                    Escriba en **Buscar dirección…** y elija una de las
+                    direcciones que propone la lista. Escribir no alcanza: la
+                    ubicación cambia solo cuando elige una sugerencia.
+                  layout: beside
+
+                - id: home.caso.corregir-ubicacion.guardar
+                  title: Haga clic en Guardar ubicación
+                  text: >-
+                    El caso queda con la nueva dirección, el pin del mapa se
+                    mueve y el mapa se centra en él. **Cancelar edición de la
+                    ubicación** descarta el cambio.
+                  layout: beside
+
+          - id: home.caso.corregir-tipo
+            type: procedure
+            props:
+              # The badge becomes a picker while `isEditingType`
+              # (calls-review-card.tsx:427-434, emergency-type-badge.tsx:442-461):
+              # its pill reads `emergencyBadge.selectType` (calls.json:515), the
+              # list has a search field `fields.searchType` (incidents.json:38)
+              # and the selection is saved when the list closes
+              # (`commitOnClose`, incident-type-picker.tsx:29-32). More than one
+              # type can be picked (the badge shows "+N").
+              lead: >-
+                Para corregir el tipo de incidente:
+              steps:
+                - id: home.caso.corregir-tipo.editar
+                  title: Haga clic en Editar tipo de emergencia
+                  text: >-
+                    El tipo de la tarjeta se convierte en un botón.
+                  layout: beside
+
+                - id: home.caso.corregir-tipo.elegir
+                  title: Elija el tipo
+                  text: >-
+                    Haga clic en el tipo para abrir la lista **Seleccionar tipo
+                    de incidente**. Busque con **Buscar tipo…** y marque uno o
+                    más tipos.
+                  layout: beside
+
+                - id: home.caso.corregir-tipo.terminar
+                  title: Termine la edición
+                  text: >-
+                    Haga clic en **Terminar edición del tipo de emergencia**.
+                    **Cancelar edición y volver al tipo original** restituye el
+                    tipo anterior.
+                  layout: beside
+
+          - id: home.caso.reporte.aviso
+            type: callout
+            props:
+              # `setPendingEdit(isEditing)` (calls-review-card.tsx:267-270) gates
+              # every exit — back arrow (views/home-view.tsx:815-818), another view
+              # (pages/dashboard.tsx:115-121) — with the toast
+              # `pendingCaseEdit.message` (calls.json:475), shown by
+              # calls-review/pending-case-edit-toast.tsx:13-40 for 4 s.
+              variant: important
+              text: >-
+                Mientras edita el tipo o la ubicación no puede salir del caso:
+                si lo intenta, la plataforma muestra **Estás editando este
+                caso. Guardá o cancelá los cambios antes de continuar.** Termine
+                o cancele la edición primero.
+
+      # --- Información de la llamada ---------------------------------------
+      - id: home.caso.informacion
+        title: Información de la llamada
+        children:
+          - id: home.caso.informacion.texto
+            type: prose
+            props:
+              # `caseInfoContent = <IncidentSummaryContent event={selectedCase} />`
+              # when `threeColumnCaseView && selectedCase` (views/home-view.tsx:1509-1513),
+              # placed under the card behind a divider
+              # (calls-review-panel.tsx:481-486).
+              text: >-
+                Debajo de la tarjeta, en el mismo panel y tras una línea
+                divisoria, reúne lo que la plataforma registró de la llamada: la
+                grabación con su transcripción, el resumen de Call AI, las
+                transferencias, el recorrido de ubicaciones y las capturas.
+                Aparece en cuanto se abre el caso y se desplaza junto con la
+                tarjeta.
+
+          - id: home.caso.informacion.fig
+            type: figure
+            props:
+              caption: "Información de la llamada bajo la tarjeta: reproductor, resumen de Call AI e historial de ubicaciones."
+              widthPercent: 90
+
+          - id: home.caso.informacion.bloques
+            type: data-table
+            props:
+              # components/panels/dashboard/incident-summary/incident-summary-content.tsx:
+              # media :103, Call AI :107, transfers :109-114 (only with a
+              # `contactId`), location history :116-231 (heading
+              # `location.locationHistory`, incidents.json:142), captures
+              # :233-269 (`summary.captures`, incidents.json:71). The extracted
+              # data of Call AI (incident-summary-call-ai.tsx:64-73) uses the
+              # `calls` labels callAi.vehiclesInvolved / weapons / wounded /
+              # suspects (calls.json:367, :333, :330, :332) and is expanded
+              # with the "+" (:85-100); rows without a value are dropped
+              # (`hasValue`, :73). Transfer history heading
+              # `caseDetail.transferHistory` (incidents.json:261,
+              # transfer-history-timeline.tsx:91).
+              labelHeader: Bloque
+              descriptionHeader: Qué contiene
+              rows:
+                - id: home.caso.informacion.bloque.grabacion
+                  label: Grabación
+                  description: >-
+                    El reproductor de la llamada, con la miniatura del video
+                    cuando el llamante compartió video, y su transcripción.
+                - id: home.caso.informacion.bloque.call-ai
+                  label: Call AI
+                  description: >-
+                    El resumen que genera el análisis automático de la llamada.
+                    El botón **+** junto al título despliega los datos que
+                    extrajo —**Vehículos Involucrados**, **Armas**, **Heridos**
+                    y **Sospechosos**—; solo figuran los que tienen valor.
+                - id: home.caso.informacion.bloque.transferencias
+                  label: Historial de transferencias
+                  description: >-
+                    Solo si la llamada pasó por más de un agente: la cadena de
+                    transferencias, con el agente que atendió, la extensión y la
+                    duración de cada tramo.
+                - id: home.caso.informacion.bloque.ubicaciones
+                  label: Historial de ubicaciones
+                  description: >-
+                    Las ubicaciones registradas del incidente, de la más
+                    reciente a la más antigua, cada una con su origen, su
+                    dirección y su hora. La más reciente es la vigente y se
+                    marca con el icono del tipo de incidente. Al hacer clic en
+                    una entrada con coordenadas, el mapa se centra en ella.
+                - id: home.caso.informacion.bloque.capturas
+                  label: Capturas
+                  description: >-
+                    Las imágenes capturadas durante la llamada, si las hay. El
+                    botón **Capturas**, con el icono de una imagen, las muestra
+                    o las oculta.
+
+          - id: home.caso.informacion.escuchar
+            type: procedure
+            props:
+              # components/panels/dashboard/incident-summary/incident-summary-media.tsx:
+              # play/pause :639-682 (`media.play`, incidents.json:109), progress
+              # range :727-737 (`media.callProgress`, incidents.json:112),
+              # transcript toggle :743-770 (`media.showTranscript`,
+              # incidents.json:111), a line seeks to its moment (:604-624 and
+              # `handleLineSeek`). Speakers `media.caller` / `media.operator`
+              # (incidents.json:100-101).
+              lead: >-
+                Para escuchar la llamada:
+              steps:
+                - id: home.caso.informacion.escuchar.reproducir
+                  title: Haga clic en Reproducir
+                  text: >-
+                    El control está a la izquierda del reproductor, al pie del
+                    panel. Mientras la grabación se procesa, el reproductor lo
+                    indica; si no hay audio, el control queda deshabilitado.
+                  layout: beside
+
+                - id: home.caso.informacion.escuchar.posicion
+                  title: Elija el punto de la llamada
+                  text: >-
+                    Mueva el control **Progreso de la llamada** para saltar a
+                    otro instante. Bajo la barra, el reproductor muestra el
+                    tiempo transcurrido y la duración total.
+                  layout: beside
+
+                - id: home.caso.informacion.escuchar.transcripcion
+                  title: Muestre la transcripción
+                  text: >-
+                    Haga clic en **Mostrar transcripción** para desplegar todas
+                    las líneas, cada una con su interlocutor (**Llamante** u
+                    **Operador**) y su hora. Al hacer clic en una línea, la
+                    llamada salta a ese momento.
+                  layout: beside
+
+          - id: home.caso.informacion.video
+            type: prose
+            props:
+              # The thumbnail is a `role="button"` that enlarges the video
+              # (incident-summary-media.tsx:540-575); the enlarged modal is
+              # :468-534 (title `media.videoModalTitle`, incidents.json:114,
+              # close `media.closeVideo`, :113, and Escape at :290-297), with the
+              # transcript and the captures beside it.
+              text: >-
+                Cuando el llamante compartió video, se muestra una miniatura
+                sobre la transcripción. Al hacer clic en ella se agranda en una
+                ventana titulada **Video y transcripción**, con la transcripción
+                y las capturas al lado. Se cierra con **Cerrar video** o con la
+                tecla Escape.
+
+          - id: home.caso.informacion.avisos
+            type: term-list
+            props:
+              entries:
+                # incidents.json:106, :105, :99; drawn at
+                # incident-summary-media.tsx:271-276, :645-657 and :595-596.
+                - id: home.caso.informacion.aviso.procesando
+                  term: Procesando audio de la llamada…
+                  definition: >-
+                    La grabación todavía se está preparando. Vuelva a mirar en
+                    unos segundos.
+                - id: home.caso.informacion.aviso.sin-audio
+                  term: Sin audio disponible
+                  definition: >-
+                    La llamada no tiene una grabación que reproducir.
+                - id: home.caso.informacion.aviso.sin-transcripcion
+                  term: Sin transcripción
+                  definition: >-
+                    La llamada no tiene transcripción registrada.
+
+      # --- Libro del caso --------------------------------------------------
+      - id: home.libro
+        title: Libro del caso
+        children:
+          - id: home.libro.proposito
+            type: prose
+            props:
+              text: >-
+                Es el registro escrito del caso: los datos del llamante y del
+                incidente y las notas que toma el operador. Queda guardado con
+                el caso.
+
+          - id: home.libro.ubicacion
+            type: prose
+            props:
+              # HOME_DOCK_MANIFEST_KEYS `incident-book` (views/home-view.tsx:286-293,
+              # `initiallyInactive`, `requiresCase`); for RECEPTION it opens with
+              # the case (:1336-1344) under the map (seed override :1133-1146).
+              # Title in the dock `dockPanels.caseBook` "Libro del Caso"
+              # (calls.json:748); the panel's own header is `caseBook.title`
+              # "Libro del caso" (calls.json:245, components/panels/case-book-panel.tsx:81).
+              text: >-
+                Se abre por sí solo al abrir un caso, bajo el mapa, y se cierra
+                al volver a la lista. En la barra de paneles figura como **Libro
+                del Caso**. Si lo cierra, recupérelo desde la barra.
+
+          - id: home.libro.vista.fig
+            type: figure
+            props:
+              caption: "Libro del caso abierto bajo el mapa, con los datos del llamante y del incidente y las notas."
+              widthPercent: 90
+
+          - id: home.libro.pasos
+            type: data-table
+            props:
+              # components/panels/case-book-panel.tsx:97-112 renders GeneralForm
+              # with `onlyCallReceptionStep` (default true, :52), which keeps
+              # only step 1 and drops the stepper
+              # (components/panels/incident-book/general-form.tsx:228-236 and
+              # components/forms/form-kit/stepped-form.tsx:84-91). Step name
+              # `book.stepCallReception` (incidents.json:187). The dispatch and
+              # extended-information steps only exist for other agencies
+              # (general-form.tsx:237-243).
+              labelHeader: Paso
+              descriptionHeader: Qué registra
+              rows:
+                - id: home.libro.paso.recepcion
+                  label: Recepción de llamada
+                  description: >-
+                    El único paso del libro. Registra quién llamó y su relación
+                    con el hecho, los teléfonos de contacto, la ubicación del
+                    incidente con sus referencias, la prioridad y las notas.
+
+          - id: home.libro.campos
+            type: data-table
+            props:
+              # components/panels/incident-book/steps/step1-body.tsx: caller
+              # block :61-154 (`step1.callerIdentification`, incidents.json:269),
+              # location block :156-273 (`step1.incidentLocation`,
+              # incidents.json:283). "Tipo de Incidente" is hidden here
+              # (`hideIncidentType`, case-book-panel.tsx:102; step1-body.tsx:216):
+              # the type is corrected on the card. Relationship options
+              # form.options.ts:43-60 (incidents.json:317-321); priority
+              # form.options.ts:92-108 (incidents.json:330-332).
+              labelHeader: Campo
+              descriptionHeader: Qué se registra
+              rows:
+                - id: home.libro.campo.nombre
+                  label: Nombre del Llamante
+                  description: >-
+                    El nombre completo de quien llamó.
+                - id: home.libro.campo.relacion
+                  label: Relación con la Emergencia
+                  description: >-
+                    Cómo se vincula el llamante con el hecho: víctima, testigo,
+                    familiar, autoridad u otro. Al elegir **Otro**, un campo
+                    adicional pide que lo especifique.
+                - id: home.libro.campo.telefono
+                  label: Teléfono / ANI
+                  description: >-
+                    El número desde el que se llamó. **Agregar teléfono** suma
+                    otros números de contacto.
+                - id: home.libro.campo.involucrado
+                  label: Llamante Involucrado
+                  description: >-
+                    Si el llamante está involucrado en el hecho: **Sí** o
+                    **No**.
+                - id: home.libro.campo.direccion
+                  label: Dirección / Número Cívico
+                  description: >-
+                    La dirección del incidente.
+                - id: home.libro.campo.ciudad
+                  label: Ciudad / Municipio
+                  description: >-
+                    La ciudad o el municipio del incidente.
+                - id: home.libro.campo.piso
+                  label: Piso / Apartamento / Unidad
+                  description: >-
+                    El detalle dentro del inmueble, si corresponde.
+                - id: home.libro.campo.referencia
+                  label: Punto de Referencia
+                  description: >-
+                    Una referencia del lugar que ayude a encontrarlo.
+                - id: home.libro.campo.prioridad
+                  label: Prioridad
+                  description: >-
+                    La prioridad del caso, que se elige con uno de tres botones:
+                    **Alta**, **Media** o **Baja**.
+                - id: home.libro.campo.notas-adicionales
+                  label: Notas Adicionales
+                  description: >-
+                    Una descripción libre del incidente reportado. El campo se
+                    despliega con **Agregar notas adicionales**.
+
+          - id: home.libro.notas.texto
+            type: prose
+            props:
+              # components/panels/incident-book/incident-notes.tsx:22-43 (a free
+              # textarea, `incidentNotes.placeholder`, incidents.json:353, that
+              # writes the report's summary field) rendered under the step by
+              # `showNotesInline` (general-form.tsx:209-218), with the heading
+              # `incidentNotes.sectionTitle` (incidents.json:351).
+              text: >-
+                Bajo los campos, la sección **Notas** ofrece un campo de texto
+                libre para el relato del llamante, las referencias del lugar y
+                cualquier dato que no entre en otro campo. Las notas forman
+                parte del mismo libro y se guardan con él.
+
+          - id: home.libro.autocompletado
+            type: callout
+            props:
+              # `autoImportCallIa` (case-book-panel.tsx:70 and :103): Call AI's
+              # data fills the form as soon as it exists, only the empty fields,
+              # never overwriting (general-form.tsx:105-120; hint
+              # `callAi.importFromCallAiHint`, calls.json:370). The manual button
+              # is hidden (`hideCallIaImport`, case-book-panel.tsx:102).
+              variant: info
+              text: >-
+                Los campos vacíos se completan solos con los datos que Call AI
+                detecta en la llamada. Nunca reemplaza lo que usted ya escribió.
+
+          - id: home.libro.registrar
+            type: procedure
+            props:
+              # The footer button is `book.save` / `book.update`
+              # (incidents.json:181-182; stepped-form.tsx:224-270: a single step
+              # has no stepper, so it is always Guardar or Actualizar), and the
+              # toasts are `book.successCreate` / `successUpdate` / `errorCreate`
+              # / `errorUpdate` (incidents.json:183-186; stepped-form.tsx:99-111).
+              lead: >-
+                Para dejar el caso registrado:
+              steps:
+                - id: home.libro.registrar.revisar
+                  title: Revise los campos completados
+                  text: >-
+                    Compruebe lo que Call AI cargó y corrija lo que no
+                    corresponda.
+                  layout: beside
+
+                - id: home.libro.registrar.completar
+                  title: Complete lo que falte y tome las notas
+                  text: >-
+                    Escriba los datos que el llamante aporte y, en **Notas**, lo
+                    que no entre en ningún campo. No necesita ordenar la
+                    información.
+                  layout: beside
+
+                - id: home.libro.registrar.guardado
+                  title: Guarde el libro
+                  text: >-
+                    Use **Guardar** la primera vez y **Actualizar** para
+                    conservar los cambios posteriores. La plataforma confirma
+                    con **Formulario guardado** o **Formulario actualizado**; si
+                    no puede guardar, avisa con **Error al guardar** o **Error
+                    al actualizar**.
+                  layout: beside
+
+          - id: home.libro.aviso
+            type: callout
+            props:
+              # The book is keyed by case (views/home-view.tsx:1658-1666), so it
+              # remounts empty for the next one. `Validar` submits it first
+              # (calls-review-case-actions.tsx:128-134, a failed save does not
+              # stop the routing). `Ver más tarde` also submits it first, but there
+              # a failed save DOES stop it: `saveCaseForLater` returns false and
+              # leaves the case as it was (stores/save-case-for-later.ts:16-17).
+              variant: important
+              text: >-
+                **Validar** y **Ver más tarde** intentan guardar el libro antes
+                de continuar. Al abrir otro caso, el libro se vacía: lo que haya
+                escrito y no se haya guardado por alguna de esas dos vías o con
+                **Guardar** no se conserva.
+
+      # --- CCTV ------------------------------------------------------------
+      - id: home.caso.cctv
+        title: CCTV
+        children:
+          - id: home.caso.cctv.proposito
+            type: prose
+            props:
+              text: >-
+                Lista las cámaras próximas al incidente, para confirmar lo que
+                el llamante describe desde una fuente propia.
+
+          - id: home.caso.cctv.texto
+            type: prose
+            props:
+              # HOME_DOCK_MANIFEST_KEYS `cameras` (views/home-view.tsx:261-268,
+              # `requiresCase`), seed :163-183 (right column, above Fuerzas en
+              # Campo). Rendered by `CallsReviewCctv`
+              # (components/panels/dashboard/calls-review/calls-review-cctv.tsx:19-59)
+              # with `onlyNearbyCameras` (:54) and radius `NEARBY_RADIUS_M = 2000`
+              # (:8). It opens only when `nearbyCctvCameras.length > 0`
+              # (views/home-view.tsx:1319-1327); title `homeView.cctv`
+              # (calls.json:425).
+              text: >-
+                Ocupa la parte superior de la columna derecha, bajo el título
+                **CCTV**, y lista únicamente las cámaras a menos de 2 km del
+                incidente. Se abre por sí solo al abrir un caso, siempre que haya
+                al menos una cámara en ese radio; si no la hay, ábralo desde la
+                barra de paneles y el panel indicará **Sin cámaras cercanas**. No
+                ofrece el listado completo de cámaras ni su búsqueda.
+
+          - id: home.caso.cctv.fig
+            type: figure
+            props:
+              caption: "Panel de CCTV con las cámaras cercanas al incidente."
+              widthPercent: 90
+
+          - id: home.caso.cctv.filas
+            type: prose
+            props:
+              # components/panels/cameras-panel.tsx:243-300 (row: name, distance
+              # via `formatDistance`, lane) and the list cap `max-h-[184px]` =
+              # four rows (:225); hovering a row pulses its pin on the map
+              # (:110-118, :244).
+              text: >-
+                Cada fila muestra el nombre de la cámara, su distancia al
+                incidente y el carril o la vía. Se ven cuatro filas a la vez; las
+                siguientes se alcanzan desplazando la lista. Al pasar el puntero
+                por una fila, el pin de esa cámara late en el mapa.
+
+          - id: home.caso.cctv.ver
+            type: procedure
+            props:
+              # `openCameraDisplay` (components/panels/cameras-panel.tsx:157-185):
+              # a second click on the selected row closes it and re-centres the
+              # map on the incident (:160-168); otherwise it turns on the Cámaras
+              # layer (:172, `showCameraLayer` :142-148), selects the marker so its info window opens and
+              # frames the camera together with the incident (:174-180). The info
+              # window is the live stream with PTZ
+              # (components/panels/info-windows/camera-info-window.tsx:14-60).
+              # Row tooltip "Abrir en el mapa" (cameras-panel.tsx:318).
+              lead: >-
+                Para ver una cámara:
+              steps:
+                - id: home.caso.cctv.ver.elegir
+                  title: Haga clic en la fila de la cámara
+                  text: >-
+                    La fila se resalta, la ventana con la imagen en vivo de la
+                    cámara se abre sobre el mapa y el mapa se encuadra para
+                    mostrar la cámara junto al incidente. La capa **Cámaras** se
+                    activa si estaba apagada.
+                  layout: beside
+
+                - id: home.caso.cctv.ver.cerrar
+                  title: Vuelva a hacer clic en la fila para cerrarla
+                  text: >-
+                    La ventana se cierra y el mapa vuelve al incidente.
+                  layout: beside
+
+          - id: home.caso.cctv.avisos
+            type: term-list
+            props:
+              entries:
+                # common.json:203, :202, :211; drawn at cameras-panel.tsx:201-216
+                # and calls-review-cctv.tsx:40-46.
+                - id: home.caso.cctv.aviso.sin-camaras
+                  term: Sin cámaras cercanas
+                  definition: >-
+                    No hay cámaras a menos de 2 km del incidente.
+                - id: home.caso.cctv.aviso.error
+                  term: No se pudieron cargar las cámaras cercanas
+                  definition: >-
+                    No fue posible recuperar la lista. Reintente más tarde.
+                - id: home.caso.cctv.aviso.sin-ubicacion
+                  term: Este incidente no tiene ubicación
+                  definition: >-
+                    Sin ubicación no se pueden buscar cámaras cercanas. Corrija
+                    la ubicación del reporte.
+
+      # --- Fuerzas en Campo ------------------------------------------------
+      - id: home.caso.fuerzas
+        title: Fuerzas en Campo
+        children:
+          - id: home.caso.fuerzas.proposito
+            type: prose
+            props:
+              text: >-
+                Lista las unidades de campo cercanas al incidente, permite
+                despachar una y muestra las que ya se despacharon para el caso.
+
+          - id: home.caso.fuerzas.ubicacion
+            type: prose
+            props:
+              # HOME_DOCK_MANIFEST_KEYS `field-forces` (views/home-view.tsx:253-260,
+              # `requiresCase`), seed override for RECEPTION :1111-1132 (below
+              # CCTV); opened by the effect at :1291-1297. Rendered by
+              # `CallsReviewFieldForces`
+              # (components/panels/dashboard/calls-review/calls-review-field-forces.tsx:57-241),
+              # which mounts the same `AvailableAgentsPanel`
+              # (components/panels/available-agents-panel.tsx) that the call view
+              # draws, with the header `fieldForces.title` (calls.json:201,
+              # calls-review-field-forces.tsx:234). The location is the CASE's
+              # (:64-67), not a caller's GPS. Filters and dispatch are the ones
+              # 02-llamada documents under "Fuerzas de Respuesta".
+              text: >-
+                Ocupa la parte inferior de la columna derecha, bajo **CCTV**,
+                con el título **Fuerzas en Campo**, y se abre por sí solo al
+                abrir un caso. Es el mismo panel que la sección **Llamada**
+                describe como **Fuerzas de Respuesta**, con el mismo filtro por
+                fuerza y el mismo procedimiento de despacho; aquí trabaja sobre
+                la ubicación del caso abierto, no sobre la de una llamada en
+                curso.
+
+          - id: home.caso.fuerzas.fig
+            type: figure
+            props:
+              caption: "Panel de Fuerzas en Campo con el filtro por fuerza y las unidades cercanas al incidente."
+              widthPercent: 90
+
+          - id: home.caso.fuerzas.estados
+            type: term-list
+            props:
+              entries:
+                # calls-review-field-forces.tsx: dispatched block :194-214
+                # (`fieldForces.dispatched`, calls.json:202); settled case
+                # :216-226 (`fieldForces.caseSettled`, calls.json:205); empty
+                # answer `availableAgents.noNearbyForces` (agents.json:120,
+                # available-agents-list.tsx:249-252) with the button
+                # `availableAgents.otherAgents` (agents.json:121, :262-267) and
+                # the directory (`directory.openTitle`, agents.json:124); no
+                # location :165-190 (line :185 holds the first half of the
+                # sentence).
+                - id: home.caso.fuerzas.estado.despacho
+                  term: En Despacho
+                  definition: >-
+                    Bloque que aparece sobre la lista cuando ya se despachó al
+                    menos una unidad para el caso y muestra su avance hacia el
+                    incidente.
+                - id: home.caso.fuerzas.estado.sin-fuerzas
+                  term: No hay fuerzas cercanas para este incidente
+                  definition: >-
+                    No se encontraron unidades cerca. El botón **Otros
+                    agentes** abre el **Directorio de agentes**, para buscar una
+                    unidad a mano.
+                - id: home.caso.fuerzas.estado.finalizado
+                  term: Este caso ya finalizó — no se despachan más fuerzas.
+                  definition: >-
+                    El caso está terminado y el panel deja de buscar unidades.
+                - id: home.caso.fuerzas.estado.sin-ubicacion
+                  term: Este incidente no tiene ubicación
+                  definition: >-
+                    Sin ubicación no se pueden buscar fuerzas cercanas. Corrija
+                    la ubicación del reporte.
+
+      # --- Log -------------------------------------------------------------
+      - id: home.caso.bitacora
+        title: Log
+        children:
+          - id: home.caso.bitacora.proposito
+            type: prose
+            props:
+              # `IncidentLogsDrawer` -> `IncidentSummaryLogs` -> `useEventLogs`
+              # (components/panels/dashboard/incident-summary/incident-logs-drawer.tsx:16-25;
+              # incident-summary-logs.tsx:11-28): the call events plus the
+              # dispatch detail and list of the case, as a timeline. Read-only:
+              # unlike the live call's log it has no comment box.
+              text: >-
+                Muestra, en orden, los eventos del caso —los de la llamada y los
+                del despacho— como una línea de tiempo. Es de solo lectura.
+
+          - id: home.caso.bitacora.ubicacion
+            type: prose
+            props:
+              # Mounted only with a case
+              # (views/home-view.tsx:1739-1747, `threeColumnCaseView &&
+              # selectedCase`). Chrome: components/panels/logs-side-drawer.tsx:60-123
+              # (tab :40-58, `title` = `logsDrawer.open` / `close`,
+              # calls.json:221-222; drawer width 360 at :46). Not a dock panel, so
+              # it is not in the panel bar.
+              text: >-
+                Es una pestaña vertical, titulada **Log**, en el borde derecho de
+                la pantalla. Está disponible solo con un caso abierto y empieza
+                cerrada. No forma parte de la barra de paneles.
+
+          - id: home.caso.bitacora.fig
+            type: figure
+            props:
+              caption: "Pestaña Log abierta en el borde derecho, con la línea de tiempo del caso."
+              widthPercent: 90
+
+          - id: home.caso.bitacora.controles
+            type: field-list
+            props:
+              items:
+                # The tab is the control (logs-side-drawer.tsx:40-58): it opens the
+                # drawer and closes it again; its tooltip is "Abrir bitácora" /
+                # "Cerrar bitácora".
+                - id: home.caso.bitacora.pestana
+                  label: Log
+                  text: >-
+                    Abre el panel del log, de 360 píxeles de ancho, que se
+                    desliza sobre la pantalla; un segundo clic lo cierra. Su
+                    ayuda emergente dice **Abrir bitácora** o **Cerrar
+                    bitácora**, según el estado.
+                  layout: beside
+
+          - id: home.caso.bitacora.avisos
+            type: term-list
+            props:
+              entries:
+                # incidents.json:120, drawn at incident-summary-logs.tsx:24-26.
+                - id: home.caso.bitacora.aviso.sin-registros
+                  term: Sin logs de la llamada
+                  definition: >-
+                    El caso todavía no tiene eventos registrados.
+
+      # --- Acciones sobre el caso ------------------------------------------
+      - id: home.caso.acciones
+        title: Acciones sobre el caso
+        children:
+          - id: home.caso.acciones.texto
+            type: prose
+            props:
+              text: >-
+                La barra de acciones reúne lo que usted hace para hacer avanzar
+                el caso: llamar de vuelta al reportante, validarlo y enviarlo a
+                las agencias, o dejarlo para más tarde.
+
+          - id: home.caso.acciones.ubicacion
+            type: prose
+            props:
+              # `CallsReviewCaseActions` is portaled into a footer that never
+              # scrolls (calls-review-panel.tsx:154-166, :488-494;
+              # calls-review-card.tsx:563-587); it is drawn for the selected card
+              # of Recepción (`showCaseActions`, :357). Layout
+              # calls-review-case-actions.tsx:181-247.
+              text: >-
+                Está fija al pie del panel **Revisión de reporte**, siempre a la
+                vista aunque desplace la información de la llamada. Aparece solo
+                con un caso abierto.
+
+          - id: home.caso.acciones.fig
+            type: figure
+            props:
+              caption: "Barra de acciones al pie del panel Revisión de reporte."
+              widthPercent: 90
+
+          - id: home.caso.acciones.controles
+            type: icon-table
+            props:
+              # components/panels/dashboard/calls-review/calls-review-case-actions.tsx:
+              # Ver más tarde :183-202 (only `showValidate && isPostCallReview`,
+              # i.e. while THIS case holds the Post-Llamada lock, :87-88);
+              # Llamar :203-225 (disabled without `onOutboundCall`, title
+              # `review.callUnavailable`, calls.json:154); Validar :226-246 (only
+              # `showValidate`, i.e. the case is not validated yet,
+              # calls-review-card.tsx:569). Labels `caseActions.viewLater`
+              # (calls.json:590), `.call` (:584), `.validate` (:585). The Llamar
+              # icon is lucide `phone-outgoing` (:216).
+              labelHeader: Acción
+              descriptionHeader: Qué hace
+              rows:
+                - id: home.caso.accion.llamar
+                  label: Llamar
+                  description: >-
+                    Inicia una llamada al teléfono desde el que se reportó el
+                    caso. Al colgar, la plataforma lo devuelve a este mismo caso
+                    en Post-Llamada, con el bloqueo y la cuenta regresiva.
+                - id: home.caso.accion.validar
+                  label: Validar
+                  description: >-
+                    Guarda el libro del caso y envía el caso a las agencias que
+                    corresponden a su tipo de incidente. Solo aparece mientras el
+                    caso no se validó.
+                - id: home.caso.accion.mas-tarde
+                  label: Ver más tarde
+                  description: >-
+                    Guarda el libro del caso y lo deja pendiente en la lista,
+                    para retomarlo después. Solo aparece durante la
+                    Post-Llamada.
+
+          - id: home.caso.validar
+            type: procedure
+            props:
+              # handleFinalize (calls-review-case-actions.tsx:90-168): it needs
+              # an address and a type (:113-120), submits the book (:128-134),
+              # sends the case with `validateAndSend` (:139), and on success
+              # plays a sound (:156), marks type and location as reviewed (:157),
+              # releases the Post-Llamada lock (:160), resets the countdown
+              # (:163), archives the case and returns to the list (:164-167).
+              lead: >-
+                Para validar un caso:
+              steps:
+                - id: home.caso.validar.revisar
+                  title: Revise el tipo y la ubicación
+                  text: >-
+                    Confirme los dos, o corríjalos con los controles de la
+                    tarjeta. Sin dirección o sin tipo, el caso no se puede
+                    validar.
+                  layout: beside
+
+                - id: home.caso.validar.libro
+                  title: Complete el libro del caso
+                  text: >-
+                    Registre los datos del llamante y del incidente. **Validar**
+                    guarda el libro, pero conviene que esté completo antes.
+                  layout: beside
+
+                - id: home.caso.validar.enviar
+                  title: Haga clic en Validar
+                  text: >-
+                    La plataforma envía el caso a las agencias, suena un aviso
+                    de confirmación y la lista vuelve a mostrarse. El caso
+                    deja de estar **Pendiente** y pasa a **Abierto con
+                    despacho** o **Abierto sin despacho**, según tenga o no
+                    agencias asignadas.
+                  layout: beside
+
+          - id: home.caso.validar.avisos
+            type: term-list
+            props:
+              entries:
+                # calls-review-case-actions.tsx:103, :113-120, :147-152;
+                # calls.json:592-595. The case stays as it was: nothing after the
+                # failed step runs.
+                - id: home.caso.validar.aviso.ubicacion
+                  term: Primero debes validar la ubicación del caso antes de enviarlo a la agencia
+                  definition: >-
+                    El caso no tiene dirección. Corrija la ubicación y vuelva a
+                    validar.
+                - id: home.caso.validar.aviso.tipo
+                  term: Primero debes validar la tipificación del caso antes de enviarlo a la agencia
+                  definition: >-
+                    El caso no tiene tipo de incidente. Corríjalo y vuelva a
+                    validar.
+                - id: home.caso.validar.aviso.sin-ruta
+                  term: "Este caso no puede ser atendido: su tipo de incidente no tiene ninguna agencia configurada para recibirlo. Contacta a un administrador para configurar el enrutamiento."
+                  definition: >-
+                    Ninguna agencia recibe casos de ese tipo. Informe al
+                    administrador para que configure el enrutamiento; mientras
+                    tanto, el caso sigue sin validar.
+                - id: home.caso.validar.aviso.sincronizando
+                  term: El caso todavía se está sincronizando, espera unos segundos e intenta validar de nuevo
+                  definition: >-
+                    El caso recién terminó de procesarse. Espere unos segundos y
+                    vuelva a hacer clic en **Validar**.
+
+          - id: home.caso.volver
+            type: procedure
+            props:
+              # The back arrow lives in the dock tab's header actions
+              # (views/home-view.tsx:871-896, `review.backToList`,
+              # calls.json:117), not in the toolbar, which is not drawn while a
+              # case is open (calls-review-panel.tsx:412). `handleBackFromCase`
+              # (:814-834) is blocked while editing (`notifyBlocked`) and while a
+              # Post-Llamada is unconfirmed (`requestPostCallExit`); otherwise it
+              # clears the case and the map view.
+              lead: >-
+                Para cerrar el caso y volver a la lista:
+              steps:
+                - id: home.caso.volver.flecha
+                  title: Ubique la flecha en el encabezado del panel
+                  text: >-
+                    Está junto al botón de cerrar del panel **Revisión de
+                    reporte**. Mientras hay un caso abierto, la barra de
+                    búsqueda y los filtros no se muestran.
+                  layout: beside
+
+                - id: home.caso.volver.lista
+                  title: Haga clic en Volver a la lista de incidentes
+                  text: >-
+                    La vista abandona el caso: la lista vuelve a mostrar las
+                    tarjetas, reaparecen el teclado y Mi turno, y los paneles
+                    recuperan su disposición predeterminada. Si está editando,
+                    la plataforma se lo impide y lo indica; si el caso está en
+                    Post-Llamada, le pregunta si desea guardarlo para verlo más
+                    tarde.
+                  layout: beside
+
+      # --- Post-Llamada ----------------------------------------------------
+      - id: home.caso.post-llamada
+        title: Post-Llamada
+        children:
+          - id: home.caso.post-llamada.proposito
+            type: prose
+            props:
+              # pages/dashboard.tsx:198-233 (`onCallEnded`): a transferred call
+              # sends the operator to Home with no case (:200-204); a callback
+              # placed from a case re-selects THAT case, locks it and starts the
+              # countdown (:205-217); otherwise it opens the wrap-up for the
+              # ended report and starts the countdown (:222-225). The case is
+              # selected and locked by `useOpenEndedCallCase`
+              # (hooks/use-open-ended-call-case.ts:22-82, lock at :80), once the
+              # report lands (polled, :58-62).
+              text: >-
+                Cuando una llamada termina, Home abre por sí solo el caso de esa
+                llamada para que usted lo revise y lo valide antes de tomar la
+                siguiente. Hasta que lo haga, el caso queda bloqueado y corre
+                una cuenta regresiva de tres minutos. Si la llamada se
+                transfirió, Home se abre sin ningún caso.
+
+          - id: home.caso.post-llamada.ubicacion
+            type: prose
+            props:
+              # The report is written asynchronously when the call closes
+              # (use-open-ended-call-case.ts:15-21) and the case may take a few
+              # seconds to sync (`caseActions.caseNotReadyYet`, calls.json:592).
+              text: >-
+                No hay nada que abrir a mano: al colgar, la plataforma lo lleva
+                a Home y selecciona el caso en cuanto el reporte de la llamada
+                está disponible, lo que puede tardar unos segundos. Es el mismo
+                estado de **Con un caso abierto** descrito arriba, con el
+                bloqueo y la cuenta regresiva además.
+
+          - id: home.caso.post-llamada.fig
+            type: figure
+            props:
+              caption: "Home en Post-Llamada: el caso abierto y la cuenta regresiva bajo la barra superior."
+              widthPercent: 90
+
+          - id: home.caso.post-llamada.efectos
+            type: data-table
+            props:
+              # The rows are the manual's own names for what Post-Llamada changes.
+              # Countdown: components/layout/handle-time-countdown.tsx (banner
+              # under the top bar :104-149; label :133; colour by remaining
+              # ratio :94-100: >50 % teal, >20 % amber, then orange and blinking,
+              # past zero red and blinking) and hooks/use-handle-time-countdown.ts
+              # (180 s at :7, beep in the last 15 s at :10 and :62-67, 3 s
+              # of grace before resuming at :14 and :33-41). Lock:
+              # stores/use-post-call-lock-store.ts:39-40, guards at
+              # pages/dashboard.tsx:122-131 (another view), :356-364 (going
+              # "Disponible") and views/home-view.tsx:814-834 (back arrow). Dialog
+              # components/layout/post-call-exit-prompt-dialog.tsx:26-43, texts
+              # common.json:703-706. Released by Validar
+              # (calls-review-case-actions.tsx:160) or Ver más tarde
+              # (stores/save-case-for-later.ts:16-27); on release the operator is
+              # put back in READY (pages/dashboard.tsx:385-397).
+              labelHeader: Qué cambia
+              descriptionHeader: Cómo se comporta
+              rows:
+                - id: home.caso.post-llamada.efecto.contador
+                  label: Cuenta regresiva
+                  description: >-
+                    Un aviso bajo la barra superior cuenta desde 3:00. Cambia de
+                    color a medida que se acaba el tiempo, del verde azulado al
+                    ámbar y al naranja, con un parpadeo suave; en los últimos
+                    15 segundos suena un pitido por segundo. Al llegar a cero
+                    pasa a rojo, parpadea con más fuerza y cuenta el tiempo de
+                    exceso. Se detiene mientras usted no está en Post-Llamada,
+                    por ejemplo durante una llamada de retorno, y se reanuda tres
+                    segundos después de volver.
+                - id: home.caso.post-llamada.efecto.bloqueo
+                  label: Bloqueo
+                  description: >-
+                    Mientras el caso no se valide ni se deje para más tarde, no
+                    puede salir de Home a otra vista, volver a la lista ni
+                    cambiar su estado a **Disponible**. Cada intento muestra la
+                    pregunta **¿Deseas guardar y ver el caso más tarde?**, con
+                    los botones **Cancelar** y **Guardar y salir**.
+                - id: home.caso.post-llamada.efecto.teclado
+                  label: Teclado
+                  description: >-
+                    El teclado permanece cerrado hasta que el caso se valide o
+                    se deje para más tarde; para llamar use **Llamar** en la
+                    barra de acciones.
+                - id: home.caso.post-llamada.efecto.salida
+                  label: Al terminar
+                  description: >-
+                    Al validar o dejar el caso para más tarde, se libera el
+                    bloqueo, la cuenta regresiva desaparece y su estado vuelve a
+                    **Disponible**.
+
+          - id: home.caso.post-llamada.contadores
+            type: term-list
+            props:
+              entries:
+                # handle-time-countdown.tsx:133 — both literals sit on the same
+                # line.
+                - id: home.caso.post-llamada.contador.normal
+                  term: Tiempo post-llamada
+                  definition: >-
+                    Lo que queda de los tres minutos, en minutos y segundos.
+                - id: home.caso.post-llamada.contador.superado
+                  term: Tiempo superado
+                  definition: >-
+                    Los tres minutos se agotaron. El aviso cuenta, con un signo
+                    más, el tiempo de exceso.
+
+          - id: home.caso.post-llamada.cerrar
+            type: procedure
+            props:
+              # A case is released by Validar or Ver más tarde
+              # (see home.caso.validar for the first).
+              lead: >-
+                Para cerrar la Post-Llamada:
+              steps:
+                - id: home.caso.post-llamada.cerrar.revisar
+                  title: Revise el caso
+                  text: >-
+                    Confirme el tipo y la ubicación, corríjalos si hace falta y
+                    complete el libro del caso.
+                  layout: beside
+
+                - id: home.caso.post-llamada.cerrar.terminar
+                  title: Haga clic en Validar o en Ver más tarde
+                  text: >-
+                    **Validar** envía el caso a las agencias. **Ver más tarde**
+                    guarda lo registrado y deja el caso pendiente en la lista
+                    para retomarlo después. En los dos casos se libera el
+                    bloqueo y usted vuelve a estar **Disponible**.
+                  layout: beside
+
+          - id: home.caso.post-llamada.retorno
+            type: callout
+            props:
+              # A callback placed with Llamar carries the case as
+              # `originatingCase` (calls-review-case-actions.tsx:208;
+              # pages/dashboard.tsx:298-302); on hang-up the same case is
+              # selected, locked and the countdown started (:205-217).
+              variant: info
+              text: >-
+                Si necesita llamar de vuelta al reportante, use **Llamar**. Al
+                colgar, la plataforma lo devuelve a este mismo caso en lugar de
+                abrir uno nuevo, y el caso queda en Post-Llamada: bloqueado y
+                con la cuenta regresiva de tres minutos hasta que lo valide o lo
+                deje para más tarde.
+
+  # --- Barra de paneles y disposición ----------------------------------------
+  - id: home.paneles
+    title: Barra de paneles y disposición
+    children:
+      - id: home.paneles.proposito
         type: prose
         props:
-          # Montado con `onlyNearbyCameras` (home-view.tsx:586-592), de modo que
-          # solo lista las cámaras cercanas al incidente, sin el listado
-          # completo ni su búsqueda. Las coordenadas del caso alimentan la
-          # consulta (:335-348).
           text: >-
-            Se ubica en la columna derecha, debajo de las agencias sugeridas, y
-            lista únicamente las cámaras próximas a la ubicación del incidente.
-            No ofrece el listado completo de cámaras ni su búsqueda: acompaña al
-            caso abierto.
+            Home es un tablero de paneles acoplados: cada panel puede abrirse,
+            cerrarse, moverse y cambiar de tamaño. La barra de paneles reúne esas
+            acciones.
 
-      - id: home.caso.acciones.titulo
-        type: detail-header
-        props:
-          # Citado de
-          # components/panels/dashboard/incident-summary/agency-case-actions.tsx:28.
-          text: Acciones
-
-      - id: home.caso.acciones.texto
+      - id: home.paneles.ubicacion
         type: prose
         props:
+          # components/panels/tool-kit-panel.tsx:123-235: a pill portalled to the
+          # body (:234), draggable by its grip (:172-179), fixed at
+          # `bottom-24 left-5.5` (:171); mounted by the icon rail
+          # (components/layout/icon-sidebar.tsx:201). It is the manual's "barra
+          # de paneles" (the product calls it ToolKit); the other sections use
+          # the same name.
           text: >-
-            Cierra la columna derecha y reúne las cuatro acciones que se pueden
-            ejecutar sobre el caso abierto.
+            Es una barra flotante en la esquina inferior izquierda, sobre la
+            barra lateral de iconos. Puede moverla: arrástrela desde el asa de
+            su parte superior. Los iconos de los paneles que se describen en
+            esta sección abren y cierran cada uno su panel, y se iluminan
+            cuando el panel está abierto; al pasar el puntero muestra
+            el nombre del panel y si está activo o inactivo.
 
-      - id: home.caso.acciones.controles
+      - id: home.paneles.fig
+        type: figure
+        props:
+          caption: "Barra de paneles con los paneles de Home y los controles de disposición."
+          widthPercent: 60
+
+      - id: home.paneles.lista
+        type: data-table
+        props:
+          # tool-kit-panel.tsx:152-160 filters by `requiresCase` /
+          # `requiresNoCase`; the manifest for RECEPTION is
+          # views/home-view.tsx:244-303 minus `resolveExcludedHomePanels`
+          # (views/home-right-slot.ts:224-257): calls-review (label
+          # `homeView.incidentReview`, calls.json:414), keypad (`dockPanels.keypad`,
+          # :754), my-shift (`homeView.myShift`, :424, requires no case,
+          # views/home-view.tsx:1017-1023), field-forces (`fieldForces.title`,
+          # :201, requires a case), cameras (`homeView.cctv`, :425, requires a
+          # case), incident-book (`dockPanels.caseBook`, :748, requires a case).
+          # `assign-incident` and `create-task` (`forcesInField.incidentAssignment`
+          # / `taskOrder`, calls.json:208, :210) are dropped unless the operator
+          # holds `dispatch.forces` (views/home-right-slot.ts:233-235); the
+          # permission is called "Despachar fuerzas" in the profile
+          # (settings.json:300). The bar also lists a toggle labelled
+          # "Información del incidente" (`incident-info`,
+          # views/home-view.tsx:275-285). It is NOT documented: it is declared in
+          # `pending` (home.paneles-toggle-informacion-incidente).
+          labelHeader: Panel
+          descriptionHeader: Cuándo figura
+          rows:
+            - id: home.paneles.panel.revision
+              label: Revisión de Incidentes
+              description: >-
+                Siempre. Es el panel **Reportes pendientes** o **Revisión de
+                reporte**, según haya o no un caso abierto.
+            - id: home.paneles.panel.teclado
+              label: Teclado
+              description: >-
+                Siempre. Se cierra por sí solo al abrir un caso.
+            - id: home.paneles.panel.turno
+              label: Mi turno
+              description: >-
+                Solo sin un caso abierto.
+            - id: home.paneles.panel.fuerzas
+              label: Fuerzas en Campo
+              description: >-
+                Solo con un caso abierto.
+            - id: home.paneles.panel.cctv
+              label: CCTV
+              description: >-
+                Solo con un caso abierto.
+            - id: home.paneles.panel.libro
+              label: Libro del Caso
+              description: >-
+                Solo con un caso abierto.
+            - id: home.paneles.panel.asignacion
+              label: Asignación de Incidentes
+              description: >-
+                Solo si su perfil incluye el permiso **Despachar fuerzas**. Se
+                describe en la sección **Fuerzas en Campo**, y también se abre
+                desde los controles de las ventanas de los agentes en el mapa.
+            - id: home.paneles.panel.tarea
+              label: Orden de Tarea
+              description: >-
+                Solo si su perfil incluye el permiso **Despachar fuerzas**. Se
+                describe en la sección **Fuerzas en Campo**.
+
+      - id: home.paneles.controles
         type: icon-table
         props:
-          labelHeader: Acción
+          # Lock / reset: components/panels/tool-kit-layout-actions.tsx:44-71
+          # (hardcoded literals; the lock is persisted, stores/use-panel-dock-store.ts:69-83;
+          # "Restablecer disposición" drops the arrangement and the zooms,
+          # components/layout/panel-dock/panel-dock.tsx:481-485). Header actions:
+          # components/layout/panel-dock/panel-dock-actions.tsx:102-167
+          # (`panel.decreaseSize` / `increaseSize` / `closePanel`,
+          # common.json:159-161); the size buttons scale the panel's CONTENT
+          # between 70 % and 150 % in steps of 10 %
+          # (store/use-panel-zoom-store.ts:5-8) and are persisted.
+          labelHeader: Control
           descriptionHeader: Qué hace
           rows:
-            # Rótulos citados de agency-case-actions.tsx:38, :48, :62 y :79.
-            - id: home.caso.accion.centrar
-              label: Centrar
+            - id: home.paneles.control.bloqueo
+              label: Edición bloqueada
               description: >-
-                Lleva el mapa a la ubicación del incidente.
-            - id: home.caso.accion.archivar
-              label: Archivar
+                Alterna entre bloquear y habilitar la edición de la disposición.
+                Con la edición bloqueada no se pueden arrastrar ni
+                redimensionar los paneles. Cuando la edición está habilitada, el
+                control dice **Edición habilitada**. La elección se conserva en
+                este equipo.
+            - id: home.paneles.control.restablecer
+              label: Restablecer disposición
               description: >-
-                Retira el caso de la lista de revisión de llamadas.
-            - id: home.caso.accion.llamar
-              label: Llamar
+                Descarta los cambios de posición, de tamaño y de zoom de los
+                paneles y los devuelve a su disposición predeterminada. No se
+                puede deshacer.
+            - id: home.paneles.control.disminuir
+              label: Disminuir tamaño del panel
               description: >-
-                Inicia una llamada al teléfono desde el que se reportó el caso.
-            - id: home.caso.accion.libro
-              label: Libro de caso
+                Reduce el contenido del panel, en pasos del 10 %, hasta el 70 %.
+                Está en el encabezado de cada panel.
+            - id: home.paneles.control.aumentar
+              label: Aumentar tamaño del panel
               description: >-
-                Abre y cierra el libro del caso en la banda inferior de la
-                vista. El control queda resaltado mientras el libro está
-                abierto.
+                Agranda el contenido del panel, en pasos del 10 %, hasta el
+                150 %.
+            - id: home.paneles.control.cerrar
+              label: Cerrar panel
+              description: >-
+                Cierra el panel. Para volver a abrirlo, use la barra de paneles.
 
-      - id: home.caso.volver
+      - id: home.paneles.abrir
         type: procedure
         props:
-          # Control citado de
-          # components/panels/dashboard/calls-review/calls-review-search.tsx:335.
-          # Mientras hay un caso abierto (`isFocusMode`,
-          # calls-review-panel.tsx:218) la barra oculta la búsqueda, los filtros
-          # y el orden (calls-review-search.tsx:206, :238, :332-346) y ofrece
-          # este control. `handleBack` limpia el caso en
-          # calls-review-panel.tsx:67-71.
+          # tool-kit-panel.tsx:199-224: the button toggles
+          # `togglePanelActive`; the icon is teal when active (:207-209).
           lead: >-
-            Para cerrar el caso y volver a la lista:
+            Para abrir o cerrar un panel:
           steps:
-            - id: home.caso.volver.ubicar
-              title: Diríjase a la barra de la revisión de llamadas
+            - id: home.paneles.abrir.barra
+              title: Ubique el panel en la barra de paneles
               text: >-
-                Mientras hay un caso abierto, la barra no ofrece la búsqueda ni
-                los filtros: en su lugar aparece el control de retorno.
+                Pase el puntero por los iconos: cada uno muestra el nombre del
+                panel y si está **Activo** o **Inactivo**.
               layout: beside
 
-            - id: home.caso.volver.control
-              title: Haga clic en Volver a la lista de incidentes
+            - id: home.paneles.abrir.alternar
+              title: Haga clic en el icono del panel
               text: >-
-                La vista abandona el caso, la lista vuelve a mostrar todas las
-                llamadas y la columna derecha recupera las agencias y el turno.
+                El panel se abre o se cierra y el icono se ilumina mientras está
+                abierto. También puede cerrarlo con **Cerrar panel**, en su
+                encabezado.
               layout: beside
 
-  # --- Libro del Caso --------------------------------------------------------
-  - id: home.libro
-    title: Libro del Caso
-    children:
-      - id: home.libro.proposito
-        type: prose
-        props:
-          text: >-
-            Es el registro escrito del caso: las notas que el operador toma
-            mientras atiende la llamada y el informe por pasos que queda como
-            constancia de lo ocurrido.
-
-      - id: home.libro.ubicacion
-        type: prose
-        props:
-          # HOME_MANIFEST, entrada `incident-book` (home-view.tsx:233-244):
-          # region "bottom", `initiallyInactive`, `requiresCase`. No se abre
-          # automáticamente — el comentario del producto en :431-433 lo deja
-          # explícito. Se abre desde "Libro de caso"
-          # (agency-case-actions.tsx:79).
-          text: >-
-            Ocupa la banda inferior de la vista y solo está disponible con un
-            caso abierto. No se abre por su cuenta: diríjase a **Acciones** y
-            haga clic en **Libro de caso**.
-
-      - id: home.libro.fig
-        type: figure
-        props:
-          caption: "Libro del caso abierto en la banda inferior, en la ficha de notas."
-          widthPercent: 90
-
-      - id: home.libro.fichas
-        type: term-list
-        props:
-          entries:
-            # Rótulos citados de components/panels/incident-book.tsx:69 y :72.
-            # Abre en las notas por decisión del producto (:22-27, :46).
-            - id: home.libro.ficha.notas
-              term: Notas
-              definition: >-
-                Un único campo de texto libre para escribir mientras atiende la
-                llamada. Es la ficha con la que abre el libro, porque es lo
-                único que se alcanza a completar durante la llamada.
-
-            - id: home.libro.ficha.libro
-              term: Libro del caso
-              definition: >-
-                El informe completo, organizado en tres pasos. Se completa una
-                vez terminada la llamada.
-
-      - id: home.libro.notas.texto
-        type: prose
-        props:
-          # components/panels/incident-book/incident-notes.tsx:11 (texto guía),
-          # :35 (deshabilitado) y :41 (leyenda al pie). Las notas escriben el
-          # campo de resumen del mismo informe (:20-22), de modo que se guardan
-          # con él.
-          text: >-
-            El campo de notas recoge el relato del llamante, las referencias del
-            lugar y cualquier dato que no entre en otro campo. Las notas forman
-            parte del mismo informe, por lo que se conservan al guardarlo.
-            Mientras no haya un caso abierto, el campo indica que **las notas
-            generales del incidente se habilitan al abrirse el caso**.
-
-      - id: home.libro.pasos
-        type: data-table
-        props:
-          labelHeader: Paso
-          descriptionHeader: Qué registra
-          rows:
-            # Rótulos citados de
-            # components/panels/incident-book/general-form.tsx:94-96. El
-            # contenido de cada paso se resume de
-            # components/panels/incident-book/steps/step1-body.tsx,
-            # step2-body.tsx y step3-body.tsx.
-            - id: home.libro.paso.recepcion
-              label: Recepción de llamada
-              description: >-
-                Quién llamó y su relación con el hecho, los teléfonos de
-                contacto, la ubicación con sus referencias, el tipo de incidente
-                y la descripción de lo reportado.
-            - id: home.libro.paso.despacho
-              label: Despacho del incidente
-              description: >-
-                Qué agencia y qué unidad se despacharon, de qué tipo, y las
-                observaciones del despacho.
-            - id: home.libro.paso.extendida
-              label: Información extendida
-              description: >-
-                Las personas lesionadas y fallecidas con sus datos, los recursos
-                empleados y las observaciones de supervisión.
-
-      - id: home.libro.registrar
+      - id: home.paneles.reorganizar
         type: procedure
         props:
-          # Rótulos de los controles de guardado citados de
-          # general-form.tsx:85-87; los avisos de resultado, de :88-91.
+          # components/layout/panel-dock/panel-dock.tsx:296-: dropping a panel on
+          # another exchanges their positions (panel-dock-swap.ts:28, :51, "every
+          # column width and row height stays exactly where it was");
+          # `locked` is passed to dockview (:567) and blocks drag and resize
+          # (stores/use-panel-dock-store.ts:8-9).
           lead: >-
-            Para dejar el caso registrado:
+            Para reorganizar los paneles:
           steps:
-            - id: home.libro.registrar.abrir
-              title: Abra el libro del caso
+            - id: home.paneles.reorganizar.mover
+              title: Arrastre el encabezado de un panel sobre otro
               text: >-
-                Con el caso abierto, diríjase a **Acciones** y haga clic en
-                **Libro de caso**. El libro aparece en la banda inferior, en la
-                ficha de notas.
+                Los dos paneles intercambian sus lugares y las columnas
+                conservan su ancho.
               layout: beside
 
-            - id: home.libro.registrar.notas
-              title: Tome las notas de la llamada
+            - id: home.paneles.reorganizar.redimensionar
+              title: Arrastre el divisor entre dos paneles
               text: >-
-                Escriba en el campo de notas mientras atiende. No necesita
-                ordenar la información: lo que no entre en ningún campo del
-                informe va aquí.
+                El panel de un lado gana el espacio que pierde el del otro.
               layout: beside
 
-            - id: home.libro.registrar.informe
-              title: Diríjase a la ficha Libro del caso
+            - id: home.paneles.reorganizar.bloquear
+              title: Bloquee la edición
               text: >-
-                El libro pasa al informe por pasos y ocupa la banda completa.
-                Complete los pasos en orden.
+                Si no quiere mover o cambiar de tamaño un panel por error, use
+                **Edición habilitada** para bloquear la edición; el control pasa
+                a decir **Edición bloqueada**. El bloqueo solo impide arrastrar
+                y redimensionar: no conserva la disposición cuando se abre o se
+                cierra un caso.
               layout: beside
 
-            - id: home.libro.registrar.guardar
-              title: Guarde el informe
-              text: >-
-                Use **Guardar** la primera vez y **Actualizar** para conservar
-                los cambios posteriores. La plataforma confirma con
-                **Formulario guardado** o **Formulario actualizado**; si no
-                puede guardar, avisa con **Error al guardar** o **Error al
-                actualizar**.
-              layout: beside
-
-      - id: home.libro.aviso
+      - id: home.paneles.aviso
         type: callout
         props:
-          # El libro se cierra y se reinicia al cambiar de caso
-          # (home-view.tsx:444-447), y se desmonta mientras está oculto (:467),
-          # de modo que nada escrito y no guardado sobrevive.
+          # The arrangement is never stored: every mount rebuilds it from the
+          # seeds (stores/use-panel-dock-store.ts:29-45), and an effect resets
+          # it whenever the selected case changes, whether or not the edit lock
+          # is on: the effect calls `resetLayout` unconditionally
+          # (views/home-view.tsx:1365-1375) and the reset handler never reads
+          # `locked` (components/layout/panel-dock/panel-dock.tsx:475-486).
           variant: important
           text: >-
-            Guarde antes de cambiar de caso. Al abrir otro caso, el libro se
-            cierra y se vacía: lo que haya escrito y no guardado no se conserva.
-
-  # --- Teclado ---------------------------------------------------------------
-  - id: home.teclado
-    title: Teclado
-    children:
-      - id: home.teclado.proposito
-        type: prose
-        props:
-          text: >-
-            Permite marcar un número y llamar desde la plataforma, sin salir de
-            Home.
-
-      - id: home.teclado.ubicacion
-        type: prose
-        props:
-          # HOME_MANIFEST, entrada `keypad` (home-view.tsx:126-136):
-          # `initiallyInactive`. El control que lo abre es el de la barra de la
-          # revisión de llamadas (calls-review-search.tsx:226) y el intercambio
-          # con la lista se hace en calls-review-panel.tsx:56-59. Encabezado
-          # citado de components/panels/keypad-panel.tsx:522.
-          text: >-
-            No está a la vista al abrir Home. Diríjase a la barra de la revisión
-            de llamadas y haga clic en **Mostrar teclado**: el teclado ocupa el
-            lugar de la lista en la columna izquierda, bajo el título
-            **LLAMADA**.
-
-      - id: home.teclado.fig
-        type: figure
-        props:
-          caption: "Teclado telefónico en la columna izquierda, en lugar de la lista de llamadas."
-          widthPercent: 90
-
-      - id: home.teclado.llamar
-        type: procedure
-        props:
-          # Control de retorno citado de keypad-panel.tsx:174. Al cerrar el
-          # teclado, la revisión de llamadas vuelve a activarse
-          # (home-view.tsx:455-459).
-          lead: >-
-            Para llamar a un número:
-          steps:
-            - id: home.teclado.llamar.abrir
-              title: Haga clic en Mostrar teclado
-              text: >-
-                El control está en la barra de la revisión de llamadas. La lista
-                deja su lugar al teclado.
-              layout: beside
-
-            - id: home.teclado.llamar.marcar
-              title: Marque el número
-              text: >-
-                Use el teclado en pantalla para componer el número al que desea
-                llamar.
-              layout: beside
-
-            - id: home.teclado.llamar.volver
-              title: Vuelva a la lista
-              # Un solo control, y es el único que existe en este estado. El
-              # paso nombraba también **Ocultar teclado**, que con el teclado
-              # abierto no está en pantalla — ver la nota en
-              # `home.revision.control.teclado`.
-              text: >-
-                Use **Volver a la vista anterior**. La revisión de llamadas
-                recupera la columna izquierda.
-              layout: beside
-
-      - id: home.teclado.aviso
-        type: callout
-        props:
-          # Los paneles del caso requieren que la revisión de llamadas esté
-          # activa (home-view.tsx:422-425), y el teclado la reemplaza
-          # (calls-review-panel.tsx:56-59).
-          variant: info
-          text: >-
-            Mientras el teclado ocupa la columna izquierda, los paneles del caso
-            abierto no se muestran. Cierre el teclado para recuperarlos: el caso
-            sigue abierto y no se pierde nada de lo registrado.
+            Los cambios de disposición duran mientras Home está abierto, y los
+            paneles vuelven a su disposición predeterminada cada vez que abre un
+            caso o regresa a la lista, aunque tenga la edición bloqueada. El
+            bloqueo solo evita mover o redimensionar los paneles por error.
 
   # --- Herramientas de mapa --------------------------------------------------
   - id: home.herramientas
@@ -1050,19 +2402,22 @@ children:
         props:
           text: >-
             Controla lo que el mapa de fondo muestra y cómo se lo mira: el nivel
-            de acercamiento, la base cartográfica y las capas de información
-            sobre ella.
+            de acercamiento, la base cartográfica, las capas de información
+            sobre ella, la vista de calle y la agrupación de los marcadores.
 
       - id: home.herramientas.ubicacion
         type: prose
         props:
-          # `MapToolsPanel` montado flotante en home-view.tsx:632-637. La
-          # posición se corre para no quedar tapada por los paneles de la
-          # esquina (:311-318).
+          # The map is a transparent panel whose rect is the area no panel
+          # covers (views/home-view.tsx:1448-1480): `MapToolsPanel` floats at
+          # `top-1/2 right-4` (:1465-1471) and `MarkerGroupingSwitch` at
+          # `top-4 left-4` (:1476-1478).
           text: >-
-            Es una columna de controles apoyada sobre el mapa, en la esquina
-            inferior derecha. Se corre por su cuenta para no quedar tapada por
-            los paneles que ocupen esa esquina.
+            Es una columna de controles apoyada sobre el borde derecho del mapa,
+            a media altura, dentro del área que dejan libre los paneles; por eso
+            se mueve cuando los paneles se reacomodan. En la esquina superior
+            izquierda de esa misma área está el interruptor de agrupación de
+            marcadores.
 
       - id: home.herramientas.fig
         type: figure
@@ -1073,27 +2428,30 @@ children:
       - id: home.herramientas.controles
         type: icon-table
         props:
-          # Los controles de esta columna NO llevan rótulo en pantalla: son
-          # botones de icono sin `title` ni `aria-label`
-          # (components/panels/map-tools-panel.tsx:228-275). Los nombres de esta
-          # tabla los da el manual, describiendo la función. Los nombres de las
-          # capas sí son citas: :49-50 y :54-56. El control de centrado llega
-          # deshabilitado porque Home monta el panel con `hasLocation={false}`
-          # (home-view.tsx:636) y el botón se apaga con eso (:228).
+          # components/panels/map-tools-panel.tsx:306-374 (labels `mapTools.*`,
+          # common.json:819-827). The centre control calls the focused case's
+          # `handleCenter` (components/panels/dashboard/incident-summary/use-incident-case-actions.ts:47-74,
+          # passed at views/home-view.tsx:1468), which does nothing without a
+          # case. Layers menu :313-325 (integrations) and map-type menu :335-347;
+          # the street-view toggle :349-374 has no rótulo and its glyph is the
+          # INACTIVE state — AGENTS.md of this manual. The grouping switch is
+          # components/panels/marker-grouping-switch.tsx:63-97; its label names
+          # what a click would do next (:68-71), `mapTools.groupMarkers` /
+          # `ungroupMarkers` (common.json:825-826), and grouping is on by default
+          # (store/use-map-layers-store.ts:277).
           labelHeader: Control
           descriptionHeader: Qué hace
           rows:
             - id: home.herramientas.control.centrar
               label: Centrar en el incidente
               description: >-
-                En Home este control está deshabilitado. Para llevar el mapa al
-                incidente del caso abierto, use **Centrar** en el panel de
-                acciones.
+                Con un caso abierto, lleva el mapa al incidente. Sin un caso
+                abierto no tiene efecto.
             - id: home.herramientas.control.integraciones
-              label: Capas de integración
+              label: Capas del mapa
               description: >-
-                Muestra u oculta sobre el mapa las capas **AVL**, **Mobile** y
-                **Cámaras**.
+                Abre un menú con las capas **AVL**, **Mobile** y **Cámaras**, que
+                se encienden y se apagan una a una.
             - id: home.herramientas.control.acercar
               label: Acercar
               description: >-
@@ -1103,12 +2461,64 @@ children:
               description: >-
                 Reduce el nivel de acercamiento del mapa.
             - id: home.herramientas.control.base
-              label: Base del mapa
+              label: Tipo de mapa
               description: >-
-                Muestra u oculta las capas **Tráfico** y **Satelital**.
+                Abre un menú con las capas **Tráfico** y **Satelital**, que se
+                encienden y se apagan una a una.
             - id: home.herramientas.control.street-view
               label: Vista de calle
               description: >-
                 Habilita la elección de un punto del mapa para verlo a nivel de
                 calle. Con la vista de calle abierta, el mismo control la
                 cierra.
+            - id: home.herramientas.control.agrupar
+              label: Agrupar marcadores
+              description: >-
+                Es el interruptor de la esquina superior izquierda del mapa.
+                Encendido, junta los marcadores que se superponen en un grupo con
+                su cantidad; apagado (**Desagrupar marcadores**), los muestra
+                por separado. Empieza encendido y su estado se conserva.
+
+      - id: home.herramientas.capas
+        type: icon-table
+        props:
+          # map-tools-panel.tsx:72-86 (the layers), :30-31 and :26-28 (their
+          # artwork), rendered by `LayerItemButton` :118-157 (`aria-pressed`
+          # shows whether one is on). What each draws: components/panels/google-map.tsx:1637
+          # (traffic), :1583 (`mapTypeId` = "hybrid" for satellite), :1674-1682
+          # (mobile), :1684-1692 (AVL), :1694-1702 (cameras); data at
+          # components/panels/use-map-data.ts:65-115. The Mobile layer is turned on
+          # by opening a case from the list (calls-review-panel.tsx:301) and
+          # Mobile and Cámaras are turned off when a call ends
+          # (store/use-map-layers-store.ts:282, called at pages/dashboard.tsx:199).
+          # "Tráfico", "Satelital" and "Cámaras" are `mapLayers.*`
+          # (common.json:185-187); "AVL" and "Mobile" are literals (:78-79).
+          labelHeader: Capa
+          descriptionHeader: Qué muestra
+          rows:
+            - id: home.herramientas.capa.trafico
+              label: Tráfico
+              description: >-
+                Superpone sobre las vías el estado del tráfico. Se enciende
+                desde **Tipo de mapa**.
+            - id: home.herramientas.capa.satelital
+              label: Satelital
+              description: >-
+                Cambia el mapa base a la imagen satelital, con los nombres de las
+                calles. Se enciende desde **Tipo de mapa**.
+            - id: home.herramientas.capa.avl
+              label: AVL
+              description: >-
+                Muestra la ubicación de los vehículos con localización
+                automática. Se enciende desde **Capas del mapa**.
+            - id: home.herramientas.capa.mobile
+              label: Mobile
+              description: >-
+                Muestra la posición de los agentes de campo. Se enciende desde
+                **Capas del mapa** y se activa por sí sola al abrir un caso
+                desde la lista.
+            - id: home.herramientas.capa.camaras
+              label: Cámaras
+              description: >-
+                Muestra las cámaras de CCTV sobre el mapa. Se enciende desde
+                **Capas del mapa**.

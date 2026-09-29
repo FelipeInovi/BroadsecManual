@@ -419,6 +419,61 @@ Treat this as a proposal to confirm, not as an agreed scope.
    **What settles it:** the owner, when a non-RECEPTION agency is actually in
    scope.
 
+4. **`sections/01-home.yaml` no longer describes the product, and updating it
+   means rewriting it.** Audited 2026-09-29 against `bridge` develop `465f5eb9`,
+   from `58e2cc4d` (develop when Home was written; no `baselines.json` exists,
+   and `documents bridge-manual` refuses for the same reason `extract` does).
+   246 first-parent commits in between. What moved the ground:
+   - Home became a dockview dock with a floating Toolkit (`80cbc85e` #195), and
+     RECEPTION's Home was redesigned around calls (`a7cc0686` #191). The layout
+     rules now live in `views/home-right-slot.ts:67-79`.
+   - The **Agencias** submodule is gone from Home. So are the case's AGENCIAS
+     block, its Acciones (Archivar, Libro de caso), the case tabs, the keypad
+     toggle, the review card's Prioridad and Estado, and the two later book
+     steps. New in their place: Validar / Ver más tarde, the Post-Llamada lock,
+     the 180 s countdown, the keypad as its own panel with five tabs, and the
+     efficiency gauge in Mi turno.
+   - The claim "RECEPTION never gets Fuerzas en Campo / CCTV" is now false.
+     `showFieldForcesOnCase` and `showCctvOnCase` are `true` again (`a1436ca3`
+     #371, right after `085c1f0d` #306 hid them "permanently"). The unmerged
+     `origin/feat/dashboard/role-based-views` takes them away again for intake
+     roles.
+   - `dispatch.forces` and `case.view.all` now gate parts of Home. The manual's
+     own axis (`canViewAllAgencies`) still does not reach it.
+   - The product has i18n (`9dfc429c` #198): es/en/pt catalogues in
+     `src/i18n/locales/`. That is why `labels` reports 210 of 224 citations
+     GONE: most citations must be repointed to the catalogue, and a good part
+     of the text really changed. The es catalogue drops accents in some strings
+     ("Sin ubicacion", "Mas recientes primero").
+
+   The full per-submodule audit is in engram,
+   `bridge-manual/home-drift-audit-2026-09-29`.
+
+   **Decided by the owner (2026-09-29):**
+   - Home stays ONE module, reorganized by STATE: without a case / with a case
+     open / cross-cutting (panel bar, map tools). It is not split per panel,
+     because the product shows it as one rail view, and several of its panels
+     exist only while a case is open.
+   - A complete rewrite of `01-home.yaml` is authorized.
+   - The baseline is develop as it is today; `role-based-views` is not
+     documented until it merges.
+   - Post-Llamada happens inside Home, so it is documented there.
+     `02-llamada.yaml` did not cover it.
+   - Quoted labels are copied exactly as the es catalogue writes them, unaccented
+     strings included. They are cited from `src/i18n/locales/es/*.json`, which
+     `labels` resolves.
+
+   **Still open after the rewrite** (the owner decides each):
+   - Statements about Home that are now false in other sections:
+     - `02-llamada` `llamada.mapa.herramientas` and `05-bridge-of-things`
+       `bot.herramientas`: "centrado deshabilitado" in Home.
+     - `02-llamada` `llamada.banda.libro.texto`: the book "por pasos".
+     - `06-forces-in-field` `fuerzas-campo.asignacion.proposito`: "Revisión de
+       Llamadas".
+   - About 30 delivered Home images are now orphaned, and 26 capture recipes point
+     at slots that no longer exist. Nothing under `assets/` was deleted.
+   - Sections 02-05 carry the same i18n citation drift: 173 labels to review.
+
 *(Questions 4 and 5 were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
 now declared, not narrated. They live in `awaiting-product.json`, which is

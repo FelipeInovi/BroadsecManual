@@ -15,10 +15,100 @@
   ],
   "targetsConfigured": 2,
   "counts": {
-    "gaps": 4,
-    "sections": 2
+    "gaps": 10,
+    "sections": 3
   },
   "awaiting": [
+    {
+      "id": "home.teclado-favoritos-simulados",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "home",
+      "declaredIn": "sections/01-home.yaml",
+      "covers": [
+        "home.teclado.fichas"
+      ],
+      "missing": "The \"Favoritos\" tab of the Teclado panel, and the control beside the number field that adds the typed number to it. The other tabs of the panel (Teclado, Recientes, Directorio, Agentes en turno) are documented; this one is not mentioned.",
+      "because": "The tab lists `MOCK_FAVORITOS` (`components/panels/keypad-panel.tsx:73-77`), three literal entries with Argentine numbers (\"Centro Médico\", \"Bomberos\", \"Policía Federal\"). The list is component state seeded from that constant (`:287`); adding a number only prepends to that state (`handleAddFavorite`, `:294-297`) and nothing is persisted or fetched. The phone button of every row has no `onClick` (`:738-740`).",
+      "settles": "The product persisting favourites per operator and wiring the row's phone button, or the owner deciding how a manual describes a tab that is on screen and fabricated."
+    },
+    {
+      "id": "home.teclado-directorio-sin-marcado",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "home",
+      "declaredIn": "sections/01-home.yaml",
+      "covers": [
+        "home.teclado.fichas"
+      ],
+      "missing": "That the rows of the \"Directorio\" tab offer no way to dial the agency. The tab is documented as a list of the registered agencies with their type, which is what it does.",
+      "because": "`DirectorioView` renders each agency as a name and a type and nothing else (`components/panels/keypad-panel.tsx:782-794`): there is no phone number in the row and no button, unlike the rows of \"Recientes\" (`:707-713`).",
+      "settles": "The product giving the directory a dial action, or the owner deciding how a manual describes a list that looks like a dialler and is not."
+    },
+    {
+      "id": "home.teclado-agentes-sin-accion",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "home",
+      "declaredIn": "sections/01-home.yaml",
+      "covers": [
+        "home.teclado.fichas"
+      ],
+      "missing": "The two buttons on each row of the \"Agentes en turno\" tab (the eye and the phone, titled \"Ver\" and \"Llamar\"). The list itself — the connected agents, their status and their station — is real and documented.",
+      "because": "`AgentsTable` renders both buttons for every row (`components/panels/agents-on-shift-list.tsx:73-86`, `showActions` is passed as `true` at `:26`) and neither has an `onClick`.",
+      "settles": "The product wiring \"Ver\" and \"Llamar\", or removing them."
+    },
+    {
+      "id": "home.paneles-toggle-informacion-incidente",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "home",
+      "declaredIn": "sections/01-home.yaml",
+      "covers": [
+        "home.paneles.lista"
+      ],
+      "missing": "The toggle labelled \"Información del incidente\" in the panel bar. Every other panel of the bar is documented; this one is not mentioned.",
+      "because": "`incident-info` is the id of the right-column SLOT (`RIGHT_SLOT_PANEL_ID`, `views/home-view.tsx:138`), registered in the manifest with the static label `homeView.incidentInfo` (`:275-285`, calls.json:419) and not excluded for RECEPTION (`views/home-right-slot.ts:224-257`). Its open state is driven by an effect from the slot's occupant (`:1201-1212`: `rightSlot != null`), and for RECEPTION with a case open `rightSlot` is null (`:782-789`), so the toggle opens a panel whose render branch returns null (`:1554-1619`, `default`). Without a case it acts as a second switch for Mi turno.",
+      "settles": "The product hiding the toggle for RECEPTION (or giving it a purpose), or the owner deciding how a manual describes a control that is on screen and does nothing."
+    },
+    {
+      "id": "home.revision-orden-inerte",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "home",
+      "declaredIn": "sections/01-home.yaml",
+      "covers": [
+        "home.revision.controles"
+      ],
+      "missing": "The sort toggle in the toolbar of \"Reportes pendientes\" (the up-down arrows, titled \"Mas recientes primero\" / \"Mas antiguos primero\"). The search, the filters and the history control beside it are documented.",
+      "because": "The toggle flips `sortAscending` (`components/panels/dashboard/calls-review/calls-review-search.tsx:345-363` and `calls-review-panel.tsx:176`, `:430-431`), but Recepción's panel never reads it: its list is filtered and re-ordered at `:363-381` without touching `sortAscending`, so pressing the toggle changes the button's title and nothing on the list. (The legacy panel for other agency types does read it, `:594`.)",
+      "settles": "The product applying the order to Recepción's list, or removing the toggle."
+    },
+    {
+      "id": "home.revision-estado-transferido",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "home",
+      "declaredIn": "sections/01-home.yaml",
+      "covers": [
+        "home.revision.estados"
+      ],
+      "missing": "The \"Transferido\" status of a case. It cannot be seen on screen today; the declaration exists so the status is not forgotten if it becomes reachable.",
+      "because": "`transferido` is a member of `CallReviewReceptionStatusKey` (`components/panels/dashboard/calls-review/calls-review.types.ts:193`) and has a label, a colour and an icon (`:224-229`, label `calls:receptionStatus.transferred`), but it is not in `CALL_REVIEW_RECEPTION_STATUS_ORDER` (`:265-266`) — so the Estado filter never lists it — and `resolveReceptionStatusKey` never returns it (`:268-282`).",
+      "settles": "The product assigning the status to a case, or deleting it."
+    },
     {
       "id": "dashboard.historial-columnas-inertes",
       "affects": [

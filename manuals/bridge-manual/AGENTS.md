@@ -29,6 +29,11 @@ filters.
 See "What is still pending" below — and trust that table over this paragraph if
 they ever disagree, because a count goes stale and a reason does not.
 
+**Superseded for Home on 2026-09-29.** `01-home` was rewritten against develop
+`465f5eb9` (ESTADO Unresolved #4). Its new slots are pending again, and most of
+its old deliveries are orphans. `image-requests.json` has the current count;
+this paragraph's does not.
+
 Sharing collapsed the twelve force-filter rows into six slots, so the icon
 convention is **33 slots, of which 30 were delivered and 3 cannot be.** The
 `icon` convention is exhausted. Everything still pending is `figure`.
@@ -118,6 +123,10 @@ page — which is why the seven deliveries here changed the page count by zero. 
 not "fix" an image by cropping it to fit; the box already holds.
 
 ## An asset family with no slot
+
+**Resolved 2026-09-29:** the Home rewrite added a map-layer table
+(`home.herramientas.capa.*`), so these five now have slots. What follows is the
+history of why they had none.
 
 `map-tools-panel.tsx:49-56` ships five map-layer images — **Tráfico, Satelital,
 AVL, Mobile, Cámaras** — each in an object literal beside its own label. A perfect
@@ -239,7 +248,8 @@ account WITHOUT it, at full resolution. `todas-las-agencias` has its own
 The rest of this section records how the call slots were finally closed. They
 are all delivered; what follows is what a RETAKE of any of them needs.
 
-**Home and Fuerzas en Campo are COMPLETE.** Both closed the same way, and it is
+**Home and Fuerzas en Campo were COMPLETE** (Home only until its 2026-09-29
+rewrite). Both closed the same way, and it is
 worth knowing how, because in each case the file said "blocked" and the truth
 was "nobody had produced the data yet":
 
