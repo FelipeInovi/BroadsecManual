@@ -207,6 +207,18 @@ sources:
         NOT deliverable: `ZoomInIcon` (:244) and `ZoomOutIcon` (:263) are
         fragments — the magnifier SVG plus a `<span>` holding `+` or `-` in the
         app's font. Extracting the SVG gives three quarters of the control.
+        Call banner and force list (`components/layout/incoming-call-banner.tsx`,
+        `components/panels/available-agent-row.tsx`): the controls are lucide
+        (Pause, SquareParking, Mic, PhoneOff, Send, Hash, UsersRound, Star,
+        Gauge, MapPinCheck) plus ONE inline SVG, the keypad grid (:424-439,
+        `fill="currentColor"`). Three shapes that are NOT single glyphs: the
+        `Resumen AI` button is text plus a Sparkles icon drawn as an animated
+        gradient CSS mask over a base64 data-URI (:743); the recommended-force
+        mark is a CSS `ring-1` on the logo (available-agent-row.tsx:283-290);
+        and the toggles (Pause/Play, Mic/MicOff) swap glyph by state, so the
+        idle one is what a row describing the control should show. The product
+        colours the badges (star amber-300, gauge orange-400, pin teal-300) with
+        glow shadows; amber-300 is ~1.5:1 on white, so they are recoloured.
       filenameHazards: |
         The `phonebook/` names describe the AGENT, not the filter: `medical_agent`
         for "Salud", `traffic_agent` for "Tránsito", `civil_defense` for "Defensa
