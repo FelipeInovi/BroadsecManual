@@ -3500,37 +3500,5 @@
         "_common/seatmap.distribucion.cambiar-agencia.verificar.png"
       ]
     }
-  ],
-  "undeclared": [
-    "home.agencias.fig",
-    "home.caso.accion.archivar",
-    "home.caso.accion.centrar",
-    "home.caso.accion.libro",
-    "home.caso.agencias.transferir.control",
-    "home.caso.fig",
-    "home.caso.volver.control",
-    "home.caso.volver.ubicar",
-    "home.fig",
-    "home.libro.fig",
-    "home.libro.registrar.abrir",
-    "home.libro.registrar.guardar",
-    "home.libro.registrar.informe",
-    "home.libro.registrar.notas",
-    "home.revision.abrir.seleccionar",
-    "home.revision.abrir.ubicar",
-    "home.revision.abrir.verificar",
-    "home.revision.control.buscar",
-    "home.revision.control.orden",
-    "home.revision.control.teclado",
-    "home.revision.corregir.direccion",
-    "home.revision.corregir.editar",
-    "home.revision.corregir.guardar",
-    "home.revision.corregir.tipo",
-    "home.revision.fig",
-    "home.teclado.fig",
-    "home.teclado.llamar.abrir",
-    "home.teclado.llamar.marcar",
-    "home.teclado.llamar.volver",
-    "home.turno.fig"
   ]
 }
