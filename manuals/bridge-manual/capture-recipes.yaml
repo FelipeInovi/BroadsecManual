@@ -45,16 +45,22 @@ target:
       - bridge-of-things
       - forces-in-field
       - create-incident
+      # The seventh button of the rail (the gear, y=380), added with the Settings
+      # entry of `navItems`. No recipe uses it: it is here because the run refuses
+      # to click when the rail's length differs from this list (2026-09-29: the
+      # rail measured 7, the list had 6).
+      - settings
 
     # Proof the attached window is the product AND signed in.
     #
-    # Top-bar CHROME, not a panel: `<span className="text-yellow-500">Agencia:
-    # </span>` at `components/layout/top-bar.tsx:123`, mounted in every view and
-    # absent before the login gate. The first attempt used Home's agencies panel
-    # and failed the moment the window happened to be left on another view —
-    # which is the normal state, since a person was just using it.
+    # Top-bar CHROME, not a panel: `<span className="text-yellow-500">ID:</span>`
+    # at `components/layout/top-bar.tsx:138`, mounted in every view and absent
+    # before the login gate. It was `Agencia:` until the top bar was redesigned
+    # (develop 465f5eb9): that span no longer exists, so the old selector timed out
+    # against a healthy, signed-in window. `Rol:` is the wrong replacement, it
+    # renders only when the profile has a `roleLabel` (:143-147).
     verify:
-      selector: span::-p-text(Agencia:)
+      selector: span::-p-text(ID:)
 
 # Each `screenIs` below was read off the running app, not guessed: clicking each
 # rail position and recording what the view puts on screen. That pass also
@@ -68,14 +74,6 @@ recipes:
   # each is one click plus a shot. The long tail — a control per procedure step,
   # a field per field-list — is the same mechanism repeated.
 
-  - slot: home.fig
-    view: home
-    screenIs: h3::-p-text(Mi Turno)
-    # Not the heading: the panel renders its shell before the query lands, and a
-    # review list with no case is a screenshot that teaches the operator the
-    # screen is empty.
-    dataReady: h3::-p-text(Revisión de llamadas)
-    settleMs: 2500
 
   - slot: seatmap.fig
     view: sitemap
@@ -126,31 +124,8 @@ recipes:
   # it. Bridge360 gives its panels no id, no test id and nothing to tell them
   # apart — the heading inside is the only handle, which is why that pair exists.
 
-  - slot: home.revision.fig
-    view: home
-    screenIs: h3::-p-text(Revisión de llamadas)
-    dataReady: ::-p-text(caso)
-    clip: h3::-p-text(Revisión de llamadas)
-    clipUp: div.panel
-    settleMs: 2500
 
-  - slot: home.agencias.fig
-    view: home
-    screenIs: h3::-p-text(Agencias)
-    # A row, not the heading: the panel paints its shell before the query lands.
-    dataReady: ::-p-text(Despacho)
-    clip: h3::-p-text(Agencias)
-    clipUp: div.panel
-    settleMs: 2500
 
-  - slot: home.turno.fig
-    view: home
-    screenIs: h3::-p-text(Mi Turno)
-    # The shift history, which only exists once the panel has its data.
-    dataReady: ::-p-text(Inicio de turno)
-    clip: h3::-p-text(Mi Turno)
-    clipUp: div.panel
-    settleMs: 2500
 
   # --- Seatmap's three regions ------------------------------------------------
   #
@@ -255,12 +230,6 @@ recipes:
   # clip is the control, not the panel around it.
 
   # Home's review controls. `title` for the buttons, `placeholder` for the field.
-  - slot: home.revision.control.buscar
-    view: home
-    screenIs: h3::-p-text(Revisión de llamadas)
-    dataReady: input[placeholder="Buscar por ID, dir..."]
-    clip: input[placeholder="Buscar por ID, dir..."]
-    settleMs: 1500
 
   - slot: home.revision.control.filtros
     view: home
@@ -269,21 +238,6 @@ recipes:
     clip: button[title="Filtros"]
     settleMs: 1500
 
-  # Both of these alternate their `title`; the citation names the state the manual
-  # documents, which is the one the control shows at rest.
-  - slot: home.revision.control.orden
-    view: home
-    screenIs: h3::-p-text(Revisión de llamadas)
-    dataReady: button[title="Más recientes primero"]
-    clip: button[title="Más recientes primero"]
-    settleMs: 1500
-
-  - slot: home.revision.control.teclado
-    view: home
-    screenIs: h3::-p-text(Revisión de llamadas)
-    dataReady: button[title="Mostrar teclado"]
-    clip: button[title="Mostrar teclado"]
-    settleMs: 1500
 
   # Seatmap's layout-edit control. Present for this account, which is itself a
   # fact worth noting: it is gated on `canManageSitemapLayout`.
@@ -631,18 +585,6 @@ recipes:
     clipUp: div[class*="rounded-2xl"][class*="shadow-lg"]
     settleMs: 2500
 
-  # "Ubique la llamada en la lista" — the LIST, not the panel. The panel is
-  # already `home.revision.fig`; what this step promises is the scrolling column
-  # of cards with the Prioridad badge on them, which is the container below.
-  - slot: home.revision.abrir.ubicar
-    view: home
-    screenIs: h3::-p-text(Revisión de llamadas)
-    # A card, not the panel header's "1 caso": the header paints before the
-    # query lands, and a list photographed empty is a claim about the operation.
-    dataReady: div[class*="cursor-pointer"][class*="rounded-2xl"]
-    clip: div[class*="custom-scrollbar"][class*="overflow-y-auto"]
-    settleMs: 2500
-
   # Seatmap's distribution region: the agency header AND the zone grid in one
   # frame, which is what "Planta de la agencia con los puestos agrupados por
   # zona" promises. The clip enters at the header and climbs — Seatmap's regions
@@ -838,60 +780,6 @@ recipes:
     dataReady: div[class*="bottom-24"] button
     clip: div[class*="bottom-24"] button
     settleMs: 2500
-
-  # --- Home's phone keypad: one reversible click ------------------------------
-  #
-  # `Mostrar teclado` swaps the review panel for the keypad, and the keypad's own
-  # `Volver a la vista anterior` swaps it back. The round trip was walked before
-  # writing this: the list came back intact.
-  #
-  # ORDER MATTERS in this block. `llamar.abrir` photographs the control that
-  # OPENS the keypad, and that control exists ONLY while the keypad is closed —
-  # `CallsReviewSearch` is mounted from calls-review-panel.tsx:204 alone, and
-  # opening the keypad deactivates that panel. So it is shot first, and only the
-  # recipe after it carries the click; the last two run with the keypad already
-  # open. Running this block out of order fails loudly rather than quietly, which
-  # is what `screenIs` is for.
-
-  - slot: home.teclado.llamar.abrir
-    view: home
-    screenIs: h3::-p-text(Revisión de llamadas)
-    dataReady: button[title="Mostrar teclado"]
-    clip: button[title="Mostrar teclado"]
-    settleMs: 2000
-
-  - slot: home.teclado.fig
-    view: home
-    steps:
-      - click: button[title="Mostrar teclado"]
-    # NOT Home's usual tell. Opening the keypad unmounts the review panel, so
-    # `Revisión de llamadas` is gone by the time the gates run; the keypad's own
-    # return control is the state this shot is about.
-    screenIs: button[title="Volver a la vista anterior"]
-    dataReady: input[placeholder*="Número"]
-    # Through the return control rather than `div.panel` directly: Home shows
-    # three panels and the bare selector would take whichever the DOM happens to
-    # order first.
-    clip: button[title="Volver a la vista anterior"]
-    clipUp: div.panel
-    settleMs: 2500
-
-  - slot: home.teclado.llamar.marcar
-    view: home
-    screenIs: button[title="Volver a la vista anterior"]
-    dataReady: input[placeholder*="Número"]
-    # The field AND the pad. The step says "componer el número", which is both —
-    # the `grid-cols-3` inside is the digits without the field they fill.
-    clip: input[placeholder*="Número"]
-    clipUp: div[class*="pt-0"][class*="flex-col"]
-    settleMs: 2000
-
-  - slot: home.teclado.llamar.volver
-    view: home
-    screenIs: button[title="Volver a la vista anterior"]
-    dataReady: button[title="Volver a la vista anterior"]
-    clip: button[title="Volver a la vista anterior"]
-    settleMs: 2000
 
   # --- Fuerzas en Campo: the panels that start inactive ------------------------
   #
@@ -1124,153 +1012,6 @@ recipes:
     clip: button[aria-label="Confirmar"]
     settleMs: 2500
 
-  # --- Home with a case open --------------------------------------------------
-  #
-  # One click on the review card opens the case, and `Volver a la lista de
-  # incidentes` closes it. The click has ONE persistent effect worth knowing:
-  # `handleSelectCase` calls `markRead(item.id)` (calls-review-panel.tsx:80),
-  # which is the product's real "someone reviewed this" signal. It is NOT a
-  # backend write — the store's own comment says no backend read flag exists for
-  # this endpoint — it is a zustand store persisted to `localStorage` under
-  # `bridge-calls-review-read` (use-calls-review-read-store.ts). Local, cosmetic,
-  # and restorable by clearing that key.
-  #
-  # Consequence for authoring: the opened card loses its **Prioridad** badge, so
-  # do not expect one in these frames.
-  #
-  # ORDER MATTERS. The first recipe opens the case; the rest read it. A case
-  # selection is app state and survives the rail click the harness navigates
-  # with, unlike a modal.
-
-  - slot: home.caso.fig
-    view: home
-    steps:
-      - click: div[role="button"][class*="rounded-2xl"]
-    # The one control that exists ONLY with a case open, which makes it the
-    # cheapest proof the click landed.
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: button[title="Volver a la lista de incidentes"]
-    settleMs: 3000
-
-  # "La lista deja a la vista únicamente esa tarjeta" — the PANEL, so the frame
-  # shows the list reduced to one card rather than the card alone.
-  - slot: home.revision.abrir.seleccionar
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: div[role="button"][class*="rounded-2xl"]
-    clip: h3::-p-text(Revisión de llamadas)
-    clipUp: div.panel
-    settleMs: 2500
-
-  # "Confirme el tipo de incidente, la dirección y el teléfono en la tarjeta que
-  # quedó a la vista" — the CARD, because the step names what is on it.
-  - slot: home.revision.abrir.verificar
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: div[role="button"][class*="rounded-2xl"]
-    clip: div[role="button"][class*="rounded-2xl"]
-    settleMs: 2500
-
-  # The pencil on the open card. Clipped, never pressed — the steps after it
-  # (`direccion`, `tipo`, `guardar`) write to a real case.
-  - slot: home.revision.corregir.editar
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: button[title="Editar"]
-    clip: button[title="Editar"]
-    settleMs: 2500
-
-  # "Mientras hay un caso abierto, la barra no ofrece la búsqueda ni los filtros:
-  # en su lugar aparece el control de retorno." The step is ABOUT the bar's
-  # changed contents, so the clip is the bar and not the button in it.
-  - slot: home.caso.volver.ubicar
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: button[title="Volver a la lista de incidentes"]
-    clip: button[title="Volver a la lista de incidentes"]
-    clipUp: div[class*="flex"][class*="gap"]
-    settleMs: 2500
-
-  - slot: home.caso.volver.control
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: button[title="Volver a la lista de incidentes"]
-    clip: button[title="Volver a la lista de incidentes"]
-    settleMs: 2500
-
-  # One per agency in the AGENCIAS panel; the clip takes the first. Never
-  # pressed: the row's own text says the control derives the case and then reads
-  # **Agencia transferida**, which is a real transfer of a real case.
-  - slot: home.caso.agencias.transferir.control
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: button::-p-text(Transferir agencia)
-    clip: button::-p-text(Transferir agencia)
-    settleMs: 2500
-
-  # --- The case book, in the bottom band --------------------------------------
-  #
-  # Opened from ACCIONES on the right column. The control TOGGLES its own label:
-  # `Abrir libro del caso` while closed, `Cerrar libro del caso` while open, both
-  # on `aria-label` and NOT on `title`. So `registrar.abrir` must be shot first,
-  # while the book is still closed — the same ordering rule as the keypad block,
-  # for the same reason.
-  #
-  # These all need the case open, which the block above leaves in place: a case
-  # selection is app state and survives the rail click between shots.
-
-  - slot: home.libro.registrar.abrir
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: button[aria-label="Abrir libro del caso"]
-    clip: button[aria-label="Abrir libro del caso"]
-    settleMs: 2500
-
-  # "Libro del caso abierto en la banda inferior, en la ficha de notas" — the
-  # panel opens on NOTAS already, so no tab click is needed. Clipped through the
-  # textarea rather than by taking `div.panel` bare: Home shows six panels with a
-  # case open and the bare selector takes whichever the DOM orders first.
-  - slot: home.libro.fig
-    view: home
-    steps:
-      - click: button[aria-label="Abrir libro del caso"]
-    screenIs: button[aria-label="Cerrar libro del caso"]
-    dataReady: textarea
-    clip: textarea
-    clipUp: div.panel
-    settleMs: 2500
-
-  - slot: home.libro.registrar.notas
-    view: home
-    screenIs: button[aria-label="Cerrar libro del caso"]
-    dataReady: textarea
-    clip: textarea
-    settleMs: 2500
-
-  # "Diríjase a la ficha Libro del caso" — the TAB, not the panel. The step is
-  # about moving between the book's two tabs, and the panel is already
-  # `home.libro.fig`.
-  - slot: home.libro.registrar.informe
-    view: home
-    screenIs: button[aria-label="Cerrar libro del caso"]
-    dataReady: button::-p-text(Libro del caso)
-    clip: button::-p-text(Libro del caso)
-    settleMs: 2500
-
-  # Clipped, never pressed: this writes the report onto a real case.
-  #
-  # `title`, and it took a failed round to find out. This panel labels its
-  # controls three different ways — the open/close toggle on `aria-label`, the
-  # two tabs as TEXT, and this one on `title`. Never assume which; the probe
-  # prints all three into one field and that is exactly how the wrong one gets
-  # written down.
-  - slot: home.libro.registrar.guardar
-    view: home
-    screenIs: button[aria-label="Cerrar libro del caso"]
-    dataReady: button[title="Guardar"]
-    clip: button[title="Guardar"]
-    settleMs: 2500
-
   # Crear Incidente's opening procedure. All three are clips on the step the
   # panel arrives with open; none of them fills the form.
 
@@ -1340,33 +1081,6 @@ recipes:
     clip: div[class*="mb-6"][class*="items-center"][class*="px-2"]
     clipUp: div[class*="p-4"][class*="flex-col"][class*="relative"]
     settleMs: 3000
-
-  # Correcting an open case. `corregir.editar` above photographs the pencil with
-  # edit mode OFF, so these two come after it and the first one turns it on.
-  # Nothing here presses Guardar: that writes to a real case.
-  #
-  # `home.revision.corregir.tipo` is NOT in this block and cannot be. The type
-  # field is `editable={isEditing && canEditType}` and
-  # `canEditType = item.matchId != null` (calls-review-card.tsx:98, :379) — the
-  # call in this list has no associated case, so no type control renders at all.
-  # Confirmed on the running app: with edit mode on there is no combobox and no
-  # select anywhere. A data condition, not a recipe.
-
-  - slot: home.revision.corregir.direccion
-    view: home
-    steps:
-      - click: button[title="Editar"]
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: input[placeholder="Buscar dirección…"]
-    clip: input[placeholder="Buscar dirección…"]
-    settleMs: 2500
-
-  - slot: home.revision.corregir.guardar
-    view: home
-    screenIs: button[title="Volver a la lista de incidentes"]
-    dataReady: button[title="Guardar"]
-    clip: button[title="Guardar"]
-    settleMs: 2500
 
   # --- Dashboard's Analítica tab ----------------------------------------------
   #
@@ -1790,38 +1504,154 @@ recipes:
   # count had been steady across every earlier delivery and a silent change
   # would read as one.
 
-  # --- Home closed, and its recipe had been right the whole time --------------
+  # --- Home, rewritten 2026-09-29 against develop 465f5eb9 ---------------------
   #
-  # `home.revision.abrir.ubicar` and `home.revision.corregir.tipo` DELIVERED, so
-  # the Home module is complete. Neither needed a new recipe or a harness
-  # feature; both needed DATA that this session's own test calls produced.
+  # Home is a dockview dock now. A panel has no `h3` and no `div.panel`: its title
+  # is a TAB, `div[role="tab"][aria-label="<title>"]`, and the panel around it is
+  # `div.dv-groupview`. That pair is this block's clip handle. The panel bar is
+  # `div[class*="bottom-24"][class*="left-5.5"]`, and the map tools are
+  # `div[class*="rounded-2xl"][class*="shadow-lg"]`.
   #
-  # `abrir.ubicar` ran through the real `capture` command — the recipe written
-  # long ago, untouched. With no call active the harness has everything it wants:
-  # the rail is 6, `Agencia:` is in the top bar, and `view: home` is a position.
-  # It only ever wanted more than one call in the review list. There are five.
+  # Two things the run cannot see and the person preparing the window must:
   #
-  # SCREEN WIDTH IS A CAPTURE PRECONDITION, and it cost three attempts. At a
-  # 1280px viewport the review cards overflow their own scroll container and the
-  # crop cuts the PRIORIDAD badge — which is the ONE thing that step's text
-  # names. At 1920px the same recipe frames five cards with every badge intact.
-  # Nothing in the recipe changed.
+  #  * the dev build mounts TanStack's query-devtools button in the bottom-right
+  #    corner, and Google's info window can be left open on the map after a click
+  #    on a place. Both land in full-window figures. Hide them for the shot with a
+  #    <style> tag (`visibility: hidden` on `.tsqd-open-btn-container` and
+  #    `.gm-style-iw-c`) and remove it afterwards; nothing else in the page moves.
+  #  * the recipe vocabulary has no `type`. Figures that need text in a field
+  #    (the keypad number) were shot against a field filled by hand first, which
+  #    is what the recipe's `settleMs` waits behind. The field is cleared after.
   #
-  # AND `Aumentar tamaño del panel` DOES NOT WIDEN THE PANEL. It zooms the
-  # panel's CONTENT, so pressing it to fix a horizontal cut makes the cut worse —
-  # fewer cards, more overflow. `Disminuir` is what makes content fit a narrow
-  # panel. Both were tried in that order, wrongly, before the screen was changed.
+  # NO-CASE state first. `Mi turno` is mounted only while no case is open, so its
+  # tab is the gate that proves the window is in the state these captions describe.
+
+  - slot: home.general.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    # A card, not the tab: the list paints its shell before the query lands.
+    dataReady: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    settleMs: 3000
+
+  - slot: home.revision.lista.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    clip: div[role="tab"][aria-label="Reportes pendientes"]
+    clipUp: div.dv-groupview
+    settleMs: 2500
+
+  - slot: home.revision.control.busqueda
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: input[placeholder="Buscar por tipo, direccion..."]
+    clip: input[placeholder="Buscar por tipo, direccion..."]
+    settleMs: 1500
+
+  - slot: home.revision.control.historial
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: button[title="Historial de incidentes"]
+    clip: button[title="Historial de incidentes"]
+    settleMs: 1500
+
+  # "Ubique el reporte en la lista" — the scrolling column of cards. Entered
+  # through a card and climbed, because the column has no handle of its own.
+  - slot: home.revision.abrir.lista
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    clip: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    clipUp: div[class*="custom-scrollbar"][class*="overflow-y-auto"]
+    settleMs: 2500
+
+  # "Haga clic en la tarjeta" — the card, hovered and NEVER clicked here: the
+  # click is the next state (`home.caso.*`), and it is taken there.
+  - slot: home.revision.abrir.tarjeta
+    view: home
+    steps:
+      - hover: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    clip: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    settleMs: 1200
+
+  - slot: home.teclado.vista.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: button[title="Recientes"]
+    clip: div[role="tab"][aria-label="Teclado"]
+    clipUp: div.dv-groupview
+    settleMs: 1500
+
+  # The pill holding the country selector and the number field. Shot with a
+  # number typed by hand (see the block header).
+  - slot: home.teclado.llamar.numero
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: input[placeholder="Número Telefónico"]
+    clip: input[placeholder="Número Telefónico"]
+    clipUp: div[class*="overflow-hidden"][class*="rounded-full"]
+    settleMs: 1200
+
+  # The call button, never pressed. Shot with a number typed so it is enabled.
+  - slot: home.teclado.llamar.iniciar
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: button[title="Llamar"]
+    clip: button[title="Llamar"]
+    settleMs: 1200
+
+  - slot: home.turno.vista.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: ::-p-text(Historial de turno)
+    clip: div[role="tab"][aria-label="Mi turno"]
+    clipUp: div.dv-groupview
+    settleMs: 2500
+
+  - slot: home.paneles.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: div[class*="bottom-24"][class*="left-5.5"] button
+    clip: div[class*="bottom-24"][class*="left-5.5"]
+    settleMs: 1500
+
+  # The grouping switch: track, knob and glyph in one control. It is not an icon
+  # the product ships as a file (marker-grouping-switch.tsx draws it), so the row
+  # of `home.herramientas.controles` is answered by a capture, not by extraction.
+  - slot: home.herramientas.control.agrupar
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: button[role="switch"][aria-checked]
+    clip: button[role="switch"][aria-checked]
+    clipUp: div[class*="rounded-full"][class*="p-1"]
+    settleMs: 1500
+
+  # "Arrastre el encabezado de un panel sobre otro" — the header, which is the
+  # drag handle. Clipped, never dragged: a drop swaps two panels and the layout is
+  # persisted per operator.
+  - slot: home.paneles.reorganizar.mover
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: div[role="tab"][aria-label="Reportes pendientes"]
+    clip: div[role="tab"][aria-label="Reportes pendientes"]
+    clipUp: div.dv-tabs-and-actions-container
+    settleMs: 1200
+
+  # NOT recipes, three figures shot by hand off the same window:
+  # `home.paneles.abrir.barra`, `home.paneles.reorganizar.redimensionar` and
+  # `home.paneles.reorganizar.bloquear`. Each needs the pointer PARKED on a control
+  # so its reveal shows (a tooltip, a highlighted divider), and the reveal lives
+  # outside the control's own box: the tooltip is a Radix popper portalled to
+  # `body`, the divider highlight is the sash's. `clip` takes one element, and no
+  # element holds both, so the frame is a rectangle:
   #
-  # `corregir.tipo` was diagnosed correctly before and stayed blocked for the
-  # right reason: `editable={isEditing && canEditType}` with
-  # `canEditType = item.matchId != null`. What changed is that the test calls
-  # left rows badged `Abierto` and `En Despacho` — calls WITH a case. Open one,
-  # press `Editar` (a `title`, not text: `s.text.includes("Editar")` is false),
-  # and the type chip gains a teal ring.
+  #   abrir.barra          hover the Teclado button of the panel bar, rect
+  #                        (16,541) 190x378; reads "Teclado — Activo"
+  #   redimensionar        hover the sash at (300,426), rect (90,384) 413x100
+  #   bloquear             hover the lock at (43,854), rect (16,780) 200x150;
+  #                        reads "Edición habilitada"
   #
-  # The figure shows the picker OPEN, not the chip alone. The step reads "haga
-  # clic en el tipo … y elija el que corresponde", and a chip by itself does not
-  # look like something you click. One reversible click on the chip opens the
-  # search field, the type list and the `1 tipo seleccionado` footer, which is
-  # the whole sentence in one frame. Nothing was selected; `Cancelar` put the
-  # card back.
+  # The tooltip is read back from the page before the shot: a tooltip stays
+  # mounted across reads and returns the PREVIOUS control's text every other time.

@@ -19,142 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 201,
-    "delivered": 151,
-    "pending": 50
+    "delivered": 167,
+    "pending": 34
   },
   "pending": [
-    {
-      "slot": "home.general.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.general.fig",
-          "blockType": "figure",
-          "shows": "Vista Home sin caso abierto: el mapa de fondo, con el teclado y los reportes pendientes a la izquierda y el resumen del turno a la derecha."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.general.fig.png",
-        "override": "<permission>/home.general.fig.png"
-      }
-    },
-    {
-      "slot": "home.revision.lista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.lista.fig",
-          "blockType": "figure",
-          "shows": "Panel de reportes pendientes con la barra de búsqueda y las tarjetas de los casos."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.lista.fig.png",
-        "override": "<permission>/home.revision.lista.fig.png"
-      }
-    },
-    {
-      "slot": "home.revision.control.busqueda",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.control.busqueda",
-          "blockType": "field-list",
-          "shows": "Buscar por tipo, direccion..."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.control.busqueda.png",
-        "override": "<permission>/home.revision.control.busqueda.png"
-      }
-    },
-    {
-      "slot": "home.revision.control.historial",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.control.historial",
-          "blockType": "field-list",
-          "shows": "Historial de incidentes"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.control.historial.png",
-        "override": "<permission>/home.revision.control.historial.png"
-      }
-    },
-    {
-      "slot": "home.revision.abrir.lista",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.abrir.lista",
-          "blockType": "procedure",
-          "shows": "Ubique el reporte en la lista"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.abrir.lista.png",
-        "override": "<permission>/home.revision.abrir.lista.png"
-      }
-    },
-    {
-      "slot": "home.revision.abrir.tarjeta",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.revision.abrir.tarjeta",
-          "blockType": "procedure",
-          "shows": "Haga clic en la tarjeta"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.revision.abrir.tarjeta.png",
-        "override": "<permission>/home.revision.abrir.tarjeta.png"
-      }
-    },
     {
       "slot": "home.revision.abrir.comprobar",
       "neededBy": [
@@ -175,94 +43,6 @@
       "deliverTo": {
         "shared": "_common/home.revision.abrir.comprobar.png",
         "override": "<permission>/home.revision.abrir.comprobar.png"
-      }
-    },
-    {
-      "slot": "home.teclado.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.teclado.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel del teclado con sus fichas y el teclado numérico."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.teclado.vista.fig.png",
-        "override": "<permission>/home.teclado.vista.fig.png"
-      }
-    },
-    {
-      "slot": "home.teclado.llamar.numero",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.teclado.llamar.numero",
-          "blockType": "procedure",
-          "shows": "Escriba el número"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.teclado.llamar.numero.png",
-        "override": "<permission>/home.teclado.llamar.numero.png"
-      }
-    },
-    {
-      "slot": "home.teclado.llamar.iniciar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.teclado.llamar.iniciar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Llamar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.teclado.llamar.iniciar.png",
-        "override": "<permission>/home.teclado.llamar.iniciar.png"
-      }
-    },
-    {
-      "slot": "home.turno.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.turno.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel del turno con el indicador de eficiencia, los recuentos de la jornada, los gráficos y el historial."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.turno.vista.fig.png",
-        "override": "<permission>/home.turno.vista.fig.png"
       }
     },
     {
@@ -948,50 +728,6 @@
       }
     },
     {
-      "slot": "home.paneles.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.fig",
-          "blockType": "figure",
-          "shows": "Barra de paneles con los paneles de Home y los controles de disposición."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.fig.png",
-        "override": "<permission>/home.paneles.fig.png"
-      }
-    },
-    {
-      "slot": "home.paneles.abrir.barra",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.abrir.barra",
-          "blockType": "procedure",
-          "shows": "Ubique el panel en la barra de paneles"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.abrir.barra.png",
-        "override": "<permission>/home.paneles.abrir.barra.png"
-      }
-    },
-    {
       "slot": "home.paneles.abrir.alternar",
       "neededBy": [
         "agencia-propia",
@@ -1011,94 +747,6 @@
       "deliverTo": {
         "shared": "_common/home.paneles.abrir.alternar.png",
         "override": "<permission>/home.paneles.abrir.alternar.png"
-      }
-    },
-    {
-      "slot": "home.paneles.reorganizar.mover",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.reorganizar.mover",
-          "blockType": "procedure",
-          "shows": "Arrastre el encabezado de un panel sobre otro"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.reorganizar.mover.png",
-        "override": "<permission>/home.paneles.reorganizar.mover.png"
-      }
-    },
-    {
-      "slot": "home.paneles.reorganizar.redimensionar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.reorganizar.redimensionar",
-          "blockType": "procedure",
-          "shows": "Arrastre el divisor entre dos paneles"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.reorganizar.redimensionar.png",
-        "override": "<permission>/home.paneles.reorganizar.redimensionar.png"
-      }
-    },
-    {
-      "slot": "home.paneles.reorganizar.bloquear",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.paneles.reorganizar.bloquear",
-          "blockType": "procedure",
-          "shows": "Bloquee la edición"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.paneles.reorganizar.bloquear.png",
-        "override": "<permission>/home.paneles.reorganizar.bloquear.png"
-      }
-    },
-    {
-      "slot": "home.herramientas.control.agrupar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.herramientas.control.agrupar",
-          "blockType": "icon-table",
-          "shows": "Agrupar marcadores"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.herramientas.control.agrupar.png",
-        "override": "<permission>/home.herramientas.control.agrupar.png"
       }
     },
     {
@@ -1128,6 +776,57 @@
   ],
   "delivered": [
     {
+      "slot": "home.general.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.general.fig",
+          "blockType": "figure",
+          "shows": "Vista Home sin caso abierto: el mapa de fondo, con el teclado y los reportes pendientes a la izquierda y el resumen del turno a la derecha."
+        }
+      ],
+      "files": [
+        "_common/home.general.fig.png"
+      ]
+    },
+    {
+      "slot": "home.revision.lista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.lista.fig",
+          "blockType": "figure",
+          "shows": "Panel de reportes pendientes con la barra de búsqueda y las tarjetas de los casos."
+        }
+      ],
+      "files": [
+        "_common/home.revision.lista.fig.png"
+      ]
+    },
+    {
+      "slot": "home.revision.control.busqueda",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.control.busqueda",
+          "blockType": "field-list",
+          "shows": "Buscar por tipo, direccion..."
+        }
+      ],
+      "files": [
+        "_common/home.revision.control.busqueda.png"
+      ]
+    },
+    {
       "slot": "home.revision.control.filtros",
       "neededBy": [
         "agencia-propia",
@@ -1142,6 +841,125 @@
       ],
       "files": [
         "_common/home.revision.control.filtros.png"
+      ]
+    },
+    {
+      "slot": "home.revision.control.historial",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.control.historial",
+          "blockType": "field-list",
+          "shows": "Historial de incidentes"
+        }
+      ],
+      "files": [
+        "_common/home.revision.control.historial.png"
+      ]
+    },
+    {
+      "slot": "home.revision.abrir.lista",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.abrir.lista",
+          "blockType": "procedure",
+          "shows": "Ubique el reporte en la lista"
+        }
+      ],
+      "files": [
+        "_common/home.revision.abrir.lista.png"
+      ]
+    },
+    {
+      "slot": "home.revision.abrir.tarjeta",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.revision.abrir.tarjeta",
+          "blockType": "procedure",
+          "shows": "Haga clic en la tarjeta"
+        }
+      ],
+      "files": [
+        "_common/home.revision.abrir.tarjeta.png"
+      ]
+    },
+    {
+      "slot": "home.teclado.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.teclado.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel del teclado con sus fichas y el teclado numérico."
+        }
+      ],
+      "files": [
+        "_common/home.teclado.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "home.teclado.llamar.numero",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.teclado.llamar.numero",
+          "blockType": "procedure",
+          "shows": "Escriba el número"
+        }
+      ],
+      "files": [
+        "_common/home.teclado.llamar.numero.png"
+      ]
+    },
+    {
+      "slot": "home.teclado.llamar.iniciar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.teclado.llamar.iniciar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Llamar"
+        }
+      ],
+      "files": [
+        "_common/home.teclado.llamar.iniciar.png"
+      ]
+    },
+    {
+      "slot": "home.turno.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.turno.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel del turno con el indicador de eficiencia, los recuentos de la jornada, los gráficos y el historial."
+        }
+      ],
+      "files": [
+        "_common/home.turno.vista.fig.png"
       ]
     },
     {
@@ -1332,6 +1150,23 @@
       ]
     },
     {
+      "slot": "home.paneles.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.fig",
+          "blockType": "figure",
+          "shows": "Barra de paneles con los paneles de Home y los controles de disposición."
+        }
+      ],
+      "files": [
+        "_common/home.paneles.fig.png"
+      ]
+    },
+    {
       "slot": "home.paneles.control.bloqueo",
       "neededBy": [
         "agencia-propia",
@@ -1414,6 +1249,74 @@
       ],
       "files": [
         "_common/home/paneles/control/cerrar.svg"
+      ]
+    },
+    {
+      "slot": "home.paneles.abrir.barra",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.abrir.barra",
+          "blockType": "procedure",
+          "shows": "Ubique el panel en la barra de paneles"
+        }
+      ],
+      "files": [
+        "_common/home.paneles.abrir.barra.png"
+      ]
+    },
+    {
+      "slot": "home.paneles.reorganizar.mover",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.reorganizar.mover",
+          "blockType": "procedure",
+          "shows": "Arrastre el encabezado de un panel sobre otro"
+        }
+      ],
+      "files": [
+        "_common/home.paneles.reorganizar.mover.png"
+      ]
+    },
+    {
+      "slot": "home.paneles.reorganizar.redimensionar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.reorganizar.redimensionar",
+          "blockType": "procedure",
+          "shows": "Arrastre el divisor entre dos paneles"
+        }
+      ],
+      "files": [
+        "_common/home.paneles.reorganizar.redimensionar.png"
+      ]
+    },
+    {
+      "slot": "home.paneles.reorganizar.bloquear",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.paneles.reorganizar.bloquear",
+          "blockType": "procedure",
+          "shows": "Bloquee la edición"
+        }
+      ],
+      "files": [
+        "_common/home.paneles.reorganizar.bloquear.png"
       ]
     },
     {
@@ -1533,6 +1436,23 @@
       ],
       "files": [
         "_common/home/herramientas/control/street-view.png"
+      ]
+    },
+    {
+      "slot": "home.herramientas.control.agrupar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.herramientas.control.agrupar",
+          "blockType": "icon-table",
+          "shows": "Agrupar marcadores"
+        }
+      ],
+      "files": [
+        "_common/home.herramientas.control.agrupar.png"
       ]
     },
     {
