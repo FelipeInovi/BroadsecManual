@@ -463,6 +463,13 @@ Treat this as a proposal to confirm, not as an agreed scope.
      strings included. They are cited from `src/i18n/locales/es/*.json`, which
      `labels` resolves.
 
+   **The rewrite's product news, declared by the owner (2026-09-29).** The
+   rewrite itself is committed as `cambio`. This line is here so its `nuevo`
+   and `retirado` parts reach a trailer too.
+   - Nuevo: Validar / Ver más tarde, Post-Llamada, the panel bar, the keypad's
+     tabs, the efficiency gauge, CCTV and Fuerzas en Campo on the case, map
+     layers and marker grouping.
+
    **Still open after the rewrite** (the owner decides each):
    - Statements about Home that are now false in other sections:
      - `02-llamada` `llamada.mapa.herramientas` and `05-bridge-of-things`
