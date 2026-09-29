@@ -469,6 +469,9 @@ Treat this as a proposal to confirm, not as an agreed scope.
    - Nuevo: Validar / Ver más tarde, Post-Llamada, the panel bar, the keypad's
      tabs, the efficiency gauge, CCTV and Fuerzas en Campo on the case, map
      layers and marker grouping.
+   - Retirado: the Agencias panel, Archivar and Transferir agencia, and the
+     Prioridad and Estado on the review card. "Llamadas transferidas" is gone
+     from Mi turno.
 
    **Still open after the rewrite** (the owner decides each):
    - Statements about Home that are now false in other sections:
