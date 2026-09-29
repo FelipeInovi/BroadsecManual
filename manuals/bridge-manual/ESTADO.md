@@ -480,9 +480,17 @@ Treat this as a proposal to confirm, not as an agreed scope.
      - `02-llamada` `llamada.banda.libro.texto`: the book "por pasos".
      - `06-forces-in-field` `fuerzas-campo.asignacion.proposito`: "Revisión de
        Llamadas".
-   - About 30 delivered Home images are now orphaned, and 26 capture recipes point
-     at slots that no longer exist. Nothing under `assets/` was deleted.
    - Sections 02-05 carry the same i18n citation drift: 173 labels to review.
+   - The quote "Estás editando este caso. Guardá o cancelá los cambios…"
+     (`es/calls.json:475`) is voseo in the client PDF. It is kept as an exact
+     quote until the owner says whether to paraphrase it.
+
+   **Settled since** (2026-09-29): the orphaned Home images were deleted and the
+   dead recipes replaced, at the owner's request. Two kinds of Home figure cannot
+   come from `capture` and were shot by a watcher script while the owner drove
+   the app: Post-Llamada needs a call that really ended, and the CCTV camera
+   window sits on a map that keeps re-centring itself. Retaking either needs a
+   person at the controls again.
 
 *(Questions 4 and 5 were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
