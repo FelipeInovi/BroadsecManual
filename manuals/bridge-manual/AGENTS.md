@@ -498,3 +498,25 @@ too. Every one of those is more extreme than the CCTV panel's 0.835.
 So do not reject a clip on its ratio. **Look at the rendered page at real size**;
 that is the only check that settles it, and it is the one failure a manifest
 cannot catch.
+
+### Capturing the rewritten Home (2026-09-29)
+
+Home is a dockview dock now; `capture-recipes.yaml` has the handles (a panel is its
+tab plus `div.dv-groupview`). What only a run against it teaches:
+
+- **The window check is the top bar's `ID:` span.** `Agencia:` no longer exists, and
+  the rail is seven buttons (the gear was added), so `views:` needs a seventh entry.
+- **A case is opened by a person, not a recipe.** Click the card's empty top-right.
+  Case 2372 has no cameras nearby (`Sin cámaras cercanas`); a case in Laureles
+  (2353) does. Opening one is local, but it turns the `Mobile` layer on, reflows the
+  dock and resets the map to a world view on the way out: put layers, the three
+  sashes and the map back by hand.
+- **Never `scrollIntoView` a card.** It scrolled the app's root container 40px and
+  pushed the top bar off screen. Wheel the list instead.
+- **The harness's rail click closes popovers**, so a picker is opened in `steps`.
+- **Type correction: end the session on the check, not the X.** `Cancelar` writes
+  the original type back to the backend; the check only sets a local flag.
+- **The live camera window and the map failed after ~13:56** ("Lo sentimos, no
+  disponemos de imágenes para esta vista" and a blank map) while a case was open, so
+  `home.caso.cctv.ver.*` are still pending. The operator status also read
+  `Desconectado` from then on; it was not changed from here.

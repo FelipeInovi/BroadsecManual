@@ -1933,3 +1933,45 @@ recipes:
     dataReady: div[class*="bottom-24"][class*="left-5.5"] button
     clip: div[class*="bottom-24"][class*="left-5.5"]
     settleMs: 1500
+
+  # "Haga clic en Volver a la lista de incidentes": the state AFTER the arrow, which
+  # is Home without a case again (list back, Teclado and Mi turno remounted). Shot
+  # after the person pressed the arrow; the arrow only leaves the case, it sends
+  # nothing. Leaving resets the map to a world view and reflows the dock, so both
+  # were put back by hand (drag the two column sashes and the horizontal one, wheel
+  # the map) before the run.
+  - slot: home.caso.volver.lista
+    view: home
+    screenIs: div[role="tab"][aria-label="Mi turno"]
+    dataReady: div[role="button"][class*="cursor-pointer"][class*="rounded-2xl"]
+    settleMs: 3000
+
+  # --- a case with cameras nearby --------------------------------------------------
+  #
+  # Case 2372 (Cl. 81 #11-41, Bogotá) resolves NO cameras (its CCTV panel reads
+  # `Sin cámaras cercanas`), so these three use case 2353 (Laureles, Medellín),
+  # whose CCTV panel opens on its own with the cameras nearest the incident.
+  # Same precondition as the block above: the person opens the case; it is a local
+  # selection. Do not scroll the page to reach the card: `scrollIntoView` scrolled
+  # the app's root `overflow-hidden` container by 40px and pushed the top bar off
+  # screen until it was reset by hand.
+  - slot: home.caso.vista.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="CCTV"]
+    dataReady: 'div[role="tab"][aria-label="Fuerzas en Campo"]'
+    settleMs: 3500
+
+  - slot: home.caso.cctv.fig
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: ::-p-text(Éxito de Unicentro)
+    clip: div[role="tab"][aria-label="CCTV"]
+    clipUp: div.dv-groupview
+    settleMs: 2500
+
+  - slot: home.caso.validar.enviar
+    view: home
+    screenIs: div[role="tab"][aria-label="Libro del Caso"]
+    dataReady: button[aria-label="Finalizar y pasar a la siguiente llamada"]
+    clip: button[aria-label="Finalizar y pasar a la siguiente llamada"]
+    settleMs: 1200

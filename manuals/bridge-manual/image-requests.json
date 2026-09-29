@@ -19,54 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 201,
-    "delivered": 191,
-    "pending": 10
+    "delivered": 195,
+    "pending": 6
   },
   "pending": [
-    {
-      "slot": "home.caso.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.vista.fig",
-          "blockType": "figure",
-          "shows": "Vista Home con un caso abierto: el reporte y la información de la llamada a la izquierda, las cámaras y las fuerzas en campo a la derecha, y el libro del caso bajo el mapa."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.vista.fig.png",
-        "override": "<permission>/home.caso.vista.fig.png"
-      }
-    },
-    {
-      "slot": "home.caso.cctv.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.cctv.fig",
-          "blockType": "figure",
-          "shows": "Panel de CCTV con las cámaras cercanas al incidente."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.cctv.fig.png",
-        "override": "<permission>/home.caso.cctv.fig.png"
-      }
-    },
     {
       "slot": "home.caso.cctv.ver.elegir",
       "neededBy": [
@@ -109,50 +65,6 @@
       "deliverTo": {
         "shared": "_common/home.caso.cctv.ver.cerrar.png",
         "override": "<permission>/home.caso.cctv.ver.cerrar.png"
-      }
-    },
-    {
-      "slot": "home.caso.validar.enviar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.validar.enviar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Validar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.validar.enviar.png",
-        "override": "<permission>/home.caso.validar.enviar.png"
-      }
-    },
-    {
-      "slot": "home.caso.volver.lista",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "home.caso.volver.lista",
-          "blockType": "procedure",
-          "shows": "Haga clic en Volver a la lista de incidentes"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/home.caso.volver.lista.png",
-        "override": "<permission>/home.caso.volver.lista.png"
       }
     },
     {
@@ -449,6 +361,23 @@
       ],
       "files": [
         "_common/home.turno.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "home.caso.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.vista.fig",
+          "blockType": "figure",
+          "shows": "Vista Home con un caso abierto: el reporte y la información de la llamada a la izquierda, las cámaras y las fuerzas en campo a la derecha, y el libro del caso bajo el mapa."
+        }
+      ],
+      "files": [
+        "_common/home.caso.vista.fig.png"
       ]
     },
     {
@@ -843,6 +772,23 @@
       ]
     },
     {
+      "slot": "home.caso.cctv.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.cctv.fig",
+          "blockType": "figure",
+          "shows": "Panel de CCTV con las cámaras cercanas al incidente."
+        }
+      ],
+      "files": [
+        "_common/home.caso.cctv.fig.png"
+      ]
+    },
+    {
       "slot": "home.caso.fuerzas.fig",
       "neededBy": [
         "agencia-propia",
@@ -996,6 +942,23 @@
       ]
     },
     {
+      "slot": "home.caso.validar.enviar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.validar.enviar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Validar"
+        }
+      ],
+      "files": [
+        "_common/home.caso.validar.enviar.png"
+      ]
+    },
+    {
       "slot": "home.caso.volver.flecha",
       "neededBy": [
         "agencia-propia",
@@ -1010,6 +973,23 @@
       ],
       "files": [
         "_common/home.caso.volver.flecha.png"
+      ]
+    },
+    {
+      "slot": "home.caso.volver.lista",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "home.caso.volver.lista",
+          "blockType": "procedure",
+          "shows": "Haga clic en Volver a la lista de incidentes"
+        }
+      ],
+      "files": [
+        "_common/home.caso.volver.lista.png"
       ]
     },
     {
