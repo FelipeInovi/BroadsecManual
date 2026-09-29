@@ -520,6 +520,10 @@ Treat this as a proposal to confirm, not as an agreed scope.
      resend, the five-step Flujo de la llamada, caller-language translation,
      the agent directory and external agent link, the recommendation markers,
      chat and state advance on the route card, and the case log drawer.
+   - Retirado: closing the case inside the call view (it now happens in
+     Home), the Resumen IA strip, the case log on the map, Copiar dirección,
+     Flow AI's Resumen / Resolución tabs, and the Agencia field on the route
+     card.
 
    **Still open (the owner decides each):**
    - Two figures will show what the text withholds: the open Log drawer always
