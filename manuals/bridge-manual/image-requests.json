@@ -19,32 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 189,
-    "pending": 56
+    "delivered": 204,
+    "pending": 41
   },
   "pending": [
-    {
-      "slot": "llamada.general.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.general.fig",
-          "blockType": "figure",
-          "shows": "Vista Llamada con una llamada en curso: la transcripción a la izquierda, el mapa con los controles de la llamada al centro y, bajo el mapa, el libro del caso, Flow AI y las fuerzas de respuesta."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.general.fig.png",
-        "override": "<permission>/llamada.general.fig.png"
-      }
-    },
     {
       "slot": "llamada.vista.fig",
       "neededBy": [
@@ -65,28 +43,6 @@
       "deliverTo": {
         "shared": "_common/llamada.vista.fig.png",
         "override": "<permission>/llamada.vista.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.fig",
-          "blockType": "figure",
-          "shows": "Controles de la llamada sobre el borde superior del mapa."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.fig.png",
-        "override": "<permission>/llamada.controles.fig.png"
       }
     },
     {
@@ -156,28 +112,6 @@
       }
     },
     {
-      "slot": "llamada.controles.transferir.abrir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.transferir.abrir",
-          "blockType": "procedure",
-          "shows": "Haga clic en Teclado numerico"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.transferir.abrir.png",
-        "override": "<permission>/llamada.controles.transferir.abrir.png"
-      }
-    },
-    {
       "slot": "llamada.controles.transferir.destino",
       "neededBy": [
         "agencia-propia",
@@ -197,72 +131,6 @@
       "deliverTo": {
         "shared": "_common/llamada.controles.transferir.destino.png",
         "override": "<permission>/llamada.controles.transferir.destino.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.flujo.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.flujo.fig",
-          "blockType": "figure",
-          "shows": "Barra superior con los datos de la llamada y el flujo de la llamada a la derecha."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.flujo.fig.png",
-        "override": "<permission>/llamada.controles.flujo.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.transcripcion.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.transcripcion.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel de transcripción con las intervenciones del llamante y del operador."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.transcripcion.vista.fig.png",
-        "override": "<permission>/llamada.transcripcion.vista.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.transcripcion.idioma.selector",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.transcripcion.idioma.selector",
-          "blockType": "field-list",
-          "shows": "Idioma del llamante"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.transcripcion.idioma.selector.png",
-        "override": "<permission>/llamada.transcripcion.idioma.selector.png"
       }
     },
     {
@@ -329,28 +197,6 @@
       "deliverTo": {
         "shared": "_common/llamada.transcripcion.traducir.reproducir.png",
         "override": "<permission>/llamada.transcripcion.traducir.reproducir.png"
-      }
-    },
-    {
-      "slot": "llamada.video.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.video.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel de video en vivo con el avance del llamante al pie."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.video.vista.fig.png",
-        "override": "<permission>/llamada.video.vista.fig.png"
       }
     },
     {
@@ -618,28 +464,6 @@
       }
     },
     {
-      "slot": "llamada.ubicacion.corregir.editar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.corregir.editar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Editar dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.corregir.editar.png",
-        "override": "<permission>/llamada.ubicacion.corregir.editar.png"
-      }
-    },
-    {
       "slot": "llamada.ubicacion.corregir.buscar",
       "neededBy": [
         "agencia-propia",
@@ -659,28 +483,6 @@
       "deliverTo": {
         "shared": "_common/llamada.ubicacion.corregir.buscar.png",
         "override": "<permission>/llamada.ubicacion.corregir.buscar.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.corregir.aceptar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.corregir.aceptar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Aceptar dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.corregir.aceptar.png",
-        "override": "<permission>/llamada.ubicacion.corregir.aceptar.png"
       }
     },
     {
@@ -948,28 +750,6 @@
       }
     },
     {
-      "slot": "llamada.camaras.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.camaras.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel de cámaras con las cámaras cercanas al incidente."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.camaras.vista.fig.png",
-        "override": "<permission>/llamada.camaras.vista.fig.png"
-      }
-    },
-    {
       "slot": "llamada.camaras.ver.elegir",
       "neededBy": [
         "agencia-propia",
@@ -1080,28 +860,6 @@
       }
     },
     {
-      "slot": "llamada.libro.registrar.pasos",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.libro.registrar.pasos",
-          "blockType": "procedure",
-          "shows": "Pase a la pestaña Libro del caso y complete los pasos"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.libro.registrar.pasos.png",
-        "override": "<permission>/llamada.libro.registrar.pasos.png"
-      }
-    },
-    {
       "slot": "llamada.libro.registrar.guardar",
       "neededBy": [
         "agencia-propia",
@@ -1121,94 +879,6 @@
       "deliverTo": {
         "shared": "_common/llamada.libro.registrar.guardar.png",
         "override": "<permission>/llamada.libro.registrar.guardar.png"
-      }
-    },
-    {
-      "slot": "llamada.flow.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.flow.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel Flow AI con los datos de la llamada a la izquierda y la resolución y el guión guiado a la derecha."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.flow.vista.fig.png",
-        "override": "<permission>/llamada.flow.vista.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.flow.guion.responder.preguntar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.flow.guion.responder.preguntar",
-          "blockType": "procedure",
-          "shows": "Formule la pregunta al llamante"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.flow.guion.responder.preguntar.png",
-        "override": "<permission>/llamada.flow.guion.responder.preguntar.png"
-      }
-    },
-    {
-      "slot": "llamada.flow.guion.responder.registrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.flow.guion.responder.registrar",
-          "blockType": "procedure",
-          "shows": "Elija la respuesta o escríbala"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.flow.guion.responder.registrar.png",
-        "override": "<permission>/llamada.flow.guion.responder.registrar.png"
-      }
-    },
-    {
-      "slot": "llamada.bitacora.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.bitacora.vista.fig",
-          "blockType": "figure",
-          "shows": "Pestaña Log abierta en el borde derecho, con la línea de tiempo del caso."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.bitacora.vista.fig.png",
-        "override": "<permission>/llamada.bitacora.vista.fig.png"
       }
     },
     {
@@ -2586,6 +2256,40 @@
       ]
     },
     {
+      "slot": "llamada.general.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.general.fig",
+          "blockType": "figure",
+          "shows": "Vista Llamada con una llamada en curso: la transcripción a la izquierda, el mapa con los controles de la llamada al centro y, bajo el mapa, el libro del caso, Flow AI y las fuerzas de respuesta."
+        }
+      ],
+      "files": [
+        "_common/llamada.general.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.controles.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.fig",
+          "blockType": "figure",
+          "shows": "Controles de la llamada sobre el borde superior del mapa."
+        }
+      ],
+      "files": [
+        "_common/llamada.controles.fig.png"
+      ]
+    },
+    {
       "slot": "llamada.controles.control.teclado",
       "neededBy": [
         "agencia-propia",
@@ -2702,6 +2406,125 @@
       ],
       "files": [
         "_common/llamada/controles/control/reenviar.svg"
+      ]
+    },
+    {
+      "slot": "llamada.controles.transferir.abrir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.transferir.abrir",
+          "blockType": "procedure",
+          "shows": "Haga clic en Teclado numerico"
+        }
+      ],
+      "files": [
+        "_common/llamada.controles.transferir.abrir.png"
+      ]
+    },
+    {
+      "slot": "llamada.controles.flujo.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.flujo.fig",
+          "blockType": "figure",
+          "shows": "Barra superior con los datos de la llamada y el flujo de la llamada a la derecha."
+        }
+      ],
+      "files": [
+        "_common/llamada.controles.flujo.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.transcripcion.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.transcripcion.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel de transcripción con las intervenciones del llamante y del operador."
+        }
+      ],
+      "files": [
+        "_common/llamada.transcripcion.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.transcripcion.idioma.selector",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.transcripcion.idioma.selector",
+          "blockType": "field-list",
+          "shows": "Idioma del llamante"
+        }
+      ],
+      "files": [
+        "_common/llamada.transcripcion.idioma.selector.png"
+      ]
+    },
+    {
+      "slot": "llamada.video.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.video.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel de video en vivo con el avance del llamante al pie."
+        }
+      ],
+      "files": [
+        "_common/llamada.video.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.corregir.editar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.corregir.editar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Editar dirección"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.corregir.editar.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.corregir.aceptar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.corregir.aceptar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Aceptar dirección"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.corregir.aceptar.png"
       ]
     },
     {
@@ -2919,6 +2742,108 @@
       ],
       "files": [
         "_common/llamada/fuerzas/distintivo/cercana.svg"
+      ]
+    },
+    {
+      "slot": "llamada.camaras.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.camaras.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel de cámaras con las cámaras cercanas al incidente."
+        }
+      ],
+      "files": [
+        "_common/llamada.camaras.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.libro.registrar.pasos",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.libro.registrar.pasos",
+          "blockType": "procedure",
+          "shows": "Pase a la pestaña Libro del caso y complete los pasos"
+        }
+      ],
+      "files": [
+        "_common/llamada.libro.registrar.pasos.png"
+      ]
+    },
+    {
+      "slot": "llamada.flow.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.flow.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel Flow AI con los datos de la llamada a la izquierda y la resolución y el guión guiado a la derecha."
+        }
+      ],
+      "files": [
+        "_common/llamada.flow.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.flow.guion.responder.preguntar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.flow.guion.responder.preguntar",
+          "blockType": "procedure",
+          "shows": "Formule la pregunta al llamante"
+        }
+      ],
+      "files": [
+        "_common/llamada.flow.guion.responder.preguntar.png"
+      ]
+    },
+    {
+      "slot": "llamada.flow.guion.responder.registrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.flow.guion.responder.registrar",
+          "blockType": "procedure",
+          "shows": "Elija la respuesta o escríbala"
+        }
+      ],
+      "files": [
+        "_common/llamada.flow.guion.responder.registrar.png"
+      ]
+    },
+    {
+      "slot": "llamada.bitacora.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.bitacora.vista.fig",
+          "blockType": "figure",
+          "shows": "Pestaña Log abierta en el borde derecho, con la línea de tiempo del caso."
+        }
+      ],
+      "files": [
+        "_common/llamada.bitacora.vista.fig.png"
       ]
     },
     {

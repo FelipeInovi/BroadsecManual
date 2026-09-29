@@ -532,8 +532,12 @@ Treat this as a proposal to confirm, not as an agreed scope.
      it.
    - 22 old Llamada deliveries are orphans now (`images` lists them). None
      were deleted.
-   - Claims to confirm on a live call: the Cámaras panel header (`CCTV` in the
-     component, `Camaras` on the toggle); the translated text being read aloud
+   - Confirmed on the 2026-09-29 test call: the Cámaras panel header reads
+     `Camaras`, not `CCTV`. The app reflows the whole dock on its own when
+     panels open, so every capture is measured and shot in one atomic step.
+     The camera window closes when the map is zoomed and falls off screen by
+     default, so it needs the owner at the controls, as in Home.
+   - Claims still to confirm on a live call: the translated text being read aloud
      in the call; Aparcar llamada returning to Home without Post-Llamada; the
      video panel growing to half the dock.
    - Four catalogue strings in voseo or `tú` (`calls.json:338`, `:379`,
