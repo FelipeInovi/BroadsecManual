@@ -144,11 +144,15 @@ problem to work around, it is a row to split** — and once split, all four
 delivered from files that were sitting there the whole time. Reach for the split
 before reaching for a way to photograph the group.
 
-**Figure heights are pinned, and that is deliberate.** Bridge's stylesheet fixes
-every figure's box to the placeholder's ratio and letterboxes the image inside it
-(`packages/render-web/src/css-bridge.ts`). So a delivered figure cannot move the
-page — which is why the seven deliveries here changed the page count by zero. Do
-not "fix" an image by cropping it to fit; the box already holds.
+**A figure is as tall as its image, capped at 470pt** (since 2026-09-30,
+`packages/render-web/src/css-bridge.ts`). Until then the Bridge sheet pinned
+every figure's box to the placeholder's 8:5 ratio, so that a delivery could not
+move the page. That left wide captures (bars, rows, single fields) floating in
+empty bands, with the caption far below them. The owner reversed it: pages
+re-flow on every build, so a delivery that moves a break costs nothing. The page
+count now moves with deliveries, and that is expected. Crop to what the caption
+describes, not to fit a box. Any scale or ratio measured on this page before that
+date assumed the pinned box.
 
 ## An asset family with no slot
 
