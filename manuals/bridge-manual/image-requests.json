@@ -4709,8 +4709,5 @@
         "_common/seatmap.distribucion.cambiar-agencia.verificar.png"
       ]
     }
-  ],
-  "undeclared": [
-    "seatmap.distribucion.zonas"
   ]
 }
