@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 241,
-    "pending": 4
+    "delivered": 242,
+    "pending": 3
   },
   "pending": [
     {
@@ -43,28 +43,6 @@
       "deliverTo": {
         "shared": "_common/llamada.controles.control.resumen.png",
         "override": "<permission>/llamada.controles.control.resumen.png"
-      }
-    },
-    {
-      "slot": "llamada.transcripcion.traducir.reproducir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.transcripcion.traducir.reproducir",
-          "blockType": "field-list",
-          "shows": "Reproducir traducción"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.transcripcion.traducir.reproducir.png",
-        "override": "<permission>/llamada.transcripcion.traducir.reproducir.png"
       }
     },
     {
@@ -1762,6 +1740,23 @@
       ],
       "files": [
         "_common/llamada.transcripcion.traducir.enviar.png"
+      ]
+    },
+    {
+      "slot": "llamada.transcripcion.traducir.reproducir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.transcripcion.traducir.reproducir",
+          "blockType": "field-list",
+          "shows": "Reproducir traducción"
+        }
+      ],
+      "files": [
+        "_common/llamada.transcripcion.traducir.reproducir.png"
       ]
     },
     {

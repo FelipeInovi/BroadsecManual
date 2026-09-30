@@ -537,13 +537,14 @@ Treat this as a proposal to confirm, not as an agreed scope.
      panels open, so every capture is measured and shot in one atomic step.
      The camera window closes when the map is zoomed and falls off screen by
      default, so it needs the owner at the controls, as in Home.
-   - Llamada's images were shot over two test calls (2026-09-29/30). Five
-     slots stay pending. Two have nothing that can fill them: the Resumen AI
-     button and the recommended-force ring. `fuerzas.vista.fig` and
-     `despacho.filtrar` need units near the incident, and the test
-     environment has none; the force filter does not apply to Otros agentes.
-     `traducir.reproducir` needs text-to-speech that leaves "En cola", which
-     it never did.
+   - Llamada's images were shot over three test calls (2026-09-29/30). Two
+     slots stay pending, and nothing can fill them: the Resumen AI button and
+     the recommended-force ring. What the other gaps needed, for any retake:
+     nearby units are matched by force type, so the forces figures needed a
+     traffic incident with a traffic unit active on Bridge Mobile nearby.
+     Text-to-speech stays "En cola" while autoplay is on, so the replay
+     control needs autoplay turned off first. The caller language only sticks
+     once the video session exists.
    - Claims still to confirm on a live call: the translated text being read aloud
      in the call; Aparcar llamada returning to Home without Post-Llamada; the
      video panel growing to half the dock.
