@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 238,
-    "pending": 7
+    "delivered": 239,
+    "pending": 6
   },
   "pending": [
     {
@@ -131,28 +131,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.despacho.filtrar.png",
         "override": "<permission>/llamada.fuerzas.despacho.filtrar.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.despacho.confirmar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.despacho.confirmar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Despachar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.despacho.confirmar.png",
-        "override": "<permission>/llamada.fuerzas.despacho.confirmar.png"
       }
     },
     {
@@ -2334,6 +2312,23 @@
       ],
       "files": [
         "_common/llamada.fuerzas.despacho.evaluar.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.despacho.confirmar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.despacho.confirmar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Despachar"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.despacho.confirmar.png"
       ]
     },
     {
