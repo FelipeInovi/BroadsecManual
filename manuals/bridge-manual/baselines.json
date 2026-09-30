@@ -4,6 +4,10 @@
     "sections/01-home.yaml": {
       "productCommit": "465f5eb9e40e56e58384a8f98f3776bf99649998",
       "verifiedAt": "2026-09-29"
+    },
+    "sections/02-llamada.yaml": {
+      "productCommit": "465f5eb9e40e56e58384a8f98f3776bf99649998",
+      "verifiedAt": "2026-09-30"
     }
   }
 }

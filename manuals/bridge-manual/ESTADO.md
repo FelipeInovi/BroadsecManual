@@ -493,7 +493,7 @@ Treat this as a proposal to confirm, not as an agreed scope.
    person at the controls again.
 
 5. **`sections/02-llamada.yaml` was rewritten against develop `465f5eb9`
-   (2026-09-29), uncommitted and not yet verified.** From `58e2cc4d`, the same
+   (2026-09-29) and verified there on 2026-09-30.** From `58e2cc4d`, the same
    range as Home. The owner asked for a full update and authorized a complete
    rewrite. The per-submodule audit is in engram,
    `bridge-manual/llamada-drift-audit-2026-09-29`.
@@ -525,13 +525,13 @@ Treat this as a proposal to confirm, not as an agreed scope.
      Flow AI's Resumen / Resolución tabs, and the Agencia field on the route
      card.
 
+   **Settled since** (2026-09-30): the Log and Flow AI figures were cropped
+   above the comment composer and the identity block, which the text
+   withholds. The 22 orphaned Llamada deliveries were deleted at the owner's
+   request. The owner saw the drift addressed, and `verified` stamped the
+   module at `465f5eb9`.
+
    **Still open (the owner decides each):**
-   - Two figures will show what the text withholds: the open Log drawer always
-     carries the comment composer (`logs-content.tsx:126-131`), and Flow AI's
-     overview carries the identity block. Crop them out at capture, or accept
-     it.
-   - 22 old Llamada deliveries are orphans now (`images` lists them). None
-     were deleted.
    - Confirmed on the 2026-09-29 test call: the Cámaras panel header reads
      `Camaras`, not `CCTV`. The app reflows the whole dock on its own when
      panels open, so every capture is measured and shot in one atomic step.
@@ -552,8 +552,6 @@ Treat this as a proposal to confirm, not as an agreed scope.
      video panel growing to half the dock.
    - Four catalogue strings in voseo or `tú` (`calls.json:338`, `:379`,
      `:522`, `agents.json:136`) are described rather than quoted.
-   - `verified --module sections/02-llamada.yaml` only after the owner has seen
-     the drift addressed.
 
 *(An earlier pair of questions numbered 4 and 5, not the ones above, were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
