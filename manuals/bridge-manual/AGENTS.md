@@ -254,16 +254,19 @@ factor.
 
 ### What is still pending, and what each needs
 
-One, and only for `agencia-propia`: `todas-las-agencias` has nothing left and
-was sealed at v1.0.0. **Not one slot is "an interaction not yet found"** any
-more. That row used to hold nine slots and every one of them was a selector —
-see the section after this table. Nothing left blocks on the harness, and
-nothing left blocks on the world outside the product: the one slot that did was
-an authoring defect and is gone.
+**Nothing, since 2026-09-30.** `image-requests.json` lists 266 delivered and 0
+pending, for both targets. The last slot to close was `seatmap.fig` for
+`agencia-propia`, together with the three other Seatmap figures that depend on
+the permission.
 
-| Blocked on | Slots |
-|---|---|
-| A second account without `canViewAllAgencies` | `seatmap.fig`, for `agencia-propia` |
+**The account for `agencia-propia` is a role WITHOUT `view.sitemap.all`, and
+that is not the same thing as a different agency.** Two attempts on
+2026-09-30 took the wrong account. One was the same administrator switched to
+Bomberos. The other was a new user whose role, `RECEPCION_SUPERVISOR`, still
+holds `view.sitemap.all`. Both showed the agency tabs. The one that worked was a
+`ROL_INTEGRAL` session. Check the claim before shooting: decode the
+`permissions` array from `auth.accessToken` in `localStorage`. On screen, the
+tell is no agency tabs, a grey category ring and "Sin datos de agencias".
 
 **`seatmap.fig` was rejected once, and why matters.** Support's capture for
 `agencia-propia` still showed the agency tabs — BOMBEROS, POLICÍA, RECEPCIÓN

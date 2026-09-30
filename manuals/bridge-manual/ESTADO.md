@@ -605,10 +605,17 @@ Treat this as a proposal to confirm, not as an agreed scope.
      dragging it to its cell. Always compare the plan with a shot taken
      before.
 
+   The four `agencia-propia` figures were shot from a `ROL_INTEGRAL` account
+   without `view.sitemap.all`, so every image slot in the manual is now
+   delivered. How to recognise the right account is in this folder's
+   `AGENTS.md`.
+
    **Still open (the owner decides each):**
-   - The four `agencia-propia` figures (`seatmap.fig`, `indicadores.fig`,
-     `monitor.fig`, `monitor.agencias.fig`) need an account without
-     `view.sitemap.all`.
+   - The overview `seatmap.fig` for `agencia-propia` shows the top bar's role
+     as the raw key `userRoles.ROL_INTEGRAL`: the es catalogue has no
+     translation for that role. That is the product's defect, and it reaches
+     the client PDF. The options are to fix the catalogue and retake the shot,
+     or to accept it.
    - `verified --module sections/03-seatmap.yaml`, once the owner has seen
      the drift addressed.
 
