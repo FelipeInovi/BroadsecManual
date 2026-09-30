@@ -19,32 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 229,
-    "pending": 16
+    "delivered": 237,
+    "pending": 8
   },
   "pending": [
-    {
-      "slot": "llamada.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.vista.fig",
-          "blockType": "figure",
-          "shows": "Vista Llamada con todos sus paneles abiertos, alrededor del mapa."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.vista.fig.png",
-        "override": "<permission>/llamada.vista.fig.png"
-      }
-    },
     {
       "slot": "llamada.controles.control.resumen",
       "neededBy": [
@@ -87,28 +65,6 @@
       "deliverTo": {
         "shared": "_common/llamada.transcripcion.traducir.reproducir.png",
         "override": "<permission>/llamada.transcripcion.traducir.reproducir.png"
-      }
-    },
-    {
-      "slot": "llamada.mapa.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.mapa.vista.fig",
-          "blockType": "figure",
-          "shows": "Mapa del incidente con la barra de ubicación y una tarjeta de ruta sobre su borde inferior."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.mapa.vista.fig.png",
-        "override": "<permission>/llamada.mapa.vista.fig.png"
       }
     },
     {
@@ -178,28 +134,6 @@
       }
     },
     {
-      "slot": "llamada.fuerzas.despacho.evaluar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.despacho.evaluar",
-          "blockType": "procedure",
-          "shows": "Haga clic en la fila de la unidad"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.despacho.evaluar.png",
-        "override": "<permission>/llamada.fuerzas.despacho.evaluar.png"
-      }
-    },
-    {
       "slot": "llamada.fuerzas.despacho.confirmar",
       "neededBy": [
         "agencia-propia",
@@ -219,116 +153,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.despacho.confirmar.png",
         "override": "<permission>/llamada.fuerzas.despacho.confirmar.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.directorio.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.directorio.buscar",
-          "blockType": "field-list",
-          "shows": "Buscar por nombre, indicativo o teléfono..."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.directorio.buscar.png",
-        "override": "<permission>/llamada.fuerzas.directorio.buscar.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.directorio.enviar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.directorio.enviar",
-          "blockType": "field-list",
-          "shows": "Enviar link de despacho"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.directorio.enviar.png",
-        "override": "<permission>/llamada.fuerzas.directorio.enviar.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.ruta.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.ruta.fig",
-          "blockType": "figure",
-          "shows": "Tarjeta de ruta de una unidad despachada sobre el borde inferior del mapa."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.ruta.fig.png",
-        "override": "<permission>/llamada.fuerzas.ruta.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.ruta.control.chat",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.ruta.control.chat",
-          "blockType": "field-list",
-          "shows": "Chat con la unidad"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.ruta.control.chat.png",
-        "override": "<permission>/llamada.fuerzas.ruta.control.chat.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.ruta.control.atendido",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.ruta.control.atendido",
-          "blockType": "field-list",
-          "shows": "Marcar atendido"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.ruta.control.atendido.png",
-        "override": "<permission>/llamada.fuerzas.ruta.control.atendido.png"
       }
     },
     {
@@ -1723,6 +1547,23 @@
       ]
     },
     {
+      "slot": "llamada.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.vista.fig",
+          "blockType": "figure",
+          "shows": "Vista Llamada con todos sus paneles abiertos, alrededor del mapa."
+        }
+      ],
+      "files": [
+        "_common/llamada.vista.fig.png"
+      ]
+    },
+    {
       "slot": "llamada.controles.fig",
       "neededBy": [
         "agencia-propia",
@@ -2077,6 +1918,23 @@
       ],
       "files": [
         "_common/llamada.chat.enviar.escribir.png"
+      ]
+    },
+    {
+      "slot": "llamada.mapa.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.mapa.vista.fig",
+          "blockType": "figure",
+          "shows": "Mapa del incidente con la barra de ubicación y una tarjeta de ruta sobre su borde inferior."
+        }
+      ],
+      "files": [
+        "_common/llamada.mapa.vista.fig.png"
       ]
     },
     {
@@ -2484,6 +2342,40 @@
       ]
     },
     {
+      "slot": "llamada.fuerzas.despacho.evaluar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.despacho.evaluar",
+          "blockType": "procedure",
+          "shows": "Haga clic en la fila de la unidad"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.despacho.evaluar.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.directorio.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.directorio.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar por nombre, indicativo o teléfono..."
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.directorio.buscar.png"
+      ]
+    },
+    {
       "slot": "llamada.fuerzas.directorio.externo",
       "neededBy": [
         "agencia-propia",
@@ -2498,6 +2390,74 @@
       ],
       "files": [
         "_common/llamada.fuerzas.directorio.externo.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.directorio.enviar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.directorio.enviar",
+          "blockType": "field-list",
+          "shows": "Enviar link de despacho"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.directorio.enviar.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.ruta.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.ruta.fig",
+          "blockType": "figure",
+          "shows": "Tarjeta de ruta de una unidad despachada sobre el borde inferior del mapa."
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.ruta.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.ruta.control.chat",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.ruta.control.chat",
+          "blockType": "field-list",
+          "shows": "Chat con la unidad"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.ruta.control.chat.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.ruta.control.atendido",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.ruta.control.atendido",
+          "blockType": "field-list",
+          "shows": "Marcar atendido"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.ruta.control.atendido.png"
       ]
     },
     {
