@@ -537,6 +537,13 @@ Treat this as a proposal to confirm, not as an agreed scope.
      panels open, so every capture is measured and shot in one atomic step.
      The camera window closes when the map is zoomed and falls off screen by
      default, so it needs the owner at the controls, as in Home.
+   - Llamada's images were shot over two test calls (2026-09-29/30). Five
+     slots stay pending. Two have nothing that can fill them: the Resumen AI
+     button and the recommended-force ring. `fuerzas.vista.fig` and
+     `despacho.filtrar` need units near the incident, and the test
+     environment has none; the force filter does not apply to Otros agentes.
+     `traducir.reproducir` needs text-to-speech that leaves "En cola", which
+     it never did.
    - Claims still to confirm on a live call: the translated text being read aloud
      in the call; Aparcar llamada returning to Home without Post-Llamada; the
      video panel growing to half the dock.
