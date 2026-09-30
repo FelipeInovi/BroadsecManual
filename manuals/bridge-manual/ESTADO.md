@@ -537,9 +537,11 @@ Treat this as a proposal to confirm, not as an agreed scope.
      panels open, so every capture is measured and shot in one atomic step.
      The camera window closes when the map is zoomed and falls off screen by
      default, so it needs the owner at the controls, as in Home.
-   - Llamada's images were shot over three test calls (2026-09-29/30). Two
-     slots stay pending, and nothing can fill them: the Resumen AI button and
-     the recommended-force ring. What the other gaps needed, for any retake:
+   - Llamada's images were shot over three test calls (2026-09-29/30), and
+     every Llamada slot is now delivered. The Resumen AI button and the
+     recommended-force ring were cropped from those captures, because no
+     product file could answer them. What the harder slots needed, for any
+     retake:
      nearby units are matched by force type, so the forces figures needed a
      traffic incident with a traffic unit active on Bridge Mobile nearby.
      Text-to-speech stays "En cola" while autoplay is on, so the replay

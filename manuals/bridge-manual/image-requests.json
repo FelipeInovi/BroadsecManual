@@ -19,54 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 242,
-    "pending": 3
+    "delivered": 244,
+    "pending": 1
   },
   "pending": [
-    {
-      "slot": "llamada.controles.control.resumen",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.control.resumen",
-          "blockType": "icon-table",
-          "shows": "Resumen AI"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.control.resumen.png",
-        "override": "<permission>/llamada.controles.control.resumen.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.distintivo.fuerza",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.distintivo.fuerza",
-          "blockType": "icon-table",
-          "shows": "Fuerza recomendada"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.distintivo.fuerza.png",
-        "override": "<permission>/llamada.fuerzas.distintivo.fuerza.png"
-      }
-    },
     {
       "slot": "seatmap.fig",
       "neededBy": [
@@ -1590,6 +1546,23 @@
       ]
     },
     {
+      "slot": "llamada.controles.control.resumen",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.control.resumen",
+          "blockType": "icon-table",
+          "shows": "Resumen AI"
+        }
+      ],
+      "files": [
+        "_common/llamada.controles.control.resumen.png"
+      ]
+    },
+    {
       "slot": "llamada.controles.enlace.enviar",
       "neededBy": [
         "agencia-propia",
@@ -2263,6 +2236,23 @@
       ],
       "files": [
         "_common/llamada/fuerzas/distintivo/cercana.svg"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.distintivo.fuerza",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.distintivo.fuerza",
+          "blockType": "icon-table",
+          "shows": "Fuerza recomendada"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.distintivo.fuerza.png"
       ]
     },
     {
@@ -4233,29 +4223,5 @@
         "_common/seatmap.distribucion.cambiar-agencia.verificar.png"
       ]
     }
-  ],
-  "undeclared": [
-    "llamada.banda.fig",
-    "llamada.camaras.fig",
-    "llamada.chat.fig",
-    "llamada.cierre.enviar.completar",
-    "llamada.cierre.enviar.confirmar",
-    "llamada.cierre.enviar.guardar",
-    "llamada.cierre.fig",
-    "llamada.fig",
-    "llamada.fuerzas.despachar.confirmar",
-    "llamada.fuerzas.despachar.elegir",
-    "llamada.fuerzas.despachar.filtrar",
-    "llamada.fuerzas.fig",
-    "llamada.fuerzas.rapida.marca",
-    "llamada.mapa.bitacora.comentar.campo",
-    "llamada.mapa.fig",
-    "llamada.mapa.ubicacion.aceptar",
-    "llamada.mapa.ubicacion.buscar",
-    "llamada.mapa.ubicacion.copiar",
-    "llamada.mapa.ubicacion.editar",
-    "llamada.mapa.ubicacion.street-view",
-    "llamada.transcripcion.fig",
-    "llamada.video.fig"
   ]
 }

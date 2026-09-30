@@ -109,9 +109,15 @@ Same `#0F766E`, so the same 5.47:1 / 4.99:1. Calls worth knowing:
 - **`reenviar` is a judgement call**: the badge is its own button holding a lone
   `Hash`, so the glyph is complete, but its meaning is the position on the send
   button. Delete the file if the reader should see it only in place.
-- **Pending on purpose**: `controles.control.resumen` (a text button, `Resumen AI`,
-  with a gradient-masked Sparkles icon) and `fuerzas.distintivo.fuerza` (a CSS
-  ring around the logo, no glyph at all).
+- **No file answered two of them, and CAPTURE did** (2026-09-30):
+  `controles.control.resumen` (a text button, `Resumen AI`, with a
+  gradient-masked Sparkles icon) and `fuerzas.distintivo.fuerza` (a CSS ring
+  around the force avatar, no glyph at all). Both were cropped from live-call
+  screenshots: the button from the map window, and the ring from a unit whose
+  force the endpoint recommended (`isBestForce`, `available-agent-row.tsx:285-289`).
+  The ring is 1px at 45% amber, so it reads as faint at real size. That is how
+  the product draws it, not a bad crop. Same lesson as the CCTV zoom above:
+  "no file can answer this" is not "no image can".
 
 ## Traps this manual hit, and will hit again
 
