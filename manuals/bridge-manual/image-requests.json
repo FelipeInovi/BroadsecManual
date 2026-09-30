@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 206,
-    "pending": 39
+    "delivered": 219,
+    "pending": 26
   },
   "pending": [
     {
@@ -109,28 +109,6 @@
       "deliverTo": {
         "shared": "_common/llamada.controles.enlace.reenviar.png",
         "override": "<permission>/llamada.controles.enlace.reenviar.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.transferir.destino",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.transferir.destino",
-          "blockType": "procedure",
-          "shows": "Elija el destino de la transferencia"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.transferir.destino.png",
-        "override": "<permission>/llamada.controles.transferir.destino.png"
       }
     },
     {
@@ -288,50 +266,6 @@
       }
     },
     {
-      "slot": "llamada.ubicacion.control.street-view",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.street-view",
-          "blockType": "field-list",
-          "shows": "Abrir Street View"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.street-view.png",
-        "override": "<permission>/llamada.ubicacion.control.street-view.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.control.editar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.editar",
-          "blockType": "field-list",
-          "shows": "Editar dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.editar.png",
-        "override": "<permission>/llamada.ubicacion.control.editar.png"
-      }
-    },
-    {
       "slot": "llamada.ubicacion.control.buscar",
       "neededBy": [
         "agencia-propia",
@@ -351,28 +285,6 @@
       "deliverTo": {
         "shared": "_common/llamada.ubicacion.control.buscar.png",
         "override": "<permission>/llamada.ubicacion.control.buscar.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.control.aceptar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.aceptar",
-          "blockType": "field-list",
-          "shows": "Aceptar dirección"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.aceptar.png",
-        "override": "<permission>/llamada.ubicacion.control.aceptar.png"
       }
     },
     {
@@ -398,28 +310,6 @@
       }
     },
     {
-      "slot": "llamada.ubicacion.control.reanalizar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.reanalizar",
-          "blockType": "field-list",
-          "shows": "Volver a analizar la ubicación"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.reanalizar.png",
-        "override": "<permission>/llamada.ubicacion.control.reanalizar.png"
-      }
-    },
-    {
       "slot": "llamada.ubicacion.control.alternas",
       "neededBy": [
         "agencia-propia",
@@ -439,50 +329,6 @@
       "deliverTo": {
         "shared": "_common/llamada.ubicacion.control.alternas.png",
         "override": "<permission>/llamada.ubicacion.control.alternas.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.control.historial",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.historial",
-          "blockType": "field-list",
-          "shows": "Historial de ubicaciones"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.historial.png",
-        "override": "<permission>/llamada.ubicacion.control.historial.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.corregir.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.corregir.buscar",
-          "blockType": "procedure",
-          "shows": "Escriba la dirección en Buscar dirección… y elija una propuesta"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.corregir.buscar.png",
-        "override": "<permission>/llamada.ubicacion.corregir.buscar.png"
       }
     },
     {
@@ -618,28 +464,6 @@
       }
     },
     {
-      "slot": "llamada.fuerzas.directorio.externo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.directorio.externo",
-          "blockType": "field-list",
-          "shows": "Despacho de agente externo"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.directorio.externo.png",
-        "override": "<permission>/llamada.fuerzas.directorio.externo.png"
-      }
-    },
-    {
       "slot": "llamada.fuerzas.directorio.enviar",
       "neededBy": [
         "agencia-propia",
@@ -747,116 +571,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.ruta.control.finalizar.png",
         "override": "<permission>/llamada.fuerzas.ruta.control.finalizar.png"
-      }
-    },
-    {
-      "slot": "llamada.libro.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.libro.vista.fig",
-          "blockType": "figure",
-          "shows": "Libro del caso en la banda bajo el mapa, con las pestañas Notas y Libro del caso."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.libro.vista.fig.png",
-        "override": "<permission>/llamada.libro.vista.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.libro.importar.boton",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.libro.importar.boton",
-          "blockType": "field-list",
-          "shows": "Importar de Call AI"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.libro.importar.boton.png",
-        "override": "<permission>/llamada.libro.importar.boton.png"
-      }
-    },
-    {
-      "slot": "llamada.libro.registrar.notas",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.libro.registrar.notas",
-          "blockType": "procedure",
-          "shows": "Escriba en Notas lo que cuenta el llamante"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.libro.registrar.notas.png",
-        "override": "<permission>/llamada.libro.registrar.notas.png"
-      }
-    },
-    {
-      "slot": "llamada.libro.registrar.guardar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.libro.registrar.guardar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Guardar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.libro.registrar.guardar.png",
-        "override": "<permission>/llamada.libro.registrar.guardar.png"
-      }
-    },
-    {
-      "slot": "llamada.bitacora.control.pestana",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.bitacora.control.pestana",
-          "blockType": "field-list",
-          "shows": "Log"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.bitacora.control.pestana.png",
-        "override": "<permission>/llamada.bitacora.control.pestana.png"
       }
     },
     {
@@ -2382,6 +2096,23 @@
       ]
     },
     {
+      "slot": "llamada.controles.transferir.destino",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.transferir.destino",
+          "blockType": "procedure",
+          "shows": "Elija el destino de la transferencia"
+        }
+      ],
+      "files": [
+        "_common/llamada.controles.transferir.destino.png"
+      ]
+    },
+    {
       "slot": "llamada.controles.flujo.fig",
       "neededBy": [
         "agencia-propia",
@@ -2450,6 +2181,91 @@
       ]
     },
     {
+      "slot": "llamada.ubicacion.control.street-view",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.street-view",
+          "blockType": "field-list",
+          "shows": "Abrir Street View"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.street-view.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.control.editar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.editar",
+          "blockType": "field-list",
+          "shows": "Editar dirección"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.editar.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.control.aceptar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.aceptar",
+          "blockType": "field-list",
+          "shows": "Aceptar dirección"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.aceptar.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.control.reanalizar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.reanalizar",
+          "blockType": "field-list",
+          "shows": "Volver a analizar la ubicación"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.reanalizar.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.control.historial",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.historial",
+          "blockType": "field-list",
+          "shows": "Historial de ubicaciones"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.historial.png"
+      ]
+    },
+    {
       "slot": "llamada.ubicacion.corregir.editar",
       "neededBy": [
         "agencia-propia",
@@ -2464,6 +2280,23 @@
       ],
       "files": [
         "_common/llamada.ubicacion.corregir.editar.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.corregir.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.corregir.buscar",
+          "blockType": "procedure",
+          "shows": "Escriba la dirección en Buscar dirección… y elija una propuesta"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.corregir.buscar.png"
       ]
     },
     {
@@ -2701,6 +2534,23 @@
       ]
     },
     {
+      "slot": "llamada.fuerzas.directorio.externo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.directorio.externo",
+          "blockType": "field-list",
+          "shows": "Despacho de agente externo"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.directorio.externo.png"
+      ]
+    },
+    {
       "slot": "llamada.camaras.vista.fig",
       "neededBy": [
         "agencia-propia",
@@ -2752,6 +2602,57 @@
       ]
     },
     {
+      "slot": "llamada.libro.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.libro.vista.fig",
+          "blockType": "figure",
+          "shows": "Libro del caso en la banda bajo el mapa, con las pestañas Notas y Libro del caso."
+        }
+      ],
+      "files": [
+        "_common/llamada.libro.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.libro.importar.boton",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.libro.importar.boton",
+          "blockType": "field-list",
+          "shows": "Importar de Call AI"
+        }
+      ],
+      "files": [
+        "_common/llamada.libro.importar.boton.png"
+      ]
+    },
+    {
+      "slot": "llamada.libro.registrar.notas",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.libro.registrar.notas",
+          "blockType": "procedure",
+          "shows": "Escriba en Notas lo que cuenta el llamante"
+        }
+      ],
+      "files": [
+        "_common/llamada.libro.registrar.notas.png"
+      ]
+    },
+    {
       "slot": "llamada.libro.registrar.pasos",
       "neededBy": [
         "agencia-propia",
@@ -2766,6 +2667,23 @@
       ],
       "files": [
         "_common/llamada.libro.registrar.pasos.png"
+      ]
+    },
+    {
+      "slot": "llamada.libro.registrar.guardar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.libro.registrar.guardar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Guardar"
+        }
+      ],
+      "files": [
+        "_common/llamada.libro.registrar.guardar.png"
       ]
     },
     {
@@ -2834,6 +2752,23 @@
       ],
       "files": [
         "_common/llamada.bitacora.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.bitacora.control.pestana",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.bitacora.control.pestana",
+          "blockType": "field-list",
+          "shows": "Log"
+        }
+      ],
+      "files": [
+        "_common/llamada.bitacora.control.pestana.png"
       ]
     },
     {
