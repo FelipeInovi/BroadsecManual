@@ -610,12 +610,13 @@ Treat this as a proposal to confirm, not as an agreed scope.
    delivered. How to recognise the right account is in this folder's
    `AGENTS.md`.
 
+   - **Accepted by the owner (2026-09-30):** the `agencia-propia` overview
+     `seatmap.fig` shows the untranslated role key `userRoles.ROL_INTEGRAL`
+     in the top bar, because the es catalogue lacks that role. It stays as
+     is. The product is still changing, so the figure is expected to be
+     retaken anyway.
+
    **Still open (the owner decides each):**
-   - The overview `seatmap.fig` for `agencia-propia` shows the top bar's role
-     as the raw key `userRoles.ROL_INTEGRAL`: the es catalogue has no
-     translation for that role. That is the product's defect, and it reaches
-     the client PDF. The options are to fix the catalogue and retake the shot,
-     or to accept it.
    - `verified --module sections/03-seatmap.yaml`, once the owner has seen
      the drift addressed.
 
