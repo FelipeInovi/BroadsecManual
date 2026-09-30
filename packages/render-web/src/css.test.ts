@@ -55,21 +55,27 @@ describe("stylesheet", () => {
     expect(css).not.toMatch(/<\/style/i);
   });
 
-  // A figure's WIDTH is declared (`widthPercent`) and does not move when an
-  // image arrives. Its HEIGHT came from the file's own proportions, and nothing
-  // held it: deliver a 4:3 screenshot into a slot whose placeholder is 8:5 and
-  // that block changes height, the page break moves, and the document has to be
-  // re-laid-out by hand. Measured on the first product: exactly that, repeatedly.
+  // A figure's WIDTH is declared (`widthPercent`); its HEIGHT follows the image.
   //
-  // So the BOX is pinned and the image fits inside it. The box is what the reader
-  // has been looking at all along, because every slot renders the placeholder
-  // until it does not.
-  describe("Bridge pins the figure box so a delivery cannot move the page", () => {
+  // This used to pin every figure's box to the placeholder's 8:5 ratio, so a
+  // delivery could never move a page break. The owner reversed it (2026-09-30).
+  // Page breaks are re-flowed by every build, so a moved break costs nothing.
+  // The pinned box cost every wide or tall image a band of empty space, and it
+  // pushed the caption away from what it describes. Bridge's figures are mostly
+  // bars, rows and single fields, which is the worst case for a fixed 8:5 box.
+  //
+  // What stays bounded is the extreme: a very tall capture at a wide
+  // `widthPercent` would otherwise fill a page, so height is capped and the
+  // image scales down inside that cap without being cropped.
+  describe("Bridge sizes a figure to its image, with only a height cap", () => {
     const css = bridgeStylesheet(themes.bridge, "BRIDGE");
 
-    it("pins the ratio and lets the image letterbox inside it", () => {
-      expect(css).toContain("aspect-ratio: 320 / 200");
-      expect(css).toContain("object-fit: contain");
+    it("no longer pins the box to the placeholder's ratio", () => {
+      expect(css).not.toContain("aspect-ratio");
+    });
+
+    it("caps the height so a tall capture cannot fill the page", () => {
+      expect(css).toMatch(/figure img \{[^}]*max-height: 470pt;[^}]*object-fit: contain;/);
     });
 
     // The `beside` layout inherits the rule above rather than declaring its own.

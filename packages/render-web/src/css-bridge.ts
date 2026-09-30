@@ -401,28 +401,31 @@ table.tbl--change-log td.tbl__date { width: 72pt; white-space: nowrap; }
 figure { margin: ${t.space.sm} 0 ${t.space.md}; text-align: center; break-inside: avoid; }
 
 /*
- * THE FIGURE BOX IS PINNED, and the image fits inside it.
+ * A FIGURE IS AS TALL AS ITS IMAGE, up to a cap.
  *
- * A figure's width is declared in content (\`widthPercent\`) and never moves. Its
- * HEIGHT used to come from whatever proportions the delivered file happened to
- * have, and nothing held it — so a 4:3 screenshot dropped into a slot whose
- * placeholder is 8:5 changed that block's height, moved the page break, and the
- * document needed re-laying-out by hand. That happened repeatedly on the first
- * product, one image at a time.
+ * A figure's width is declared in content (\`widthPercent\`); its height follows
+ * the delivered file, the same as in Broadsec's sheet.
  *
- * \`320 / 200\` is the placeholder's own viewBox — see \`packages/cli/assets/_pending.svg\`,
- * and the test in \`packages/cli/src/images.test.ts\` that fails if the two ever
- * disagree. Pinning to THAT ratio means the box is the one the reader has been
- * looking at all along, because every undelivered slot renders the placeholder.
+ * This rule used to pin every figure's box to the placeholder's 8:5 ratio
+ * (the placeholder's own 320 by 200 viewBox), so a delivery could not move a
+ * page break.
+ * The owner reversed that on 2026-09-30. Every build re-flows the pages, so a
+ * moved break costs nothing. The pinned box, on the other hand, cost every wide
+ * or tall image a band of empty space and pushed the caption away from what it
+ * describes. Bridge's figures are mostly bars, rows and single fields, which is
+ * the worst case for a fixed 8:5 box.
  *
- * \`contain\` letterboxes rather than crops: an image that does not match the box
- * loses nothing, it just sits in it. A wrongly cropped control is a control the
- * reader cannot recognise, which is worse than empty margin beside it.
+ * The cap handles the one extreme left: a tall capture at a wide
+ * \`widthPercent\` would otherwise fill a page. 470pt is about 65% of the A4
+ * content height (842pt minus the 62pt and 52pt margins), which leaves room
+ * for the caption and some text. \`contain\` scales an image down inside the
+ * cap and never crops it: a cropped control is one the reader cannot
+ * recognise.
  *
  * Table icons are deliberately untouched — \`td.tbl__icon img\` above bounds them
- * on both axes already, so a delivery there could never move the page.
+ * on both axes already.
  */
-figure img { max-width: 100%; aspect-ratio: 320 / 200; object-fit: contain; }
+figure img { max-width: 100%; max-height: 470pt; object-fit: contain; }
 figure.figure--item img { max-width: 70%; }
 figcaption {
   margin-top: ${t.space.xs};
