@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 219,
-    "pending": 26
+    "delivered": 229,
+    "pending": 16
   },
   "pending": [
     {
@@ -68,94 +68,6 @@
       }
     },
     {
-      "slot": "llamada.controles.enlace.enviar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.enlace.enviar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Enviar enlace de video"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.enlace.enviar.png",
-        "override": "<permission>/llamada.controles.enlace.enviar.png"
-      }
-    },
-    {
-      "slot": "llamada.controles.enlace.reenviar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.controles.enlace.reenviar",
-          "blockType": "procedure",
-          "shows": "Para otro teléfono, haga clic en Reenviar enlace a otro numero"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.controles.enlace.reenviar.png",
-        "override": "<permission>/llamada.controles.enlace.reenviar.png"
-      }
-    },
-    {
-      "slot": "llamada.transcripcion.traducir.campo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.transcripcion.traducir.campo",
-          "blockType": "field-list",
-          "shows": "Escribir mensaje…"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.transcripcion.traducir.campo.png",
-        "override": "<permission>/llamada.transcripcion.traducir.campo.png"
-      }
-    },
-    {
-      "slot": "llamada.transcripcion.traducir.enviar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.transcripcion.traducir.enviar",
-          "blockType": "field-list",
-          "shows": "Enviar traducción"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.transcripcion.traducir.enviar.png",
-        "override": "<permission>/llamada.transcripcion.traducir.enviar.png"
-      }
-    },
-    {
       "slot": "llamada.transcripcion.traducir.reproducir",
       "neededBy": [
         "agencia-propia",
@@ -178,72 +90,6 @@
       }
     },
     {
-      "slot": "llamada.chat.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.chat.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel de chat con el intercambio de mensajes y el campo de escritura."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.chat.vista.fig.png",
-        "override": "<permission>/llamada.chat.vista.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.chat.enviar.abrir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.chat.enviar.abrir",
-          "blockType": "procedure",
-          "shows": "Abra el panel Chat desde la barra de paneles"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.chat.enviar.abrir.png",
-        "override": "<permission>/llamada.chat.enviar.abrir.png"
-      }
-    },
-    {
-      "slot": "llamada.chat.enviar.escribir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.chat.enviar.escribir",
-          "blockType": "procedure",
-          "shows": "Escriba el mensaje y haga clic en Enviar mensaje"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.chat.enviar.escribir.png",
-        "override": "<permission>/llamada.chat.enviar.escribir.png"
-      }
-    },
-    {
       "slot": "llamada.mapa.vista.fig",
       "neededBy": [
         "agencia-propia",
@@ -263,72 +109,6 @@
       "deliverTo": {
         "shared": "_common/llamada.mapa.vista.fig.png",
         "override": "<permission>/llamada.mapa.vista.fig.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.control.buscar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.buscar",
-          "blockType": "field-list",
-          "shows": "Buscar dirección…"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.buscar.png",
-        "override": "<permission>/llamada.ubicacion.control.buscar.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.control.pin",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.pin",
-          "blockType": "field-list",
-          "shows": "Confirmar ubicación del pin"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.pin.png",
-        "override": "<permission>/llamada.ubicacion.control.pin.png"
-      }
-    },
-    {
-      "slot": "llamada.ubicacion.control.alternas",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.ubicacion.control.alternas",
-          "blockType": "field-list",
-          "shows": "Otras ubicaciones posibles"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.ubicacion.control.alternas.png",
-        "override": "<permission>/llamada.ubicacion.control.alternas.png"
       }
     },
     {
@@ -2079,6 +1859,40 @@
       ]
     },
     {
+      "slot": "llamada.controles.enlace.enviar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.enlace.enviar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Enviar enlace de video"
+        }
+      ],
+      "files": [
+        "_common/llamada.controles.enlace.enviar.png"
+      ]
+    },
+    {
+      "slot": "llamada.controles.enlace.reenviar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.controles.enlace.reenviar",
+          "blockType": "procedure",
+          "shows": "Para otro teléfono, haga clic en Reenviar enlace a otro numero"
+        }
+      ],
+      "files": [
+        "_common/llamada.controles.enlace.reenviar.png"
+      ]
+    },
+    {
       "slot": "llamada.controles.transferir.abrir",
       "neededBy": [
         "agencia-propia",
@@ -2164,6 +1978,40 @@
       ]
     },
     {
+      "slot": "llamada.transcripcion.traducir.campo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.transcripcion.traducir.campo",
+          "blockType": "field-list",
+          "shows": "Escribir mensaje…"
+        }
+      ],
+      "files": [
+        "_common/llamada.transcripcion.traducir.campo.png"
+      ]
+    },
+    {
+      "slot": "llamada.transcripcion.traducir.enviar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.transcripcion.traducir.enviar",
+          "blockType": "field-list",
+          "shows": "Enviar traducción"
+        }
+      ],
+      "files": [
+        "_common/llamada.transcripcion.traducir.enviar.png"
+      ]
+    },
+    {
       "slot": "llamada.video.vista.fig",
       "neededBy": [
         "agencia-propia",
@@ -2178,6 +2026,57 @@
       ],
       "files": [
         "_common/llamada.video.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.chat.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.chat.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel de chat con el intercambio de mensajes y el campo de escritura."
+        }
+      ],
+      "files": [
+        "_common/llamada.chat.vista.fig.png"
+      ]
+    },
+    {
+      "slot": "llamada.chat.enviar.abrir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.chat.enviar.abrir",
+          "blockType": "procedure",
+          "shows": "Abra el panel Chat desde la barra de paneles"
+        }
+      ],
+      "files": [
+        "_common/llamada.chat.enviar.abrir.png"
+      ]
+    },
+    {
+      "slot": "llamada.chat.enviar.escribir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.chat.enviar.escribir",
+          "blockType": "procedure",
+          "shows": "Escriba el mensaje y haga clic en Enviar mensaje"
+        }
+      ],
+      "files": [
+        "_common/llamada.chat.enviar.escribir.png"
       ]
     },
     {
@@ -2215,6 +2114,23 @@
       ]
     },
     {
+      "slot": "llamada.ubicacion.control.buscar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.buscar",
+          "blockType": "field-list",
+          "shows": "Buscar dirección…"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.buscar.png"
+      ]
+    },
+    {
       "slot": "llamada.ubicacion.control.aceptar",
       "neededBy": [
         "agencia-propia",
@@ -2232,6 +2148,23 @@
       ]
     },
     {
+      "slot": "llamada.ubicacion.control.pin",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.pin",
+          "blockType": "field-list",
+          "shows": "Confirmar ubicación del pin"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.pin.png"
+      ]
+    },
+    {
       "slot": "llamada.ubicacion.control.reanalizar",
       "neededBy": [
         "agencia-propia",
@@ -2246,6 +2179,23 @@
       ],
       "files": [
         "_common/llamada.ubicacion.control.reanalizar.png"
+      ]
+    },
+    {
+      "slot": "llamada.ubicacion.control.alternas",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.ubicacion.control.alternas",
+          "blockType": "field-list",
+          "shows": "Otras ubicaciones posibles"
+        }
+      ],
+      "files": [
+        "_common/llamada.ubicacion.control.alternas.png"
       ]
     },
     {
