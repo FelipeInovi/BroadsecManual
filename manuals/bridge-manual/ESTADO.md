@@ -584,6 +584,9 @@ Treat this as a proposal to confirm, not as an agreed scope.
    **The rewrite's product news, declared by the owner (2026-09-30)**, split
    as for Home and Llamada: the rewrite is committed as `cambio`, and the line
    below reaches a `nuevo` trailer. Nothing was retired.
+   - Nuevo: the "Nuevos incidentes" band at the top of Seatmap, and the
+     "En espera" state in the indicators, the operator monitor and the
+     workstation card.
 
    **Still open (the owner decides each):**
    - The orphaned `seatmap.distribucion.zonas` image and its recipe
