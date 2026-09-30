@@ -19,107 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 266,
-    "delivered": 262,
-    "pending": 4
+    "delivered": 266,
+    "pending": 0
   },
-  "pending": [
-    {
-      "slot": "seatmap.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.fig",
-          "blockType": "figure",
-          "shows": "Vista Seatmap con la franja de casos recientes, la distribución de la sala, los indicadores de la agencia y el monitor de operadores."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.fig.png",
-        "override": "<permission>/seatmap.fig.png"
-      },
-      "files": [
-        "todas-las-agencias/seatmap.fig.png"
-      ]
-    },
-    {
-      "slot": "seatmap.indicadores.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.indicadores.fig",
-          "blockType": "figure",
-          "shows": "Columna de indicadores con el anillo de categorías, las tarjetas de atención y el recuento por estado."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.indicadores.fig.png",
-        "override": "<permission>/seatmap.indicadores.fig.png"
-      },
-      "files": [
-        "todas-las-agencias/seatmap.indicadores.fig.png"
-      ]
-    },
-    {
-      "slot": "seatmap.monitor.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.monitor.fig",
-          "blockType": "figure",
-          "shows": "Banda inferior con las fichas Estados de Operadores y Agencias."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.monitor.fig.png",
-        "override": "<permission>/seatmap.monitor.fig.png"
-      },
-      "files": [
-        "todas-las-agencias/seatmap.monitor.fig.png"
-      ]
-    },
-    {
-      "slot": "seatmap.monitor.agencias.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "seatmap.monitor.agencias.fig",
-          "blockType": "figure",
-          "shows": "Ficha Agencias con su pie, que reúne el total de casos gestionados y el acceso al detalle."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia"
-      ],
-      "deliverTo": {
-        "shared": "_common/seatmap.monitor.agencias.fig.png",
-        "override": "<permission>/seatmap.monitor.agencias.fig.png"
-      },
-      "files": [
-        "todas-las-agencias/seatmap.monitor.agencias.fig.png"
-      ]
-    }
-  ],
+  "pending": [],
   "delivered": [
     {
       "slot": "home.general.fig",
@@ -2719,6 +2622,24 @@
       ]
     },
     {
+      "slot": "seatmap.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.fig",
+          "blockType": "figure",
+          "shows": "Vista Seatmap con la franja de casos recientes, la distribución de la sala, los indicadores de la agencia y el monitor de operadores."
+        }
+      ],
+      "files": [
+        "agencia-propia/seatmap.fig.png",
+        "todas-las-agencias/seatmap.fig.png"
+      ]
+    },
+    {
       "slot": "seatmap.casos.fig",
       "neededBy": [
         "agencia-propia",
@@ -3047,6 +2968,24 @@
       ]
     },
     {
+      "slot": "seatmap.indicadores.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.indicadores.fig",
+          "blockType": "figure",
+          "shows": "Columna de indicadores con el anillo de categorías, las tarjetas de atención y el recuento por estado."
+        }
+      ],
+      "files": [
+        "agencia-propia/seatmap.indicadores.fig.png",
+        "todas-las-agencias/seatmap.indicadores.fig.png"
+      ]
+    },
+    {
       "slot": "seatmap.indicadores.estado.disponibles",
       "neededBy": [
         "agencia-propia",
@@ -3115,6 +3054,24 @@
       ]
     },
     {
+      "slot": "seatmap.monitor.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.monitor.fig",
+          "blockType": "figure",
+          "shows": "Banda inferior con las fichas Estados de Operadores y Agencias."
+        }
+      ],
+      "files": [
+        "agencia-propia/seatmap.monitor.fig.png",
+        "todas-las-agencias/seatmap.monitor.fig.png"
+      ]
+    },
+    {
       "slot": "seatmap.monitor.operadores.fig",
       "neededBy": [
         "agencia-propia",
@@ -3163,6 +3120,24 @@
       ],
       "files": [
         "_common/seatmap.monitor.copiar-id.copiar.png"
+      ]
+    },
+    {
+      "slot": "seatmap.monitor.agencias.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "seatmap.monitor.agencias.fig",
+          "blockType": "figure",
+          "shows": "Ficha Agencias con su pie, que reúne el total de casos gestionados y el acceso al detalle."
+        }
+      ],
+      "files": [
+        "agencia-propia/seatmap.monitor.agencias.fig.png",
+        "todas-las-agencias/seatmap.monitor.agencias.fig.png"
       ]
     },
     {
