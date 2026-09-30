@@ -1,13 +1,98 @@
-# Seatmap — written against the Bridge360 source, cited by file and line.
+# Seatmap — written against the Bridge360 source (`bridge`, branch `develop`,
+# 465f5eb9), cited by file and line.
 #
 # There is no module map for this product yet (no extractor exists for its
 # shape), so every claim here carries its own provenance comment instead of
-# tracing to `knowledge/`. There is no i18n catalogue either: every label below
-# is a QUOTATION of a literal in the component, with the line it sits on. If the
-# product rewords one, nothing here notices — that is recorded in ESTADO.md.
+# tracing to `knowledge/`. Every quoted UI label is a QUOTATION, cited in the
+# `labels` list below and checked by `broadsec-manual labels bridge-manual`.
+# Since the product gained an i18n catalogue, a quotation is cited from the
+# Spanish catalogue (`src/i18n/locales/es/*.json`) when the product keys it. The
+# catalogue keeps its own spelling ("Tiempo de espera más larga", "En Espera" in
+# the operator table and "En espera" in the status count, "Offline"): a
+# quotation is copied as the catalogue writes it, while the manual's own prose
+# is written correctly.
+#
+# This module was rewritten in full on 2026-09-30, with the owner's
+# authorisation, from the previous version that was written against `58e2cc4d`.
+# The drift audit is in engram, `bridge-manual/seatmap-drift-audit-2026-09-30`.
 #
 # The product calls the view `sitemap` internally, but the control the operator
-# reads says "Seatmap" (icon-sidebar.tsx:56). The manual quotes the screen.
+# reads says "Seatmap" (`navigation.seatmap`, common.json:67, used at
+# components/layout/icon-sidebar.tsx:74). The manual quotes the screen.
+#
+# ORGANISATION. Four areas, in the order an operator reads the screen: the
+# recent-cases band above the top bar (`Nuevos incidentes`), the floor plan on
+# the left with its agency tabs, the indicators column on the right, and the
+# operator monitor in the bottom band. The floor plan carries the most
+# behaviour, so it is split into the workstation card, the operator detail and
+# the layout editing.
+#
+# CONDITIONING. The axis is `permission`, with values from `canViewAllAgencies`
+# ALONE (domain/can-view-all-agencies.ts:5-7; `hasPermission` also grants `*`,
+# auth/domain/has-permission.ts:2 and :10-11). It is consumed in
+# views/sitemap-view.tsx:38 and reaches, in this file, exactly these places:
+#   - the agency tabs, `SitemapAgencyTabs` (sitemap-view.tsx:140-146), and the
+#     procedure that uses them;
+#   - the loading notice, `sitemap.loadingAgencies` (sitemap-view.tsx:113-114),
+#     which is the `canViewAll` branch of the ternary at :111-118;
+#   - the no-agency notice (:117), the `else` branch, for the reader without it;
+#   - the category donut: `useCategoryStats(canViewAll)` (sitemap-view.tsx:79)
+#     passes `canViewAll` as `enabled` (hooks/use-category-stats.ts:15-20), so
+#     without the permission the query never runs and the donut receives total 0
+#     and no categories (components/sitemap/sitemap-stats-panel.tsx:62,
+#     :64-65) — a grey ring, a 0 and no legend;
+#   - the agencies card: `agenciesCases={canViewAll ? agenciesCases : []}`
+#     (sitemap-view.tsx:175), so without the permission the card falls to its
+#     empty state (components/sitemap/sitemap-operator-monitor-panel.tsx:289-292)
+#     with the total at 0 (:303-309).
+# `canManageSitemapLayout` (sitemap-view.tsx:39, domain/can-manage-sitemap-layout.ts:6-13)
+# and the sidebar gate `view.sitemap` (components/layout/icon-sidebar.tsx:77,
+# filter at :146-151) are independent of the axis (ESTADO.md, Ruled out and
+# Unresolved #1): they are stated in prose and nothing is conditioned on them.
+#
+# WHAT THE CODE DOES NOT PROVE, and the text therefore does not claim:
+#   - that a layout change applies to other users of the agency: the frontend
+#     only sends a PATCH / POST / DELETE per change
+#     (infrastructure/http/sitemap-layout-api.service.ts:35-83);
+#   - that the category donut is scoped to the selected agency, or to any
+#     period: the request carries neither an agency nor a period
+#     (infrastructure/http/workforce-api.service.ts:449-456, called without
+#     arguments at hooks/use-category-stats.ts:18);
+#   - what makes the marquee time colour: it is a regex over the type label
+#     (views/sitemap-cases-marquee.model.ts:17, :53-58); there is no severity
+#     field on the backend row, so the text says only "según el tipo";
+#   - why "Cargando agencias…" stays: errors are swallowed, so it is described
+#     only as the loading state;
+#   - that dragging is limited to edit mode: `useDraggable` is disabled only
+#     while a change is being saved (components/sitemap/sitemap-zone-grid.tsx:457
+#     passes `disabled={isSaving}`), so drag is described inside edit mode only;
+#   - what triggers the operator state "En Espera": it arrives as `on_hold` from
+#     the backend and nothing on the client says why.
+#
+# NOT DOCUMENTED, and not a gap:
+#   - `sitemap.agencyLoadError` ("No se pudo cargar la agencia asignada.",
+#     analytics.json:442). It is unreachable: it sits in the `!agencyId` branch
+#     under `user?.agencyId ?`, but for a reader without the permission
+#     `agencyId` IS `user?.agencyId` (sitemap-view.tsx:53-55), so inside that
+#     branch `user?.agencyId` is always falsy and the ternary always yields
+#     `noAgencyAssigned`. The previous version documented it under
+#     `agencia-propia`; a message that cannot appear is dropped.
+#   - the operator status `Vacío` (`operatorStatus.empty`, analytics.json:458)
+#     in the table: rows are filtered to `assignedUser != null`
+#     (sitemap-operator-monitor-panel.tsx:78), so an empty desk never reaches the
+#     table. An empty desk is documented only as the blank card in the plan.
+#   - the "zonas" of the previous version: there are none. The plan is a free
+#     grid of row / column cells (sitemap-zone-grid.tsx:133-150).
+#   - `sitemap-layout-mock.service.ts`: the store is built on the real API
+#     service (stores/use-sitemap-position-store.ts:146-148).
+#
+# QUOTATIONS LEFT OUT ON PURPOSE. `sitemap.maxChairsReached`
+# (common.json:653, "Ya no puedes agregar…") is in the familiar register the
+# client PDF cannot carry, so the section describes the notice without quoting
+# it.
+#
+# Paths in comments are relative to `src/modules/dashboard/presentation/ui/` in
+# the `bridge` source repository, except where another module is named in full.
 
 id: seatmap
 title: Seatmap
@@ -17,68 +102,138 @@ subtitle: Estado de la sala de operación en tiempo real
 # this in words; as data, `labels` can be checked.
 sourceBase: src/modules/dashboard/presentation/ui/
 
-# Where every UI label in this section was COPIED FROM. This product ships no
-# i18n catalogue, so each label is a quotation and a quotation does not follow
-# what it quoted — `broadsec-manual labels bridge-manual` holds each one against
-# its line.
+# Where every quoted UI label in this section was COPIED FROM. Checked by
+# `broadsec-manual labels bridge-manual`.
 #
-# Only quotations are listed. `label: Encabezado de la agencia`,
-# `labelHeader: Tarjeta` and the other column headings are the MANUAL's own
-# naming, not the product's, so there is nothing to check them against and
-# citing them would report the manual's words as drifted from a screen that
-# never said them.
+# NOT cited, because they are the MANUAL's own naming and the product never said
+# them: the column headings (`Área`, `Qué contiene`, `Dato`, `Qué indica`,
+# `Estado`, `Qué agrupa`, `Columna`, `Contenido`, `Color`, `Control`,
+# `Qué hace`), the row names that describe a region or a colour (`Banda
+# superior`, `Código del puesto`, `Verde`, …) and the field-list names of the
+# plan (`Cuadrícula de puestos`, `Selector de agencias`). The titles of the two
+# monitor cards ("Estados de Operadores", "Agencias") are quoted in the
+# `detail-header` blocks, which declare no label policy, so their source is in a
+# comment there instead.
 labels:
+  # The recent-cases band (`sitemap.casesMarquee.*`).
+  - at: seatmap.casos.mensaje.titulo
+    from: ../../../../i18n/locales/es/analytics.json:447
+  - at: seatmap.casos.mensaje.cargando
+    from: ../../../../i18n/locales/es/analytics.json:449
+  - at: seatmap.casos.mensaje.vacio
+    from: ../../../../i18n/locales/es/analytics.json:448
+
+  # The edit button (`sitemap.editLayout`).
   - at: seatmap.distribucion.editar
-    from: components/sitemap/sitemap-editor-toolbar.tsx:22
+    from: ../../../../i18n/locales/es/analytics.json:411
 
-  # The four states the view renders in place of the grid. One ternary, three
-  # outcomes, plus `accessDenied`.
+  # The two notices the view renders in place of the plan for one reader each,
+  # and `accessDenied` for both (sitemap-view.tsx:111-122).
   - at: seatmap.distribucion.aviso.cargando
-    from: views/sitemap-view.tsx:112
-  - at: seatmap.distribucion.aviso.sin-cargar
-    from: views/sitemap-view.tsx:114
+    from: ../../../../i18n/locales/es/analytics.json:441
   - at: seatmap.distribucion.aviso.sin-agencia
-    from: views/sitemap-view.tsx:115
+    from: ../../../../i18n/locales/es/analytics.json:443
   - at: seatmap.distribucion.aviso.sin-acceso
-    from: views/sitemap-view.tsx:119
+    from: ../../../../i18n/locales/es/analytics.json:444
 
-  # `title` of each stat card.
+  # The workstation card's two labelled icons (aria-label and title).
+  - at: seatmap.distribucion.puesto.dato.sip
+    from: ../../../../i18n/locales/es/analytics.json:439
+  - at: seatmap.distribucion.puesto.dato.asistencia
+    from: ../../../../i18n/locales/es/analytics.json:438
+
+  # The operator detail popover: the three stat tiles and the button. The popover
+  # reads the default namespace (`useTranslation()` with no argument,
+  # sitemap-workstation-card.tsx:155, `defaultNS: "common"` at i18n/index.ts:79).
+  - at: seatmap.distribucion.detalle.dato.atendidas
+    from: ../../../../i18n/locales/es/analytics.json:435
+  - at: seatmap.distribucion.detalle.dato.rechazadas
+    from: ../../../../i18n/locales/es/analytics.json:436
+  - at: seatmap.distribucion.detalle.dato.tiempo
+    from: ../../../../i18n/locales/es/analytics.json:437
+  - at: seatmap.distribucion.detalle.dato.boton
+    from: ../../../../i18n/locales/es/common.json:656
+
+  # Layout editing: the add button. The delete control is not quoted (see the
+  # comment on `seatmap.distribucion.edicion.controles`).
+  - at: seatmap.distribucion.edicion.control.agregar
+    from: ../../../../i18n/locales/es/analytics.json:440
+
+  # The Dashboard destinations the two buttons open, named as the analytics
+  # panel reads them: `tabs.agentPerformance` (analytics.json:11, used at
+  # components/panels/dashboard/analytics-panel.tsx:36) and the literal at :33.
+  - at: seatmap.distribucion.detalle.destino.rendimiento
+    from: ../../../../i18n/locales/es/analytics.json:11
+  - at: seatmap.monitor.agencias.destino.llamadas
+    from: components/panels/dashboard/analytics-panel.tsx:33
+
+  # `title` of each stat card and the six messages under their values.
   - at: seatmap.indicadores.tarjeta.espera
-    from: components/sitemap/sitemap-stats-panel.tsx:276
+    from: ../../../../i18n/locales/es/analytics.json:412
   - at: seatmap.indicadores.tarjeta.cola
-    from: components/sitemap/sitemap-stats-panel.tsx:288
+    from: ../../../../i18n/locales/es/analytics.json:415
   - at: seatmap.indicadores.tarjeta.en-llamada
-    from: components/sitemap/sitemap-stats-panel.tsx:300
+    from: ../../../../i18n/locales/es/analytics.json:418
+  - at: seatmap.indicadores.mensaje.sin-espera
+    from: ../../../../i18n/locales/es/analytics.json:413
+  - at: seatmap.indicadores.mensaje.en-curso
+    from: ../../../../i18n/locales/es/analytics.json:414
+  - at: seatmap.indicadores.mensaje.sin-cola
+    from: ../../../../i18n/locales/es/analytics.json:416
+  - at: seatmap.indicadores.mensaje.con-cola
+    from: ../../../../i18n/locales/es/analytics.json:417
+  - at: seatmap.indicadores.mensaje.sin-operador
+    from: ../../../../i18n/locales/es/analytics.json:419
+  - at: seatmap.indicadores.mensaje.con-operador
+    from: ../../../../i18n/locales/es/analytics.json:420
 
   # `label` of each AgentStatusRow.
   - at: seatmap.indicadores.estado.disponibles
-    from: components/sitemap/sitemap-stats-panel.tsx:318
+    from: ../../../../i18n/locales/es/analytics.json:421
   - at: seatmap.indicadores.estado.en-llamada
-    from: components/sitemap/sitemap-stats-panel.tsx:324
+    from: ../../../../i18n/locales/es/analytics.json:422
+  - at: seatmap.indicadores.estado.en-espera
+    from: ../../../../i18n/locales/es/analytics.json:423
   - at: seatmap.indicadores.estado.no-disponibles
-    from: components/sitemap/sitemap-stats-panel.tsx:330
+    from: ../../../../i18n/locales/es/analytics.json:424
 
-  # Column `header`s of the operator monitor table.
+  # Column headers of the operator table (`operatorTable.*`).
   - at: seatmap.monitor.columna.operador-id
-    from: components/sitemap/use-operator-monitor-table.tsx:168
+    from: ../../../../i18n/locales/es/analytics.json:461
   - at: seatmap.monitor.columna.operador
-    from: components/sitemap/use-operator-monitor-table.tsx:183
+    from: ../../../../i18n/locales/es/analytics.json:462
   - at: seatmap.monitor.columna.estado
-    from: components/sitemap/use-operator-monitor-table.tsx:191
+    from: ../../../../i18n/locales/es/analytics.json:463
   - at: seatmap.monitor.columna.duracion
-    from: components/sitemap/use-operator-monitor-table.tsx:212
+    from: ../../../../i18n/locales/es/analytics.json:464
 
-  # `STATUS_LABEL`, the operator states as the table prints them.
+  # The operator states as the table prints them: `operatorStatus.*`, and the
+  # two `not_ready` variants from `agents:notReadyVariant.*`
+  # (domain/agent-not-ready-status.ts:13-25 and use-operator-monitor-table.tsx:46-60).
   - at: seatmap.monitor.estado.disponible
-    from: components/sitemap/use-operator-monitor-table.tsx:21
+    from: ../../../../i18n/locales/es/analytics.json:453
   - at: seatmap.monitor.estado.ocupado
-    from: components/sitemap/use-operator-monitor-table.tsx:22
+    from: ../../../../i18n/locales/es/analytics.json:454
+  - at: seatmap.monitor.estado.en-espera
+    from: ../../../../i18n/locales/es/analytics.json:455
   - at: seatmap.monitor.estado.pausa
-    from: components/sitemap/use-operator-monitor-table.tsx:23
+    from: ../../../../i18n/locales/es/agents.json:85
+  - at: seatmap.monitor.estado.bano
+    from: ../../../../i18n/locales/es/agents.json:86
   - at: seatmap.monitor.estado.offline
-    from: components/sitemap/use-operator-monitor-table.tsx:24
-  - at: seatmap.monitor.estado.vacio
-    from: components/sitemap/use-operator-monitor-table.tsx:25
+    from: ../../../../i18n/locales/es/analytics.json:457
+
+  # The operator card's empty answer and the agencies card's.
+  - at: seatmap.monitor.mensaje.sin-operadores
+    from: ../../../../i18n/locales/es/analytics.json:430
+  - at: seatmap.monitor.agencias.mensaje.sin-datos
+    from: ../../../../i18n/locales/es/analytics.json:427
+  - at: seatmap.monitor.agencias.tarjeta.dato.rotulo
+    from: ../../../../i18n/locales/es/common.json:657
+  - at: seatmap.monitor.agencias.pie.total
+    from: ../../../../i18n/locales/es/analytics.json:428
+  - at: seatmap.monitor.agencias.pie.detalle
+    from: ../../../../i18n/locales/es/analytics.json:429
 
 children:
   - id: seatmap.proposito
@@ -88,25 +243,171 @@ children:
         La vista **Seatmap** representa la sala de operación tal como está
         distribuida físicamente: cada puesto de trabajo, quién lo ocupa y en qué
         estado se encuentra. Reúne en una sola pantalla la ocupación de la sala,
-        los indicadores de atención de la agencia y el detalle operador por
-        operador.
+        los indicadores de atención de la agencia, el detalle operador por
+        operador y los casos más recientes.
 
   - id: seatmap.acceso
     type: prose
     props:
-      # icon-sidebar.tsx:55-59 — nav item id `sitemap`, label "Seatmap",
-      # rendered in the icon rail; dashboard.tsx:714 switches the view.
+      # components/layout/icon-sidebar.tsx:73-77 — nav item `sitemap`, label
+      # `navigation.seatmap`, `requiredPermissions: ["view.sitemap"]`; the filter
+      # that hides it is :146-151. pages/dashboard.tsx switches the view. The
+      # rail counter is :155-156 (`hasPendingAssistance`), fed by the sitemap
+      # stream's `helpRequested` count (views/sitemap-view.tsx:64-76) plus the
+      # operator's own pending request (icon-sidebar.tsx:137-138). Its tooltip
+      # keys are `sidebar.assistanceTooltip*` (icon-sidebar.tsx:164-165,
+      # common.json:141-142).
+      # The Post-Llamada lock: `handleViewChange` asks for the exit prompt
+      # instead of switching (pages/dashboard.tsx:125-131); the prompt is
+      # documented in Home (`home.caso.post-llamada.efecto.bloqueo`).
       text: >-
-        Diríjase a **Seatmap** en la barra lateral de iconos. La vista ocupa la
-        pantalla completa y se organiza en tres áreas: la distribución de la
-        sala a la izquierda, los indicadores de la agencia a la derecha y el
-        monitor de operadores en la banda inferior.
+        Diríjase a **Seatmap** en la barra lateral de iconos. La opción aparece
+        solo para los usuarios cuyo permiso incluye la consulta del Seatmap. La
+        vista ocupa el área de trabajo, a la derecha de la barra lateral y bajo
+        la barra superior, y se organiza en cuatro áreas: una franja superior
+        con los casos más recientes, la distribución de la sala a la izquierda,
+        los indicadores de la agencia a la derecha y el monitor de operadores en
+        la banda inferior. Cuando hay solicitudes de asistencia pendientes, el
+        icono de **Seatmap** muestra un contador rojo con su cantidad. Mientras la Post-Llamada de un caso
+        esté pendiente, el intento de cambiar de vista muestra la pregunta de
+        salida que se describe en la sección **Home**.
 
   - id: seatmap.fig
     type: figure
     props:
-      caption: "Vista Seatmap con la distribución de la sala, los indicadores de la agencia y el monitor de operadores."
+      caption: "Vista Seatmap con la franja de casos recientes, la distribución de la sala, los indicadores de la agencia y el monitor de operadores."
       widthPercent: 90
+
+  - id: seatmap.areas.titulo
+    type: detail-header
+    props:
+      text: Áreas de la vista
+
+  - id: seatmap.areas
+    type: data-table
+    props:
+      # views/sitemap-view.tsx:99-180 (the grid: plan :106-147, indicators
+      # :149-163, monitor :165-179) and components/layout/dashboard-shell.tsx:18-19,
+      # :42, :59-67 (the marquee, mounted only while the active view is `sitemap`,
+      # above the top strip).
+      labelHeader: Área
+      descriptionHeader: Qué contiene
+      rows:
+        - id: seatmap.area.casos
+          label: Franja superior
+          description: >-
+            Sobre la barra superior de la plataforma. Muestra los casos más
+            recientes en una cinta que se desplaza sola. Se describe en la
+            subsección **Barra de casos recientes**.
+        - id: seatmap.area.distribucion
+          label: Área izquierda
+          description: >-
+            La planta de la agencia, con una tarjeta por puesto de trabajo. Se
+            describe en la subsección **Distribución de la sala**.
+        - id: seatmap.area.indicadores
+          label: Columna derecha
+          description: >-
+            El anillo de categorías, las tarjetas de espera, cola y llamadas, y
+            el recuento de operadores por estado. Se describe en la subsección
+            **Indicadores de la agencia**.
+        - id: seatmap.area.monitor
+          label: Banda inferior
+          description: >-
+            Las fichas **Estados de Operadores** y **Agencias**. Se describe en
+            la subsección **Monitor de operadores**.
+
+  # --- Barra de casos recientes ----------------------------------------------
+  - id: seatmap.casos
+    title: Barra de casos recientes
+    children:
+      - id: seatmap.casos.proposito
+        type: prose
+        props:
+          # components/sitemap/sitemap-cases-marquee.tsx:109-172. It queries the
+          # event history, asking for the 12 newest by creation date (:111-116);
+          # rows with no resolvable time are dropped
+          # (views/sitemap-cases-marquee.model.ts:63-66), so up to 12 show. The
+          # hook polls every 15 s (hooks/use-event-history.ts:87, :175).
+          text: >-
+            Muestra los casos más recientes en una cinta que se desplaza sola,
+            para que el operador vea de un vistazo qué incidentes están
+            entrando mientras mira la sala. Presenta hasta 12 casos recientes;
+            los que no traen hora no se muestran. Se actualiza cada 15 segundos
+            sin recargar la vista.
+
+      - id: seatmap.casos.ubicacion
+        type: prose
+        props:
+          # components/layout/dashboard-shell.tsx:18-19 — the only view that gets
+          # the header; :59-67 mounts it above the top strip, full width. The
+          # animation pauses on hover (sitemap-cases-marquee.tsx:152,
+          # `hover:[animation-play-state:paused]`). No permission gate: the shell
+          # tests the active view only.
+          text: >-
+            Ocupa una franja a todo lo ancho de la pantalla, por encima de la
+            barra superior de la plataforma, y aparece solo mientras está abierto
+            **Seatmap**. No requiere ninguna acción previa. Al pasar el cursor
+            sobre la cinta, el desplazamiento se detiene.
+
+      - id: seatmap.casos.fig
+        type: figure
+        props:
+          caption: "Franja superior de Seatmap con el título Nuevos incidentes y los casos recientes en desplazamiento."
+          widthPercent: 90
+
+      - id: seatmap.casos.datos
+        type: data-table
+        props:
+          # views/sitemap-cases-marquee.model.ts: time :45-51 (`resolveTime`: the
+          # call's start time as HH:mm, else the trailing HH:mm of `createdAt`),
+          # type :67, place :68-69 (address, else city, else state, else a
+          # dash), `PLACEHOLDER = "—"` :13. The time colour is
+          # components/sitemap/sitemap-cases-marquee.tsx:16-19, :58 from a
+          # severity that model derives from the type label only (:53-58).
+          labelHeader: Dato
+          descriptionHeader: Qué indica
+          rows:
+            - id: seatmap.casos.dato.hora
+              label: Hora
+              description: >-
+                La hora del caso, en formato hh:mm: la de inicio de la llamada o,
+                si esa no viene, la de creación del caso. Su color cambia según
+                el tipo de incidente.
+            - id: seatmap.casos.dato.tipo
+              label: Tipo de incidente
+              description: >-
+                La clasificación del caso. Si el caso no la trae, se muestra un
+                guion.
+            - id: seatmap.casos.dato.lugar
+              label: Lugar
+              description: >-
+                La dirección del caso o, cuando no la tiene, su ciudad o su
+                estado. Si no hay ninguno de los tres, se muestra un guion.
+            - id: seatmap.casos.dato.separador
+              label: Rombo
+              description: >-
+                Un rombo blanco precede a cada caso y lo separa del anterior.
+
+      - id: seatmap.casos.mensajes
+        type: term-list
+        props:
+          # sitemap-cases-marquee.tsx:118 (title), :137-139 (loading / empty). The
+          # title sits in the fixed left cluster with the brand mark
+          # (MarqueeLead, :37-55), which never scrolls.
+          entries:
+            - id: seatmap.casos.mensaje.titulo
+              term: Nuevos incidentes
+              definition: >-
+                Título fijo de la franja, junto al logotipo, a la izquierda de
+                la cinta. No se desplaza.
+            - id: seatmap.casos.mensaje.cargando
+              term: Cargando casos…
+              definition: >-
+                Reemplaza a la cinta mientras la plataforma recupera los casos.
+            - id: seatmap.casos.mensaje.vacio
+              term: Sin casos recientes
+              definition: >-
+                Reemplaza a la cinta cuando no hay casos que mostrar.
 
   # --- Distribución de la sala -----------------------------------------------
   - id: seatmap.distribucion
@@ -116,23 +417,26 @@ children:
         type: prose
         props:
           text: >-
-            Muestra la planta de la agencia agrupada por zonas, con un elemento
-            por puesto de trabajo. El color de cada puesto indica el estado del
-            operador que lo ocupa, de modo que la ocupación de la sala se lee de
-            un vistazo y sin consultar ninguna tabla.
+            Muestra la planta de la agencia, con una tarjeta por cada puesto de
+            trabajo. El color de la tarjeta indica el estado del operador que lo
+            ocupa, de modo que la ocupación de la sala se lee de un vistazo y sin
+            consultar ninguna tabla. Se actualiza en tiempo real.
 
       - id: seatmap.distribucion.ubicacion
         type: prose
         props:
+          # views/sitemap-view.tsx:106-147 (the left panel); the plan renders only
+          # once an agency is resolved and access was not denied (:111-123). Live
+          # updates: hooks/use-sitemap-stream.ts:173-209 (SSE
+          # `sitemap.workstation.updated`, merged at :70-82).
           text: >-
-            Ocupa el área izquierda de la vista y está disponible desde el
-            momento en que la pantalla termina de cargar. No requiere ninguna
-            acción previa.
+            Ocupa el área izquierda de la vista. La planta aparece en cuanto la
+            agencia queda resuelta, sin ninguna acción previa.
 
       - id: seatmap.distribucion.fig
         type: figure
         props:
-          caption: "Planta de la agencia con los puestos agrupados por zona."
+          caption: "Planta de la agencia con una tarjeta por puesto de trabajo."
           widthPercent: 90
 
       - id: seatmap.distribucion.elementos
@@ -140,79 +444,83 @@ children:
         props:
           items:
             - id: seatmap.distribucion.encabezado
-              # sitemap-agency-header.tsx, mounted at sitemap-view.tsx:126 con
-              # `agencyName={selectedAgency?.name}`.
+              # components/sitemap/sitemap-agency-header.tsx:22, mounted at
+              # views/sitemap-view.tsx:128 with `agencyName={selectedAgency?.name}`;
+              # a dash while the name is unknown.
               #
-              # `below` y no `beside`, y el ancho declarado: este encabezado es
-              # una franja de 1275x46 — un nombre centrado sobre una regla — y la
-              # columna de `beside` mide 239px (38% de los 628 de contenido),
-              # así que `contain` lo achicaba a escala 0.19 y el nombre salía a
-              # unos 2px. En la columna de texto completa la escala es 0.49, que
-              # es donde ya rendean las figuras aceptadas de este manual:
-              # `crear-incidente.general.campo.tipo` sale a 0.59 sobre una fuente
-              # de 10px, o sea los mismos ~6px en la página.
+              # `below` and not `beside`, with the width declared: this header is
+              # a 1275x46 band (a centred name over a rule) and the `beside`
+              # column is 239px (38% of the 628px content column), so `contain`
+              # scaled it to 0.19 and the name landed near 2px. In the full text
+              # column the scale is 0.49, which is where the accepted figures of
+              # this manual already render: `crear-incidente.general.campo.tipo`
+              # comes out at 0.59 over a 10px font, the same ~6px on the page.
               #
-              # `widthPercent` es obligatorio acá: `below` sin él tope al 70%
-              # (`figure.figure--item img`, css-bridge.ts:404) y volvería a 0.35.
+              # `widthPercent` is required here: `below` without it caps at 70%
+              # (`figure.figure--item img`, css-bridge.ts:404) and falls back to
+              # 0.35.
               #
-              # La lección general: una franja muy apaisada no es una figura
-              # imposible, es una figura que no entra en la columna angosta.
+              # The general lesson: a very wide band is not an impossible figure,
+              # it is a figure that does not fit the narrow column.
               label: Encabezado de la agencia
               text: >-
-                Indica de qué agencia es la planta que se está mostrando. Es la
-                referencia para confirmar que está consultando la sala correcta
-                antes de interpretar cualquier indicador.
+                Muestra el nombre de la agencia cuya planta se está mostrando,
+                sobre una línea divisoria. Es la referencia para confirmar que
+                consulta la sala correcta antes de interpretar el recuento por
+                estado o la tabla de operadores.
               layout: below
               widthPercent: 100
 
-            - id: seatmap.distribucion.zonas
-              # sitemap-zone-grid.tsx, mounted at sitemap-view.tsx:127-133.
-              label: Cuadrícula de zonas
+            - id: seatmap.distribucion.cuadricula
+              # components/sitemap/sitemap-zone-grid.tsx:133-150 (cells by row and
+              # column, `SitemapGridCoord`), :447-470 (one `SitemapChairItem` per
+              # workstation at its resolved position), :419-432 (the block is
+              # centred and scaled down when it does not fit). A blank card is
+              # `visual.kind === "empty"` (components/sitemap/sitemap-workstation-card.tsx:193-206).
+              label: Cuadrícula de puestos
               text: >-
-                Agrupa los puestos de trabajo por zona de la sala. Cada puesto
-                muestra el operador asignado y su estado actual, y se actualiza
-                en tiempo real sin necesidad de recargar la vista.
+                Distribuye los puestos de la agencia en filas y columnas, una
+                tarjeta por puesto, en la posición que la plataforma tiene
+                registrada. Cada tarjeta muestra el operador asignado y su
+                estado, y se actualiza sin recargar la vista. Un puesto con
+                estado vacío se ve como una tarjeta vacía. Si la planta no cabe en el
+                área, se reduce para mostrarse completa.
 
             - id: seatmap.distribucion.editar
-              # Label quoted from sitemap-editor-toolbar.tsx:22 (`title` and
-              # `aria-label` of the pencil button). Gated at
-              # sitemap-view.tsx:123 by `canManageLayout &&`, which resolves
-              # through can-manage-sitemap-layout.ts. NOT conditioned here: that
-              # permission is independent of the one this manual is built on, so
-              # tagging it against `permission` would assert a combination the
-              # product does not state. See ESTADO.md.
+              # components/sitemap/sitemap-editor-toolbar.tsx:23-25 (`onClick`,
+              # `title` and `aria-label` of the pencil button, `sitemap.editLayout`). Gated at
+              # views/sitemap-view.tsx:125 by `canManageLayout &&`, which resolves
+              # through domain/can-manage-sitemap-layout.ts:6-13. NOT conditioned
+              # here: that permission is independent of the one this manual is
+              # built on, so tagging it against `permission` would assert a
+              # combination the product does not state. See ESTADO.md.
               label: Editar distribución
               text: >-
-                Habilita el modo de edición de la planta, que permite reubicar
-                los puestos de trabajo para que la representación coincida con
-                la sala real. El control se muestra únicamente a los usuarios
-                cuyo permiso incluye la edición de la distribución.
+                Botón con un lápiz, en la esquina superior derecha de la planta.
+                Activa y desactiva el modo de edición, que se describe en
+                **Edición de la distribución**. El botón se muestra únicamente a
+                los usuarios cuyo permiso incluye la edición de la distribución.
               layout: beside
 
-            # sitemap-view.tsx:138 — `{canViewAll && <SitemapAgencyTabs …>}`,
+            # views/sitemap-view.tsx:140-146 — `{canViewAll && <SitemapAgencyTabs …>}`,
             # where `canViewAll = canViewAllAgencies(user?.permissions)`
-            # (sitemap-view.tsx:36, can-view-all-agencies.ts:6-14).
+            # (views/sitemap-view.tsx:38, domain/can-view-all-agencies.ts:5-7). The
+            # tabs render nothing while the list is empty
+            # (components/sitemap/sitemap-agency-tabs.tsx:16). The first selection
+            # is the user's own agency, else the first of the list
+            # (views/sitemap-view.tsx:46-51).
             - id: seatmap.distribucion.agencias
               label: Selector de agencias
               text: >-
                 Presenta una pestaña por agencia al pie de la planta y permite
-                pasar de una a otra sin salir de la vista. La agencia propia
-                queda seleccionada al abrir la pantalla.
+                pasar de una a otra sin salir de la vista. Al abrir la pantalla
+                queda seleccionada la agencia del usuario o, si esta no figura
+                en la lista, la primera de la lista.
               when:
                 permission: [todas-las-agencias]
 
-      - id: seatmap.distribucion.aviso-permiso
-        type: callout
-        props:
-          variant: important
-          text: >-
-            La edición de la distribución modifica la planta para todos los
-            usuarios de la agencia, no solo para su sesión. Confirme que los
-            puestos que reubique corresponden a la sala real antes de salir del
-            modo de edición.
-
       # Whole procedure conditioned: without the selector there is no agency to
-      # switch to. Same gate as the selector above (sitemap-view.tsx:138).
+      # switch to. Same gate as the selector above (sitemap-view.tsx:140).
       - id: seatmap.distribucion.cambiar-agencia
         type: procedure
         when:
@@ -236,51 +544,523 @@ children:
               layout: beside
 
             - id: seatmap.distribucion.cambiar-agencia.verificar
+              # What changes with `agencyId`: the stream (sitemap-view.tsx:57-59),
+              # the queue metrics (:77, hooks/use-queue-metrics.ts:15) and so the
+              # plan, the status count and the operator table. The category donut
+              # and the agencies card come from queries that take no agency
+              # (sitemap-view.tsx:78-79) and are deliberately not listed.
               title: Verifique el encabezado
               text: >-
                 Confirme en el encabezado que la planta corresponde a la agencia
-                elegida. La planta, los indicadores y el monitor de operadores
-                se actualizan juntos con los datos de esa agencia.
+                elegida. La planta, las tarjetas de espera, cola y llamadas, el
+                recuento por estado y la tabla de operadores se actualizan con
+                los datos de esa agencia.
               layout: beside
+
+      # --- Tarjeta del puesto ----------------------------------------------
+      - id: seatmap.distribucion.puesto
+        title: Tarjeta del puesto de trabajo
+        children:
+          - id: seatmap.distribucion.puesto.proposito
+            type: prose
+            props:
+              # components/sitemap/sitemap-workstation-card.tsx:147-517, mounted
+              # per workstation by components/sitemap/sitemap-chair-item.tsx:90-97.
+              text: >-
+                Cada puesto de la planta es una tarjeta que resume a su operador:
+                el código del puesto, el nombre, el tiempo que lleva en su estado
+                actual y un color que indica cuál es ese estado. Debajo de cada
+                tarjeta se dibuja el icono de una silla.
+
+          - id: seatmap.distribucion.puesto.ubicacion
+            type: prose
+            props:
+              # sitemap-workstation-card.tsx:228-229 (`isPoppedOut`, only with an
+              # assigned user), :234 (the width grows to `estimateExpandedWidth`,
+              # :80-87), components/sitemap/sitemap-zone-grid.tsx:226-252 (the
+              # same-row chairs to its right are pushed by the overflow).
+              text: >-
+                Las tarjetas ocupan la planta, en el área izquierda de la vista.
+                Al pasar el cursor sobre la tarjeta de un puesto con operador, la
+                tarjeta se ensancha para mostrar completos el nombre y el código,
+                y los puestos de la misma fila que están a su derecha se
+                desplazan para no quedar tapados.
+
+          - id: seatmap.distribucion.puesto.fig
+            type: figure
+            props:
+              caption: "Tarjetas de puesto en distintos estados, con un puesto vacío entre ellas."
+              widthPercent: 90
+
+          - id: seatmap.distribucion.puesto.datos
+            type: data-table
+            props:
+              # sitemap-workstation-card.tsx: code :279 (`translateWorkstationCode`,
+              # in the top-right strip); status mark :291-303 (`showBusyIcon` is
+              # `visual.kind === "busy" || helpRequested`, :170; the dot otherwise);
+              # SIP icon :281-290 (`sipRegistered === false` and category not
+              # OFFLINE), label `sitemap.sipDisconnected` (analytics.json:439);
+              # assistance mark :116-134, shown at :175-176 for the operator's own
+              # workstation while `assistanceStatus === "pending"`, label
+              # `sitemap.requestingAssistance` (analytics.json:438); name :344-358;
+              # elapsed time :370 (`ws.presence ? elapsed : "—"`), formatted
+              # `mm:ss` by `useElapsed` (hooks/use-sitemap-stream.ts:271-298);
+              # empty card :193-206. A desk with no assigned user and a status
+              # other than `empty` is not a documented state.
+              labelHeader: Elemento
+              descriptionHeader: Qué muestra
+              rows:
+                - id: seatmap.distribucion.puesto.dato.codigo
+                  label: Código del puesto
+                  description: >-
+                    El identificador del puesto, en la franja de la esquina
+                    superior derecha de la tarjeta.
+                - id: seatmap.distribucion.puesto.dato.indicador
+                  label: Indicador de estado
+                  description: >-
+                    Un punto de color junto al código. En los puestos ocupados y
+                    en los puestos con una solicitud de asistencia, el punto se
+                    sustituye por un círculo rojo con un signo de exclamación.
+                - id: seatmap.distribucion.puesto.dato.sip
+                  label: Teléfono SIP desconectado
+                  description: >-
+                    Icono de un teléfono tachado, junto al código. Aparece
+                    cuando el teléfono SIP del puesto no está registrado y el
+                    operador no figura como **Offline**.
+                - id: seatmap.distribucion.puesto.dato.asistencia
+                  label: Solicitando asistencia
+                  description: >-
+                    Una mano sobre un círculo ámbar con animación pulsante, en la
+                    esquina del avatar. Se muestra en el puesto del propio
+                    operador mientras su solicitud de asistencia está pendiente.
+                - id: seatmap.distribucion.puesto.dato.operador
+                  label: Operador
+                  description: >-
+                    El nombre del operador asignado, junto a su avatar.
+                - id: seatmap.distribucion.puesto.dato.tiempo
+                  label: Tiempo en el estado
+                  description: >-
+                    Los minutos y segundos que lleva el operador en su estado
+                    actual, debajo del nombre. Si el puesto no informa presencia,
+                    se muestra un guion.
+                - id: seatmap.distribucion.puesto.dato.vacio
+                  label: Puesto vacío
+                  description: >-
+                    Una tarjeta gris sin avatar, nombre ni tiempo, con la silla
+                    debajo. Es la forma en que la planta dibuja un puesto con
+                    estado vacío.
+
+          - id: seatmap.distribucion.puesto.colores.titulo
+            type: detail-header
+            props:
+              text: Color de la tarjeta
+
+          - id: seatmap.distribucion.puesto.colores
+            type: data-table
+            props:
+              # domain/sitemap-card-palette.ts:13-47 (`available` #30FF51, `busy`
+              # #EF4444, `on_hold` #F59E0B, `not_ready` #FFB830, `unavailable`
+              # #72737C) and :49-55 (`RESTROOM_PALETTE` #38BDF8). The status the
+              # colour comes from is decided by domain/map-sitemap-card-visual.ts:
+              # 125-179: `helpRequested` first forces `busy` (:134-136), then the
+              # presence category (:138-143), then the ui status (:145-158); the
+              # operator table and the counts read the ui status first
+              # (compute-sitemap-metrics.ts:50-66). The two amber tones
+              # (#F59E0B and #FFB830) differ in lightness only; the figure, not
+              # this text, is what tells them apart.
+              labelHeader: Color
+              descriptionHeader: Estado del operador
+              rows:
+                - id: seatmap.distribucion.puesto.color.verde
+                  label: Verde
+                  description: >-
+                    **Disponible**.
+                - id: seatmap.distribucion.puesto.color.rojo
+                  label: Rojo
+                  description: >-
+                    **Ocupado**, o un puesto con una solicitud de asistencia
+                    pendiente.
+                - id: seatmap.distribucion.puesto.color.ambar
+                  label: Ámbar
+                  description: >-
+                    **En Espera**.
+                - id: seatmap.distribucion.puesto.color.ambar-claro
+                  label: Ámbar claro
+                  description: >-
+                    **Pausa**.
+                - id: seatmap.distribucion.puesto.color.celeste
+                  label: Celeste
+                  description: >-
+                    **Baño**, la variante de la pausa.
+                - id: seatmap.distribucion.puesto.color.gris
+                  label: Gris
+                  description: >-
+                    **Offline**.
+
+      # --- Detalle del operador --------------------------------------------
+      - id: seatmap.distribucion.detalle
+        title: Detalle del operador
+        children:
+          - id: seatmap.distribucion.detalle.proposito
+            type: prose
+            props:
+              # sitemap-workstation-card.tsx:404-512 — a Popover whose open state
+              # is controlled by the grid (`isSelected`), only for a card with an
+              # assigned operator (:378-385 returns the bare card otherwise). The
+              # stats are fetched only while it is open (:177-179) and default to
+              # the last 30 days (hooks/use-agent-performance.ts:7-15).
+              text: >-
+                Ofrece, sin salir de la planta, un resumen de la actividad de un
+                operador: cuántas llamadas atendió y rechazó y cuánto tiempo
+                estuvo en llamada durante los últimos 30 días, con un acceso a su
+                rendimiento completo.
+
+          - id: seatmap.distribucion.detalle.ubicacion
+            type: prose
+            props:
+              # sitemap-zone-grid.tsx:458-459 (`isSelected`), :284-290
+              # (`handleDragStart` clears the selection). The closing gestures are
+              # those of the shared Popover component (:404), not written here.
+              text: >-
+                Se abre con un clic sobre la tarjeta de un puesto con operador,
+                como recuadro sobre la tarjeta. Los puestos sin operador
+                asignado no abren ningún recuadro. Para cerrarlo, haga clic fuera de él.
+
+          - id: seatmap.distribucion.detalle.fig
+            type: figure
+            props:
+              caption: "Recuadro de detalle de un operador, abierto sobre su tarjeta en la planta."
+              widthPercent: 90
+
+          - id: seatmap.distribucion.detalle.datos
+            type: data-table
+            props:
+              # sitemap-workstation-card.tsx: header :415-449 (name, agency with a
+              # dot in the agency colour, status dot), stats :460-498 (the three
+              # `STAT_TILES` declared at :44-63, values `?? 0` at :221-225, time
+              # `formatHandleTime` :65-71 as `Nh MMm` or `Nm`), a spinner while
+              # loading :451-458, button :501-510 (`sitemap.viewMoreDetails`, read
+              # from common.json:656 because the popover uses the default
+              # namespace).
+              labelHeader: Dato
+              descriptionHeader: Qué indica
+              rows:
+                - id: seatmap.distribucion.detalle.dato.identidad
+                  label: Operador y agencia
+                  description: >-
+                    El nombre del operador, la agencia de la planta y un punto
+                    con el color de su estado.
+                - id: seatmap.distribucion.detalle.dato.atendidas
+                  label: Atendidas
+                  description: >-
+                    La cantidad de llamadas que el operador atendió en los
+                    últimos 30 días.
+                - id: seatmap.distribucion.detalle.dato.rechazadas
+                  label: Rechazadas
+                  description: >-
+                    La cantidad de llamadas que el operador rechazó en el mismo
+                    período. Es la cifra que el recuadro destaca con un tono más
+                    intenso.
+                - id: seatmap.distribucion.detalle.dato.tiempo
+                  label: Tiempo en llamada
+                  description: >-
+                    El tiempo total que el operador estuvo en llamada en el mismo
+                    período, en horas y minutos o solo en minutos cuando no llega
+                    a una hora. Si el operador no tiene actividad registrada, las
+                    llamadas atendidas y rechazadas muestran 0 y el tiempo en
+                    llamada muestra 0m.
+                - id: seatmap.distribucion.detalle.dato.boton
+                  label: Ver más detalles
+                  description: >-
+                    Botón al pie del recuadro. Abre el rendimiento del operador,
+                    como se explica en el procedimiento siguiente.
+
+          - id: seatmap.distribucion.detalle.consultar
+            type: procedure
+            props:
+              lead: >-
+                Para consultar el detalle de un operador:
+              steps:
+                - id: seatmap.distribucion.detalle.consultar.abrir
+                  title: Haga clic en el puesto del operador
+                  text: >-
+                    Elija en la planta la tarjeta de un puesto con operador. Se
+                    abre el recuadro de detalle sobre la tarjeta.
+                  layout: beside
+
+                - id: seatmap.distribucion.detalle.consultar.revisar
+                  title: Revise los indicadores del operador
+                  text: >-
+                    El recuadro muestra el nombre, la agencia y las tres cifras
+                    del operador. Mientras se recuperan, aparece un indicador de
+                    carga.
+                  layout: beside
+
+                - id: seatmap.distribucion.detalle.consultar.rendimiento
+                  # pages/dashboard.tsx:142-154 (`handleViewOperatorDetails`: sets
+                  # the `agent-performance` filter `operator`, then
+                  # `setActiveView("dashboard")`; blocked at :145-148 while the
+                  # Post-Llamada lock is set), :1050-1058 (opens the analytics tab,
+                  # sub-tab `agent-performance`); the names are those of
+                  # components/panels/dashboard/analytics-panel.tsx:31-40 and
+                  # 04-dashboard.yaml. `view.dashboard` gates the sidebar item
+                  # only (icon-sidebar.tsx:84); this handler does not check it, and
+                  # what it does without that permission is not asserted.
+                  title: Haga clic en Ver más detalles
+                  text: >-
+                    La plataforma abre la sección **Dashboard**, en la ficha
+                    **Analítica**, subficha **Rendimiento de Operadores**, con el
+                    filtro de operador ya establecido en ese operador. Mientras
+                    haya una Post-Llamada pendiente, el intento de cambiar de
+                    vista muestra la pregunta de salida que se describe en la
+                    sección **Home**.
+                  layout: beside
+
+          - id: seatmap.distribucion.detalle.destino
+            type: term-list
+            props:
+              # pages/dashboard.tsx:1054-1058 — initial sub-tab `agent-performance`.
+              entries:
+                - id: seatmap.distribucion.detalle.destino.rendimiento
+                  term: Rendimiento de Operadores
+                  definition: >-
+                    Subficha de **Analítica**, en el **Dashboard**, a la que llega
+                    el botón **Ver más detalles**.
+
+      # --- Edición de la distribución --------------------------------------
+      - id: seatmap.distribucion.edicion
+        title: Edición de la distribución
+        children:
+          - id: seatmap.distribucion.edicion.proposito
+            type: prose
+            props:
+              text: >-
+                Permite reubicar, intercambiar, agregar y eliminar los puestos
+                de trabajo para que la planta coincida con la sala real.
+
+          - id: seatmap.distribucion.edicion.acceso
+            type: prose
+            props:
+              # The mode is stored per agency, in memory only
+              # (stores/use-sitemap-editor-store.ts:3-19); it is effective only
+              # with `canManageLayout` (sitemap-zone-grid.tsx:67). The rendered
+              # buffer of free cells is EDIT_MODE_BUFFER, 2 rows and 2 columns
+              # (:41, :119-131); every rendered cell shows a dashed border while a
+              # drag is active (components/sitemap/sitemap-grid-cell.tsx:47-65).
+              text: >-
+                Se activa con **Editar distribución**, el botón con un lápiz de
+                la esquina superior derecha de la planta, y se desactiva
+                volviendo a pulsarlo. Ese botón solo se muestra a los usuarios
+                cuyo permiso incluye la edición de la distribución. Al activarlo,
+                la planta suma celdas libres alrededor de los puestos y aparecen
+                los controles para agregar y eliminar puestos.
+
+          - id: seatmap.distribucion.edicion.acceso-agencias
+            type: prose
+            when:
+              permission: [todas-las-agencias]
+            props:
+              # The mode is keyed by agency id (stores/use-sitemap-editor-store.ts:3-19),
+              # which only matters where the reader can switch agency
+              # (views/sitemap-view.tsx:140-146).
+              text: >-
+                El modo de edición se activa por agencia: al pasar de una a otra,
+                cada una conserva su propio estado hasta que se vuelve a pulsar
+                el botón.
+
+          - id: seatmap.distribucion.edicion.fig
+            type: figure
+            props:
+              caption: "Planta en modo de edición, con el botón de edición activo, el botón para agregar sillas y el icono de papelera sobre cada puesto."
+              widthPercent: 90
+
+          - id: seatmap.distribucion.edicion.controles
+            type: icon-table
+            props:
+              # components/sitemap/sitemap-zone-grid.tsx:390-413 (the add button:
+              # `Plus`, `title` is the max-chairs notice when full, `aria-label`
+              # `sitemap.addChair`, analytics.json:440); components/sitemap/
+              # sitemap-chair-item.tsx:98-115 (a `DeleteConfirmButton`, only while
+              # `isEditMode`). Its `tooltip` prop (`sitemap.deleteChair`,
+              # common.json:651) only fills a `data-tip` attribute
+              # (panels/dashboard/bridge-of-things/pmv/components/delete-confirm-button.tsx:73)
+              # that never renders as a tooltip, and the button has no `title` or
+              # `aria-label`, so the control is named here in the manual's own
+              # words and not quoted. The check / cross pair is :47-60. The
+              # pencil is documented above.
+              labelHeader: Control
+              descriptionHeader: Qué hace
+              rows:
+                - id: seatmap.distribucion.edicion.control.agregar
+                  label: Agregar silla
+                  description: >-
+                    Crea un puesto nuevo. Está debajo del botón de edición y
+                    solo aparece con el modo de edición activo.
+                - id: seatmap.distribucion.edicion.control.eliminar
+                  label: Papelera
+                  description: >-
+                    Icono de papelera sobre cada puesto, con el que se elimina. Pide confirmación antes
+                    de eliminar el puesto.
+
+          - id: seatmap.distribucion.aviso-permiso
+            type: callout
+            props:
+              variant: important
+              # Each change is sent when it happens: a drop
+              # (sitemap-zone-grid.tsx:294-321, `moveWorkstation` ->
+              # stores/use-sitemap-position-store.ts:51-95, PATCH at
+              # infrastructure/http/sitemap-layout-api.service.ts:35-54), an add
+              # (:323-364, POST :56-69) and a delete (:366-374, DELETE :71-83).
+              # There is no save control in the toolbar
+              # (sitemap-editor-toolbar.tsx:13-41). Whether other users of the
+              # agency see the change is NOT asserted: the frontend does not
+              # prove it.
+              text: >-
+                Cada cambio se guarda en el momento en que se realiza: no existe
+                un botón de guardar. Confirme que el puesto que mueva o elimine
+                corresponde a la sala real antes de soltarlo o de confirmar la
+                eliminación.
+
+          - id: seatmap.distribucion.reubicar
+            type: procedure
+            props:
+              lead: >-
+                Para mover un puesto a una celda libre:
+              steps:
+                - id: seatmap.distribucion.reubicar.activar
+                  # Shares the figure of the `Editar distribución` field above: it
+                  # is the same control, in the same state.
+                  image: seatmap.distribucion.editar
+                  title: Haga clic en Editar distribución
+                  text: >-
+                    La planta suma celdas libres alrededor de los puestos, donde
+                    se pueden soltar. Mientras se arrastra un puesto, todas las
+                    celdas se marcan con un borde punteado.
+                  layout: beside
+
+                - id: seatmap.distribucion.reubicar.arrastrar
+                  # sitemap-zone-grid.tsx:294-321 — the drop target is the cell
+                  # under the pointer (`pointerWithin`, :383); an occupied target
+                  # swaps both chairs (:307-309); the valid target is highlighted
+                  # by sitemap-grid-cell.tsx:32-33, :53-63.
+                  title: Arrastre el puesto hasta otra celda
+                  text: >-
+                    Mantenga pulsada la tarjeta y suéltela sobre una celda libre
+                    para moverla. Si la suelta sobre otro puesto, ambos
+                    intercambian su posición. La celda de destino se resalta
+                    mientras arrastra.
+                  layout: beside
+
+                - id: seatmap.distribucion.reubicar.salir
+                  title: Vuelva a hacer clic en Editar distribución
+                  text: >-
+                    El botón recupera su aspecto normal y desaparecen los
+                    controles de edición. Los cambios ya están guardados: cada
+                    uno se envió al soltar el puesto.
+                  layout: beside
+
+          - id: seatmap.distribucion.agregar
+            type: procedure
+            props:
+              lead: >-
+                Para agregar un puesto:
+              steps:
+                - id: seatmap.distribucion.agregar.pulsar
+                  # sitemap-zone-grid.tsx:329-350 (the new chair goes next to the
+                  # last one, or to the start of the next row at
+                  # `gridCapacity.cols`, :182-193), :323-327 and :400-404 (at
+                  # `gridCapacity.maxChairs` the button is dimmed and the
+                  # `maxChairsReached` notice is shown; the count is
+                  # `cols * rows` of what fits on screen).
+                  title: Haga clic en Agregar silla
+                  text: >-
+                    La silla nueva se coloca a continuación de la última de la
+                    planta y, al llegar al final de la fila, en la fila
+                    siguiente. Cuando la planta ya no admite más sillas por el
+                    espacio disponible en pantalla, el botón se atenúa y la
+                    plataforma avisa de que no se pueden agregar más.
+                  layout: beside
+
+                - id: seatmap.distribucion.agregar.verificar
+                  title: Verifique el puesto nuevo
+                  text: >-
+                    El puesto nuevo aparece en la planta. Si la plataforma no
+                    pudo crearlo, muestra un aviso de error y la planta no
+                    cambia.
+                  layout: beside
+
+          - id: seatmap.distribucion.eliminar
+            type: procedure
+            props:
+              lead: >-
+                Para eliminar un puesto:
+              steps:
+                - id: seatmap.distribucion.eliminar.papelera
+                  title: Haga clic en el icono de papelera
+                  text: >-
+                    El icono se muestra sobre cada puesto mientras el modo de
+                    edición está activo.
+                  layout: beside
+
+                - id: seatmap.distribucion.eliminar.confirmar
+                  # delete-confirm-button.tsx:47-60 — a red cross (cancel) and a
+                  # green check (confirm); a failure is reported by
+                  # sitemap-zone-grid.tsx:366-374.
+                  title: Confirme con la marca de verificación
+                  text: >-
+                    El icono se reemplaza por una cruz roja y una marca verde. La
+                    marca verde elimina el puesto y la cruz cancela la acción. Si
+                    la plataforma no pudo eliminarlo, muestra un aviso de error.
+                  layout: beside
+
+          - id: seatmap.distribucion.edicion.errores
+            type: prose
+            props:
+              # stores/use-sitemap-position-store.ts:51-95 (`isSaving` blocks a
+              # second change, :53; a failed move reverts to `previous`, :69-72,
+              # :80-83 and the error is shown by sitemap-zone-grid.tsx:316-318),
+              # sitemap-zone-grid.tsx:428 (the canvas dims while saving),
+              # :457 (drag disabled while saving).
+              text: >-
+                Mientras se guarda un cambio, la planta se atenúa y no admite
+                otro movimiento. Si un movimiento no se puede guardar, la
+                plataforma muestra un aviso de error y el puesto vuelve a su
+                celda anterior.
 
       - id: seatmap.distribucion.avisos
         type: term-list
         props:
           entries:
-            # sitemap-view.tsx:111-115 — one ternary, three outcomes. The first
-            # is the `canViewAll` branch; the other two are the `else`.
+            # views/sitemap-view.tsx:111-118 — one ternary, two outcomes for the
+            # notice. The first is the `canViewAll` branch; the second is the
+            # `else`. The third branch of the ternary (`agencyLoadError`,
+            # :115-116) is unreachable, see the header.
             - id: seatmap.distribucion.aviso.cargando
               term: Cargando agencias…
               definition: >-
-                La lista de agencias todavía se está recuperando. La planta
-                aparece en cuanto llega la primera agencia.
+                Aparece en el lugar de la planta mientras la pantalla todavía no
+                tiene una agencia que mostrar. La planta aparece en cuanto hay
+                una agencia seleccionada.
               when:
                 permission: [todas-las-agencias]
-
-            - id: seatmap.distribucion.aviso.sin-cargar
-              term: No se pudo cargar la agencia asignada.
-              definition: >-
-                Su usuario tiene una agencia asignada, pero no fue posible
-                recuperar su planta. Reintente más tarde y, si el aviso
-                persiste, informe al administrador.
-              when:
-                permission: [agencia-propia]
 
             - id: seatmap.distribucion.aviso.sin-agencia
               term: Su usuario no tiene agencia asignada.
               definition: >-
                 No hay ninguna agencia vinculada a su usuario, por lo que no hay
-                planta que mostrar. Solicite la asignación al administrador.
+                planta que mostrar.
               when:
                 permission: [agencia-propia]
 
-            # sitemap-view.tsx:117-120 — `accessDenied`, from useSitemapStream.
-            # No gate on the permission axis: both targets can reach it.
+            # views/sitemap-view.tsx:119-122 — `accessDenied`, from
+            # useSitemapStream (hooks/use-sitemap-stream.ts:84-92, set on a
+            # forbidden answer at :100, :153, :214-217, :236-239). No gate on the
+            # permission axis: both targets can reach it.
             - id: seatmap.distribucion.aviso.sin-acceso
               term: No tiene acceso al sitemap de esta agencia.
               definition: >-
-                La agencia existe, pero su usuario no está autorizado a
-                consultar su planta.
+                La plataforma rechazó la consulta de la planta de esta agencia
+                para su usuario.
 
   # --- Indicadores de la agencia ---------------------------------------------
   - id: seatmap.indicadores
@@ -290,81 +1070,174 @@ children:
         type: prose
         props:
           text: >-
-            Resume el estado de atención de la agencia seleccionada: cuánto se
-            está esperando, cuántas llamadas hay en cola y cómo se reparten los
-            operadores entre disponibles, en llamada y no disponibles.
+            Resume el estado de la atención: cuánto se espera en la cola y
+            cuántos operadores hay en cada estado.
 
       - id: seatmap.indicadores.ubicacion
         type: prose
         props:
+          # views/sitemap-view.tsx:149-163 (the right column). The cards and the
+          # status rows read the selected agency (`useQueueMetrics(agencyId)` :77
+          # and the stream's metrics :57-59, hooks/use-sitemap-stream.ts:63-68);
+          # the donut is fed by a query with no agency (:79), so the text does not
+          # say it follows the selection.
           text: >-
-            Ocupa la columna derecha de la vista y acompaña siempre a la planta:
-            los valores corresponden a la agencia que esté seleccionada en ese
-            momento.
+            Ocupa la columna derecha de la vista y acompaña siempre a la planta.
+            Las tarjetas de espera, cola y llamadas, y el recuento por estado,
+            corresponden a la agencia cuya planta se está consultando.
 
       - id: seatmap.indicadores.fig
         type: figure
         props:
-          caption: "Columna de indicadores con el reparto por categoría, las tarjetas de atención y el recuento por estado."
+          caption: "Columna de indicadores con el anillo de categorías, las tarjetas de atención y el recuento por estado."
           widthPercent: 90
 
       - id: seatmap.indicadores.categorias.titulo
         type: detail-header
         props:
-          text: Reparto por categoría
+          text: Anillo de categorías
 
       - id: seatmap.indicadores.categorias.texto
         type: prose
+        when:
+          permission: [todas-las-agencias]
         props:
-          # CategoryDonut, mounted at sitemap-stats-panel.tsx:267 from
-          # `useCategoryStats()` (sitemap-view.tsx:77).
+          # CategoryDonut, mounted at components/sitemap/sitemap-stats-panel.tsx:278
+          # from `useCategoryStats(canViewAll)` (views/sitemap-view.tsx:79). The
+          # ring plots at most 8 categories (:64); the legend lists them all
+          # (:139-147) as `{percentage}% ({count})` (:190). The query refetches
+          # every 60 s while enabled (hooks/use-category-stats.ts:20). Category
+          # names go through `translateEmergencyType` (:143). Neither an agency
+          # nor a period is asserted: see the header.
           text: >-
-            Encabeza la columna y distribuye el total de casos de la agencia
-            entre sus categorías, de modo que se vea qué tipo de incidente está
-            concentrando la operación.
+            Es el anillo que encabeza la columna. Muestra en el centro el total
+            de casos y, a su derecha, una leyenda con cada categoría de
+            emergencia, su porcentaje y su cantidad, por ejemplo 5% (2), para ver
+            qué tipos de emergencia concentran los casos. El anillo grafica hasta
+            ocho categorías; la leyenda las lista todas. Se actualiza cada
+            minuto.
+
+      - id: seatmap.indicadores.categorias.texto-propia
+        type: prose
+        when:
+          permission: [agencia-propia]
+        props:
+          # Same gate: the query is `enabled: false` without the permission
+          # (hooks/use-category-stats.ts:19), so `total` is 0 and `categories` is
+          # empty (:25-26). `hasData` is false (sitemap-stats-panel.tsx:62): the
+          # ring is a single grey cell (:63-65, :97), the total prints 0 (:122)
+          # and the legend does not render (:137). A tooltip carries `noData`
+          # (:65) on hover and is deliberately not quoted here.
+          text: >-
+            En su perfil el anillo aparece en gris, sin categorías y sin leyenda,
+            con el total en 0. Las tarjetas y el recuento por estado, descritos a
+            continuación, sí muestran los datos de su agencia.
 
       - id: seatmap.indicadores.tarjetas
         type: data-table
         props:
+          # Titles: components/sitemap/sitemap-stats-panel.tsx:287, :299, :311
+          # (`sitemap.longestWait`, `callsOnHold`, `currentlyOnCall`).
+          # Longest wait: `formatWaitTime` :29-41 (`mm:ss`, `hh:mm:ss` from one
+          # hour, `00:00` for null). Calls on hold: `queuedCalls ?? "—"` :300, from
+          # the agency's queue metrics (hooks/use-queue-metrics.ts:15,
+          # refetch every 30 s :17). On call: `metrics.busy` :312, the same value
+          # as the status row at :334.
           labelHeader: Tarjeta
           descriptionHeader: Qué indica
           rows:
-            # Labels quoted from sitemap-stats-panel.tsx:276, :288 and :300.
             - id: seatmap.indicadores.tarjeta.espera
               label: Tiempo de espera más larga
               description: >-
-                Cuánto lleva esperando la llamada más antigua de la cola. Es el
-                indicador que anticipa un incumplimiento de tiempos de
-                atención.
+                El tiempo que lleva en cola la llamada que más espera en la
+                agencia, en minutos y segundos (con horas a partir de la primera
+                hora). Muestra 00:00 cuando no hay espera.
             - id: seatmap.indicadores.tarjeta.cola
               label: Llamadas en espera
               description: >-
-                Cuántas llamadas están en cola sin operador asignado.
+                La cantidad de llamadas de la agencia que están en cola. Muestra
+                un guion mientras la plataforma no ha entregado el dato. Se
+                actualiza cada 30 segundos.
             - id: seatmap.indicadores.tarjeta.en-llamada
               label: En llamada actualmente
               description: >-
-                Cuántos operadores están atendiendo una llamada en este momento.
+                La cantidad de operadores de la agencia que están atendiendo una
+                llamada. Es el mismo dato que la fila **En llamada** del recuento
+                por estado.
+
+      - id: seatmap.indicadores.mensajes
+        type: term-list
+        props:
+          # components/sitemap/sitemap-stats-panel.tsx:289-293, :301-305,
+          # :313-317 — the small message under each value.
+          entries:
+            - id: seatmap.indicadores.mensaje.sin-espera
+              term: Sin espera prolongada
+              definition: >-
+                Bajo **Tiempo de espera más larga**, cuando el valor es 00:00.
+            - id: seatmap.indicadores.mensaje.en-curso
+              term: Espera en curso
+              definition: >-
+                Bajo **Tiempo de espera más larga**, cuando hay una llamada
+                esperando.
+            - id: seatmap.indicadores.mensaje.sin-cola
+              term: No hay llamadas en espera
+              definition: >-
+                Bajo **Llamadas en espera**, cuando no hay ninguna o el dato aún
+                no llegó.
+            - id: seatmap.indicadores.mensaje.con-cola
+              term: Llamadas esperando atención
+              definition: >-
+                Bajo **Llamadas en espera**, cuando hay al menos una en cola.
+            - id: seatmap.indicadores.mensaje.sin-operador
+              term: Ningún operador en llamada
+              definition: >-
+                Bajo **En llamada actualmente**, cuando el valor es 0.
+            - id: seatmap.indicadores.mensaje.con-operador
+              term: Operadores atendiendo llamadas
+              definition: >-
+                Bajo **En llamada actualmente**, cuando el valor es mayor que 0.
 
       - id: seatmap.indicadores.estados
         type: icon-table
         props:
+          # components/sitemap/sitemap-stats-panel.tsx:325-348 (four
+          # `AgentStatusRow`), labels `sitemap.available`, `onCall`, `onHold`,
+          # `unavailable` (analytics.json:421-424). The counts are
+          # domain/compute-sitemap-metrics.ts:23-48 by ui status: `available`,
+          # `busy`, `on_hold` each alone; `unavailable` adds `not_ready` (which
+          # covers Pausa and Baño, :37-39) and `offline` (:41-42). `empty` is
+          # counted apart and no row shows it (:25-26). The presence-category and
+          # colour fallbacks follow at :50-110.
           labelHeader: Estado
           descriptionHeader: Qué agrupa
           rows:
-            # Labels quoted from sitemap-stats-panel.tsx:318, :324 and :330.
             - id: seatmap.indicadores.estado.disponibles
               label: Disponibles
               description: >-
-                Operadores conectados y en condiciones de recibir una llamada.
+                Operadores con estado **Disponible** en la tabla de operadores.
             - id: seatmap.indicadores.estado.en-llamada
               label: En llamada
               description: >-
-                Operadores que están atendiendo una llamada.
+                Operadores con estado **Ocupado**.
+            - id: seatmap.indicadores.estado.en-espera
+              label: En espera
+              description: >-
+                Puestos cuyo estado es **En Espera**. Esta fila se cuenta
+                aparte de **No disponibles**.
             - id: seatmap.indicadores.estado.no-disponibles
               label: No disponibles
               description: >-
-                Operadores conectados que no están recibiendo llamadas, por
-                pausa o por otra causa registrada.
+                Operadores en **Pausa**, incluida la pausa por **Baño**, y
+                operadores **Offline**.
+
+      - id: seatmap.indicadores.estados.nota
+        type: prose
+        props:
+          text: >-
+            Cada fila muestra la cantidad seguida del rótulo, por ejemplo 3
+            Disponibles. El recuento no incluye los puestos con estado vacío,
+            que la planta dibuja como tarjeta vacía.
 
   # --- Monitor de operadores -------------------------------------------------
   - id: seatmap.monitor
@@ -374,130 +1247,339 @@ children:
         type: prose
         props:
           text: >-
-            Detalla operador por operador lo que la planta resume por color, y
-            permite abrir el detalle de un operador concreto o el análisis de su
-            llamada.
+            Detalla, operador por operador, el estado que la planta resume con
+            colores.
 
       - id: seatmap.monitor.ubicacion
         type: prose
         props:
-          # sitemap-view.tsx:163 — the whole panel renders only once an
-          # `agencyId` is resolved.
+          # views/sitemap-view.tsx:165 — the whole panel renders only once an
+          # `agencyId` is resolved. The two cards sit side by side
+          # (components/sitemap/sitemap-operator-monitor-panel.tsx:158,
+          # `grid-cols-1 lg:grid-cols-2`).
           text: >-
             Ocupa la banda inferior de la vista y aparece una vez que la agencia
-            quedó resuelta. Se divide en dos fichas contiguas.
+            quedó resuelta. Se divide en dos fichas contiguas: **Estados de
+            Operadores**, a la izquierda, y **Agencias**, a la derecha.
 
       - id: seatmap.monitor.fig
         type: figure
         props:
-          caption: "Banda inferior con las fichas de estados de operadores y de agencias."
+          caption: "Banda inferior con las fichas Estados de Operadores y Agencias."
           widthPercent: 90
 
       - id: seatmap.monitor.operadores.titulo
         type: detail-header
         props:
-          # Quoted from sitemap-operator-monitor-panel.tsx:167.
+          # Quoted from sitemap-operator-monitor-panel.tsx:169
+          # (`sitemap.operatorStates`, analytics.json:425).
           text: Estados de Operadores
+
+      - id: seatmap.monitor.operadores.fig
+        type: figure
+        props:
+          caption: "Ficha Estados de Operadores con la tabla, el estado de cada operador y los controles de página."
+          widthPercent: 90
 
       - id: seatmap.monitor.operadores.texto
         type: prose
         props:
+          # sitemap-operator-monitor-panel.tsx:75-91 — `assignedUser != null`
+          # (:78), sorted by `operatorStatusPriority` (:52-56: `available` 0,
+          # `offline` 2, the rest 1; stable sort :83-88).
           text: >-
-            Lista los puestos de la agencia con el operador que los ocupa y su
-            estado. Cuando la agencia tiene más operadores de los que caben en
-            la ficha, la lista se recorre con los controles **Página anterior** y
-            **Página siguiente** al pie.
+            Lista los puestos de la agencia que tienen un operador asignado, con
+            su identificador, su nombre, su estado y el tiempo que lleva en él.
+            La tabla incluye solo los puestos que tienen un operador asignado.
+            Los operadores con estado **Disponible** se listan primero,
+            los **Offline** al final y el resto entre ambos, en el orden en que
+            llegan.
 
       - id: seatmap.monitor.columnas
         type: data-table
         props:
+          # Headers: components/sitemap/use-operator-monitor-table.tsx:176, :191,
+          # :199, :220 (`operatorTable.*`, analytics.json:461-464).
+          # The id column is `assignedUser.id` (:178, `row.original.assignedUser?.id`
+          # — the operator's user id, not the workstation's), cut to its first
+          # `ceil(length / 3.2)` characters with an ellipsis (:129-133), copied on
+          # click (:121, feedback :115 and :164) and widened while hovered
+          # (`distributeIdColumnWidth` :81-98, from sitemap-operator-monitor-panel.tsx:
+          # 102-116). Duration is `useElapsed(presence.statusSince)`, `mm:ss`
+          # (hooks/use-sitemap-stream.ts:271-298).
           labelHeader: Columna
           descriptionHeader: Contenido
           rows:
-            # Headers quoted from use-operator-monitor-table.tsx:168, :183,
-            # :191 and :212.
             - id: seatmap.monitor.columna.operador-id
               label: Operador ID
               description: >-
-                Identificador del puesto de trabajo dentro de la agencia.
+                El identificador del operador, no el del puesto. Se muestra solo
+                su primera parte; al pasar el cursor por encima la columna se
+                ensancha y lo muestra completo, y al hacer clic se copia.
             - id: seatmap.monitor.columna.operador
               label: Operador
               description: >-
-                Nombre del operador que ocupa el puesto.
+                El nombre del operador asignado al puesto.
             - id: seatmap.monitor.columna.estado
               label: Estado
               description: >-
-                Estado actual del operador, con el mismo criterio que el color
-                del puesto en la planta.
+                El estado actual del operador, con un punto y una etiqueta del
+                color que le corresponde. Los estados posibles se describen a
+                continuación.
             - id: seatmap.monitor.columna.duracion
               label: Duración
               description: >-
-                Cuánto lleva el operador en el estado que muestra la fila.
+                El tiempo que lleva el operador en el estado que muestra la fila,
+                en minutos y segundos.
 
       - id: seatmap.monitor.estados
         type: term-list
         props:
+          # analytics.json:453-457 (`operatorStatus.*`) for the four states the
+          # table resolves through `STATUS_LABEL`
+          # (components/sitemap/use-operator-monitor-table.tsx:21-32, :46-60,
+          # colours :36-42); `not_ready` is split by
+          # `resolveNotReadyVariant` (domain/agent-not-ready-status.ts:13-25,
+          # tokens `restroom`, `baño`, `bano`) into Pausa (`break`) and Baño
+          # (`restroom`), labels `agents:notReadyVariant.*` (agents.json:85-86).
+          # Colours: STATUS_COLOR `available` #30FF51, `busy` #EF4444, `on_hold`
+          # #F59E0B, `offline` #72737C; variants #FFB830 and #38BDF8
+          # (domain/agent-not-ready-status.ts:27-30). No `Vacío` here: see header.
           entries:
-            # Quoted from use-operator-monitor-table.tsx:21-25, the status
-            # label dictionary.
             - id: seatmap.monitor.estado.disponible
               term: Disponible
               definition: >-
-                Conectado y en condiciones de recibir una llamada.
+                Se muestra en verde. Es la fila **Disponibles** del recuento por
+                estado.
             - id: seatmap.monitor.estado.ocupado
               term: Ocupado
               definition: >-
-                Atendiendo una llamada.
+                Se muestra en rojo. Es la fila **En llamada** del recuento por
+                estado.
+            - id: seatmap.monitor.estado.en-espera
+              term: En Espera
+              definition: >-
+                Se muestra en ámbar. Es la fila **En espera** del recuento por
+                estado.
             - id: seatmap.monitor.estado.pausa
               term: Pausa
               definition: >-
-                Conectado y sin recibir llamadas, con una pausa registrada.
+                Se muestra en ámbar claro. Se cuenta entre los **No disponibles**.
+            - id: seatmap.monitor.estado.bano
+              term: Baño
+              definition: >-
+                Variante de la pausa, que la plataforma distingue por el código o
+                la etiqueta del estado que recibe. Se muestra en celeste y se
+                cuenta entre los **No disponibles**.
             - id: seatmap.monitor.estado.offline
               term: Offline
               definition: >-
-                Sin sesión activa en la plataforma.
-            - id: seatmap.monitor.estado.vacio
-              term: Vacío
-              definition: >-
-                Puesto de trabajo sin operador asignado.
+                Se muestra en gris. Se cuenta entre los **No disponibles**.
 
-      - id: seatmap.monitor.vacio
+      - id: seatmap.monitor.operadores.paginas
         type: prose
         props:
-          # sitemap-operator-monitor-panel.tsx:217.
+          # use-operator-monitor-table.tsx:63 (`OPERATOR_MONITOR_PAGE_SIZE = 6`),
+          # sitemap-operator-monitor-panel.tsx:245-271 (the footer renders only
+          # with rows; the counter is `pageIndex + 1 / pageCount` :258, the
+          # arrows are disabled at the ends :252, :265; their `aria-label`s are
+          # `sitemap.previousPage` / `nextPage`, analytics.json:431-432 — not
+          # visible text, so not quoted), use-operator-monitor-table.tsx:252 the
+          # page does not reset on data updates (`autoResetPageIndex: false`).
           text: >-
-            Cuando la agencia no tiene puestos con operador asignado, la ficha
-            muestra **Sin operadores asignados** en lugar de la lista.
+            La tabla muestra seis operadores por página. Cuando hay más, el pie
+            de la ficha ofrece una flecha hacia la página anterior, otra hacia la
+            siguiente y un contador con el formato 1 / 3. Cada flecha se
+            deshabilita cuando no hay página en esa dirección. El pie no se
+            muestra cuando la tabla está vacía.
+
+      - id: seatmap.monitor.copiar-id
+        type: procedure
+        props:
+          lead: >-
+            Para copiar el identificador de un operador:
+          steps:
+            - id: seatmap.monitor.copiar-id.pasar
+              # use-operator-monitor-table.tsx:135 (`isPoppedOut`, a darker
+              # background and a shadow, :156-160), sitemap-operator-monitor-panel.tsx:
+              # 102-116 (the column width follows the measured id).
+              title: Pase el cursor sobre el identificador
+              text: >-
+                La columna **Operador ID** se ensancha y el identificador se
+                muestra completo, sobre un fondo más oscuro.
+              layout: beside
+
+            - id: seatmap.monitor.copiar-id.copiar
+              # use-operator-monitor-table.tsx:118-127 (`handleCopy` writes to the
+              # clipboard and sets `copied` only on success), :113-117 (the mark
+              # clears after 1500 ms), :164 (the `Check` icon).
+              title: Haga clic en el identificador
+              text: >-
+                El identificador completo se copia al portapapeles y aparece una
+                marca de verificación junto a él durante un segundo y medio. La
+                marca aparece solo si la copia se realizó.
+              layout: beside
+
+      - id: seatmap.monitor.vacio
+        type: term-list
+        props:
+          # sitemap-operator-monitor-panel.tsx:213-221 (`colSpan={4}` row), the
+          # footer hides at :245.
+          entries:
+            - id: seatmap.monitor.mensaje.sin-operadores
+              term: Sin operadores asignados
+              definition: >-
+                Reemplaza a las filas cuando ningún puesto de la agencia tiene un
+                operador asignado. En ese caso el pie de página de la ficha no se
+                muestra.
 
       - id: seatmap.monitor.agencias.titulo
         type: detail-header
         props:
-          # Quoted from sitemap-operator-monitor-panel.tsx:281.
+          # Quoted from sitemap-operator-monitor-panel.tsx:284
+          # (`sitemap.agencies`, analytics.json:426).
           text: Agencias
 
-      # sitemap-view.tsx:173 — `agenciesCases={canViewAll ? agenciesCases : []}`.
-      # The ficha is mounted for both targets; only its data is gated, so the
-      # two prose blocks below describe the same ficha in the state each reader
-      # actually finds it in.
+      - id: seatmap.monitor.agencias.fig
+        type: figure
+        props:
+          caption: "Ficha Agencias con su pie, que reúne el total de casos gestionados y el acceso al detalle."
+          widthPercent: 90
+
+      # views/sitemap-view.tsx:175 — `agenciesCases={canViewAll ? agenciesCases : []}`.
+      # The card is mounted for both targets; only its data is gated, so the two
+      # prose blocks below describe the same card in the state each reader
+      # actually finds it in. The footer (total and detail button) renders for
+      # both (sitemap-operator-monitor-panel.tsx:300-348).
       - id: seatmap.monitor.agencias.texto
         type: prose
         when:
           permission: [todas-las-agencias]
         props:
+          # hooks/use-agencies-cases.ts:15-16 (enabled with the permission,
+          # refetch every 60 s); components/sitemap/use-agency-summary-table.ts:22
+          # (sorted by `totalCases`, descending).
           text: >-
-            Compara el volumen de casos gestionados entre las agencias a las que
-            alcanza su permiso, y acumula al pie el **Total casos gestionados**
-            de todas ellas. Sirve para detectar una agencia sobrecargada frente
-            al resto antes de que se traduzca en tiempos de espera.
+            Lista las agencias con el volumen de casos que gestionó cada una,
+            ordenadas de mayor a menor, de modo que se vea qué agencia concentra
+            más casos. Los datos se actualizan cada minuto.
 
       - id: seatmap.monitor.agencias.texto-propia
         type: prose
         when:
           permission: [agencia-propia]
         props:
-          # Same gate: with `agenciesCases` empty, the ficha falls to the empty
-          # state at sitemap-operator-monitor-panel.tsx:287.
+          # Same gate: with `agenciesCases` empty, the card falls to the empty
+          # state at sitemap-operator-monitor-panel.tsx:289-292 and the total is
+          # 0 (:123-126, :303-309).
           text: >-
-            Compara el volumen de casos gestionados entre agencias. Como su
-            permiso alcanza únicamente su propia agencia, la ficha muestra
-            **Sin datos de agencias**.
+            En su perfil la ficha no lista agencias: muestra **Sin datos de
+            agencias** y el total de casos gestionados en 0. Conserva el pie con
+            el total y el acceso al detalle.
+
+      - id: seatmap.monitor.agencias.tarjeta
+        type: data-table
+        when:
+          permission: [todas-las-agencias]
+        props:
+          # components/sitemap/sitemap-agency-summary.tsx:16-83 (`AgencyCard`):
+          # name :54 (uppercase by class, :51), count :56-58, the fixed caption
+          # `sitemap.managedCases` :65 (common.json:657), bar and percentage
+          # :69-80 with `share = totalCases / maxCases * 100` :95, the border
+          # `highlighted = totalCases === maxCases && totalCases > 0` :96.
+          # Icon and colour come from `resolveAgencyVisual` by keywords of the
+          # name (components/sitemap/resolve-agency-visual.tsx:10-65, default
+          # :67-72). Whole table conditioned: none of it renders without the
+          # permission, since `agenciesCases` is empty.
+          labelHeader: Dato
+          descriptionHeader: Qué indica
+          rows:
+            - id: seatmap.monitor.agencias.tarjeta.dato.nombre
+              label: Nombre de la agencia
+              description: >-
+                El nombre, en mayúsculas, con un icono y un color propios del
+                tipo de agencia.
+            - id: seatmap.monitor.agencias.tarjeta.dato.casos
+              label: Cantidad de casos
+              description: >-
+                El número de casos que gestionó la agencia, a la derecha del
+                nombre.
+            - id: seatmap.monitor.agencias.tarjeta.dato.rotulo
+              label: Casos gestionados
+              description: >-
+                Texto fijo bajo el nombre, que acompaña al número de casos.
+            - id: seatmap.monitor.agencias.tarjeta.dato.barra
+              label: Barra y porcentaje
+              description: >-
+                Comparan la agencia con la que más casos tiene: esa llega a 100%
+                y las demás se calculan en proporción a ella. No es el
+                porcentaje sobre el total.
+            - id: seatmap.monitor.agencias.tarjeta.dato.borde
+              label: Borde resaltado
+              description: >-
+                La agencia con más casos, siempre que tenga alguno, se destaca
+                con un borde del color de su tipo.
+
+      - id: seatmap.monitor.agencias.paginas
+        type: prose
+        when:
+          permission: [todas-las-agencias]
+        props:
+          # components/sitemap/use-agency-summary-table.ts:14 (page size 2),
+          # sitemap-operator-monitor-panel.tsx:311-337 (the pager renders when
+          # `agencyPageCount > 1`; `aria-label`s `previousAgencyPage` /
+          # `nextAgencyPage`, analytics.json:433-434, not visible text).
+          text: >-
+            La ficha muestra dos agencias por página. Cuando hay más, aparece al
+            pie una flecha a cada lado de un contador de páginas, con el formato
+            1 / 2, para recorrerlas.
+
+      - id: seatmap.monitor.agencias.mensajes
+        type: term-list
+        props:
+          # sitemap-operator-monitor-panel.tsx:289-292.
+          entries:
+            - id: seatmap.monitor.agencias.mensaje.sin-datos
+              term: Sin datos de agencias
+              definition: >-
+                Reemplaza a las tarjetas cuando no hay datos de agencias que
+                mostrar.
+
+      - id: seatmap.monitor.agencias.pie
+        type: term-list
+        props:
+          # sitemap-operator-monitor-panel.tsx:300-348 — footer: total :301-310
+          # (`sitemap.totalManagedCases`, the sum :123-126), button :338-347
+          # (`sitemap.viewMoreDetail`, analytics.json:429; `onViewCallAnalysis`
+          # :343). pages/dashboard.tsx:156-163 (`handleViewCallAnalysis`: sets
+          # `pendingCallAnalysis`, `setActiveView("dashboard")`; blocked at
+          # :157-160 while the Post-Llamada lock is set) and :1054-1058 (initial
+          # sub-tab `call-analysis`); names as in 04-dashboard.yaml. As with the
+          # operator button, `view.dashboard` is not checked here and is not
+          # asserted.
+          entries:
+            - id: seatmap.monitor.agencias.pie.total
+              term: Total casos gestionados
+              definition: >-
+                La suma de los casos gestionados que la ficha lista. Vale 0
+                cuando la ficha no lista ninguno.
+            - id: seatmap.monitor.agencias.pie.detalle
+              term: Ver más detalle
+              image: true
+              definition: >-
+                Botón del extremo derecho del pie. Abre la sección
+                **Dashboard**, en la ficha **Analítica**, subficha **Análisis de
+                Llamadas**. Mientras haya una Post-Llamada pendiente, el
+                intento de cambiar de vista muestra la pregunta de salida que se
+                describe en la sección **Home**.
+
+      - id: seatmap.monitor.agencias.destino
+        type: term-list
+        props:
+          # pages/dashboard.tsx:1054-1058 — initial sub-tab `call-analysis`.
+          entries:
+            - id: seatmap.monitor.agencias.destino.llamadas
+              term: Análisis de Llamadas
+              definition: >-
+                Subficha de **Analítica**, en el **Dashboard**, a la que llega
+                el botón **Ver más detalle**.

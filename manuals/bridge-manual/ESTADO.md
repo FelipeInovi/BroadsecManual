@@ -189,7 +189,7 @@ state.
 - **What varies the UI is `permissions[]`**, through two independent predicates
   in `src/modules/dashboard/domain/` — `can-view-all-agencies.ts` and
   `can-manage-sitemap-layout.ts` — consumed in exactly one view,
-  `src/modules/dashboard/presentation/ui/views/sitemap-view.tsx:36-37`.
+  `src/modules/dashboard/presentation/ui/views/sitemap-view.tsx:38-39` (it was `:36-37` at `58e2cc4d`).
 - **Screens are not routes.** `wouter` declares five routes and one is the whole
   application (`src/app/App.tsx:126-138`). The operator moves between seven
   views in `src/modules/dashboard/presentation/ui/views/`. Screen mapping follows
@@ -400,7 +400,7 @@ Treat this as a proposal to confirm, not as an agreed scope.
    So the map's `values` key is **not extractable for this product at all**,
    which is structurally unlike `broadlineavida` where `mv.config.ts` IS the
    value. An honest extractor here could emit `references` — the two gate lines
-   at `sitemap-view.tsx:36-37` — and nothing else. Two lines verifiable by eye
+   at `sitemap-view.tsx:38-39` — and nothing else. Two lines verifiable by eye
    in one file do not pay for an extractor.
 
    The extraction work that DOES pay for Bridge is not gating. It is (a) labels,
@@ -552,6 +552,49 @@ Treat this as a proposal to confirm, not as an agreed scope.
      video panel growing to half the dock.
    - Four catalogue strings in voseo or `tú` (`calls.json:338`, `:379`,
      `:522`, `agents.json:136`) are described rather than quoted.
+
+6. **`sections/03-seatmap.yaml` was rewritten against develop `465f5eb9`
+   (2026-09-30), not yet verified.** From `58e2cc4d`, the same range as Home
+   and Llamada. The owner asked for a meticulous full update and authorized
+   a complete rewrite. The audit is in engram,
+   `bridge-manual/seatmap-drift-audit-2026-09-30`.
+
+   What decided the new shape, all from the code:
+   - The axis stands as it was: `canViewAllAgencies` (`view.sitemap.all`),
+     now on the shared `has-permission.ts`. The conditioning grew from 7
+     `when`s to 10. The category ring is disabled without the permission
+     (`useCategoryStats(canViewAll)`, #275), so its text and the Agencias
+     card table and pager are per-target. The "agency could not load" notice
+     was dropped because it is unreachable: without the permission,
+     `agencyId` IS `user.agencyId` (`sitemap-view.tsx:53-55`, :111-118).
+   - `canManageSitemapLayout` and the new sidebar gate `view.sitemap` (#217)
+     stay prose, as before.
+   - Seatmap has no zones. The plan is a free grid of workstation cards, and
+     "zonas" is gone from the manual.
+   - Two claims were dropped because the client cannot prove them: that a
+     layout change applies to every user of the agency, and that the category
+     ring is scoped to the selected agency. The category request carries no
+     agency id. The marquee colour is described only "según el tipo", because
+     it is derived from a regex over the type label.
+   - Figures shot with the permission cannot be shared. The indicator and
+     monitor figures now live under `todas-las-agencias/`, and
+     `agencia-propia` needs its own capture of the plan, the indicators and
+     the monitor, from an account without `view.sitemap.all`.
+
+   **The rewrite's product news, declared by the owner (2026-09-30)**, split
+   as for Home and Llamada: the rewrite is committed as `cambio`, and the line
+   below reaches a `nuevo` trailer. Nothing was retired.
+
+   **Still open (the owner decides each):**
+   - The orphaned `seatmap.distribucion.zonas` image and its recipe
+     (`capture-recipes.yaml:683`).
+   - The images: the new slots, the three stale shared figures, and every
+     `agencia-propia` capture.
+   - Dragging a chair is not gated by edit mode in the client
+     (`sitemap-chair-item.tsx:57-61`). The manual describes it only inside
+     edit mode. Whether the backend refuses it outside is unknown.
+   - `verified --module sections/03-seatmap.yaml`, once the owner has seen
+     the drift addressed.
 
 *(An earlier pair of questions numbered 4 and 5, not the ones above, were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
