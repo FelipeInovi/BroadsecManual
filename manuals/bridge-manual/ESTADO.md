@@ -554,7 +554,7 @@ Treat this as a proposal to confirm, not as an agreed scope.
      `:522`, `agents.json:136`) are described rather than quoted.
 
 6. **`sections/03-seatmap.yaml` was rewritten against develop `465f5eb9`
-   (2026-09-30), not yet verified.** From `58e2cc4d`, the same range as Home
+   (2026-09-30) and verified there the same day.** From `58e2cc4d`, the same range as Home
    and Llamada. The owner asked for a meticulous full update and authorized
    a complete rewrite. The audit is in engram,
    `bridge-manual/seatmap-drift-audit-2026-09-30`.
@@ -616,9 +616,8 @@ Treat this as a proposal to confirm, not as an agreed scope.
      is. The product is still changing, so the figure is expected to be
      retaken anyway.
 
-   **Still open (the owner decides each):**
-   - `verified --module sections/03-seatmap.yaml`, once the owner has seen
-     the drift addressed.
+   The owner saw the drift addressed, and `verified` stamped the module at
+   `465f5eb9`. Nothing about Seatmap is open.
 
 *(An earlier pair of questions numbered 4 and 5, not the ones above, were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
