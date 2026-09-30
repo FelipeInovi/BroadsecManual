@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 237,
-    "pending": 8
+    "delivered": 238,
+    "pending": 7
   },
   "pending": [
     {
@@ -153,28 +153,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.despacho.confirmar.png",
         "override": "<permission>/llamada.fuerzas.despacho.confirmar.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.ruta.control.finalizar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.ruta.control.finalizar",
-          "blockType": "field-list",
-          "shows": "Finalizar Caso"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.ruta.control.finalizar.png",
-        "override": "<permission>/llamada.fuerzas.ruta.control.finalizar.png"
       }
     },
     {
@@ -2458,6 +2436,23 @@
       ],
       "files": [
         "_common/llamada.fuerzas.ruta.control.atendido.png"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.ruta.control.finalizar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.ruta.control.finalizar",
+          "blockType": "field-list",
+          "shows": "Finalizar Caso"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.ruta.control.finalizar.png"
       ]
     },
     {
