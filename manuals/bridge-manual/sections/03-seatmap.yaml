@@ -959,6 +959,24 @@ children:
                     uno se envió al soltar el puesto.
                   layout: beside
 
+          - id: seatmap.distribucion.reubicar.fuera-edicion
+            type: callout
+            props:
+              # Observed on the running product (2026-09-30), and it is what the
+              # code does: dragging is disabled only while saving
+              # (sitemap-chair-item.tsx:57-61) and `handleDragEnd` never reads
+              # `isEditMode` (sitemap-zone-grid.tsx:294-321), but outside edit
+              # mode the only drop targets are the occupied cells
+              # (`gridCellCoords`, :132-134). So a card dropped on another card
+              # swaps both even with the edit button off, and a move to a free
+              # cell needs edit mode.
+              variant: important
+              text: >-
+                El intercambio de dos puestos también ocurre fuera del modo de
+                edición: si arrastra una tarjeta y la suelta sobre otra, las dos
+                cambian de posición y el cambio se guarda. Para mover un puesto a
+                una celda libre sí es necesario activar Editar distribución.
+
           - id: seatmap.distribucion.agregar
             type: procedure
             props:
