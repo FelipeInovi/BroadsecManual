@@ -19,8 +19,8 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 245,
-    "delivered": 239,
-    "pending": 6
+    "delivered": 241,
+    "pending": 4
   },
   "pending": [
     {
@@ -68,28 +68,6 @@
       }
     },
     {
-      "slot": "llamada.fuerzas.vista.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.vista.fig",
-          "blockType": "figure",
-          "shows": "Panel de fuerzas de respuesta con el filtro por fuerza y las unidades cercanas."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.vista.fig.png",
-        "override": "<permission>/llamada.fuerzas.vista.fig.png"
-      }
-    },
-    {
       "slot": "llamada.fuerzas.distintivo.fuerza",
       "neededBy": [
         "agencia-propia",
@@ -109,28 +87,6 @@
       "deliverTo": {
         "shared": "_common/llamada.fuerzas.distintivo.fuerza.png",
         "override": "<permission>/llamada.fuerzas.distintivo.fuerza.png"
-      }
-    },
-    {
-      "slot": "llamada.fuerzas.despacho.filtrar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "llamada.fuerzas.despacho.filtrar",
-          "blockType": "procedure",
-          "shows": "Elija la fuerza"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/llamada.fuerzas.despacho.filtrar.png",
-        "override": "<permission>/llamada.fuerzas.despacho.filtrar.png"
       }
     },
     {
@@ -2081,6 +2037,23 @@
       ]
     },
     {
+      "slot": "llamada.fuerzas.vista.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.vista.fig",
+          "blockType": "figure",
+          "shows": "Panel de fuerzas de respuesta con el filtro por fuerza y las unidades cercanas."
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.vista.fig.png"
+      ]
+    },
+    {
       "slot": "llamada.fuerzas.filtro.todos",
       "neededBy": [
         "agencia-propia",
@@ -2295,6 +2268,23 @@
       ],
       "files": [
         "_common/llamada/fuerzas/distintivo/cercana.svg"
+      ]
+    },
+    {
+      "slot": "llamada.fuerzas.despacho.filtrar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "llamada.fuerzas.despacho.filtrar",
+          "blockType": "procedure",
+          "shows": "Elija la fuerza"
+        }
+      ],
+      "files": [
+        "_common/llamada.fuerzas.despacho.filtrar.png"
       ]
     },
     {
