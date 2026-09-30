@@ -588,14 +588,27 @@ Treat this as a proposal to confirm, not as an agreed scope.
      "En espera" state in the indicators, the operator monitor and the
      workstation card.
 
+   **Settled since** (2026-09-30): the orphaned zones image and its recipe
+   were deleted. Every `todas-las-agencias` figure was captured, and that
+   target is complete. Tried on the console, at the owner's request: a swap
+   happens outside edit mode too, and saves. It is now documented in the
+   callout `seatmap.distribucion.reubicar.fuera-edicion`. A move to a free
+   cell needs edit mode.
+
+   What the captures taught, for any retake:
+   - The grid caps chairs by container height (`gridCapacity`,
+     `sitemap-zone-grid.tsx:182-193`). At 1920x1009, 23 chairs already hit
+     the cap, so "Agregar silla" could only be shot with the viewport
+     enlarged (CDP `Emulation.setDeviceMetricsOverride`). The same trick
+     fits the whole indicators column, which is 980 px tall.
+   - Delete and add were shot by deleting one empty desk, adding it back and
+     dragging it to its cell. Always compare the plan with a shot taken
+     before.
+
    **Still open (the owner decides each):**
-   - The orphaned `seatmap.distribucion.zonas` image and its recipe
-     (`capture-recipes.yaml:683`).
-   - The images: the new slots, the three stale shared figures, and every
-     `agencia-propia` capture.
-   - Dragging a chair is not gated by edit mode in the client
-     (`sitemap-chair-item.tsx:57-61`). The manual describes it only inside
-     edit mode. Whether the backend refuses it outside is unknown.
+   - The four `agencia-propia` figures (`seatmap.fig`, `indicadores.fig`,
+     `monitor.fig`, `monitor.agencias.fig`) need an account without
+     `view.sitemap.all`.
    - `verified --module sections/03-seatmap.yaml`, once the owner has seen
      the drift addressed.
 
