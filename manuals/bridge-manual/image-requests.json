@@ -4908,15 +4908,5 @@
         "_common/seatmap.distribucion.cambiar-agencia.verificar.png"
       ]
     }
-  ],
-  "undeclared": [
-    "dashboard.analitica.fig",
-    "dashboard.emergency.fig",
-    "dashboard.fig",
-    "dashboard.historial.detalle.abrir",
-    "dashboard.historial.detalle.ubicar",
-    "dashboard.historial.exportar.marcar",
-    "dashboard.historial.fig",
-    "dashboard.historial.paginacion.mover"
   ]
 }
