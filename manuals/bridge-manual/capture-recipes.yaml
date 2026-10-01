@@ -746,6 +746,8 @@ recipes:
   # The footer is one 1798px strip, so each control is clipped on its own.
   - slot: dashboard.historial.paginacion.total
     view: dashboard
+    steps:
+      - click: button::-p-text(Historial de Eventos)
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
     # The span "N eventos" (`eventsHistory.totalItems`). Probe it live: any other
@@ -759,6 +761,8 @@ recipes:
   # selector together.
   - slot: dashboard.historial.paginacion.porpagina
     view: dashboard
+    steps:
+      - click: button::-p-text(Historial de Eventos)
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
     clip: button[aria-label="Por página"]
@@ -786,6 +790,8 @@ recipes:
   # indicator beside them.
   - slot: dashboard.historial.paginacion.mover-pie
     view: dashboard
+    steps:
+      - click: button::-p-text(Historial de Eventos)
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
     clip: button::-p-text(Anterior)
@@ -796,6 +802,8 @@ recipes:
   # `aria-label={filter.label}` (events-history-toolbar.tsx:41-43), here "Tipo".
   - slot: dashboard.historial.buscar.tipo
     view: dashboard
+    steps:
+      - click: button::-p-text(Historial de Eventos)
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: button[aria-label="Tipo"]
     clip: button[aria-label="Tipo"]
@@ -807,9 +815,12 @@ recipes:
   # Re-declared 2026-10-01 as `...ubicar-tabla`: the delivered file is from before #345.
   - slot: dashboard.historial.detalle.ubicar-tabla
     view: dashboard
+    steps:
+      - click: button::-p-text(Historial de Eventos)
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
-    clip: table
+    clip: h3::-p-text(Historial de Eventos)
+    clipUp: div.panel
     settleMs: 2500
 
   # Seatmap's three distribution elements, and the one procedure step that is a
@@ -1094,6 +1105,7 @@ recipes:
   - slot: dashboard.historial.detalle.abrir-cuadro
     view: dashboard
     steps:
+      - click: button::-p-text(Historial de Eventos)
       - click: table tbody tr:nth-child(3)
     # The dialog's own heading, which is also the manual's claim: "un cuadro
     # titulado **Evento** seguido del identificador" — it reads `EVENTO 566`.
@@ -1304,7 +1316,8 @@ recipes:
       - click: button[aria-label="Seleccionar todos"]
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
-    clip: table
+    clip: h3::-p-text(Historial de Eventos)
+    clipUp: div.panel
     settleMs: 2500
 
   # --- Orden de Tarea: not a route problem, the same data gap ------------------

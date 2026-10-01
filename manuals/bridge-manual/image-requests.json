@@ -19,164 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 279,
-    "delivered": 258,
-    "pending": 21
+    "delivered": 278,
+    "pending": 1
   },
   "pending": [
-    {
-      "slot": "dashboard.vista",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.fig",
-          "blockType": "figure",
-          "shows": "Vista Dashboard con la barra de fichas en la parte superior."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.vista.png",
-        "override": "<permission>/dashboard.vista.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.vista",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.fig",
-          "blockType": "figure",
-          "shows": "Ficha de historial de eventos con la barra de herramientas, la tabla y el pie de paginación."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.vista.png",
-        "override": "<permission>/dashboard.historial.vista.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.buscar.tipo",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.buscar.tipo",
-          "blockType": "field-list",
-          "shows": "Tipo"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.buscar.tipo.png",
-        "override": "<permission>/dashboard.historial.buscar.tipo.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.paginacion.total",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.paginacion.total",
-          "blockType": "field-list",
-          "shows": "Total de eventos"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.paginacion.total.png",
-        "override": "<permission>/dashboard.historial.paginacion.total.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.paginacion.porpagina",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.paginacion.porpagina",
-          "blockType": "field-list",
-          "shows": "Por página"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.paginacion.porpagina.png",
-        "override": "<permission>/dashboard.historial.paginacion.porpagina.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.paginacion.mover-pie",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.paginacion.mover",
-          "blockType": "field-list",
-          "shows": "Anterior y Siguiente"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.paginacion.mover-pie.png",
-        "override": "<permission>/dashboard.historial.paginacion.mover-pie.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.detalle.ubicar-tabla",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.detalle.ubicar",
-          "blockType": "procedure",
-          "shows": "Ubique el evento en la tabla"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.detalle.ubicar-tabla.png",
-        "override": "<permission>/dashboard.historial.detalle.ubicar-tabla.png"
-      }
-    },
     {
       "slot": "dashboard.historial.detalle.abrir-cuadro",
       "neededBy": [
@@ -197,292 +43,6 @@
       "deliverTo": {
         "shared": "_common/dashboard.historial.detalle.abrir-cuadro.png",
         "override": "<permission>/dashboard.historial.detalle.abrir-cuadro.png"
-      }
-    },
-    {
-      "slot": "dashboard.historial.exportar.marcar-tabla",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.exportar.marcar",
-          "blockType": "procedure",
-          "shows": "Marque las filas que necesita"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.exportar.marcar-tabla.png",
-        "override": "<permission>/dashboard.historial.exportar.marcar-tabla.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.vista",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.fig",
-          "blockType": "figure",
-          "shows": "Ficha de analítica con sus subfichas, la barra de controles y la subficha General."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.vista.png",
-        "override": "<permission>/dashboard.analitica.vista.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.barra.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.barra.fig",
-          "blockType": "figure",
-          "shows": "Barra de la ficha Analítica con las subfichas, el control de actualización, el rango de fechas y el botón Filtros."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.barra.fig.png",
-        "override": "<permission>/dashboard.analitica.barra.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.rango.fechas",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.rango.fechas",
-          "blockType": "field-list",
-          "shows": "Rango de fechas"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.rango.fechas.png",
-        "override": "<permission>/dashboard.analitica.rango.fechas.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.filtros.boton",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.filtros.boton",
-          "blockType": "field-list",
-          "shows": "Filtros"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.filtros.boton.png",
-        "override": "<permission>/dashboard.analitica.filtros.boton.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.general.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.general.fig",
-          "blockType": "figure",
-          "shows": "Subficha General con sus cinco tarjetas."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.general.fig.png",
-        "override": "<permission>/dashboard.analitica.general.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.llamadas.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.llamadas.fig",
-          "blockType": "figure",
-          "shows": "Subficha Análisis de Llamadas con sus cinco tarjetas."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.llamadas.fig.png",
-        "override": "<permission>/dashboard.analitica.llamadas.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.analitica.operadores.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.analitica.operadores.fig",
-          "blockType": "figure",
-          "shows": "Subficha Rendimiento de Operadores con la distribución del tiempo, la respuesta frente al objetivo y la tabla de operadores."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.analitica.operadores.fig.png",
-        "override": "<permission>/dashboard.analitica.operadores.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.emergency.vista",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.emergency.fig",
-          "blockType": "figure",
-          "shows": "Subficha de indicadores con la franja de recuentos y los repartos debajo."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.emergency.vista.png",
-        "override": "<permission>/dashboard.emergency.vista.png"
-      }
-    },
-    {
-      "slot": "dashboard.reportes.fig",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.reportes.fig",
-          "blockType": "figure",
-          "shows": "Subficha Reportes de Emergencias con los cuatro indicadores y los cuatro gráficos."
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.reportes.fig.png",
-        "override": "<permission>/dashboard.reportes.fig.png"
-      }
-    },
-    {
-      "slot": "dashboard.reportes.consultar.abrir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.reportes.consultar.abrir",
-          "blockType": "procedure",
-          "shows": "Haga clic en Filtros"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.reportes.consultar.abrir.png",
-        "override": "<permission>/dashboard.reportes.consultar.abrir.png"
-      }
-    },
-    {
-      "slot": "dashboard.reportes.consultar.elegir",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.reportes.consultar.elegir",
-          "blockType": "procedure",
-          "shows": "Despliegue un apartado y elija los criterios"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.reportes.consultar.elegir.png",
-        "override": "<permission>/dashboard.reportes.consultar.elegir.png"
-      }
-    },
-    {
-      "slot": "dashboard.reportes.consultar.aplicar",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.reportes.consultar.aplicar",
-          "blockType": "procedure",
-          "shows": "Haga clic en Aplicar"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.reportes.consultar.aplicar.png",
-        "override": "<permission>/dashboard.reportes.consultar.aplicar.png"
       }
     }
   ],
@@ -3621,6 +3181,23 @@
       ]
     },
     {
+      "slot": "dashboard.vista",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.fig",
+          "blockType": "figure",
+          "shows": "Vista Dashboard con la barra de fichas en la parte superior."
+        }
+      ],
+      "files": [
+        "_common/dashboard.vista.png"
+      ]
+    },
+    {
       "slot": "dashboard.calor.control",
       "neededBy": [
         "agencia-propia",
@@ -3635,6 +3212,23 @@
       ],
       "files": [
         "_common/dashboard.calor.control.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.vista",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.fig",
+          "blockType": "figure",
+          "shows": "Ficha de historial de eventos con la barra de herramientas, la tabla y el pie de paginación."
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.vista.png"
       ]
     },
     {
@@ -3655,6 +3249,57 @@
       ]
     },
     {
+      "slot": "dashboard.historial.buscar.tipo",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.buscar.tipo",
+          "blockType": "field-list",
+          "shows": "Tipo"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.buscar.tipo.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.paginacion.total",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.paginacion.total",
+          "blockType": "field-list",
+          "shows": "Total de eventos"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.paginacion.total.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.paginacion.porpagina",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.paginacion.porpagina",
+          "blockType": "field-list",
+          "shows": "Por página"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.paginacion.porpagina.png"
+      ]
+    },
+    {
       "slot": "dashboard.historial.paginacion.indicador",
       "neededBy": [
         "agencia-propia",
@@ -3669,6 +3314,40 @@
       ],
       "files": [
         "_common/dashboard.historial.paginacion.indicador.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.paginacion.mover-pie",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.paginacion.mover",
+          "blockType": "field-list",
+          "shows": "Anterior y Siguiente"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.paginacion.mover-pie.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.detalle.ubicar-tabla",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.detalle.ubicar",
+          "blockType": "procedure",
+          "shows": "Ubique el evento en la tabla"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.detalle.ubicar-tabla.png"
       ]
     },
     {
@@ -3689,6 +3368,23 @@
       ]
     },
     {
+      "slot": "dashboard.historial.exportar.marcar-tabla",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.exportar.marcar",
+          "blockType": "procedure",
+          "shows": "Marque las filas que necesita"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.exportar.marcar-tabla.png"
+      ]
+    },
+    {
       "slot": "dashboard.historial.exportar.formato",
       "neededBy": [
         "agencia-propia",
@@ -3706,6 +3402,40 @@
       ]
     },
     {
+      "slot": "dashboard.analitica.vista",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.fig",
+          "blockType": "figure",
+          "shows": "Ficha de analítica con sus subfichas, la barra de controles y la subficha General."
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.vista.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.barra.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.barra.fig",
+          "blockType": "figure",
+          "shows": "Barra de la ficha Analítica con las subfichas, el control de actualización, el rango de fechas y el botón Filtros."
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.barra.fig.png"
+      ]
+    },
+    {
       "slot": "dashboard.analitica.accion.actualizar",
       "neededBy": [
         "agencia-propia",
@@ -3720,6 +3450,40 @@
       ],
       "files": [
         "_common/dashboard.analitica.accion.actualizar.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.rango.fechas",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.rango.fechas",
+          "blockType": "field-list",
+          "shows": "Rango de fechas"
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.rango.fechas.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.filtros.boton",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.filtros.boton",
+          "blockType": "field-list",
+          "shows": "Filtros"
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.filtros.boton.png"
       ]
     },
     {
@@ -3754,6 +3518,142 @@
       ],
       "files": [
         "_common/dashboard.analitica.accion.limpiar.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.general.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.general.fig",
+          "blockType": "figure",
+          "shows": "Subficha General con sus cinco tarjetas."
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.general.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.llamadas.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.llamadas.fig",
+          "blockType": "figure",
+          "shows": "Subficha Análisis de Llamadas con sus cinco tarjetas."
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.llamadas.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.analitica.operadores.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.analitica.operadores.fig",
+          "blockType": "figure",
+          "shows": "Subficha Rendimiento de Operadores con la distribución del tiempo, la respuesta frente al objetivo y la tabla de operadores."
+        }
+      ],
+      "files": [
+        "_common/dashboard.analitica.operadores.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.emergency.vista",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.emergency.fig",
+          "blockType": "figure",
+          "shows": "Subficha de indicadores con la franja de recuentos y los repartos debajo."
+        }
+      ],
+      "files": [
+        "_common/dashboard.emergency.vista.png"
+      ]
+    },
+    {
+      "slot": "dashboard.reportes.fig",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.reportes.fig",
+          "blockType": "figure",
+          "shows": "Subficha Reportes de Emergencias con los cuatro indicadores y los cuatro gráficos."
+        }
+      ],
+      "files": [
+        "_common/dashboard.reportes.fig.png"
+      ]
+    },
+    {
+      "slot": "dashboard.reportes.consultar.abrir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.reportes.consultar.abrir",
+          "blockType": "procedure",
+          "shows": "Haga clic en Filtros"
+        }
+      ],
+      "files": [
+        "_common/dashboard.reportes.consultar.abrir.png"
+      ]
+    },
+    {
+      "slot": "dashboard.reportes.consultar.elegir",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.reportes.consultar.elegir",
+          "blockType": "procedure",
+          "shows": "Despliegue un apartado y elija los criterios"
+        }
+      ],
+      "files": [
+        "_common/dashboard.reportes.consultar.elegir.png"
+      ]
+    },
+    {
+      "slot": "dashboard.reportes.consultar.aplicar",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.reportes.consultar.aplicar",
+          "blockType": "procedure",
+          "shows": "Haga clic en Aplicar"
+        }
+      ],
+      "files": [
+        "_common/dashboard.reportes.consultar.aplicar.png"
       ]
     },
     {
