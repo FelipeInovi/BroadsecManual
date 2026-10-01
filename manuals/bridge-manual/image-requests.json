@@ -19,33 +19,10 @@
   "deploymentsConfigured": 2,
   "counts": {
     "total": 279,
-    "delivered": 278,
-    "pending": 1
+    "delivered": 279,
+    "pending": 0
   },
-  "pending": [
-    {
-      "slot": "dashboard.historial.detalle.abrir-cuadro",
-      "neededBy": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "uses": [
-        {
-          "nodeId": "dashboard.historial.detalle.abrir",
-          "blockType": "procedure",
-          "shows": "Haga clic en la fila"
-        }
-      ],
-      "pendingFor": [
-        "agencia-propia",
-        "todas-las-agencias"
-      ],
-      "deliverTo": {
-        "shared": "_common/dashboard.historial.detalle.abrir-cuadro.png",
-        "override": "<permission>/dashboard.historial.detalle.abrir-cuadro.png"
-      }
-    }
-  ],
+  "pending": [],
   "delivered": [
     {
       "slot": "home.general.fig",
@@ -3348,6 +3325,23 @@
       ],
       "files": [
         "_common/dashboard.historial.detalle.ubicar-tabla.png"
+      ]
+    },
+    {
+      "slot": "dashboard.historial.detalle.abrir-cuadro",
+      "neededBy": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "uses": [
+        {
+          "nodeId": "dashboard.historial.detalle.abrir",
+          "blockType": "procedure",
+          "shows": "Haga clic en la fila"
+        }
+      ],
+      "files": [
+        "_common/dashboard.historial.detalle.abrir-cuadro.png"
       ]
     },
     {

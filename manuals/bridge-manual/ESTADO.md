@@ -700,11 +700,11 @@ Treat this as a proposal to confirm, not as an agreed scope.
      Ordenar por on its own left the operator table's order unchanged: both
      stay in `pending`. The default date range read 30 Sep - 01 Oct with the
      app started on 01 Oct, which agrees with the text.
-   - `dashboard.historial.detalle.abrir-cuadro` is the one slot left pending,
-     on purpose. A capture was taken (event 2405) and NOT delivered, because it
-     shows the Auditoría card with its constant rows ("Antonio Villamizar",
-     "Pablo Rodriguez"). The owner decides: deliver it as shot, or crop it.
-     No rectangle keeps the video and Atributos while dropping that card.
+   - **Decided by the owner (2026-10-01):** `dashboard.historial.detalle.abrir-cuadro`
+     ships as shot (event 2405), with the Auditoría card and its constant rows
+     ("Antonio Villamizar", "Pablo Rodriguez") visible. The text still does not
+     describe that card, and its `pending` entry stands. Retake the figure
+     when the product replaces the constant.
    - The owner reviewed the rewritten module (2026-10-01) and found it good,
      and `verified` stamped it at `465f5eb9`, the same baseline as Home,
      Llamada and Seatmap.
