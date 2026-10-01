@@ -88,7 +88,10 @@ recipes:
     dataReady: table tbody tr
     settleMs: 3000
 
-  - slot: dashboard.fig
+  # Re-declared 2026-10-01 (`dashboard.fig` -> slot `dashboard.vista`): the file
+  # delivered under the old name showed a strip of three fichas and the previous
+  # top bar. The Dashboard now has two fichas.
+  - slot: dashboard.vista
     view: dashboard
     screenIs: h3::-p-text(Historial de Eventos)
     # A row, not the heading: the table paints its head and an empty body while
@@ -159,12 +162,18 @@ recipes:
     clipUp: div[class*="rounded-[25px]"]
     settleMs: 3000
 
-  # --- Dashboard's three tabs -------------------------------------------------
+  # --- Dashboard's two fichas and Analítica's five subfichas -------------------
   #
-  # One route, three tabs; each is a click. `screenIs` is the tab's own content
-  # and not its button, which stays on screen whichever tab is open.
+  # One route, two fichas (Historial de Eventos, Analítica); Analítica holds five
+  # subfichas, each a click. `screenIs` is the tab's own content and not its
+  # button, which stays on screen whichever tab is open.
+  #
+  # 2026-10-01: the old third ficha, "Emergency Dashboard", is the subficha
+  # "Dashboard de Emergencias" of Analítica, and "Reportes de Emergencias" is new.
+  # The four overview figures below were re-declared under new slots
+  # (`*.vista`) because the delivered files no longer match the screen.
 
-  - slot: dashboard.historial.fig
+  - slot: dashboard.historial.vista
     view: dashboard
     # Title case. The screen shows HISTORIAL DE EVENTOS, but that is CSS
     # `uppercase` — `::-p-text` reads textContent, which is what the component
@@ -175,7 +184,7 @@ recipes:
     clipUp: div.panel
     settleMs: 3000
 
-  - slot: dashboard.analitica.fig
+  - slot: dashboard.analitica.vista
     view: dashboard
     steps:
       - click: button::-p-text(Analítica)
@@ -183,13 +192,130 @@ recipes:
     dataReady: ::-p-text(Análisis de Llamadas)
     settleMs: 3500
 
-  - slot: dashboard.emergency.fig
+  # The ficha's bar: the five subfichas on the left, refresh, date range and
+  # Filtros on the right. `clipUp` climbs from the refresh button to the row that
+  # holds both (`div.flex.flex-wrap.items-center.gap-2`, analytics-panel.tsx:117).
+  - slot: dashboard.analitica.barra.fig
     view: dashboard
     steps:
-      - click: button::-p-text(Emergency Dashboard)
-    screenIs: ::-p-text(Llamadas atendidas)
-    dataReady: ::-p-text(Llamadas atendidas)
+      - click: button::-p-text(Analítica)
+    screenIs: button[title="Actualizar"]
+    dataReady: button[title="Actualizar"]
+    clip: button[title="Actualizar"]
+    clipUp: div[class*="flex-wrap"][class*="items-center"]
+    settleMs: 2500
+
+  # The date-range button (analytics-header-date-range.tsx:45). Its text is the
+  # chosen dates, so it is addressed by the calendar glyph's parent: the first
+  # button after the refresh control. Probe it live; the label changes daily.
+  - slot: dashboard.analitica.rango.fechas
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+    screenIs: button[title="Actualizar"]
+    dataReady: button[title="Actualizar"]
+    clip: button[title="Actualizar"] + button
+    settleMs: 2500
+
+  - slot: dashboard.analitica.filtros.boton
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+    screenIs: button[title="Actualizar"]
+    dataReady: button::-p-text(Filtros)
+    clip: button::-p-text(Filtros)
+    settleMs: 2500
+
+  # The five subfichas. `General` is what Analítica opens on; the other four are
+  # a click on the sub-tab's own text. `screenIs` is a card title of the
+  # subficha, as the component wrote it (CSS uppercases it on screen).
+  - slot: dashboard.analitica.general.fig
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(General)
+    screenIs: ::-p-text(Clasificación por Tipo de Incidente)
+    dataReady: ::-p-text(Clasificación por Tipo de Incidente)
     settleMs: 3500
+
+  - slot: dashboard.analitica.llamadas.fig
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Análisis de Llamadas)
+    screenIs: ::-p-text(Transferencia de Llamadas)
+    dataReady: ::-p-text(Transferencia de Llamadas)
+    settleMs: 3500
+
+  - slot: dashboard.analitica.operadores.fig
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Rendimiento de Operadores)
+    screenIs: ::-p-text(Distribución del Tiempo en Turno)
+    dataReady: ::-p-text(Distribución del Tiempo en Turno)
+    settleMs: 3500
+
+  # Was `button::-p-text(Emergency Dashboard)`: that button no longer exists. The
+  # subficha is "Dashboard de Emergencias" (analytics.json:13) and sits inside
+  # Analítica, so the recipe needs BOTH clicks.
+  - slot: dashboard.emergency.vista
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Dashboard de Emergencias)
+    screenIs: ::-p-text(Distribución de casos)
+    dataReady: ::-p-text(Distribución de casos)
+    settleMs: 3500
+
+  # Reportes de Emergencias loads its own report; the card labels only exist once
+  # the response is in (the cards show a loader before that), so they are the
+  # proof the data is ready.
+  - slot: dashboard.reportes.fig
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Reportes de Emergencias)
+    screenIs: ::-p-text(Total emergencias)
+    dataReady: ::-p-text(Total emergencias)
+    settleMs: 4000
+
+  # The three steps of the filters panel. The panel is a popover that the rail
+  # click dismisses, so every recipe carries all of its clicks.
+  - slot: dashboard.reportes.consultar.abrir
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Reportes de Emergencias)
+      - click: button::-p-text(Filtros)
+    screenIs: button::-p-text(Aplicar)
+    dataReady: button::-p-text(Aplicar)
+    clip: button::-p-text(Filtros)
+    settleMs: 3000
+
+  - slot: dashboard.reportes.consultar.elegir
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Reportes de Emergencias)
+      - click: button::-p-text(Filtros)
+      - click: button::-p-text(Rango de fechas)
+    screenIs: button::-p-text(Aplicar)
+    dataReady: button::-p-text(Aplicar)
+    clip: button::-p-text(Aplicar)
+    clipUp: div[class*="max-h-"]
+    settleMs: 3000
+
+  - slot: dashboard.reportes.consultar.aplicar
+    view: dashboard
+    steps:
+      - click: button::-p-text(Analítica)
+      - click: button::-p-text(Reportes de Emergencias)
+      - click: button::-p-text(Filtros)
+    screenIs: button::-p-text(Aplicar)
+    dataReady: button::-p-text(Aplicar)
+    clip: button::-p-text(Aplicar)
+    settleMs: 3000
 
   # --- Crear Incidente's four accordion steps ---------------------------------
   #
@@ -613,38 +739,73 @@ recipes:
     clipUp: div[class*="p-4"][class*="flex-col"][class*="relative"]
     settleMs: 3000
 
-  # Dashboard's pagination, at the foot of Historial de Eventos.
+  # Dashboard's footer, at the foot of Historial de Eventos. Since #345 it holds
+  # four things, left to right: "N eventos", the "Por página" selector, the
+  # "Página X de Y" span and the two buttons (events-history-panel.tsx:321-376).
+  #
+  # The footer is one 1798px strip, so each control is clipped on its own.
+  - slot: dashboard.historial.paginacion.total
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: table tbody tr
+    # The span "N eventos" (`eventsHistory.totalItems`). Probe it live: any other
+    # span containing "eventos" would match first.
+    clip: span::-p-text(eventos)
+    settleMs: 2500
+
+  # The selector's trigger carries `aria-label="Por página"` (panel:333); the
+  # caption "Por página" is a sibling span in the same
+  # `div.flex.items-center.gap-1.5` (:324), so climbing to it frames caption and
+  # selector together.
+  - slot: dashboard.historial.paginacion.porpagina
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: table tbody tr
+    clip: button[aria-label="Por página"]
+    clipUp: div[class*="gap-1.5"]
+    settleMs: 2500
+
   - slot: dashboard.historial.paginacion.indicador
     view: dashboard
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
     # The span itself, 85x16. Small, but it IS the control, and the smallest
-    # already accepted here is 12x16 (`bot.cctv.presets.guardar`).
-    clip: span::-p-text(Página)
+    # already accepted here is 12x16 (`bot.cctv.presets.guardar`). Its text is now
+    # "Página 1 de N" and the "Por página" caption sits before it, so the match
+    # carries the "1 de" to avoid the caption: a retake opens on page 1.
+    clip: span::-p-text(Página 1 de)
     settleMs: 2500
 
-  # "Anterior y Siguiente" — a row naming TWO controls, which is the shape that
-  # turned out to be an authoring defect for CCTV's diagonals. It is NOT one
-  # here, and the difference is worth recording: the product wraps both buttons
-  # in one `div.flex.items-center.gap-2` (events-history-panel.tsx:334), so a
-  # single clip shows both, exactly as the label reads. That is the same verdict
-  # `bot.cctv.presets.volver` reached — split only when each control has its own
-  # box, never merely because the label names two.
-  #
-  # NOT the whole pagination strip: that is 1798x28, and letterboxed into the
-  # 320/200 figure box it renders as a 5px sliver. The wrapper is 203x28.
-  - slot: dashboard.historial.paginacion.mover
+  # "Anterior y Siguiente" — a row naming TWO controls. Before #345 the product
+  # wrapped both buttons in one `div.flex.items-center.gap-2`; now they share
+  # their parent with the "Por página" selector and the "Página X de Y" span
+  # (`div.flex.items-center.gap-3`, events-history-panel.tsx:323), and that is
+  # why the old `clipUp: div[class*="gap-2"]` stopped resolving. The slot is
+  # re-declared as `dashboard.historial.paginacion.mover-pie` and clips that
+  # group: it shows both buttons, as the label reads, with the selector and the
+  # indicator beside them.
+  - slot: dashboard.historial.paginacion.mover-pie
     view: dashboard
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
     clip: button::-p-text(Anterior)
-    clipUp: div[class*="gap-2"][class*="items-center"]
+    clipUp: div[class*="gap-3"][class*="items-center"]
+    settleMs: 2500
+
+  # The "Tipo" filter of the toolbar. SelectTrigger carries
+  # `aria-label={filter.label}` (events-history-toolbar.tsx:41-43), here "Tipo".
+  - slot: dashboard.historial.buscar.tipo
+    view: dashboard
+    screenIs: h3::-p-text(Historial de Eventos)
+    dataReady: button[aria-label="Tipo"]
+    clip: button[aria-label="Tipo"]
     settleMs: 2500
 
   # "Ubique el evento en la tabla" — the table with rows in it. The step is
   # about finding a row, so the figure has to show rows rather than the panel
   # chrome that `dashboard.historial.fig` already carries.
-  - slot: dashboard.historial.detalle.ubicar
+  # Re-declared 2026-10-01 as `...ubicar-tabla`: the delivered file is from before #345.
+  - slot: dashboard.historial.detalle.ubicar-tabla
     view: dashboard
     screenIs: h3::-p-text(Historial de Eventos)
     dataReady: table tbody tr
@@ -926,7 +1087,11 @@ recipes:
   #
   # Same shape as the CCTV mosaic naming three cameras: when the product's data
   # decides whether a shot is usable, the recipe picks the data.
-  - slot: dashboard.historial.detalle.abrir
+  # Re-declared 2026-10-01 as `dashboard.historial.detalle.abrir-cuadro`: the file
+  # delivered under the old name shows the dialog's Auditoría card, which the
+  # manual does not describe. A retake of the same dialog will show it again; the
+  # slot is new so that the owner decides what to do with that card first.
+  - slot: dashboard.historial.detalle.abrir-cuadro
     view: dashboard
     steps:
       - click: table tbody tr:nth-child(3)
@@ -1130,7 +1295,8 @@ recipes:
   #
   # The tab click is needed because the previous block leaves Dashboard on
   # Analítica.
-  - slot: dashboard.historial.exportar.marcar
+  # Re-declared 2026-10-01 as `...marcar-tabla`: the delivered file is from before #345.
+  - slot: dashboard.historial.exportar.marcar-tabla
     view: dashboard
     steps:
       - click: button::-p-text(Historial de Eventos)

@@ -311,7 +311,7 @@ state.
     server-paginated table (`manualPagination: true`, `:169`), so a filter only
     ever filters the page currently loaded. This is true of the columns that DO
     work, so it shapes how they are described.
-  - `previewColumns` (`events-history-columns.tsx:122`) is exported and used
+  - `previewColumns` (`events-history-columns.tsx:151`) is exported and used
     nowhere. Dead code — do not document it, and do not mistake it for the
     column set on screen.
 
@@ -343,8 +343,8 @@ state.
   inside it, which is exactly how this one survived.
 
 - **A hidden tab is the CLEAN case, and it is worth contrasting.** Analytics
-  declares four sub-tabs and marks `Análisis de Colas` as `enabled: false`
-  (`analytics-panel.tsx:26`), and `VISIBLE_TABS` filters it out (`:30-32`). It is
+  declares six sub-tabs and marks `Análisis de Colas` as `enabled: false`
+  (`analytics-panel.tsx:35`), and `VISIBLE_TABS` filters it out (`:51-53`). It is
   not on screen, so there is nothing to document and nothing to explain. That is
   what a deliberately unfinished feature looks like when it is handled properly —
   the contrast with the finding above is the point.
@@ -480,7 +480,7 @@ Treat this as a proposal to confirm, not as an agreed scope.
        Home.
      - `06-forces-in-field` `fuerzas-campo.asignacion.proposito`: "Revisión de
        Llamadas".
-   - Sections 03-05 carry the same i18n citation drift: 137 labels to review.
+   - Sections 05-07 carry the same i18n citation drift: 76 citations to review (`labels bridge-manual`, 2026-10-01).
    - The quote "Estás editando este caso. Guardá o cancelá los cambios…"
      (`es/calls.json:475`) is voseo in the client PDF. It is kept as an exact
      quote until the owner says whether to paraphrase it.
@@ -619,6 +619,73 @@ Treat this as a proposal to confirm, not as an agreed scope.
    The owner saw the drift addressed, and `verified` stamped the module at
    `465f5eb9`. Nothing about Seatmap is open.
 
+7. **`sections/04-dashboard.yaml` was rewritten against develop `465f5eb9`
+   (2026-10-01), from `58e2cc4d`.** The owner asked for a thorough review and
+   authorized a complete rewrite. The audit is in engram,
+   `bridge-manual/dashboard-drift-audit-2026-10-01`; what the rewrite found on
+   top of it is in `bridge-manual/dashboard-rewrite-2026-10-01`. The old section
+   was already wrong at `58e2cc4d`: it was written against a checkout older than
+   #163.
+
+   What decided the new shape, all from the code:
+   - Two fichas, not three: Historial de Eventos and Analítica. "Emergency
+     Dashboard" is the Analítica subficha "Dashboard de Emergencias" (#163), and
+     "Reportes de Emergencias" (#239) is a fifth subficha. Nothing is
+     conditioned: the view reads no `agencyType`, role or permission, and the
+     manual's axis does not reach it. The sidebar gate `view.dashboard` (#217) is
+     stated in prose only.
+   - The heatmap shows at the foot of Historial and of every Analítica
+     subficha, and its points are the latest 100 cases of the last 30 days, not
+     "the period consulted": no search and no filter reaches it.
+   - Only the filters that change something visible are documented. The audit
+     proposed a field matrix per subficha from `FILTER_CONFIG_BY_TAB`; reading
+     which cards consume each field cut it down. Turno, Tipo de llamada, Estado
+     de la llamada, Prioridad and the Tiempo de Timbre and Tiempo de Respuesta
+     KPI selectors are read only by a mock helper that the disabled
+     "Análisis de Colas" subficha mounts, so they are declared pending instead
+     of described as range or bucket filters. In Historial, the Tipo filter
+     works (on the loaded page), and the Cola filter cannot match (its options
+     are the literals CRUE and RECEP, the column holds Recepción, Policía, …).
+   - "Últimas 24 horas" is the calendar day in course; the two preset lists
+     (Período in General, Filtro rápido in Rendimiento de Operadores) are
+     documented separately; the operator table lost its Abandonadas column (#277).
+   - Cross-references name the section by its title (the `{{ref:…}}` token still
+     does not exist in the pipeline, see Findings).
+
+   Four `pending` entries, by the standing policy: the Historial ESTADO column
+   and the Fecha, Estado and Cola filters (AGENCIA is NOT among them: it shows
+   the real queue); the event detail's Auditoría card (a constant); the
+   Analítica fields and toolbar buttons that change nothing; and the inert
+   Exportar buttons.
+
+   Eight figures kept their node id and were re-declared under a new slot with
+   `image:`, because the delivered file no longer matches the screen
+   (`dashboard.vista`, `dashboard.historial.vista`, `dashboard.analitica.vista`,
+   `dashboard.emergency.vista`, `dashboard.historial.paginacion.mover-pie`,
+   `dashboard.historial.detalle.abrir-cuadro`, `dashboard.historial.detalle.ubicar-tabla`,
+   `dashboard.historial.exportar.marcar-tabla`). Their old files are orphans on
+   disk. 13 slots are new. Twenty-one are pending and none was captured.
+
+   **The rewrite's product news, declared by the owner (2026-10-01)**, split
+   as for Home, Llamada and Seatmap: the rewrite is committed as `cambio`, and
+   the lines below reach a `nuevo` and a `retirado` trailer.
+   - Cambio: the `view.dashboard` gate (#217); the "Dashboard de Emergencias"
+     label (#198); the operator table (#272, #274, #277). The relocation of the
+     emergency dashboard into Analítica (#163) predates the baseline: it is a
+     correction of the manual, not product news.
+
+   **Still open (the owner decides each):**
+   - Claims to check live: that Seatmap's jump into Dashboard works without
+     `view.dashboard` (`pages/dashboard.tsx:142-163` checks nothing); that the
+     heatmap toggle is the only button of the panel bar on Dashboard; what the
+     Estado de operador options match; the scope of the export with and without
+     marked rows; whether "Ordenar por" does anything on its own and whether the
+     inert fields listed in the pending entry are still inert; and whose calls
+     the Dashboard de Emergencias counts (the text says only the 30-day window).
+   - Any retake of `dashboard.historial.detalle.abrir-cuadro` will show the
+     Auditoría card again; decide before capturing.
+   - The module is not stamped by `verified`.
+
 *(An earlier pair of questions numbered 4 and 5, not the ones above, were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
 now declared, not narrated. They live in `awaiting-product.json`, which is
@@ -630,8 +697,8 @@ derivable and therefore not restated here.)*
 scope decision, not an authoring one. Three candidates, in the order I would
 raise them:
 
-1. **The two declared gaps close** — Dashboard's Historial de Eventos and Bridge
-   of Things' DASHBOARD panel, both waiting on the product. Run
+1. **The declared gaps close** — Dashboard's four entries (the Historial columns and filters, the event detail's Auditoría card,
+   the Analítica fields that change nothing, and the Exportar buttons) and Bridge of Things' DASHBOARD panel, all waiting on the product. Run
    `awaiting bridge-manual`. Nothing else can finish those two modules.
 2. **PMV and CCTV split out of Bridge of Things.** `05-` documents both at
    workflow depth, which satisfies `module-completeness`, but PMV alone has

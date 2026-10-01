@@ -15,7 +15,7 @@
   ],
   "targetsConfigured": 2,
   "counts": {
-    "gaps": 14,
+    "gaps": 17,
     "sections": 4
   },
   "awaiting": [
@@ -180,9 +180,54 @@
       "covers": [
         "dashboard.historial"
       ],
-      "missing": "Four visible things in the \"Historial de Eventos\" tab: the ESTADO column, the AGENCIA column, the Estado filter and the Fecha filter. The tab's rows are real, and its search, pagination, detail dialog, row selection and export are documented in full — these four are not mentioned.",
-      "because": "The ESTADO dot's colour is `STATUS_DOT_COLORS[row.index % STATUS_DOT_COLORS.length]` (`events-history-columns.tsx:103`) — the row's POSITION in the table, not the event's state. The underlying status is hardcoded `\"Cerrado\"` for every row (`events-history-panel.tsx:139`), so the Estado filter's other two options (`Abierto`, `En gestión`, `events-history-filters.tsx:9-13`) can never match anything. The Fecha filter's options come from `MOCK_EVENTS` (`events-history-filters.tsx:6-8`), i.e. fixture dates that will not match the real rows. AGENCIA is a hardcoded `\"-\"` (`events-history-panel.tsx:141`). All four render: the panel uses `fullColumns` (:155).",
+      "missing": "Four visible things in the \"Historial de Eventos\" ficha: the ESTADO column and the Fecha, Estado and Cola filters of the toolbar. The ficha's rows are real, and its columns (AGENCIA included), search, order, Tipo filter, footer, detail dialog and export are documented in full — these four are not mentioned.",
+      "because": "The ESTADO dot's colour is `STATUS_DOT_COLORS[row.index % STATUS_DOT_COLORS.length]` (`events-history-columns.tsx:132`) — the row's POSITION in the table, not the event's state — and the underlying status is hardcoded `\"closed\"` (`events-history-panel.tsx:134`), so the Estado filter's other options (`events-history-filters.tsx:24-28`) can never match anything real. The Fecha filter's options come from `MOCK_EVENTS` (`events-history-filters.tsx:5`, :7-9), fixture dates that will not match the real rows. The Cola filter's options are the literals `CRUE` and `RECEP` (`events-history-filters.tsx:10-13`), while the column it filters holds the translated queue names (`translateQueueNameByName`, `shared/presentation/i18n/translate-entity.ts:404-423`: Recepción, Policía, Bomberos, Salud, …), so an option never equals a cell. The AGENCIA column is NOT inert: it shows the real queue (`events-history-columns.tsx:56-60`, `events-history-panel.tsx:135`); the hardcoded `agency: \"-\"` (:136) is never rendered. All of it renders: the panel uses `createFullColumns` (:150).",
       "settles": "The product connecting them to real data, or the owner deciding how a manual describes a control that is on screen and inert."
+    },
+    {
+      "id": "dashboard.historial-auditoria-simulada",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "dashboard",
+      "declaredIn": "sections/04-dashboard.yaml",
+      "covers": [
+        "dashboard.historial.detalle"
+      ],
+      "missing": "The \"Auditoría\" card of the event detail dialog, the third card of its bottom row. The map, the media, the Atributos del Evento and the Transcripción are documented; this card is not mentioned.",
+      "because": "Its rows are the constant `AUDIT_ROWS` — two fixed entries dated \"may 12 2026\" with a person's name and a phone number (`components/panels/dashboard/event-detail-content.tsx:73-80`), read by `AuditTable` (:165-169) and mounted at :538-542 for every event, whichever one is open. No query is behind it.",
+      "settles": "The product replacing the constant with the event's real audit trail."
+    },
+    {
+      "id": "dashboard.analitica-filtros-sin-efecto",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "dashboard",
+      "declaredIn": "sections/04-dashboard.yaml",
+      "covers": [
+        "dashboard.analitica"
+      ],
+      "missing": "Filter fields and toolbar controls of Analítica that are on screen and change nothing visible, or whose effect the client cannot prove: Turno (in General, Análisis de Llamadas and Rendimiento de Operadores), Tipo de llamada, Estado de la llamada and Operador (in General and Análisis de Llamadas), Prioridad and the two time-bucket selectors Tiempo de Timbre and Tiempo de Respuesta KPI (Segundos) (in Análisis de Llamadas), Estado de operador (in General), Ordenar por used on its own (Rendimiento de Operadores), and the date range and Filtros buttons in Dashboard de Emergencias. The effective fields, the presets, the range modes and the chips are documented in full.",
+      "because": "`FILTER_CONFIG_BY_TAB` (analytics-filters-panel.tsx:60-95) declares the fields but the visible cards read only some of them. `shift`, `callType`, `callStatus`, `priority`, `ringTimeRange` and `responseTimeKpiRange` are read nowhere except analytics-mock-filter-effect.ts:79-87, which scales mock counts for `AgencyQueueDistributionTableCard` and `ResponseTimeByAgencyAreaCard`, mounted only by the disabled `queue-analysis` subficha (analytics-panel.tsx:35, queue-analysis-tab.tsx:12-25). `operator` is read only by the operator table and its count (operator-performance-table-card.tsx:184-195, answered-calls-summary-card.tsx:29-45), both in Rendimiento de Operadores. `operatorStatuses` is compared with the status code and category the backend returns (agent-performance-radial-card.tsx:80-87) and nothing on the client shows that the four option values (available, restroom, break, disconnected) match them. `sortBy` defaults to \"none\" (stores/use-analytics-filters-store.ts:193) and is written only by the \"Respuesta más rápida\" preset (analytics-filters-panel.tsx:884-888); the store's comment says the field is chosen by clicking a column header, and the operator table's headers carry no click handler (operator-performance-table-card.tsx:200-253). The Dashboard de Emergencias subficha reads no filter (analytics-filters-panel.tsx:93-94) and its values ignore the date range (hooks/use-my-dashboard.ts:6-14, :36-39), yet it is an `AnalyticsTabId` (stores/use-analytics-filters-store.ts:7-13), so the date range and Filtros buttons render for it (analytics-panel.tsx:149-159).",
+      "settles": "The product wiring each field to a card, or removing the field from the subficha that cannot use it. Re-check Ordenar por, Estado de operador and the whole list live."
+    },
+    {
+      "id": "dashboard.analitica-exportar-sin-accion",
+      "affects": [
+        "agencia-propia",
+        "todas-las-agencias"
+      ],
+      "section": "dashboard",
+      "declaredIn": "sections/04-dashboard.yaml",
+      "covers": [
+        "dashboard.analitica"
+      ],
+      "missing": "The \"Exportar\" button at the right of the Analítica toolbar and the export buttons on the cards Agencia, Tiempo de Timbre and Transferencia de Llamadas of Análisis de Llamadas.",
+      "because": "The panel-level button is a placeholder with no handler, commented \"TEMPORAL — placeholder sin acción\" (`analytics-panel.tsx:164-171`). The per-card `ExportButton` (`export-button.tsx`) is mounted in `call-analysis-tab.tsx:26`, :34 and :43 with no export behind it.",
+      "settles": "The product dispatching a real CSV or Excel export from those buttons."
     },
     {
       "id": "bot.panel-dashboard-fixture",
