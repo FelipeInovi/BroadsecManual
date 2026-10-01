@@ -673,6 +673,8 @@ Treat this as a proposal to confirm, not as an agreed scope.
      label (#198); the operator table (#272, #274, #277). The relocation of the
      emergency dashboard into Analítica (#163) predates the baseline: it is a
      correction of the manual, not product news.
+   - Nuevo: the Reportes de Emergencias subficha (#239), and the page-size
+     selector with the event total in Historial de Eventos (#345).
 
    **Still open (the owner decides each):**
    - Claims to check live: that Seatmap's jump into Dashboard works without
