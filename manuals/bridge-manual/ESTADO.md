@@ -675,6 +675,8 @@ Treat this as a proposal to confirm, not as an agreed scope.
      correction of the manual, not product news.
    - Nuevo: the Reportes de Emergencias subficha (#239), and the page-size
      selector with the event total in Historial de Eventos (#345).
+   - Retirado: the Abandonadas column of the operator table in Rendimiento de
+     Operadores (#277). The Llamadas abandonadas filter remains.
 
    **Still open (the owner decides each):**
    - Claims to check live: that Seatmap's jump into Dashboard works without
