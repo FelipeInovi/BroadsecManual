@@ -663,8 +663,16 @@ Treat this as a proposal to confirm, not as an agreed scope.
    (`dashboard.vista`, `dashboard.historial.vista`, `dashboard.analitica.vista`,
    `dashboard.emergency.vista`, `dashboard.historial.paginacion.mover-pie`,
    `dashboard.historial.detalle.abrir-cuadro`, `dashboard.historial.detalle.ubicar-tabla`,
-   `dashboard.historial.exportar.marcar-tabla`). Their old files are orphans on
-   disk. 13 slots are new. Twenty-one are pending and none was captured.
+   `dashboard.historial.exportar.marcar-tabla`). Their old files were deleted
+   at the owner's request (2026-10-01). 13 slots are new. All were shot from
+   the running console the same day except `abrir-cuadro` (see below);
+   `image-requests.json` has the count.
+
+   What the captures taught, for any retake: the rail click lands on whichever
+   ficha was open last, so every Historial recipe clicks its ficha first; the
+   row selection survives across fichas and runs, so check `Seleccionar
+   todos` is off before shooting an unmarked table; and `clip: table` is not
+   safe here, clip the panel by its heading instead.
 
    **The rewrite's product news, declared by the owner (2026-10-01)**, split
    as for Home, Llamada and Seatmap: the rewrite is committed as `cambio`, and
@@ -680,14 +688,23 @@ Treat this as a proposal to confirm, not as an agreed scope.
 
    **Still open (the owner decides each):**
    - Claims to check live: that Seatmap's jump into Dashboard works without
-     `view.dashboard` (`pages/dashboard.tsx:142-163` checks nothing); that the
-     heatmap toggle is the only button of the panel bar on Dashboard; what the
-     Estado de operador options match; the scope of the export with and without
-     marked rows; whether "Ordenar por" does anything on its own and whether the
-     inert fields listed in the pending entry are still inert; and whose calls
-     the Dashboard de Emergencias counts (the text says only the 30-day window).
-   - Any retake of `dashboard.historial.detalle.abrir-cuadro` will show the
-     Auditoría card again; decide before capturing.
+     `view.dashboard` (`pages/dashboard.tsx:142-163` checks nothing; needs an
+     account without that permission); the scope of the export with and
+     without marked rows (not tried: it downloads a file); and whose calls the
+     Dashboard de Emergencias counts (the text says only the 30-day window).
+   - **Checked on the console (2026-10-01)**, from the administrator account.
+     The panel bar on Dashboard holds one button, the heatmap toggle. Estado
+     de operador works, as a multi-select on the Rendimiento de Operadores
+     card in General, and Descanso is the row that card labels Pausa: it is
+     now documented and out of `pending`. Turno changed no number, and
+     Ordenar por on its own left the operator table's order unchanged: both
+     stay in `pending`. The default date range read 30 Sep - 01 Oct with the
+     app started on 01 Oct, which agrees with the text.
+   - `dashboard.historial.detalle.abrir-cuadro` is the one slot left pending,
+     on purpose. A capture was taken (event 2405) and NOT delivered, because it
+     shows the Auditoría card with its constant rows ("Antonio Villamizar",
+     "Pablo Rodriguez"). The owner decides: deliver it as shot, or crop it.
+     No rectangle keeps the video and Atributos while dropping that card.
    - The module is not stamped by `verified`.
 
 *(An earlier pair of questions numbered 4 and 5, not the ones above, were the two per-section forms of one question. It has been

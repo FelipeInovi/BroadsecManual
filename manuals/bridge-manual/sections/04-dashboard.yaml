@@ -42,10 +42,6 @@
 #   - the performance level thresholds of the operator table
 #     (`classifyOperatorPerformance`): the text says the level is Alto, Medio or
 #     Bajo and nothing about what makes it;
-#   - what the Estado de operador options match: `agent-performance-radial-card.tsx:
-#     80-87` compares them with the status code and category, and whether the
-#     four option values (available, restroom, break, disconnected) meet the
-#     statuses the backend returns is a live check;
 #   - the export: `events-history-panel.tsx:173-190` sends the selected report
 #     ids when there are any, the last 30 days and the search; what the backend
 #     does with them is its side.
@@ -186,6 +182,8 @@ labels:
     from: ../../../../i18n/locales/es/analytics.json:151
   - at: dashboard.analitica.campo.desempeno
     from: ../../../../i18n/locales/es/analytics.json:152
+  - at: dashboard.analitica.campo.estado-operador
+    from: ../../../../i18n/locales/es/analytics.json:149
   - at: dashboard.analitica.filtros.horario.rango
     from: ../../../../i18n/locales/es/analytics.json:160
 
@@ -385,17 +383,16 @@ pending:
       General, Análisis de Llamadas and Rendimiento de Operadores), Tipo de
       llamada, Estado de la llamada and Operador (in General and Análisis de
       Llamadas), Prioridad and the two time-bucket selectors Tiempo de Timbre and
-      Tiempo de Respuesta KPI (Segundos) (in Análisis de Llamadas), Estado de
-      operador (in General), Ordenar por used on its own (Rendimiento de
+      Tiempo de Respuesta KPI (Segundos) (in Análisis de Llamadas), Ordenar
+      por used on its own (Rendimiento de
       Operadores), and the date range and Filtros buttons in Dashboard de
       Emergencias. The effective fields, the presets, the range modes and the
       chips are documented in full.
     because: >-
-      `FILTER_CONFIG_BY_TAB` (analytics-filters-panel.tsx:60-95) declares the fields but the visible cards read only some of them. `shift`, `callType`, `callStatus`, `priority`, `ringTimeRange` and `responseTimeKpiRange` are read nowhere except analytics-mock-filter-effect.ts:79-87, which scales mock counts for `AgencyQueueDistributionTableCard` and `ResponseTimeByAgencyAreaCard`, mounted only by the disabled `queue-analysis` subficha (analytics-panel.tsx:35, queue-analysis-tab.tsx:12-25). `operator` is read only by the operator table and its count (operator-performance-table-card.tsx:184-195, answered-calls-summary-card.tsx:29-45), both in Rendimiento de Operadores. `operatorStatuses` is compared with the status code and category the backend returns (agent-performance-radial-card.tsx:80-87) and nothing on the client shows that the four option values (available, restroom, break, disconnected) match them. `sortBy` defaults to "none" (stores/use-analytics-filters-store.ts:193) and is written only by the "Respuesta más rápida" preset (analytics-filters-panel.tsx:884-888); the store's comment says the field is chosen by clicking a column header, and the operator table's headers carry no click handler (operator-performance-table-card.tsx:200-253). The Dashboard de Emergencias subficha reads no filter (analytics-filters-panel.tsx:93-94) and its values ignore the date range (hooks/use-my-dashboard.ts:6-14, :36-39), yet it is an `AnalyticsTabId` (stores/use-analytics-filters-store.ts:7-13), so the date range and Filtros buttons render for it (analytics-panel.tsx:149-159).
+      `FILTER_CONFIG_BY_TAB` (analytics-filters-panel.tsx:60-95) declares the fields but the visible cards read only some of them. `shift`, `callType`, `callStatus`, `priority`, `ringTimeRange` and `responseTimeKpiRange` are read nowhere except analytics-mock-filter-effect.ts:79-87, which scales mock counts for `AgencyQueueDistributionTableCard` and `ResponseTimeByAgencyAreaCard`, mounted only by the disabled `queue-analysis` subficha (analytics-panel.tsx:35, queue-analysis-tab.tsx:12-25). `operator` is read only by the operator table and its count (operator-performance-table-card.tsx:184-195, answered-calls-summary-card.tsx:29-45), both in Rendimiento de Operadores. Checked on the console 2026-10-01: Turno set to Mañana in General changed no number on any card, and Ordenar por set to Ascendente left the operator table's order as it was. `sortBy` defaults to "none" (stores/use-analytics-filters-store.ts:193) and is written only by the "Respuesta más rápida" preset (analytics-filters-panel.tsx:884-888); the store's comment says the field is chosen by clicking a column header, and the operator table's headers carry no click handler (operator-performance-table-card.tsx:200-253). The Dashboard de Emergencias subficha reads no filter (analytics-filters-panel.tsx:93-94) and its values ignore the date range (hooks/use-my-dashboard.ts:6-14, :36-39), yet it is an `AnalyticsTabId` (stores/use-analytics-filters-store.ts:7-13), so the date range and Filtros buttons render for it (analytics-panel.tsx:149-159).
     settles: >-
       The product wiring each field to a card, or removing the field from the
-      subficha that cannot use it. Re-check Ordenar por, Estado de operador and
-      the whole list live.
+      subficha that cannot use it. Re-check the whole list live.
 
   - id: dashboard.analitica-exportar-sin-accion
     covers: [dashboard.analitica]
@@ -1061,8 +1058,12 @@ children:
           #  - Operador: solo en Rendimiento de Operadores (la tabla y el recuento).
           #    Las opciones salen de `useAgentPerformance` con el rango de fechas
           #    (analytics-filters-panel.tsx:1044-1064).
-          #  - Estado de operador: agent-performance-radial-card.tsx:80-87; ver
-          #    el encabezado, "WHAT THE CODE DOES NOT PROVE".
+          #  - Estado de operador: agent-performance-radial-card.tsx:80-87, a
+          #    multi-select (OPERATOR_STATUS_OPTION_KEYS, analytics-filters-
+          #    panel.tsx:972-977; labels operatorStatuses.*, analytics.json:251-
+          #    254). Checked on the console 2026-10-01: Baño left only the Baño
+          #    row (6), and Baño + Descanso left Pausa and Baño, so `break`
+          #    matches the row labelled Pausa (`notReady`, analytics.json:456).
           #  - Clasificación por Tipo de Incidente: incident-type-priority-card.tsx:
           #    90-113.
           #  - Granularidad del Gráfico: call-volume-area-card.tsx:39. Se vuelve a
@@ -1095,6 +1096,14 @@ children:
                 **Semana** o **Mes**. Al cambiar el rango de fechas, la
                 plataforma propone la que corresponde a su duración: Hora hasta
                 un día, Día hasta siete, Semana hasta 31 y Mes por encima de eso.
+            - id: dashboard.analitica.campo.estado-operador
+              label: Estado de operador
+              description: >-
+                En **General**, deja en la tarjeta **Rendimiento de Operadores**
+                solo las filas de los estados elegidos: **Disponible**,
+                **Baño**, **Descanso** o **Desconectado**. Admite varias
+                elecciones. **Descanso** corresponde a la fila que la tarjeta
+                muestra como **Pausa**.
             - id: dashboard.analitica.campo.operador
               label: Operador
               description: >-
