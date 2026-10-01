@@ -12,6 +12,10 @@
     "sections/03-seatmap.yaml": {
       "productCommit": "465f5eb9e40e56e58384a8f98f3776bf99649998",
       "verifiedAt": "2026-09-30"
+    },
+    "sections/04-dashboard.yaml": {
+      "productCommit": "465f5eb9e40e56e58384a8f98f3776bf99649998",
+      "verifiedAt": "2026-10-01"
     }
   }
 }

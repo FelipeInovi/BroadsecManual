@@ -705,7 +705,9 @@ Treat this as a proposal to confirm, not as an agreed scope.
      shows the Auditoría card with its constant rows ("Antonio Villamizar",
      "Pablo Rodriguez"). The owner decides: deliver it as shot, or crop it.
      No rectangle keeps the video and Atributos while dropping that card.
-   - The module is not stamped by `verified`.
+   - The owner reviewed the rewritten module (2026-10-01) and found it good,
+     and `verified` stamped it at `465f5eb9`, the same baseline as Home,
+     Llamada and Seatmap.
 
 *(An earlier pair of questions numbered 4 and 5, not the ones above, were the two per-section forms of one question. It has been
 answered — see the last entry under Decided — and the two gaps they described are
