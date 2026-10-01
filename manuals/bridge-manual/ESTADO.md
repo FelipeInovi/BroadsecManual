@@ -716,7 +716,18 @@ derivable and therefore not restated here.)*
 
 ## Next section
 
-**None — the seven the product's rail offers are written.** What comes next is a
+**`sections/05-bridge-of-things.yaml`, then `06-forces-in-field.yaml` and
+`07-create-incident.yaml`: update each against develop `465f5eb9`** (decided
+2026-10-01). Home, Llamada, Seatmap and Dashboard are rewritten and stamped
+there (Unresolved #4-#7). The other three are still written against
+`58e2cc4d`: `labels bridge-manual` flags their citations, and each carries a
+stale claim about Home (see #4). Use the same flow per module: a read-only
+drift audit, the owner's go-ahead, a rewrite, a fresh review, the
+cambio/nuevo/retirado commits the owner confirms, the captures, and
+`verified` last.
+
+**Below, written before that update round, is the older note: the seven the
+product's rail offers are written.** What comes next is a
 scope decision, not an authoring one. Three candidates, in the order I would
 raise them:
 
